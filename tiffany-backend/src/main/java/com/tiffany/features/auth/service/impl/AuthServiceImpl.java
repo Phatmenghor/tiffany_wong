@@ -59,47 +59,31 @@ public class AuthServiceImpl implements AuthService {
         log.info("Login attempt: {} (userType: {})",
                 request.getUserIdentifier(), request.getUserType());
 
-        try {
-            // Simple lookup by user identifier, validate userType matches
-            User user = userRepository.findByUserIdentifierAndIsDeletedFalse(request.getUserIdentifier())
-                    .orElseThrow(() -> new ValidationException("Invalid credentials"));
+        User user = userRepository.findByUserIdentifierAndIsDeletedFalse(request.getUserIdentifier())
+                .orElseThrow(() -> new ValidationException("Invalid credentials"));
 
-            // Validate userType matches
-            if (!request.getUserType().equals(user.getUserType())) {
-                throw new ValidationException("Invalid credentials");
-            }
-
-            // Authenticate with Spring Security
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUserIdentifier(), request.getPassword())
-            );
-
-            // Validate account status
-            securityUtils.validateAccountStatus(user);
-
-            // Generate access token
-            String accessToken = jwtGenerator.generateAccessToken(authentication);
-
-            // Generate refresh token
-            String ipAddress = getClientIpAddress();
-            String deviceInfo = getDeviceInfo();
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user, ipAddress, deviceInfo);
-
-            // Build login response
-            LoginResponse response = userMapper.toLoginResponse(user, accessToken);
-            response.setRefreshToken(refreshToken.getToken());
-
-            log.info("Login successful: {} (type: {})",
-                    user.getUserIdentifier(), user.getUserType());
-            return response;
-
-        } catch (ValidationException e) {
-            log.warn("Login failed: {} - Reason: {}", request.getUserIdentifier(), e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.warn("Login failed: {} - Error: {}", request.getUserIdentifier(), e.getMessage());
+        if (!request.getUserType().equals(user.getUserType())) {
             throw new ValidationException("Invalid credentials");
         }
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUserIdentifier(), request.getPassword())
+        );
+
+        securityUtils.validateAccountStatus(user);
+
+        String accessToken = jwtGenerator.generateAccessToken(authentication);
+
+        String ipAddress = getClientIpAddress();
+        String deviceInfo = getDeviceInfo();
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user, ipAddress, deviceInfo);
+
+        LoginResponse response = userMapper.toLoginResponse(user, accessToken);
+        response.setRefreshToken(refreshToken.getToken());
+
+        log.info("Login successful: {} (type: {})",
+                user.getUserIdentifier(), user.getUserType());
+        return response;
     }
 
 

@@ -75,12 +75,12 @@ public class UserServiceImpl implements UserService {
         Pageable pageable = PaginationUtils.createPageable(
                 request.getPageNo(), request.getPageSize(), request.getSortBy(), request.getSortDirection());
 
-        List<UserType> userTypes = nullIfEmpty(request.getUserTypes());
-        List<AccountStatus> accountStatuses = nullIfEmpty(request.getAccountStatuses());
-        List<String> roles = nullIfEmpty(request.getRoles());
-
         Page<User> page = userRepository.searchUsers(
-                userTypes, accountStatuses, roles, request.getSearch(), pageable);
+                (request.getUserTypes() != null && !request.getUserTypes().isEmpty()) ? request.getUserTypes() : null,
+                (request.getAccountStatuses() != null && !request.getAccountStatuses().isEmpty()) ? request.getAccountStatuses() : null,
+                (request.getRoles() != null && !request.getRoles().isEmpty()) ? request.getRoles() : null,
+                request.getSearch(),
+                pageable);
         return userMapper.toPaginationResponse(page, paginationMapper);
     }
 
@@ -142,12 +142,5 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateCurrentUser(UserUpdateRequest request) {
         User currentUser = securityUtils.getCurrentUser();
         return updateUser(currentUser.getId(), request);
-    }
-
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private <T> List<T> nullIfEmpty(List<T> list) {
-        return (list != null && !list.isEmpty()) ? list : null;
     }
 }
