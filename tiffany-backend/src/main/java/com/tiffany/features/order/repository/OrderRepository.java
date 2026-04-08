@@ -25,7 +25,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
            "LEFT JOIN FETCH o.items oi " +
            "LEFT JOIN FETCH oi.product p " +
            "LEFT JOIN FETCH oi.productSize ps " +
-           "LEFT JOIN FETCH oi.pricingSnapshot " +
            "LEFT JOIN FETCH o.customer " +
            "LEFT JOIN FETCH o.deliveryAddress " +
            "WHERE o.id = :id AND o.isDeleted = false")
