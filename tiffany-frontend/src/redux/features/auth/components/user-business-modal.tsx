@@ -342,21 +342,6 @@ export default function UserBusinessModal({
 
                       <SelectField
                         control={control}
-                        name="userType"
-                        label="User Type"
-                        placeholder="Select user type"
-                        options={[
-                          { label: "Owner", value: UserGropeType.OWNER },
-                          { label: "Admin", value: "ADMIN" },
-                          { label: "Staff", value: "STAFF" },
-                        ]}
-                        required
-                        disabled={isSubmitting}
-                        error={errors.userType}
-                      />
-
-                      <SelectField
-                        control={control}
                         name="userRole"
                         label="User Role"
                         placeholder="Select user role"

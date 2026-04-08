@@ -17,12 +17,12 @@ export const USER_PLATFORM_ROLE_FILTER = [
   { value: UserRole.CUSTOMER, label: "Customer" },
 ];
 
-// Aligned with backend UserRole enum (ADMIN, STAFF, CUSTOMER)
+// Aligned with backend UserRole enum (ADMIN, STAFF)
+// CUSTOMER users are shown in separate Customer page
 export const USER_BUSINESS_ROLE_FILTER = [
   { value: UserRole.ALL, label: "All Roles" },
   { value: UserRole.ADMIN, label: "Admin" },
   { value: UserRole.STAFF, label: "Staff" },
-  { value: UserRole.CUSTOMER, label: "Customer" },
 ];
 
 export const BUSINESS_FILTER = [
