@@ -19,12 +19,6 @@ public interface CartService {
     CartSummaryResponse getCart();
 
     /**
-     * GET - Get paginated cart items for current user
-     * Used for infinite scroll / pagination on frontend
-     */
-    CartSummaryResponse getCartPaginated(int pageNo, int pageSize);
-
-    /**
      * DELETE - Clear current user's cart
      */
     CartSummaryResponse clearCart();

@@ -106,44 +106,6 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public CartSummaryResponse getCartPaginated(int pageNo, int pageSize) {
-        UUID userId = securityUtils.getCurrentUserId();
-        log.info("Getting paginated cart for user: {}, page: {}, size: {}",
-                userId, pageNo, pageSize);
-
-        Optional<Cart> cartOpt = cartRepository.findByUserIdWithItems(userId);
-        if (cartOpt.isPresent()) {
-            Cart cart = cartOpt.get();
-
-            // Deduplicate items first (handles race conditions)
-            deduplicateCartItems(cart);
-
-            // Filter unavailable items
-            filterUnavailableItems(cart);
-
-            // Store total item count BEFORE pagination (for response)
-            int totalItemCount = cart.getItems() == null ? 0 : cart.getItems().size();
-
-            // Apply pagination to items
-            if (cart.getItems() != null && !cart.getItems().isEmpty()) {
-                int start = (pageNo - 1) * pageSize;
-                int end = Math.min(start + pageSize, cart.getItems().size());
-
-                // Create a new list with only the paginated items
-                List<CartItem> paginatedItems = cart.getItems().subList(start, end);
-                cart.setItems(paginatedItems);
-            }
-
-            CartSummaryResponse response = cartMapper.toSummaryResponse(cart);
-            // Override totalItems to be item count (for pagination), not sum of quantities
-            response.setTotalItems(totalItemCount);
-            return response;
-        }
-        return emptyCartSummary();
-    }
-
-    @Override
     public CartSummaryResponse clearCart() {
         UUID userId = securityUtils.getCurrentUserId();
         log.info("Clearing cart for user: {}", userId);
