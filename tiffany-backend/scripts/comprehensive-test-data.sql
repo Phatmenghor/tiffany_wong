@@ -17,7 +17,7 @@
 -- Categories: 200
 -- Banners: 20
 -- Carts: All 20,001 customers
--- Orders: 20,000 for phatmenghor21@gmail.com
+-- Orders: 2,000 for phatmenghor21@gmail.com
 -- ============================================================================
 
 -- ============================================================================
@@ -362,11 +362,11 @@ BEGIN
 END $$;
 
 -- ============================================================================
--- 10. ORDERS (20,000 orders for phatmenghor21@gmail.com)
+-- 10. ORDERS (2,000 orders for phatmenghor21@gmail.com)
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[90 percent] Inserting 20,000 orders with items, addresses, and history...';
+    RAISE NOTICE '[90 percent] Inserting 2,000 orders with items, addresses, and history...';
     RAISE NOTICE '      This is the final step, may take a few minutes...';
 END $$;
 
@@ -389,7 +389,7 @@ SELECT
     '+855 98 123 456' || i,
     'customer' || i || '@test.com',
     'Please deliver quickly'
-FROM generate_series(1, 20000) AS t(i);
+FROM generate_series(1, 2000) AS t(i);
 
 -- ============================================================================
 -- 11. ORDER ITEMS (Multiple items per order)
