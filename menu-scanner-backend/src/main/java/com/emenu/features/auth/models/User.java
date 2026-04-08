@@ -13,8 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_platform_user_identifier", columnNames = {"user_identifier", "user_type"}),
-        @UniqueConstraint(name = "uk_business_user_identifier", columnNames = {"user_identifier", "business_id"})
+        @UniqueConstraint(name = "uk_user_identifier", columnNames = {"user_identifier"})
 })
 @Data
 @EqualsAndHashCode(callSuper = true, exclude = {"profile", "employment", "telegram", "addresses", "emergencyContacts", "documents", "educations"})
@@ -43,21 +42,6 @@ public class User extends BaseUUIDEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status = Status.ACTIVE;
-
-    @Column(name = "business_id")
-    private UUID businessId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "business_id", insertable = false, updatable = false)
-    private Business business;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<Role> roles;
 
     @Column(name = "remark", columnDefinition = "TEXT")
     private String remark;
@@ -109,7 +93,7 @@ public class User extends BaseUUIDEntity {
     }
 
     public boolean isActive() { return AccountStatus.ACTIVE.equals(accountStatus); }
-    public boolean isBusinessUser() { return UserType.BUSINESS_USER.equals(userType); }
+    public boolean isOwner() { return UserType.OWNER.equals(userType); }
     public boolean isCustomer() { return UserType.CUSTOMER.equals(userType); }
 
     // ── Telegram Sync ─────────────────────────────────────────────────────────
