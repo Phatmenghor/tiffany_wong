@@ -162,13 +162,13 @@ SELECT
     (random() * 10000)::int,  -- Random view count 0-10000
     (random() * 1000)::int,   -- Random favorite count 0-1000
     CASE
-        WHEN random() < 0.4 THEN 'PERCENTAGE'  -- 40% PERCENTAGE
-        WHEN random() < 0.8 THEN 'FIXED'       -- 40% FIXED
-        ELSE NULL                                -- 20% no promotion
+        WHEN random() < 0.4 THEN 'PERCENTAGE'       -- 40% PERCENTAGE
+        WHEN random() < 0.8 THEN 'FIXED_AMOUNT'     -- 40% FIXED_AMOUNT
+        ELSE NULL                                    -- 20% no promotion
     END,
     CASE
         WHEN random() < 0.4 THEN (5 + random() * 45)::numeric(10,2)    -- PERCENTAGE: 5-50%
-        WHEN random() < 0.8 THEN (1 + random() * 100)::numeric(10,2)   -- FIXED: 1-100 discount
+        WHEN random() < 0.8 THEN (1 + random() * 100)::numeric(10,2)   -- FIXED_AMOUNT: 1-100 discount
         ELSE NULL
     END,
     NOW(),
@@ -187,13 +187,13 @@ SELECT
     p.sku || '-' || CASE ((random() * 3)::int) WHEN 0 THEN 'S' WHEN 1 THEN 'M' WHEN 2 THEN 'L' ELSE 'XL' END,
     p.barcode || '-' || CASE ((random() * 3)::int) WHEN 0 THEN 'S' WHEN 1 THEN 'M' WHEN 2 THEN 'L' ELSE 'XL' END,
     CASE
-        WHEN random() < 0.4 THEN 'PERCENTAGE'  -- 40% PERCENTAGE
-        WHEN random() < 0.8 THEN 'FIXED'       -- 40% FIXED
-        ELSE NULL                                -- 20% no promotion
+        WHEN random() < 0.4 THEN 'PERCENTAGE'       -- 40% PERCENTAGE
+        WHEN random() < 0.8 THEN 'FIXED_AMOUNT'     -- 40% FIXED_AMOUNT
+        ELSE NULL                                    -- 20% no promotion
     END,
     CASE
         WHEN random() < 0.4 THEN (5 + random() * 45)::numeric(10,2)    -- PERCENTAGE: 5-50%
-        WHEN random() < 0.8 THEN (1 + random() * 50)::numeric(10,2)    -- FIXED: 1-50 discount
+        WHEN random() < 0.8 THEN (1 + random() * 50)::numeric(10,2)    -- FIXED_AMOUNT: 1-50 discount
         ELSE NULL
     END,
     NOW(),
