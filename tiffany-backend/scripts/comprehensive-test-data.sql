@@ -23,6 +23,15 @@
 -- ============================================================================
 -- 0. CLEANUP - DELETE ALL EXISTING DATA (Foreign Key Order)
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '================================================';
+    RAISE NOTICE 'TIFFANY E-MENU PLATFORM - TEST DATA GENERATION';
+    RAISE NOTICE '================================================';
+    RAISE NOTICE '';
+    RAISE NOTICE '[0%] Starting cleanup of existing data...';
+END $$;
+
 DELETE FROM product_favorites;
 DELETE FROM order_status_history;
 DELETE FROM order_items;
@@ -49,16 +58,40 @@ DELETE FROM order_counters;
 -- Reset sequences/auto-increment
 ALTER SEQUENCE reference_counters_id_seq RESTART WITH 1;
 
+DO $$
+BEGIN
+    RAISE NOTICE '[5%] Cleanup completed successfully';
+    RAISE NOTICE '';
+END $$;
+
 -- ============================================================================
 -- 1. SYSTEM SETTINGS (Must be first - referenced by other tables)
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '[10%] Inserting system settings...';
+END $$;
+
 INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, tax_percentage, system_name, logo_system_url, primary_color, contact_address, contact_phone, contact_email)
 VALUES
 ('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 10.0, 'Tiffany E-Menu Platform', 'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce', '#57823D', 'Phnom Penh, Cambodia', '+855 23 888 9999', 'contact@tiffany.com');
 
+DO $$
+BEGIN
+    RAISE NOTICE '[15%] System settings inserted';
+    RAISE NOTICE '';
+END $$;
+
 -- ============================================================================
 -- 2. USERS (60,003 total)
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '[20%] Inserting users (60,003 total)...';
+    RAISE NOTICE '      - 20,000 ADMIN users';
+    RAISE NOTICE '      - 20,000 STAFF users';
+    RAISE NOTICE '      - 20,003 CUSTOMER users';
+END $$;
 
 -- Insert main admin user (phatmenghor19@gmail.com)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, account_status, user_role)
@@ -70,6 +103,11 @@ INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, 
 VALUES
 ('550e8400-e29b-41d4-a716-446655550003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor20@gmail.com', '$2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36', 'OWNER', 'ACTIVE', 'ADMIN');
 
+DO $$
+BEGIN
+    RAISE NOTICE '      [25%] Inserted 2 main ADMIN users';
+END $$;
+
 -- Insert 19,998 additional ADMIN users (OWNER type with ADMIN role)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, account_status, user_role)
 SELECT
@@ -79,6 +117,11 @@ SELECT
     'OWNER', 'ACTIVE', 'ADMIN'
 FROM generate_series(1, 19998) AS t(i);
 
+DO $$
+BEGIN
+    RAISE NOTICE '      [35%] Inserted 19,998 additional ADMIN users';
+END $$;
+
 -- Insert 20,000 STAFF users (OWNER type with STAFF role)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, account_status, user_role)
 SELECT
@@ -87,6 +130,11 @@ SELECT
     '$2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36',
     'OWNER', 'ACTIVE', 'STAFF'
 FROM generate_series(1, 20000) AS t(i);
+
+DO $$
+BEGIN
+    RAISE NOTICE '      [45%] Inserted 20,000 STAFF users';
+END $$;
 
 -- Insert 20,001 CUSTOMER users (CUSTOMER type with CUSTOMER role)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, account_status, user_role)
@@ -101,9 +149,20 @@ SELECT
     'CUSTOMER', 'ACTIVE', 'CUSTOMER'
 FROM generate_series(1, 20000) AS t(i);
 
+DO $$
+BEGIN
+    RAISE NOTICE '      [55%] Inserted 20,001 CUSTOMER users';
+    RAISE NOTICE '';
+END $$;
+
 -- ============================================================================
 -- 3. CATEGORIES (200 categories)
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '[60%] Inserting 200 categories...';
+END $$;
+
 INSERT INTO categories (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, image_url, status)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
@@ -112,9 +171,21 @@ SELECT
     'ACTIVE'
 FROM generate_series(1, 200) AS t(i);
 
+DO $$
+BEGIN
+    RAISE NOTICE '      [65%] Categories inserted';
+    RAISE NOTICE '';
+END $$;
+
 -- ============================================================================
 -- 5. PRODUCTS (100,000 with detailed descriptions)
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '[70%] Inserting 100,000 products with detailed descriptions...';
+    RAISE NOTICE '      This may take several minutes...';
+END $$;
+
 INSERT INTO products (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, sku, barcode, price, main_image_url, category_id, status, view_count, favorite_count, promotion_type, promotion_value, promotion_from_date, promotion_to_date)
 WITH category_list AS (
     SELECT id, ROW_NUMBER() OVER (ORDER BY id) as cat_num FROM categories
@@ -164,9 +235,20 @@ SELECT
     NOW() + INTERVAL '30 days'
 FROM generate_series(1, 100000) AS t(i);
 
+DO $$
+BEGIN
+    RAISE NOTICE '      [75%] Products inserted successfully';
+    RAISE NOTICE '';
+END $$;
+
 -- ============================================================================
 -- 6. PRODUCT SIZES (70% of products = 70,000 with 5-10 sizes each)
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '[76%] Inserting product sizes (5-10 per product with sizes)...';
+END $$;
+
 INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, name, price, sku, barcode, promotion_type, promotion_value, promotion_from_date, promotion_to_date)
 WITH product_with_sizes AS (
     SELECT * FROM products ORDER BY RANDOM() LIMIT (100000 * 0.7)::int
@@ -206,9 +288,20 @@ FROM product_with_sizes p
 CROSS JOIN size_names sn
 WHERE sn.size_id <= (5 + ((ABS(hashtext(p.id::text))::numeric % 6))::int);  -- 5-10 sizes per product
 
+DO $$
+BEGIN
+    RAISE NOTICE '      [80%] Product sizes inserted successfully';
+    RAISE NOTICE '';
+END $$;
+
 -- ============================================================================
 -- 7. PRODUCT IMAGES (1-5 per product)
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '[81%] Inserting product images (1-5 per product)...';
+END $$;
+
 INSERT INTO product_images (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, image_url)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
@@ -217,9 +310,20 @@ SELECT
 FROM products p
 CROSS JOIN generate_series(1, (1 + (random() * 4)::int)) AS img_num;
 
+DO $$
+BEGIN
+    RAISE NOTICE '      [83%] Product images inserted successfully';
+    RAISE NOTICE '';
+END $$;
+
 -- ============================================================================
 -- 8. BANNERS (20 banners)
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '[84%] Inserting 20 banners...';
+END $$;
+
 INSERT INTO banners (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, description, image_url, link_url, status)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
@@ -229,9 +333,20 @@ SELECT
     'ACTIVE'
 FROM generate_series(1, 20) AS t(i);
 
+DO $$
+BEGIN
+    RAISE NOTICE '      [86%] Banners inserted successfully';
+    RAISE NOTICE '';
+END $$;
+
 -- ============================================================================
 -- 9. CARTS (All 20,001 customers)
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '[87%] Inserting carts for 20,001 customers...';
+END $$;
+
 INSERT INTO carts (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
@@ -240,9 +355,21 @@ FROM users u
 WHERE u.user_type = 'CUSTOMER'
 AND NOT EXISTS (SELECT 1 FROM carts c WHERE c.user_id = u.id);
 
+DO $$
+BEGIN
+    RAISE NOTICE '      [89%] Carts inserted successfully';
+    RAISE NOTICE '';
+END $$;
+
 -- ============================================================================
 -- 10. ORDERS (20,000 orders for phatmenghor21@gmail.com)
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '[90%] Inserting 20,000 orders with items, addresses, and history...';
+    RAISE NOTICE '      This is the final step, may take a few minutes...';
+END $$;
+
 INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_number, customer_id, order_status, source, order_from, payment_method, payment_status, subtotal, tax_amount, discount_amount, delivery_fee, total_amount, customer_name, customer_phone, customer_email, customer_note)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
@@ -316,11 +443,61 @@ SELECT
 FROM orders o;
 
 -- ============================================================================
--- Final Statistics
+-- Final Statistics & Summary
 -- ============================================================================
-SELECT 'Data generation completed!' as status;
-SELECT COUNT(*) as total_users FROM users;
-SELECT COUNT(*) as total_products FROM products;
-SELECT COUNT(*) as total_sizes FROM product_sizes;
-SELECT COUNT(*) as total_orders FROM orders;
-SELECT COUNT(*) as total_order_items FROM order_items;
+DO $$
+DECLARE
+    v_total_users INT;
+    v_total_products INT;
+    v_total_sizes INT;
+    v_total_images INT;
+    v_total_orders INT;
+    v_total_order_items INT;
+    v_total_categories INT;
+    v_total_banners INT;
+    v_total_carts INT;
+BEGIN
+    -- Retrieve counts
+    SELECT COUNT(*) INTO v_total_users FROM users;
+    SELECT COUNT(*) INTO v_total_products FROM products;
+    SELECT COUNT(*) INTO v_total_sizes FROM product_sizes;
+    SELECT COUNT(*) INTO v_total_images FROM product_images;
+    SELECT COUNT(*) INTO v_total_orders FROM orders;
+    SELECT COUNT(*) INTO v_total_order_items FROM order_items;
+    SELECT COUNT(*) INTO v_total_categories FROM categories;
+    SELECT COUNT(*) INTO v_total_banners FROM banners;
+    SELECT COUNT(*) INTO v_total_carts FROM carts;
+
+    -- Print results
+    RAISE NOTICE '';
+    RAISE NOTICE '[100%] DATA GENERATION COMPLETED SUCCESSFULLY!';
+    RAISE NOTICE '';
+    RAISE NOTICE '================================================';
+    RAISE NOTICE 'FINAL STATISTICS';
+    RAISE NOTICE '================================================';
+    RAISE NOTICE '📊 Users:             %', v_total_users;
+    RAISE NOTICE '📦 Products:          %', v_total_products;
+    RAISE NOTICE '📐 Product Sizes:     %', v_total_sizes;
+    RAISE NOTICE '🖼️  Product Images:    %', v_total_images;
+    RAISE NOTICE '🏷️  Categories:         %', v_total_categories;
+    RAISE NOTICE '🎯 Banners:           %', v_total_banners;
+    RAISE NOTICE '🛒 Shopping Carts:    %', v_total_carts;
+    RAISE NOTICE '📝 Orders:            %', v_total_orders;
+    RAISE NOTICE '📋 Order Items:       %', v_total_order_items;
+    RAISE NOTICE '';
+    RAISE NOTICE '================================================';
+    RAISE NOTICE 'TEST DATA READY FOR USE!';
+    RAISE NOTICE '================================================';
+    RAISE NOTICE 'Default Login Credentials:';
+    RAISE NOTICE '  Admin:    phatmenghor19@gmail.com';
+    RAISE NOTICE '  Owner:    phatmenghor20@gmail.com';
+    RAISE NOTICE '  Customer: phatmenghor21@gmail.com';
+    RAISE NOTICE '  Password: 88889999 (for all test users)';
+    RAISE NOTICE '';
+    RAISE NOTICE 'Additional users:';
+    RAISE NOTICE '  - admin1@tiffany.com to admin19998@tiffany.com (ADMIN users)';
+    RAISE NOTICE '  - staff1@tiffany.com to staff20000@tiffany.com (STAFF users)';
+    RAISE NOTICE '  - customer1@test.com to customer20000@test.com (CUSTOMER users)';
+    RAISE NOTICE '';
+    RAISE NOTICE '================================================';
+END $$;
