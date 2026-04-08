@@ -89,30 +89,7 @@ public class UserServiceImpl implements UserService {
             saved.setEmployment(emp);
         }
 
-        // Use a final reference for use inside lambdas (saved is reassigned below)
-        final User savedRef = saved;
-
-        // Addresses
-        if (req.getAddresses() != null) {
-            req.getAddresses().forEach(r -> savedRef.getAddresses().add(buildAddress(r, savedRef)));
-        }
-
-        // Emergency contacts
-        if (req.getEmergencyContacts() != null) {
-            req.getEmergencyContacts().forEach(r -> savedRef.getEmergencyContacts().add(buildContact(r, savedRef)));
-        }
-
-        // Documents
-        if (req.getDocuments() != null) {
-            req.getDocuments().forEach(r -> savedRef.getDocuments().add(buildDocument(r, savedRef)));
-        }
-
-        // Educations
-        if (req.getEducations() != null) {
-            req.getEducations().forEach(r -> savedRef.getEducations().add(buildEducation(r, savedRef)));
-        }
-
-        saved = userRepository.save(savedRef);
+        saved = userRepository.save(saved);
         log.info("User created: {} type={}", saved.getUserIdentifier(), saved.getUserType());
         return userMapper.toResponse(saved);
     }
@@ -179,16 +156,6 @@ public class UserServiceImpl implements UserService {
             if (req.getLeaveDate() != null) emp.setLeaveDate(req.getLeaveDate());
             if (req.getShift() != null) emp.setShift(req.getShift());
         }
-
-        // null = no change | [] = remove all | items = merge (update by id / create new / delete missing)
-        if (req.getAddresses() != null) mergeList(req.getAddresses(), user.getAddresses(),
-                AddressRequest::getId, this::applyAddressFields, r -> buildAddress(r, user));
-        if (req.getEmergencyContacts() != null) mergeList(req.getEmergencyContacts(), user.getEmergencyContacts(),
-                EmergencyContactRequest::getId, this::applyContactFields, r -> buildContact(r, user));
-        if (req.getDocuments() != null) mergeList(req.getDocuments(), user.getDocuments(),
-                DocumentRequest::getId, this::applyDocumentFields, r -> buildDocument(r, user));
-        if (req.getEducations() != null) mergeList(req.getEducations(), user.getEducations(),
-                EducationRequest::getId, this::applyEducationFields, r -> buildEducation(r, user));
 
         User updated = userRepository.save(user);
         log.info("User updated: {}", updated.getUserIdentifier());

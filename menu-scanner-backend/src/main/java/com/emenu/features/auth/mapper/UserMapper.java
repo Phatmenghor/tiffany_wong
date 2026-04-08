@@ -105,21 +105,12 @@ public interface UserMapper {
 
     List<UserResponse> toResponseList(List<User> users);
 
-    AddressResponse toAddressResponse(UserAddress address);
-    EmergencyContactResponse toEmergencyContactResponse(UserEmergencyContact contact);
-    DocumentResponse toDocumentResponse(UserDocument document);
-    EducationResponse toEducationResponse(UserEducation education);
-
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "roles",             ignore = true)
     @Mapping(target = "password",          ignore = true)
     @Mapping(target = "profile",           ignore = true)
     @Mapping(target = "employment",        ignore = true)
     @Mapping(target = "telegram",          ignore = true)
-    @Mapping(target = "addresses",         ignore = true)
-    @Mapping(target = "emergencyContacts", ignore = true)
-    @Mapping(target = "documents",         ignore = true)
-    @Mapping(target = "educations",        ignore = true)
     void updateEntity(UserUpdateRequest request, @MappingTarget User user);
 
     @Mapping(target = "roles",             ignore = true)
@@ -127,10 +118,6 @@ public interface UserMapper {
     @Mapping(target = "profile",           ignore = true)
     @Mapping(target = "employment",        ignore = true)
     @Mapping(target = "telegram",          ignore = true)
-    @Mapping(target = "addresses",         ignore = true)
-    @Mapping(target = "emergencyContacts", ignore = true)
-    @Mapping(target = "documents",         ignore = true)
-    @Mapping(target = "educations",        ignore = true)
     User toEntity(UserCreateRequest request);
 
     @Mapping(target = "roles",             ignore = true)
@@ -138,10 +125,6 @@ public interface UserMapper {
     @Mapping(target = "profile",           ignore = true)
     @Mapping(target = "employment",        ignore = true)
     @Mapping(target = "telegram",          ignore = true)
-    @Mapping(target = "addresses",         ignore = true)
-    @Mapping(target = "emergencyContacts", ignore = true)
-    @Mapping(target = "documents",         ignore = true)
-    @Mapping(target = "educations",        ignore = true)
     User toEntity(RegisterRequest request);
 
     @Named("rolesToStrings")
