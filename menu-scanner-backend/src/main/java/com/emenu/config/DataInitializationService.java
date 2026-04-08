@@ -159,11 +159,6 @@ public class DataInitializationService {
                 profile.setLastName("Administrator");
                 admin.setProfile(profile);
 
-                com.emenu.features.auth.models.UserEmployment employment = new com.emenu.features.auth.models.UserEmployment();
-                employment.setUser(admin);
-                employment.setPosition("Platform Owner");
-                admin.setEmployment(employment);
-
                 admin = userRepository.save(admin);
                 log.info("✅ Created platform owner: {} with ID: {}", adminUserIdentifier, admin.getId());
                 return 1;

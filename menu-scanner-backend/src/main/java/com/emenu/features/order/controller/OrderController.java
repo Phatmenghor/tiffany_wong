@@ -71,7 +71,7 @@ public class OrderController {
     }
 
     /**
-     * Get all orders with filtering (Admin/Business view)
+     * Get all orders with filtering (Admin/Business view) - Business ID extracted from token
      */
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<PaginationResponse<OrderResponse>>> getAllOrders(@Valid @RequestBody OrderFilterRequest filter) {
@@ -81,6 +81,8 @@ public class OrderController {
         log.debug("📋 [FILTER DETAILS] Status: {}, PaymentMethod: {}, PaymentStatus: {}",
                 filter.getOrderStatus(), filter.getPaymentMethod(), filter.getPaymentStatus());
 
+        UUID businessId = securityUtils.getCurrentUserBusinessId();
+        filter.setBusinessId(businessId);
         PaginationResponse<OrderResponse> orders = orderService.getAllOrders(filter);
 
         long duration = System.currentTimeMillis() - startTime;
@@ -89,28 +91,6 @@ public class OrderController {
                 orders.getContent().isEmpty() ? 0 : orders.getContent().size() * 500); // Rough estimate
 
         return ResponseEntity.ok(ApiResponse.success("Orders retrieved successfully", orders));
-    }
-
-    /**
-     * Get my business orders (for business owners)
-     */
-    @PostMapping("/my-business/all")
-    public ResponseEntity<ApiResponse<PaginationResponse<OrderResponse>>> getMyBusinessOrders(@Valid @RequestBody OrderFilterRequest filter) {
-        long startTime = System.currentTimeMillis();
-        User currentUser = securityUtils.getCurrentUser();
-        log.info("🏢 [API REQUEST] GET /api/v1/orders/my-business/all | Page: {}, Size: {}",
-                filter.getPageNo(), filter.getPageSize());
-
-        log.debug("📋 [FILTER DETAILS] Status: {}, PaymentMethod: {}, PaymentStatus: {}",
-                filter.getOrderStatus(), filter.getPaymentMethod(), filter.getPaymentStatus());
-
-        PaginationResponse<OrderResponse> orders = orderService.getAllOrders(filter);
-
-        long duration = System.currentTimeMillis() - startTime;
-        log.info("✅ [API RESPONSE] Retrieved {} business orders (total: {}) in {} ms",
-                orders.getContent().size(), orders.getTotalElements(), duration);
-
-        return ResponseEntity.ok(ApiResponse.success("Business orders retrieved successfully", orders));
     }
 
     /**

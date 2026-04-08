@@ -80,24 +80,13 @@ public class UserController {
     }
 
     /**
-     * Retrieves all users with pagination and filtering
+     * Retrieves all users with pagination and filtering - Business ID extracted from token
+     * Security: No businessId parameter needed, extracted from authenticated user's context
      */
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<PaginationResponse<UserResponse>>> getAllUsers(
             @Valid @RequestBody UserFilterRequest request) {
         log.info("Get all users");
-        PaginationResponse<UserResponse> response = userService.getAllUsers(request);
-        return ResponseEntity.ok(ApiResponse.success("Users retrieved", response));
-    }
-
-    /**
-     * Retrieves current business users with pagination - Business ID extracted from token
-     * Security: No businessId parameter needed, extracted from authenticated user's context
-     */
-    @PostMapping("/my-business/all")
-    public ResponseEntity<ApiResponse<PaginationResponse<UserResponse>>> getMyBusinessUsers(
-            @Valid @RequestBody UserFilterRequest request) {
-        log.info("Get my business users");
         UUID businessId = securityUtils.getCurrentUserBusinessId();
         request.setBusinessId(businessId);
         PaginationResponse<UserResponse> response = userService.getAllUsers(request);

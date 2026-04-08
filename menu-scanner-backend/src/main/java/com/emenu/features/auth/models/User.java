@@ -16,8 +16,8 @@ import java.util.UUID;
         @UniqueConstraint(name = "uk_user_identifier", columnNames = {"user_identifier"})
 })
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"profile", "employment", "telegram"})
-@ToString(exclude = {"profile", "employment", "telegram"})
+@EqualsAndHashCode(callSuper = true, exclude = {"profile"})
+@ToString(exclude = {"profile"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends BaseUUIDEntity {
@@ -46,16 +46,10 @@ public class User extends BaseUUIDEntity {
     @Column(name = "remark", columnDefinition = "TEXT")
     private String remark;
 
-    // ── Profile & Employment & Telegram (separate tables) ────────────────────
+    // ── Profile (separate table) ───────────────────────────────────────────
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserProfile profile;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private UserEmployment employment;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private UserTelegram telegram;
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -70,23 +64,4 @@ public class User extends BaseUUIDEntity {
     public boolean isActive() { return AccountStatus.ACTIVE.equals(accountStatus); }
     public boolean isOwner() { return UserType.OWNER.equals(userType); }
     public boolean isCustomer() { return UserType.CUSTOMER.equals(userType); }
-
-    // ── Telegram Sync ─────────────────────────────────────────────────────────
-
-    public void syncTelegram(Long telegramId, String username, String firstName, String lastName, String photoUrl) {
-        if (this.telegram == null) {
-            this.telegram = new UserTelegram();
-            this.telegram.setUser(this);
-        }
-        this.telegram.setTelegramId(telegramId);
-        this.telegram.setTelegramUsername(username);
-        this.telegram.setTelegramFirstName(firstName);
-        this.telegram.setTelegramLastName(lastName);
-        this.telegram.setTelegramPhotoUrl(photoUrl);
-        this.telegram.setTelegramSyncedAt(java.time.LocalDateTime.now());
-    }
-
-    public void unsyncTelegram() {
-        this.telegram = null; // orphanRemoval deletes the row
-    }
 }

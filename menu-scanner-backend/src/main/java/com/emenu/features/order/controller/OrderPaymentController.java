@@ -25,24 +25,15 @@ public class OrderPaymentController {
     private final SecurityUtils securityUtils;
 
     /**
-     * Get all payments with filtering
+     * Get all payments with filtering - Business ID extracted from token
      */
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<PaginationResponse<OrderPaymentResponse>>> getAllPayments(@Valid @RequestBody OrderPaymentFilterRequest filter) {
         log.info("Getting all business payments with filters");
+        UUID businessId = securityUtils.getCurrentUserBusinessId();
+        filter.setBusinessId(businessId);
         PaginationResponse<OrderPaymentResponse> payments = paymentService.getAllPayments(filter);
         return ResponseEntity.ok(ApiResponse.success("Payments retrieved successfully", payments));
-    }
-
-    /**
-     * Get my business payments
-     */
-    @PostMapping("/my-business/all")
-    public ResponseEntity<ApiResponse<PaginationResponse<OrderPaymentResponse>>> getMyBusinessPayments(@Valid @RequestBody OrderPaymentFilterRequest filter) {
-        log.info("Getting payments for current user's business");
-        User currentUser = securityUtils.getCurrentUser();
-        PaginationResponse<OrderPaymentResponse> payments = paymentService.getAllPayments(filter);
-        return ResponseEntity.ok(ApiResponse.success("Business payments retrieved successfully", payments));
     }
 
     /**

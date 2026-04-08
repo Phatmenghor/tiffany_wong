@@ -42,27 +42,13 @@ public class BusinessExchangeRateController {
     }
 
     /**
-     * Get all business exchange rates with filtering and pagination
+     * Get all business exchange rates with filtering and pagination - Business ID extracted from token
+     * Security: No businessId parameter needed, extracted from authenticated user's context
      */
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<PaginationResponse<BusinessExchangeRateResponse>>> getAllBusinessExchangeRates(
             @Valid @RequestBody BusinessExchangeRateFilterRequest filter) {
         log.info("POST /business-exchange-rates/all - page: {}", filter.getPageNo());
-
-        PaginationResponse<BusinessExchangeRateResponse> exchangeRates =
-                exchangeRateService.getAllBusinessExchangeRates(filter);
-
-        return ResponseEntity.ok(ApiResponse.success("Business exchange rates retrieved successfully", exchangeRates));
-    }
-
-    /**
-     * Get all business exchange rates for current business - Business ID extracted from token
-     * Security: No businessId parameter needed, extracted from authenticated user's context
-     */
-    @PostMapping("/my-business/all")
-    public ResponseEntity<ApiResponse<PaginationResponse<BusinessExchangeRateResponse>>> getMyBusinessExchangeRates(
-            @Valid @RequestBody BusinessExchangeRateFilterRequest filter) {
-        log.info("POST /business-exchange-rates/my-business/all - page: {}", filter.getPageNo());
 
         UUID businessId = securityUtils.getCurrentUserBusinessId();
         filter.setBusinessId(businessId);

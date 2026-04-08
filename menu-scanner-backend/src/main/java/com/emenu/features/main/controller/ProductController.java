@@ -63,7 +63,8 @@ public class ProductController {
             @Valid @RequestBody ProductFilterDto filter) {
 
         log.info("Get products by admin - Page: {}, Size: {}", filter.getPageNo(), filter.getPageSize());
-
+        UUID businessId = securityUtils.getCurrentUserBusinessId();
+        filter.setBusinessId(businessId);
         PaginationResponse<ProductDetailDto> products = productService.getAllProductsAdmin(filter);
 
         return ResponseEntity.ok(ApiResponse.success(
@@ -79,21 +80,6 @@ public class ProductController {
         log.info("Get products by admin for POS - Page: {}, Size: {}", filter.getPageNo(), filter.getPageSize());
 
         PaginationResponse<ProductDetailDto> products = productService.getAllProductsAdminPos(filter);
-
-        return ResponseEntity.ok(ApiResponse.success(
-                String.format("Found %d products", products.getTotalElements()),
-                products
-        ));
-    }
-
-    @PostMapping("/admin/my-business/all")
-    public ResponseEntity<ApiResponse<PaginationResponse<ProductDetailDto>>> getAllProductBusiness(
-            @Valid @RequestBody ProductFilterDto filter) {
-
-        log.info("Get products by business user - Page: {}, Size: {}", filter.getPageNo(), filter.getPageSize());
-        UUID businessId = securityUtils.getCurrentUserBusinessId();
-        filter.setBusinessId(businessId);
-        PaginationResponse<ProductDetailDto> products = productService.getAllProductsAdmin(filter);
 
         return ResponseEntity.ok(ApiResponse.success(
                 String.format("Found %d products", products.getTotalElements()),

@@ -39,13 +39,4 @@ public class UserCreateRequest {
     private LocalDate dateOfBirth;
     private String phoneNumber;
     private String profileImageUrl;
-
-    // Employment
-    private String employeeId;
-    private String position;
-    private String department;
-    private EmploymentType employmentType;
-    private LocalDate joinDate;
-    private LocalDate leaveDate;
-    private String shift;
 }

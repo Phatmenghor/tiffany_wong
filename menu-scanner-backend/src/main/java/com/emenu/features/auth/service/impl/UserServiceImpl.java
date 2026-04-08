@@ -70,20 +70,6 @@ public class UserServiceImpl implements UserService {
         profile.setProfileImageUrl(req.getProfileImageUrl());
         saved.setProfile(profile);
 
-        // Employment
-        if (hasEmploymentData(req)) {
-            UserEmployment emp = new UserEmployment();
-            emp.setUser(saved);
-            emp.setEmployeeId(req.getEmployeeId());
-            emp.setPosition(req.getPosition());
-            emp.setDepartment(req.getDepartment());
-            emp.setEmploymentType(req.getEmploymentType());
-            emp.setJoinDate(req.getJoinDate());
-            emp.setLeaveDate(req.getLeaveDate());
-            emp.setShift(req.getShift());
-            saved.setEmployment(emp);
-        }
-
         saved = userRepository.save(saved);
         log.info("User created: {} type={}", saved.getUserIdentifier(), saved.getUserType());
         return userMapper.toResponse(saved);
@@ -139,19 +125,6 @@ public class UserServiceImpl implements UserService {
         if (req.getPhoneNumber() != null) profile.setPhoneNumber(req.getPhoneNumber());
         if (req.getProfileImageUrl() != null) profile.setProfileImageUrl(req.getProfileImageUrl());
 
-        // Employment
-        if (hasEmploymentUpdateData(req)) {
-            UserEmployment emp = user.getEmployment();
-            if (emp == null) { emp = new UserEmployment(); emp.setUser(user); user.setEmployment(emp); }
-            if (req.getEmployeeId() != null) emp.setEmployeeId(req.getEmployeeId());
-            if (req.getPosition() != null) emp.setPosition(req.getPosition());
-            if (req.getDepartment() != null) emp.setDepartment(req.getDepartment());
-            if (req.getEmploymentType() != null) emp.setEmploymentType(req.getEmploymentType());
-            if (req.getJoinDate() != null) emp.setJoinDate(req.getJoinDate());
-            if (req.getLeaveDate() != null) emp.setLeaveDate(req.getLeaveDate());
-            if (req.getShift() != null) emp.setShift(req.getShift());
-        }
-
         User updated = userRepository.save(user);
         log.info("User updated: {}", updated.getUserIdentifier());
         return userMapper.toResponse(updated);
@@ -199,15 +172,5 @@ public class UserServiceImpl implements UserService {
 
     private <T> List<T> nullIfEmpty(List<T> list) {
         return (list != null && !list.isEmpty()) ? list : null;
-    }
-
-    private boolean hasEmploymentData(UserCreateRequest r) {
-        return r.getEmployeeId() != null || r.getPosition() != null || r.getDepartment() != null
-                || r.getEmploymentType() != null || r.getJoinDate() != null || r.getShift() != null;
-    }
-
-    private boolean hasEmploymentUpdateData(UserUpdateRequest r) {
-        return r.getEmployeeId() != null || r.getPosition() != null || r.getDepartment() != null
-                || r.getEmploymentType() != null || r.getJoinDate() != null || r.getShift() != null;
     }
 }
