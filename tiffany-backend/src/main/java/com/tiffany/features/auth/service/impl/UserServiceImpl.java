@@ -14,6 +14,7 @@ import com.tiffany.features.auth.repository.UserRepository;
 import com.tiffany.features.auth.service.UserService;
 import com.tiffany.security.SecurityUtils;
 import com.tiffany.shared.dto.PaginationResponse;
+import com.tiffany.shared.mapper.PaginationMapper;
 import com.tiffany.shared.pagination.PaginationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtils securityUtils;
-    private final com.tiffany.shared.mapper.PaginationMapper paginationMapper;
+    private final PaginationMapper paginationMapper;
 
     @Override
     public UserResponse createUser(UserCreateRequest req) {
