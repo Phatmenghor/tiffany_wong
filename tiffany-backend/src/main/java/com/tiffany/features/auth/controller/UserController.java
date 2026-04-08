@@ -36,7 +36,7 @@ public class UserController {
     @PostMapping("owner-token")
     public ResponseEntity<String> getMyBusinessToken() {
         log.info("Get my business token");
-        return ResponseEntity.ok("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwaGF0bWVuZ2hvcjIwQGdtYWlsLmNvbSIsInJvbGVzIjoiUk9MRV9CVVNJTkVTU19BRE1JTiIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3NzMxMTg0MDQsImV4cCI6MTc4MzExODQwNH0.YwU5olhCcnrys0nWji0gdYk9eG6pEwH0iZFwpyBtpPxIr8d9WrXNdDi3S9Lskz643aJGhnjc3irdEHmyFQUMzw");
+        return ResponseEntity.ok("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwaGF0bWVuZ2hvcjE5QGdtYWlsLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3NzU2NTA3ODIsImV4cCI6MTc4NDI5MDc4Mn0.LJpacRTlp5bdcqw1PXbROfW1Id3v488GWcI9bOK5b0eahZWUWXq19_Ya4wPGZHc7VCp6vVO0tQmVYAkstCZOuA");
     }
 
     /**
