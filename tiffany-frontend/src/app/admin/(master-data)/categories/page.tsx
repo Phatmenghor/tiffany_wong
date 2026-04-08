@@ -19,6 +19,7 @@ import {
   setSearchFilter,
   setStatusFilter,
   resetState,
+  updateCategoryStatusOptimistic,
 } from "@/redux/features/master-data/store/slice/categories-slice";
 import {
   deleteCategoriesService,
@@ -135,12 +136,20 @@ export default function CategoriesPage() {
 
   const handleToggleCategoryStatus = (category: CategoriesResponseModel) => {
     if (!category?.id) return;
-    try {
-      dispatch(toggleCategoriesStatusService(category));
-      showToast.success("Category status updated successfully");
-    } catch (error: any) {
+
+    // Calculate new status optimistically
+    const newStatus = category.status === Status.ACTIVE ? Status.INACTIVE : Status.ACTIVE;
+
+    // Update local state immediately (optimistic)
+    dispatch(updateCategoryStatusOptimistic({ id: category.id, status: newStatus }));
+    showToast.success("Category status updated successfully");
+
+    // Call API in background
+    dispatch(toggleCategoriesStatusService(category)).catch((error: any) => {
+      // If API fails, revert the optimistic update
+      dispatch(updateCategoryStatusOptimistic({ id: category.id, status: category.status }));
       showToast.error(error || "Failed to update category status");
-    }
+    });
   };
 
   const tableHandlers = useMemo(

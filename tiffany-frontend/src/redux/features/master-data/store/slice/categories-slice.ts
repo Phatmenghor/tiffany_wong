@@ -74,6 +74,31 @@ const categoriesSlice = createSlice({
     resetState: () => {
       return initialState;
     },
+
+    updateCategoryStatusOptimistic: (state, action: PayloadAction<{ id: string; status: string }>) => {
+      const { id, status } = action.payload;
+
+      // Update in dataWithProductCount list
+      if (state.dataWithProductCount?.content) {
+        const index = state.dataWithProductCount.content.findIndex((c) => c.id === id);
+        if (index !== -1) {
+          state.dataWithProductCount.content[index].status = status;
+        }
+      }
+
+      // Update in data list
+      if (state.data?.content) {
+        const index = state.data.content.findIndex((c) => c.id === id);
+        if (index !== -1) {
+          state.data.content[index].status = status;
+        }
+      }
+
+      // Update selected category if it matches
+      if (state.selectedCategories?.id === id) {
+        state.selectedCategories.status = status;
+      }
+    },
   },
 
   extraReducers: (builder) => {
@@ -244,6 +269,7 @@ export const {
   clearSelectedCategories,
   resetFilters,
   resetState,
+  updateCategoryStatusOptimistic,
 } = categoriesSlice.actions;
 
 export default categoriesSlice.reducer;
