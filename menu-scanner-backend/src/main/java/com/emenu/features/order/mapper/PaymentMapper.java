@@ -8,8 +8,6 @@ import com.emenu.features.order.dto.request.PaymentCreateRequest;
 import com.emenu.features.order.dto.response.PaymentResponse;
 import com.emenu.features.order.dto.update.PaymentUpdateRequest;
 import com.emenu.features.order.models.Payment;
-import com.emenu.features.subscription.dto.request.SubscriptionCancelRequest;
-import com.emenu.features.subscription.dto.request.SubscriptionRenewRequest;
 import com.emenu.features.subscription.models.Subscription;
 import com.emenu.shared.dto.PaginationResponse;
 import com.emenu.shared.mapper.PaginationMapper;
@@ -57,56 +55,6 @@ return paginationMapper.toPaginationResponse(paymentPage, this::toResponseList);
      * Create payment from helper DTO - pure MapStruct mapping
      */
     Payment createFromHelper(PaymentCreateHelper helper);
-
-    /**
-     * Helper method to build PaymentCreateHelper for subscription renewal
-     */
-    default PaymentCreateHelper buildSubscriptionPaymentHelper(Subscription subscription, SubscriptionRenewRequest request) {
-        return PaymentCreateHelper.builder()
-                .businessId(subscription.getBusinessId())
-                .planId(subscription.getPlanId())
-                .subscriptionId(subscription.getId())
-                .amount(request.getPaymentAmount())
-                .paymentMethod(request.getPaymentMethod())
-                .paymentType(PaymentType.SUBSCRIPTION)
-                .status(PaymentStatus.COMPLETED)
-                .notes("Payment for subscription renewal")
-                .build();
-    }
-
-    /**
-     * Helper method to build PaymentCreateHelper for subscription refund
-     */
-    default PaymentCreateHelper buildSubscriptionRefundHelper(Subscription subscription, SubscriptionCancelRequest request) {
-        return PaymentCreateHelper.builder()
-                .businessId(subscription.getBusinessId())
-                .planId(subscription.getPlanId())
-                .subscriptionId(subscription.getId())
-                .amount(request.getRefundAmount().negate())
-                .paymentMethod(PaymentMethod.CASH)
-                .paymentType(PaymentType.REFUND)
-                .status(PaymentStatus.COMPLETED)
-                .notes("Refund for cancelled subscription")
-                .build();
-    }
-
-    /**
-     * Helper method to build PaymentCreateHelper with subscription relationship
-     */
-    default PaymentCreateHelper buildPaymentHelper(UUID businessId, UUID planId, UUID subscriptionId,
-                                                     BigDecimal amount, PaymentMethod method,
-                                                     PaymentType type, String notes) {
-        return PaymentCreateHelper.builder()
-                .businessId(businessId)
-                .planId(planId)
-                .subscriptionId(subscriptionId)
-                .amount(amount)
-                .paymentMethod(method)
-                .paymentType(type)
-                .status(PaymentStatus.COMPLETED)
-                .notes(notes)
-                .build();
-    }
 
     /**
      * Update payment with subscription relationship

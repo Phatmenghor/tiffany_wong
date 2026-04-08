@@ -32,7 +32,6 @@ import com.emenu.features.main.models.Brand;
 import com.emenu.features.main.utils.ProductFavoriteQueryHelper;
 import com.emenu.features.main.utils.ProductUtils;
 import com.emenu.features.order.utils.CartQueryHelper;
-import com.emenu.features.stock.repository.ProductStockRepository;
 import com.emenu.security.SecurityUtils;
 import com.emenu.shared.dto.PaginationResponse;
 import com.emenu.shared.mapper.PaginationMapper;
@@ -67,7 +66,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductUtils productUtils;
     private final ProductFavoriteQueryHelper favoriteQueryHelper;
     private final CartQueryHelper cartQueryHelper;
-    private final ProductStockRepository productStockRepository;
 
     @Override
     @Transactional(readOnly = true)

@@ -16,8 +16,6 @@ import com.emenu.features.order.dto.response.OrderResponse;
 import com.emenu.features.order.dto.response.POSCheckoutResponse;
 import com.emenu.features.order.dto.update.OrderUpdateRequest;
 import com.emenu.enums.payment.PaymentMethod;
-import com.emenu.features.order.models.DeliveryOption;
-import com.emenu.features.order.repository.DeliveryOptionRepository;
 import com.emenu.features.main.models.Product;
 import com.emenu.features.main.repository.ProductRepository;
 import com.emenu.features.order.mapper.OrderPaymentMapper;
@@ -27,7 +25,6 @@ import com.emenu.features.order.models.Cart;
 import com.emenu.features.order.models.Order;
 import com.emenu.features.order.models.OrderItem;
 import com.emenu.features.order.models.OrderDeliveryAddress;
-import com.emenu.features.order.models.OrderDeliveryOption;
 import com.emenu.features.order.models.OrderItemPricingSnapshot;
 import com.emenu.features.order.dto.response.OrderPricingSnapshot;
 import com.emenu.features.order.repository.OrderPaymentRepository;
@@ -35,12 +32,9 @@ import com.emenu.features.order.repository.CartRepository;
 import com.emenu.features.order.repository.OrderRepository;
 import com.emenu.features.order.repository.OrderStatusHistoryRepository;
 import com.emenu.features.order.repository.OrderDeliveryAddressRepository;
-import com.emenu.features.order.repository.OrderDeliveryOptionRepository;
 import com.emenu.features.order.repository.OrderItemPricingSnapshotRepository;
 import com.emenu.features.order.models.OrderStatusHistory;
-import com.emenu.features.location.repository.LocationRepository;
 import com.emenu.features.order.service.OrderService;
-import com.emenu.features.stock.service.impl.StockServiceImpl;
 import com.emenu.security.SecurityUtils;
 import com.emenu.shared.dto.PaginationResponse;
 import com.emenu.shared.generate.ReferenceNumberGenerator;
@@ -70,11 +64,8 @@ public class OrderServiceImpl implements OrderService {
     private final CartRepository cartRepository;
     private final OrderPaymentRepository paymentRepository;
     private final OrderStatusHistoryRepository orderStatusHistoryRepository;
-    private final DeliveryOptionRepository deliveryOptionRepository;
     private final ProductRepository productRepository;
-    private final LocationRepository locationRepository;
     private final OrderDeliveryAddressRepository orderDeliveryAddressRepository;
-    private final OrderDeliveryOptionRepository orderDeliveryOptionRepository;
     private final OrderItemPricingSnapshotRepository orderItemPricingSnapshotRepository;
     private final OrderMapper orderMapper;
     private final OrderPaymentMapper paymentMapper;
@@ -83,7 +74,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderNumberGenerator orderNumberGenerator;
     private final PaymentReferenceGenerator paymentReferenceGenerator;
     private final PaginationMapper paginationMapper;
-    private final StockServiceImpl stockService;
 
     @Override
     public OrderResponse createOrderFromCart(OrderCreateRequest request) {

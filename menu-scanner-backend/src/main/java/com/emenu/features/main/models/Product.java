@@ -2,7 +2,6 @@ package com.emenu.features.main.models;
 
 import com.emenu.enums.product.ProductStatus;
 import com.emenu.enums.product.PromotionType;
-import com.emenu.enums.product.StockStatus;
 import com.emenu.features.auth.models.Business;
 import com.emenu.shared.domain.BaseUUIDEntity;
 import jakarta.persistence.*;
@@ -96,10 +95,6 @@ public class Product extends BaseUUIDEntity {
 
     @Column(name = "has_sizes", nullable = false)
     private Boolean hasSizes = false;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "stock_status", nullable = false)
-    private StockStatus stockStatus = StockStatus.ENABLED;
 
     @Column(name = "has_active_promotion", nullable = false)
     private Boolean hasActivePromotion = false;

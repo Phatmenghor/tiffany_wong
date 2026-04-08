@@ -15,7 +15,6 @@ import com.emenu.features.order.models.Payment;
 import com.emenu.features.order.repository.PaymentRepository;
 import com.emenu.features.order.service.ExchangeRateService;
 import com.emenu.features.order.service.PaymentService;
-import com.emenu.features.subscription.models.Subscription;
 import com.emenu.features.subscription.repository.SubscriptionPlanRepository;
 import com.emenu.features.subscription.repository.SubscriptionRepository;
 import com.emenu.shared.dto.PaginationResponse;

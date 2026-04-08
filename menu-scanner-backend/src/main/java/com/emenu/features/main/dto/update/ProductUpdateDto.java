@@ -1,7 +1,6 @@
 package com.emenu.features.main.dto.update;
 
 import com.emenu.enums.product.ProductStatus;
-import com.emenu.enums.product.StockStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.Data;
@@ -39,8 +38,6 @@ public class ProductUpdateDto {
     private List<ProductSizeUpdateDto> sizes;
 
     private ProductStatus status;
-
-    private StockStatus stockStatus;
 
     public boolean hasPromotionData() {
         return promotionType != null && promotionValue != null;

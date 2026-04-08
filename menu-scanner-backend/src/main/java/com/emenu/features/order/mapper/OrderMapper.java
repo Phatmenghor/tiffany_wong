@@ -1,6 +1,5 @@
 package com.emenu.features.order.mapper;
 
-import com.emenu.features.location.mapper.LocationMapper;
 import com.emenu.features.order.dto.helper.OrderCreateHelper;
 import com.emenu.features.order.dto.helper.OrderItemCreateHelper;
 import com.emenu.features.order.dto.request.OrderCreateRequest;
@@ -23,7 +22,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        uses = {LocationMapper.class, DeliveryOptionMapper.class, OrderItemMapper.class, PaginationMapper.class, OrderStatusHistoryMapper.class})
+        uses = {OrderItemMapper.class, PaginationMapper.class, OrderStatusHistoryMapper.class})
 public interface OrderMapper {
 
     @Mapping(target = "id", source = "id")

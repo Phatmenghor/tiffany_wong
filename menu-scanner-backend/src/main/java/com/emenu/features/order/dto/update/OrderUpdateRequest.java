@@ -4,7 +4,6 @@ import com.emenu.enums.order.OrderStatus;
 import com.emenu.enums.payment.PaymentMethod;
 import com.emenu.enums.payment.PaymentStatus;
 import com.emenu.features.order.dto.request.DeliveryAddressRequest;
-import com.emenu.features.order.dto.request.DeliveryOptionRequest;
 import com.emenu.features.order.dto.request.OrderItemUpdateRequest;
 import com.emenu.features.order.dto.response.OrderPricingSnapshot;
 import jakarta.validation.Valid;
@@ -36,9 +35,6 @@ public class OrderUpdateRequest {
     // Delivery info
     @Valid
     private DeliveryAddressRequest deliveryAddress;
-
-    @Valid
-    private DeliveryOptionRequest deliveryOption;
 
     // Order status
     private OrderStatus orderStatus;
