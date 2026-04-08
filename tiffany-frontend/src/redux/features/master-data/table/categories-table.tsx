@@ -88,11 +88,14 @@ export const categoriesTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       truncate: true,
-      render: (categories) => (
-        <span className="text-xs text-muted-foreground">
-          {formatProductCount(categories?.totalProducts)}
-        </span>
-      ),
+      render: (categories) => {
+        const total = categories?.totalProducts ?? 0;
+        return (
+          <span className="text-xs text-muted-foreground">
+            {formatProductCount(total)}
+          </span>
+        );
+      },
     },
 
     {
@@ -101,11 +104,14 @@ export const categoriesTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       truncate: true,
-      render: (categories) => (
-        <span className="text-xs text-muted-foreground">
-          {formatProductCount(categories?.activeProducts)}
-        </span>
-      ),
+      render: (categories) => {
+        const active = categories?.activeProducts ?? 0;
+        return (
+          <span className="text-xs text-muted-foreground">
+            {formatProductCount(active)}
+          </span>
+        );
+      },
     },
 
     {
