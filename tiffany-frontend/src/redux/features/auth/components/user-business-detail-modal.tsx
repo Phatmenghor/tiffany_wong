@@ -50,12 +50,11 @@ export function UserBusinessDetailModal({
     onClose();
   };
 
-
   if (isFetchingDetail) {
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">User Details Loading</DialogTitle>
-        <DialogContent className="w-full sm:max-w-7xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full sm:max-w-3xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
           <div className="flex items-center justify-center h-full">
             <Loading />
           </div>
@@ -68,7 +67,7 @@ export function UserBusinessDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">User Details</DialogTitle>
-        <DialogContent className="w-full sm:max-w-7xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full sm:max-w-3xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
           <div className="flex items-center justify-center h-full">
             <p className="text-muted-foreground">No user data available</p>
           </div>
@@ -80,7 +79,7 @@ export function UserBusinessDetailModal({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogTitle className="sr-only">User Details - {userData.fullName}</DialogTitle>
-      <DialogContent className="w-full sm:max-w-7xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+      <DialogContent className="w-full sm:max-w-3xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
         {/* Header */}
         <div className="px-6 py-4 border-b bg-muted/30 flex-shrink-0">
           <div className="flex items-start gap-6">
@@ -127,11 +126,24 @@ export function UserBusinessDetailModal({
                   <DisplayField label="Phone Number" value={userData.phoneNumber} />
                   <DisplayField label="Gender" value={userData.gender ? formatEnumValue(userData.gender) : "-"} />
                   <DisplayField label="Date of Birth" value={userData.dateOfBirth} />
-                  <DisplayField label="Account Status" value={userData.accountStatus ? formatEnumValue(userData.accountStatus) : "-"} />
                 </div>
               </CardContent>
             </Card>
 
+            {/* Account Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Account Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <DisplayField label="User Identifier" value={userData.userIdentifier} />
+                  <DisplayField label="User Type" value={formatEnumValue(userData.userType)} />
+                  <DisplayField label="User Role" value={userData.userRole ? formatEnumValue(userData.userRole) : "-"} />
+                  <DisplayField label="Account Status" value={userData.accountStatus ? formatEnumValue(userData.accountStatus) : "-"} />
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Remarks */}
             {userData.remark && (
@@ -153,9 +165,6 @@ export function UserBusinessDetailModal({
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <DisplayField label="User ID" value={userData.id} />
-                  <DisplayField label="User Identifier" value={userData.userIdentifier} />
-                  <DisplayField label="User Type" value={formatEnumValue(userData.userType)} />
-                  <DisplayField label="User Role" value={userData.userRole ? formatEnumValue(userData.userRole) : "-"} />
                   <DisplayField label="Created At" value={dateTimeFormat(userData.createdAt ?? "")} />
                   <DisplayField label="Created By" value={userData.createdBy} />
                   <DisplayField label="Last Updated" value={dateTimeFormat(userData.updatedAt ?? "")} />
