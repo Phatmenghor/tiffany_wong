@@ -5,10 +5,13 @@
 -- Password Hash (bcrypt): $2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36
 -- PLACEHOLDER IMAGE URL: https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce
 --
--- Users: 60,001 total
+-- Users: 60,003 total
 --   - 20,000 ADMIN users (UserType: OWNER, UserRole: ADMIN)
+--     - phatmenghor19@gmail.com (ADMIN)
+--     - phatmenghor20@gmail.com (OWNER with ADMIN role)
+--     - 19,998 additional ADMIN users
 --   - 20,000 STAFF users (UserType: OWNER, UserRole: STAFF)
---   - 20,001 CUSTOMER users (UserType: CUSTOMER, UserRole: CUSTOMER)
+--   - 20,003 CUSTOMER users (UserType: CUSTOMER, UserRole: CUSTOMER)
 -- Products: 100,000 with 70% having sizes (70,000 sizes)
 -- Product Images: 1-5 per product
 -- Categories: 200
@@ -53,17 +56,27 @@ VALUES
 ('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 10.0, 'Tiffany E-Menu Platform', 'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce', '#57823D', 'Phnom Penh, Cambodia', '+855 23 888 9999', 'contact@tiffany.com');
 
 -- ============================================================================
--- 2. USERS (60,001 total)
+-- 2. USERS (60,003 total)
 -- ============================================================================
 
--- Insert 20,000 ADMIN users (OWNER type with ADMIN role)
+-- Insert main admin user (phatmenghor19@gmail.com)
+INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, account_status, user_role)
+VALUES
+('550e8400-e29b-41d4-a716-446655550001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor19@gmail.com', '$2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36', 'OWNER', 'ACTIVE', 'ADMIN');
+
+-- Insert owner user with ADMIN role (phatmenghor20@gmail.com)
+INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, account_status, user_role)
+VALUES
+('550e8400-e29b-41d4-a716-446655550003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor20@gmail.com', '$2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36', 'OWNER', 'ACTIVE', 'ADMIN');
+
+-- Insert 19,998 additional ADMIN users (OWNER type with ADMIN role)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, account_status, user_role)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'admin' || i || '@tiffany.com',
     '$2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36',
     'OWNER', 'ACTIVE', 'ADMIN'
-FROM generate_series(1, 20000) AS t(i);
+FROM generate_series(1, 19998) AS t(i);
 
 -- Insert 20,000 STAFF users (OWNER type with STAFF role)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, account_status, user_role)
@@ -329,8 +342,10 @@ VALUES
 -- ============================================================================
 -- SUMMARY OF INSERTED DATA (System Settings inserted at beginning - step 1)
 -- ============================================================================
--- Users: 60,001
--- User Profiles: 60,001
+-- Users: 60,003
+--   - phatmenghor19@gmail.com (OWNER/ADMIN)
+--   - phatmenghor20@gmail.com (OWNER/ADMIN)
+-- User Profiles: 60,003
 -- Categories: 200
 -- Products: 100,000
 -- Product Sizes: ~70,000
@@ -346,7 +361,7 @@ VALUES
 -- Social Media: 4
 -- Reference Counters: 2
 -- System Settings: 1
--- TOTAL RECORDS: ~610,000-770,050
+-- TOTAL RECORDS: ~610,000-770,070
 -- ============================================================================
 -- END OF LARGE SCALE TEST DATA
 -- ============================================================================
