@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState, useRef } from "react";
 import Link from "next/link";
+import { getImageWithFallback } from "@/constants/image-defaults";
 
 interface UserAvatarCardProps {
   user: {
@@ -119,7 +120,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
                   : ""
               }`}
             >
-              <AvatarImage src={user.profileImageUrl} alt={displayName} />
+              <AvatarImage src={getImageWithFallback(user.profileImageUrl, "profile")} alt={displayName} />
               <AvatarFallback
                 className={`${sizes.avatar} rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white text-sm font-bold shadow-sm`}
               >
@@ -151,7 +152,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
                 )}
 
                 <img
-                  src={user.profileImageUrl}
+                  src={getImageWithFallback(user.profileImageUrl, "profile")}
                   alt={displayName}
                   className="max-w-[70vw] max-h-[70vh] w-auto h-auto object-contain rounded-lg"
                   onLoad={() => setImageLoading(false)}
