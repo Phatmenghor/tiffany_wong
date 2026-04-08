@@ -86,9 +86,10 @@ public class JWTGenerator {
      *
      * @param username the username
      * @param userType the user type (OWNER, CUSTOMER)
+     * @param userRole the user role (ADMIN, STAFF, CUSTOMER)
      * @return JWT refresh token
      */
-    public String generateRefreshToken(String username, String userType) {
+    public String generateRefreshToken(String username, String userType, String userRole) {
         Date currentDate = new Date();
         Date expiryDate = new Date(currentDate.getTime() + refreshTokenExpiration);
 
@@ -96,6 +97,7 @@ public class JWTGenerator {
                 .subject(username)
                 .claim("type", "refresh")
                 .claim("userType", userType)
+                .claim("userRole", userRole)
                 .issuedAt(currentDate)
                 .expiration(expiryDate)
                 .signWith(getSigningKey(), Jwts.SIG.HS512)
@@ -127,6 +129,24 @@ public class JWTGenerator {
                 .parseSignedClaims(token)
                 .getPayload();
         return claims.get("userType", String.class);
+    }
+
+    public String getUserRoleFromJWT(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claims.get("userRole", String.class);
+    }
+
+    public String getRolesFromJWT(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claims.get("roles", String.class);
     }
 
     public Date getExpirationDateFromJWT(String token) {

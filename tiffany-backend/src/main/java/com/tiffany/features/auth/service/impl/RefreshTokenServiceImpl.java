@@ -33,7 +33,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
         String tokenString = jwtGenerator.generateRefreshToken(
                 user.getUserIdentifier(),
-                user.getUserType().name()
+                user.getUserType().name(),
+                user.getUserRole().name()
         );
 
         LocalDateTime expiryDate = LocalDateTime.ofInstant(

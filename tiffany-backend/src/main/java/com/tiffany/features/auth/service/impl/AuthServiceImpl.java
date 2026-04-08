@@ -162,6 +162,7 @@ public class AuthServiceImpl implements AuthService {
 
         String userIdentifier = jwtGenerator.getUsernameFromJWT(refreshTokenString);
         String userTypeStr = jwtGenerator.getUserTypeFromJWT(refreshTokenString);
+        String userRoleStr = jwtGenerator.getUserRoleFromJWT(refreshTokenString);
 
         log.info("Token refresh attempt: identifier={}", userIdentifier);
 
@@ -177,7 +178,12 @@ public class AuthServiceImpl implements AuthService {
 
         securityUtils.validateAccountStatus(user);
 
-        String newAccessToken = jwtGenerator.generateAccessTokenFromUsername(user.getUserIdentifier(), java.util.Collections.emptyList());
+        // Generate new access token with role from user (not from token)
+        // to ensure role is always current from database
+        String newAccessToken = jwtGenerator.generateAccessTokenFromUsername(
+                user.getUserIdentifier(),
+                java.util.Collections.singletonList("ROLE_" + user.getUserRole().name())
+        );
         RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user, null, null);
 
         refreshTokenService.revokeRefreshToken(refreshTokenString, "TOKEN_REFRESH");
