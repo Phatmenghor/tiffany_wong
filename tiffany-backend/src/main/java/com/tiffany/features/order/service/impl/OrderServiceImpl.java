@@ -12,7 +12,6 @@ import com.tiffany.features.order.dto.filter.OrderFilterRequest;
 import com.tiffany.features.order.dto.helper.OrderCreateHelper;
 import com.tiffany.features.order.dto.helper.OrderItemCreateHelper;
 import com.tiffany.features.order.dto.request.OrderCreateRequest;
-import com.tiffany.features.order.dto.response.CartSummaryResponse;
 import com.tiffany.features.order.dto.response.OrderResponse;
 import com.tiffany.features.order.dto.update.OrderUpdateRequest;
 import com.tiffany.features.order.mapper.OrderMapper;
@@ -86,19 +85,15 @@ public class OrderServiceImpl implements OrderService {
 
             createInitialOrderStatusHistory(savedOrder, currentUser.getId());
 
-            if (request.getCart() != null && request.getCart().getItems() != null && !request.getCart().getItems().isEmpty()) {
-                log.info("Processing cart items - count: {}", request.getCart().getItems().size());
-                createOrderItemsFromCartSummary(savedOrder.getId(), request.getCart(), null);
-            } else {
-                Cart cart = cartRepository.findByUserIdWithItems(currentUser.getId())
-                        .orElseThrow(() -> new ValidationException("Cart is empty or not found"));
+            Cart cart = cartRepository.findByUserIdWithItems(currentUser.getId())
+                    .orElseThrow(() -> new ValidationException("Cart is empty or not found"));
 
-                if (cart.getItems() == null || cart.getItems().isEmpty()) {
-                    throw new ValidationException("Cannot create order from empty cart");
-                }
-
-                createOrderItemsFromCart(savedOrder.getId(), cart);
+            if (cart.getItems() == null || cart.getItems().isEmpty()) {
+                throw new ValidationException("Cannot create order from empty cart");
             }
+
+            log.info("Processing cart items - count: {}", cart.getItems().size());
+            createOrderItemsFromCart(savedOrder.getId(), cart);
 
             createPaymentRecord(savedOrder);
             clearCartAfterOrder(currentUser.getId());
@@ -358,87 +353,6 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal deliveryFee = order.getDeliveryFee() != null ? order.getDeliveryFee() : BigDecimal.ZERO;
         BigDecimal taxAmount = order.getTaxAmount() != null ? order.getTaxAmount() : BigDecimal.ZERO;
         order.setTotalAmount(subtotal.subtract(discountAmount).add(deliveryFee).add(taxAmount));
-        orderRepository.save(order);
-    }
-
-    private void createOrderItemsFromCartSummary(UUID orderId, Object cartSummary,
-                                                  OrderUpdateRequest.PricingInfo pricingInfo) {
-        if (!(cartSummary instanceof CartSummaryResponse)) {
-            log.warn("Invalid cart summary type: {}", cartSummary.getClass().getName());
-            return;
-        }
-
-        CartSummaryResponse cartResponse = (CartSummaryResponse) cartSummary;
-        log.info("Processing cart items - count: {}, orderId: {}", cartResponse.getItems().size(), orderId);
-
-        BigDecimal subtotal = cartResponse.getSubtotal() != null ? cartResponse.getSubtotal() : BigDecimal.ZERO;
-        BigDecimal discountAmount = cartResponse.getTotalDiscount() != null ? cartResponse.getTotalDiscount() : BigDecimal.ZERO;
-
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NotFoundException("Order not found: " + orderId));
-
-        for (var item : cartResponse.getItems()) {
-            Product product = productRepository.findById(item.getProductId())
-                    .orElseThrow(() -> new NotFoundException("Product not found: " + item.getProductId()));
-
-            BigDecimal finalPrice = item.getAfter() != null ? item.getAfter().getFinalPrice() : item.getFinalPrice();
-
-            OrderItemCreateHelper helper = OrderItemCreateHelper.builder()
-                    .orderId(orderId)
-                    .productId(item.getProductId())
-                    .productSizeId(item.getProductSizeId())
-                    .productName(item.getProductName())
-                    .productImageUrl(item.getProductImageUrl())
-                    .sizeName(item.getSizeName())
-                    // Use before snapshot for current price if available
-                    .currentPrice(item.getBefore() != null ? item.getBefore().getCurrentPrice() : item.getCurrentPrice())
-                    .finalPrice(finalPrice)
-                    .unitPrice(finalPrice)
-                    .hasPromotion(item.getAfter() != null ? item.getAfter().getHasActivePromotion() : item.getHasActivePromotion())
-                    .promotionType(item.getAfter() != null && item.getAfter().getPromotionType() != null ?
-                            item.getAfter().getPromotionType() : item.getPromotionType())
-                    .promotionValue(item.getAfter() != null ? item.getAfter().getPromotionValue() : item.getPromotionValue())
-                    .quantity(item.getQuantity())
-                    // Set SKU and barcode from product master data (primary source)
-                    .sku(product.getSku())
-                    .barcode(product.getBarcode())
-                    .build();
-
-            OrderItem orderItem = orderMapper.createOrderItemFromHelper(helper);
-            orderItem.setTotalPrice(item.getTotalPrice() != null ? item.getTotalPrice() :
-                    finalPrice.multiply(new BigDecimal(item.getQuantity())));
-
-            // Store audit trail - always set hadChangeFromPOS (true/false, never null)
-            orderItem.setHadChangeFromPOS(item.getHadChangeFromPOS() != null && item.getHadChangeFromPOS());
-
-            orderItem.setOrder(order);
-            order.getItems().add(orderItem);
-            orderRepository.save(order);
-        }
-
-        order.setSubtotal(subtotal);
-        order.setDiscountAmount(discountAmount);
-
-        BigDecimal deliveryFee = order.getDeliveryFee() != null ? order.getDeliveryFee() : BigDecimal.ZERO;
-        BigDecimal taxAmount = order.getTaxAmount() != null ? order.getTaxAmount() : BigDecimal.ZERO;
-        BigDecimal totalAmount = subtotal.subtract(discountAmount).add(deliveryFee).add(taxAmount);
-        order.setTotalAmount(totalAmount);
-
-        if (pricingInfo != null) {
-            order.setHadOrderLevelChangeFromPOS(pricingInfo.getHadOrderLevelChangeFromPOS() != null && pricingInfo.getHadOrderLevelChangeFromPOS());
-
-            if (pricingInfo.getDiscountType() != null && !pricingInfo.getDiscountType().isEmpty()) {
-                order.setDiscountType(pricingInfo.getDiscountType());
-            }
-
-            if (pricingInfo.getOrderLevelChangeReason() != null && !pricingInfo.getOrderLevelChangeReason().isEmpty()) {
-                order.setOrderLevelChangeReason(pricingInfo.getOrderLevelChangeReason());
-            } else if (!order.getHadOrderLevelChangeFromPOS()) {
-                order.setOrderLevelChangeReason("No order-level changes from POS");
-            }
-        }
-
-        log.info("Order items saved - orderId: {}, itemCount: {}, total: {}", orderId, order.getItems().size(), totalAmount);
         orderRepository.save(order);
     }
 

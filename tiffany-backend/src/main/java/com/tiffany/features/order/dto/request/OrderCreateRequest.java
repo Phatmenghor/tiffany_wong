@@ -17,7 +17,6 @@ public class OrderCreateRequest {
     private UUID addressId;
 
     private DeliveryOptionRequest deliveryOption;
-    private CartSummaryRequest cart;
     private String customerNote;
     private OrderStatus orderStatus = OrderStatus.PENDING;
 }
