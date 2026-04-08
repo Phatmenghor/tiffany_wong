@@ -2,7 +2,6 @@ package com.tiffany.features.order.dto.request;
 
 import com.tiffany.enums.order.OrderStatus;
 import com.tiffany.features.order.enums.OrderFromEnum;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,10 +27,6 @@ public class OrderCreateRequest {
 
     // Cart summary - complete cart data from frontend (can be edited locally before submit)
     private CartSummaryRequest cart;
-
-    @Valid
-    @NotNull(message = "Payment info is required")
-    private OrderPaymentRequest payment;
 
     private String customerNote;
 
