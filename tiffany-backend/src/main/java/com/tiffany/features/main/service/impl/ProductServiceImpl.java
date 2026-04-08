@@ -85,11 +85,8 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> productPage = productRepository.findAllWithFilters(
                 filter.getCategoryId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
-                Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
-                Boolean.FALSE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
-                filter.getHasSize(),
                 filter.getSearch(),
                 pageable
         );
@@ -156,8 +153,6 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = productRepository.findAllWithFilters(
                 filter.getCategoryId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
-                Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
-                Boolean.FALSE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
                 filter.getSearch(),
@@ -223,15 +218,12 @@ public class ProductServiceImpl implements ProductService {
                 filter.getSortDirection()
         );
 
-        // Use optimized query - no category/business/images JOINs (20-30x faster)
+        // Use optimized query
         Page<Product> productPage = productRepository.findAllWithFiltersOptimized(
                 filter.getCategoryId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
-                Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
-                Boolean.FALSE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
-                filter.getHasSize(),
                 filter.getSearch(),
                 pageable
         );
@@ -267,11 +259,8 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> productPage = productRepository.findAllWithFilters(
                 filter.getCategoryId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
-                Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
-                Boolean.FALSE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
-                filter.getHasSize(),
                 filter.getSearch(),
                 pageable
         );

@@ -86,71 +86,50 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     /**
      * Find all products with dynamic filtering - OPTIMIZED FOR LIST VIEW
-     * Uses denormalized categoryName/brandName fields - NO JOINs/FETCH needed
      * Sizes are loaded separately to avoid Hibernate pagination warning
-     * ~20-30x faster than full detail query
      */
     @Query("SELECT DISTINCT p FROM Product p " +
            "WHERE p.isDeleted = false " +
            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
            "AND (:statuses IS NULL OR p.status IN :statuses) " +
-           "AND (:needsPromotion IS NULL OR p.hasActivePromotion = true) " +
-           "AND (:needsNoPromotion IS NULL OR p.hasActivePromotion = false) " +
-           "AND (:minPrice IS NULL OR p.displayPrice >= :minPrice) " +
-           "AND (:maxPrice IS NULL OR p.displayPrice <= :maxPrice) " +
-           "AND (:hasSizes IS NULL OR p.hasSizes = :hasSizes) " +
+           "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+           "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
            "AND (:search IS NULL OR :search = '' OR " +
            "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(p.categoryName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(p.brandName) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Product> findAllWithFiltersOptimized(
         @Param("categoryId") UUID categoryId,
         @Param("statuses") List<ProductStatus> statuses,
-        @Param("needsPromotion") Boolean needsPromotion,
-        @Param("needsNoPromotion") Boolean needsNoPromotion,
         @Param("minPrice") BigDecimal minPrice,
         @Param("maxPrice") BigDecimal maxPrice,
-        @Param("hasSizes") Boolean hasSizes,
         @Param("search") String search,
         Pageable pageable
     );
 
     /**
-     * Find all products with dynamic filtering - paginated - LEGACY (for detail views)
-     * OPTIMIZED: Uses has_active_promotion field instead of expensive EXISTS subqueries
-     * Uses denormalized categoryName/brandName fields - no FETCH joins (prevents Hibernate pagination warning)
+     * Find all products with dynamic filtering - paginated
      * Collections are batch-loaded separately in service layer after pagination
      */
     @Query("SELECT DISTINCT p FROM Product p " +
            "WHERE p.isDeleted = false " +
            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
            "AND (:statuses IS NULL OR p.status IN :statuses) " +
-           "AND (:needsPromotion IS NULL OR p.hasActivePromotion = true) " +
-           "AND (:needsNoPromotion IS NULL OR p.hasActivePromotion = false) " +
-           "AND (:minPrice IS NULL OR p.displayPrice >= :minPrice) " +
-           "AND (:maxPrice IS NULL OR p.displayPrice <= :maxPrice) " +
-           "AND (:hasSizes IS NULL OR p.hasSizes = :hasSizes) " +
+           "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+           "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
            "AND (:search IS NULL OR :search = '' OR " +
            "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(p.categoryName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(p.brandName) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Product> findAllWithFilters(
         @Param("categoryId") UUID categoryId,
         @Param("statuses") List<ProductStatus> statuses,
-        @Param("needsPromotion") Boolean needsPromotion,
-        @Param("needsNoPromotion") Boolean needsNoPromotion,
         @Param("minPrice") BigDecimal minPrice,
         @Param("maxPrice") BigDecimal maxPrice,
-        @Param("hasSizes") Boolean hasSizes,
         @Param("search") String search,
         Pageable pageable
     );
 
     /**
      * Find all products with dynamic filtering - non-paginated
-     * OPTIMIZED: Uses has_active_promotion field instead of expensive EXISTS subqueries
      */
     @Query("SELECT DISTINCT p FROM Product p " +
            "LEFT JOIN FETCH p.category c " +
@@ -158,10 +137,8 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "WHERE p.isDeleted = false " +
            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
            "AND (:statuses IS NULL OR p.status IN :statuses) " +
-           "AND (:needsPromotion IS NULL OR p.hasActivePromotion = true) " +
-           "AND (:needsNoPromotion IS NULL OR p.hasActivePromotion = false) " +
-           "AND (:minPrice IS NULL OR p.displayPrice >= :minPrice) " +
-           "AND (:maxPrice IS NULL OR p.displayPrice <= :maxPrice) " +
+           "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+           "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
            "AND (:search IS NULL OR :search = '' OR " +
            "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
@@ -169,8 +146,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Product> findAllWithFilters(
         @Param("categoryId") UUID categoryId,
         @Param("statuses") List<ProductStatus> statuses,
-        @Param("needsPromotion") Boolean needsPromotion,
-        @Param("needsNoPromotion") Boolean needsNoPromotion,
         @Param("minPrice") BigDecimal minPrice,
         @Param("maxPrice") BigDecimal maxPrice,
         @Param("search") String search,
