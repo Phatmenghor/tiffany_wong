@@ -14,18 +14,18 @@ public interface CartService {
     CartSummaryResponse submitCartItem(CartItemCreateRequest request);
 
     /**
-     * GET - Get current user's cart for a specific business
+     * GET - Get current user's cart
      */
-    CartSummaryResponse getCart(UUID businessId);
+    CartSummaryResponse getCart();
 
     /**
      * GET - Get paginated cart items for current user
      * Used for infinite scroll / pagination on frontend
      */
-    CartSummaryResponse getCartPaginated(UUID businessId, int pageNo, int pageSize);
+    CartSummaryResponse getCartPaginated(int pageNo, int pageSize);
 
     /**
-     * DELETE - Clear current user's cart for a specific business
+     * DELETE - Clear current user's cart
      */
-    CartSummaryResponse clearCart(UUID businessId);
+    CartSummaryResponse clearCart();
 }

@@ -28,26 +28,18 @@ public class CartController {
         return ResponseEntity.ok(ApiResponse.success("Cart updated successfully", cart));
     }
 
-    @PostMapping("/all")
-    public ResponseEntity<ApiResponse<CartSummaryResponse>> getCart(
-            @Valid @RequestBody GetCartRequest request) {
-        log.info("Getting full cart for business: {}", request.getBusinessId());
+    @GetMapping
+    public ResponseEntity<ApiResponse<CartSummaryResponse>> getCart() {
+        log.info("Getting full cart for current user");
         // Get all cart items without pagination - return complete cart data
-        CartSummaryResponse cart = cartService.getCartPaginated(request.getBusinessId(), 1, 1000);
+        CartSummaryResponse cart = cartService.getCartPaginated(1, 1000);
         return ResponseEntity.ok(ApiResponse.success("Cart retrieved successfully", cart));
     }
 
-    // Simple request class for getting full cart (no pagination)
-    @Data
-    public static class GetCartRequest {
-        @jakarta.validation.constraints.NotNull(message = "Business ID is required")
-        private UUID businessId;
-    }
-
-    @DeleteMapping("/{businessId}/clear")
-    public ResponseEntity<ApiResponse<CartSummaryResponse>> clearCart(@PathVariable UUID businessId) {
-        log.info("Clearing cart for business: {}", businessId);
-        CartSummaryResponse cart = cartService.clearCart(businessId);
+    @DeleteMapping("/clear")
+    public ResponseEntity<ApiResponse<CartSummaryResponse>> clearCart() {
+        log.info("Clearing cart for current user");
+        CartSummaryResponse cart = cartService.clearCart();
         return ResponseEntity.ok(ApiResponse.success("Cart cleared", cart));
     }
 }

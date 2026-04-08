@@ -49,16 +49,10 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     List<Order> findByCustomerIdOrderByCreatedAtDesc(@Param("customerId") UUID customerId);
 
     /**
-     * Finds all non-deleted orders by business ID, ordered by creation date descending
+     * Finds all non-deleted orders by order status, ordered by creation date descending
      */
-    @Query("SELECT o FROM Order o WHERE o.businessId = :businessId AND o.isDeleted = false ORDER BY o.createdAt DESC")
-    List<Order> findByBusinessIdOrderByCreatedAtDesc(@Param("businessId") UUID businessId);
-
-    /**
-     * Finds non-deleted orders by business ID and order status, ordered by creation date descending
-     */
-    @Query("SELECT o FROM Order o WHERE o.businessId = :businessId AND o.orderStatus = :orderStatus AND o.isDeleted = false ORDER BY o.createdAt DESC")
-    List<Order> findByBusinessIdAndOrderStatusOrderByCreatedAtDesc(@Param("businessId") UUID businessId, @Param("orderStatus") OrderStatus orderStatus);
+    @Query("SELECT o FROM Order o WHERE o.orderStatus = :orderStatus AND o.isDeleted = false ORDER BY o.createdAt DESC")
+    List<Order> findByOrderStatusOrderByCreatedAtDesc(@Param("orderStatus") OrderStatus orderStatus);
 
     /**
      * Checks if an order exists with the given order number
@@ -66,10 +60,10 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     boolean existsByOrderNumber(String orderNumber);
 
     /**
-     * Counts non-deleted orders by business ID and order status
+     * Counts non-deleted orders by order status
      */
-    @Query("SELECT COUNT(o) FROM Order o WHERE o.businessId = :businessId AND o.orderStatus = :orderStatus AND o.isDeleted = false")
-    long countByBusinessIdAndOrderStatus(@Param("businessId") UUID businessId, @Param("orderStatus") OrderStatus orderStatus);
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.orderStatus = :orderStatus AND o.isDeleted = false")
+    long countByOrderStatus(@Param("orderStatus") OrderStatus orderStatus);
 
     /**
      * Finds paginated non-deleted orders by customer ID with eager loading of related entities
@@ -88,7 +82,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     /**
      * Find all non-deleted orders with optional filters and eager loading of related entities
      * Supports filtering by:
-     * - businessId (required for business users, optional for admin)
      * - orderStatus
      * - paymentMethod
      * - paymentStatus
@@ -102,13 +95,11 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
            "LEFT JOIN FETCH o.deliveryAddress " +
            "LEFT JOIN FETCH o.deliveryOption " +
            "WHERE o.isDeleted = false " +
-           "AND (:businessId IS NULL OR o.businessId = :businessId) " +
            "AND (:orderStatus IS NULL OR o.orderStatus = :orderStatus) " +
            "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
            "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus) " +
            "ORDER BY o.createdAt DESC")
     Page<Order> findAllWithFilters(
-            @Param("businessId") UUID businessId,
             @Param("orderStatus") OrderStatus orderStatus,
             @Param("paymentMethod") com.emenu.enums.payment.PaymentMethod paymentMethod,
             @Param("paymentStatus") com.emenu.enums.payment.PaymentStatus paymentStatus,

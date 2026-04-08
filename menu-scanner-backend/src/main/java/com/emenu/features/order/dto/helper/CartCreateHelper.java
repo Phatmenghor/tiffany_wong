@@ -14,5 +14,4 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CartCreateHelper {
     private UUID userId;
-    private UUID businessId;
 }

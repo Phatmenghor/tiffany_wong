@@ -53,11 +53,8 @@ public class CartServiceImpl implements CartService {
         log.info("Submit cart item - User: {}, Product: {}, Quantity: {}",
                 userId, request.getProductId(), request.getQuantity());
 
-        // Validate product and derive businessId
-        UUID businessId = validateProductAndGetBusinessId(request.getProductId(), request.getProductSizeId());
-
         // Get or create cart
-        Cart cart = getOrCreateCart(userId, businessId);
+        Cart cart = getOrCreateCart(userId);
 
         // Check if item already exists in cart (with pessimistic lock to prevent
         // OptimisticLockException when users rapidly update quantities)
@@ -95,26 +92,26 @@ public class CartServiceImpl implements CartService {
         entityManager.clear();
 
         // Reload cart with items for response (deduplication happens during load)
-        return loadCartSummary(userId, businessId);
+        return loadCartSummary(userId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public CartSummaryResponse getCart(UUID businessId) {
+    public CartSummaryResponse getCart() {
         UUID userId = securityUtils.getCurrentUserId();
-        log.info("Getting cart for user: {} and business: {}", userId, businessId);
+        log.info("Getting cart for user: {}", userId);
 
-        return loadCartSummary(userId, businessId);
+        return loadCartSummary(userId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public CartSummaryResponse getCartPaginated(UUID businessId, int pageNo, int pageSize) {
+    public CartSummaryResponse getCartPaginated(int pageNo, int pageSize) {
         UUID userId = securityUtils.getCurrentUserId();
-        log.info("Getting paginated cart for user: {}, business: {}, page: {}, size: {}",
-                userId, businessId, pageNo, pageSize);
+        log.info("Getting paginated cart for user: {}, page: {}, size: {}",
+                userId, pageNo, pageSize);
 
-        Optional<Cart> cartOpt = cartRepository.findByUserIdAndBusinessIdWithItems(userId, businessId);
+        Optional<Cart> cartOpt = cartRepository.findByUserIdWithItems(userId);
         if (cartOpt.isPresent()) {
             Cart cart = cartOpt.get();
 
@@ -146,11 +143,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartSummaryResponse clearCart(UUID businessId) {
+    public CartSummaryResponse clearCart() {
         UUID userId = securityUtils.getCurrentUserId();
-        log.info("Clearing cart for user: {} and business: {}", userId, businessId);
+        log.info("Clearing cart for user: {}", userId);
 
-        Optional<Cart> cartOpt = cartRepository.findByUserIdAndBusinessIdWithItems(userId, businessId);
+        Optional<Cart> cartOpt = cartRepository.findByUserIdWithItems(userId);
         if (cartOpt.isPresent()) {
             Cart cart = cartOpt.get();
             if (cart.getItems() != null && !cart.getItems().isEmpty()) {
@@ -166,8 +163,8 @@ public class CartServiceImpl implements CartService {
 
     // ===== PRIVATE HELPER METHODS =====
 
-    private CartSummaryResponse loadCartSummary(UUID userId, UUID businessId) {
-        Optional<Cart> cartOpt = cartRepository.findByUserIdAndBusinessIdWithItems(userId, businessId);
+    private CartSummaryResponse loadCartSummary(UUID userId) {
+        Optional<Cart> cartOpt = cartRepository.findByUserIdWithItems(userId);
         if (cartOpt.isPresent()) {
             Cart loaded = cartOpt.get();
             deduplicateCartItems(loaded);
@@ -183,37 +180,20 @@ public class CartServiceImpl implements CartService {
         return empty;
     }
 
-    private Cart getOrCreateCart(UUID userId, UUID businessId) {
-        Optional<Cart> existingCart = cartRepository.findByUserIdAndBusinessIdAndIsDeletedFalse(userId, businessId);
+    private Cart getOrCreateCart(UUID userId) {
+        Optional<Cart> existingCart = cartRepository.findByUserIdAndIsDeletedFalse(userId);
 
         if (existingCart.isPresent()) {
             return existingCart.get();
         }
 
         com.emenu.features.order.dto.helper.CartCreateHelper helper =
-            new com.emenu.features.order.dto.helper.CartCreateHelper(userId, businessId);
+            new com.emenu.features.order.dto.helper.CartCreateHelper(userId);
         Cart newCart = cartMapper.createFromHelper(helper);
         Cart savedCart = cartRepository.save(newCart);
 
-        log.info("Created new cart for user: {} and business: {}", userId, businessId);
+        log.info("Created new cart for user: {}", userId);
         return savedCart;
-    }
-
-    private UUID validateProductAndGetBusinessId(UUID productId, UUID productSizeId) {
-        if (productSizeId != null) {
-            ProductSize productSize = productSizeRepository.findById(productSizeId)
-                    .orElseThrow(() -> new NotFoundException("Product size not found"));
-
-            Product product = productSize.getProduct();
-            validateProductAvailability(product);
-            return product.getBusinessId();
-        } else {
-            Product product = productRepository.findByIdAndIsDeletedFalse(productId)
-                    .orElseThrow(() -> new NotFoundException("Product not found"));
-
-            validateProductAvailability(product);
-            return product.getBusinessId();
-        }
     }
 
     private void validateProductAvailability(Product product) {

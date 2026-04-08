@@ -99,16 +99,6 @@ public class SecurityUtils {
         }
     }
 
-    public UUID getCurrentUserBusinessId() {
-        try {
-            User currentUser = getCurrentUser();
-            return currentUser.getBusinessId();
-        } catch (Exception e) {
-            log.debug("Error getting business ID: {}", e.getMessage());
-            return null;
-        }
-    }
-
     public UUID getCurrentUserId() {
         return getCurrentUser().getId();
     }

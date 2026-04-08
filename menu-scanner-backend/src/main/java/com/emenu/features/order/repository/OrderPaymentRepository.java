@@ -40,34 +40,33 @@ public interface OrderPaymentRepository extends JpaRepository<OrderPayment, UUID
     Optional<OrderPayment> findByIdWithDetails(@Param("id") UUID id);
 
     /**
-     * Finds all non-deleted business order payments by business ID, ordered by creation date descending
+     * Finds all non-deleted order payments, ordered by creation date descending
      */
-    @Query("SELECT bop FROM OrderPayment bop WHERE bop.businessId = :businessId AND bop.isDeleted = false ORDER BY bop.createdAt DESC")
-    List<OrderPayment> findByBusinessIdOrderByCreatedAtDesc(@Param("businessId") UUID businessId);
+    @Query("SELECT bop FROM OrderPayment bop WHERE bop.isDeleted = false ORDER BY bop.createdAt DESC")
+    List<OrderPayment> findAllOrderByCreatedAtDesc();
 
     /**
-     * Checks if a non-deleted business order payment exists with the given payment reference
+     * Checks if a non-deleted order payment exists with the given payment reference
      */
     boolean existsByPaymentReferenceAndIsDeletedFalse(String paymentReference);
 
     /**
-     * Calculates total revenue for a business from completed payments
+     * Calculates total revenue from completed payments
      */
-    @Query("SELECT SUM(bop.totalAmount) FROM OrderPayment bop WHERE bop.businessId = :businessId AND bop.status = 'COMPLETED' AND bop.isDeleted = false")
-    BigDecimal getTotalRevenue(@Param("businessId") UUID businessId);
+    @Query("SELECT SUM(bop.totalAmount) FROM OrderPayment bop WHERE bop.status = 'COMPLETED' AND bop.isDeleted = false")
+    BigDecimal getTotalRevenue();
 
     /**
-     * Calculates revenue for a business within a date range from completed payments
+     * Calculates revenue within a date range from completed payments
      */
-    @Query("SELECT SUM(bop.totalAmount) FROM OrderPayment bop WHERE bop.businessId = :businessId AND bop.status = 'COMPLETED' AND bop.createdAt >= :fromDate AND bop.createdAt <= :toDate AND bop.isDeleted = false")
-    BigDecimal getRevenueByDateRange(@Param("businessId") UUID businessId, @Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
+    @Query("SELECT SUM(bop.totalAmount) FROM OrderPayment bop WHERE bop.status = 'COMPLETED' AND bop.createdAt >= :fromDate AND bop.createdAt <= :toDate AND bop.isDeleted = false")
+    BigDecimal getRevenueByDateRange(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
 
     /**
-     * Find all business order payments with dynamic filtering
+     * Find all order payments with dynamic filtering
      */
     @Query("SELECT bop FROM OrderPayment bop " +
            "WHERE bop.isDeleted = false " +
-           "AND (:businessId IS NULL OR bop.businessId = :businessId) " +
            "AND (:statuses IS NULL OR bop.status IN :statuses) " +
            "AND (:paymentMethod IS NULL OR bop.paymentMethod = :paymentMethod) " +
            "AND (:customerPaymentMethod IS NULL OR bop.customerPaymentMethod = :customerPaymentMethod) " +
@@ -76,7 +75,6 @@ public interface OrderPaymentRepository extends JpaRepository<OrderPayment, UUID
            "AND (:search IS NULL OR :search = '' OR " +
            "     LOWER(bop.paymentReference) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<OrderPayment> findAllWithFilters(
-        @Param("businessId") UUID businessId,
         @Param("statuses") List<PaymentStatus> statuses,
         @Param("paymentMethod") PaymentMethod paymentMethod,
         @Param("customerPaymentMethod") String customerPaymentMethod,

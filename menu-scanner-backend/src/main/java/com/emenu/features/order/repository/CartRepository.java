@@ -14,23 +14,7 @@ import java.util.UUID;
 public interface CartRepository extends JpaRepository<Cart, UUID> {
 
     /**
-     * Finds a non-deleted cart by user ID and business ID with items, products, sizes, and business eagerly fetched
-     */
-    @Query("SELECT DISTINCT c FROM Cart c " +
-           "LEFT JOIN FETCH c.items ci " +
-           "LEFT JOIN FETCH ci.product p " +
-           "LEFT JOIN FETCH ci.productSize ps " +
-           "LEFT JOIN FETCH c.business " +
-           "WHERE c.userId = :userId AND c.businessId = :businessId AND c.isDeleted = false")
-    Optional<Cart> findByUserIdAndBusinessIdWithItems(@Param("userId") UUID userId, @Param("businessId") UUID businessId);
-
-    /**
-     * Finds a non-deleted cart by user ID and business ID
-     */
-    Optional<Cart> findByUserIdAndBusinessIdAndIsDeletedFalse(UUID userId, UUID businessId);
-
-    /**
-     * Finds the most recently updated non-deleted cart for a user with items eagerly fetched
+     * Finds a non-deleted cart by user ID with items, products, sizes, and business eagerly fetched
      */
     @Query("SELECT DISTINCT c FROM Cart c " +
            "LEFT JOIN FETCH c.items ci " +
@@ -39,15 +23,20 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
            "LEFT JOIN FETCH c.business " +
            "WHERE c.userId = :userId AND c.isDeleted = false " +
            "ORDER BY c.updatedAt DESC")
-    List<Cart> findByUserIdWithItems(@Param("userId") UUID userId);
+    Optional<Cart> findByUserIdWithItems(@Param("userId") UUID userId);
 
     /**
-     * Counts total quantity of active products in a user's cart for a specific business
+     * Finds a non-deleted cart by user ID
+     */
+    Optional<Cart> findByUserIdAndIsDeletedFalse(UUID userId);
+
+    /**
+     * Counts total quantity of active products in a user's cart
      */
     @Query("SELECT COALESCE(SUM(ci.quantity), 0) FROM Cart c " +
             "JOIN c.items ci " +
             "JOIN ci.product p " +
-            "WHERE c.userId = :userId AND c.businessId = :businessId AND c.isDeleted = false " +
+            "WHERE c.userId = :userId AND c.isDeleted = false " +
             "AND ci.isDeleted = false AND p.isDeleted = false AND p.status = 'ACTIVE'")
-    Long countItemsByUserIdAndBusinessId(@Param("userId") UUID userId, @Param("businessId") UUID businessId);
+    Long countItemsByUserId(@Param("userId") UUID userId);
 }

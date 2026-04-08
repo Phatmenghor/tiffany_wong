@@ -36,14 +36,13 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
     Optional<Payment> findByIdWithRelationships(@Param("id") UUID id);
 
     /**
-     * Searches payments with filters for business, plan, payment methods, statuses, date range, and text search
+     * Searches payments with filters for plan, payment methods, statuses, date range, and text search
      */
     @Query("""
                 SELECT p FROM Payment p
                 LEFT JOIN p.business b
                 LEFT JOIN p.plan pl
                 WHERE p.isDeleted = false
-                AND (:businessId IS NULL OR p.businessId = :businessId)
                 AND (:planId IS NULL OR p.planId = :planId)
                 AND (:paymentMethods IS NULL OR p.paymentMethod IN :paymentMethods)
                 AND (:statuses IS NULL OR p.status IN :statuses)
@@ -56,7 +55,6 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
                 ORDER BY p.createdAt DESC
             """)
     Page<Payment> findAllWithFilters(
-            @Param("businessId") UUID businessId,
             @Param("planId") UUID planId,
             @Param("paymentMethods") List<PaymentMethod> paymentMethods,
             @Param("statuses") List<PaymentStatus> statuses,
