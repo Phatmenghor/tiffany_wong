@@ -365,7 +365,6 @@ public class ProductServiceImpl implements ProductService {
             // Get cart quantity for this product
             Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
                     userId,
-                    null,
                     List.of(product.getId())
             );
             dto.setQuantity(cartQuantities.getOrDefault(product.getId(), 0));
