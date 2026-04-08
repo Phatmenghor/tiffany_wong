@@ -1,12 +1,15 @@
 -- ============================================================================
 -- TIFFANY E-MENU PLATFORM - LARGE SCALE TEST DATA
 -- ============================================================================
--- Users: 1000 (1 ADMIN + 1 STAFF + 20,000 CUSTOMER) = 20,002 users
+-- Users: 60,001 total
+--   - 20,000 ADMIN users
+--   - 20,000 STAFF users
+--   - 20,001 CUSTOMER users
 -- Products: 100,000 with 70% having sizes (70,000 sizes)
 -- Product Images: 1-5 per product
 -- Categories: 200
 -- Banners: 20
--- Carts: All 20,000 customers
+-- Carts: All 20,001 customers
 -- Orders: 20,000 for phatmenghor21@gmail.com
 -- ============================================================================
 
@@ -46,15 +49,32 @@ VALUES
 ('550e8400-e29b-41d4-a716-446655440003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'CUSTOMER', 'Customer access - can browse and purchase products');
 
 -- ============================================================================
--- 2. USERS (1000 total: 1 ADMIN + 1 STAFF + 20,000 CUSTOMER)
+-- 2. USERS (60,001 total: 20,000 ADMIN + 20,000 STAFF + 20,001 CUSTOMER)
 -- ============================================================================
+
+-- Insert 20,000 ADMIN users
+INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status)
+SELECT
+    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    'admin' || i || '@tiffany.com',
+    '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK',
+    'PLATFORM_USER', 'ACTIVE', 'ACTIVE'
+FROM generate_series(1, 20000) AS t(i);
+
+-- Insert 20,000 STAFF users
+INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status)
+SELECT
+    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    'staff' || i || '@tiffany.com',
+    '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK',
+    'BUSINESS_USER', 'ACTIVE', 'ACTIVE'
+FROM generate_series(1, 20000) AS t(i);
+
+-- Insert 20,001 CUSTOMER users (including 3 main users)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status)
 VALUES
-('550e8400-e29b-41d4-a716-446655550000', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor19@gmail.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'PLATFORM_USER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor20@gmail.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'BUSINESS_USER', 'ACTIVE', 'ACTIVE'),
 ('550e8400-e29b-41d4-a716-446655550002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor21@gmail.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE');
 
--- Insert 20,000 CUSTOMER users
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
@@ -81,19 +101,19 @@ SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     u.id,
     CASE 
-        WHEN u.user_type = 'PLATFORM_USER' THEN 'Platform'
-        WHEN u.user_type = 'BUSINESS_USER' THEN 'Business'
-        ELSE 'Customer' || (row_number() OVER (ORDER BY u.id))
-    END,
-    CASE 
         WHEN u.user_type = 'PLATFORM_USER' THEN 'Admin'
+        WHEN u.user_type = 'BUSINESS_USER' THEN 'Staff'
+        ELSE 'Customer'
+    END || ' ' || (row_number() OVER (PARTITION BY u.user_type ORDER BY u.id)),
+    CASE 
+        WHEN u.user_type = 'PLATFORM_USER' THEN 'Administrator'
         WHEN u.user_type = 'BUSINESS_USER' THEN 'Manager'
         ELSE 'User'
     END,
     CASE 
-        WHEN u.user_type = 'PLATFORM_USER' THEN 'Admin'
-        WHEN u.user_type = 'BUSINESS_USER' THEN 'BizMgr'
-        ELSE 'Cust' || (row_number() OVER (ORDER BY u.id))
+        WHEN u.user_type = 'PLATFORM_USER' THEN 'Admin' || (row_number() OVER (PARTITION BY u.user_type ORDER BY u.id))
+        WHEN u.user_type = 'BUSINESS_USER' THEN 'Staff' || (row_number() OVER (PARTITION BY u.user_type ORDER BY u.id))
+        ELSE 'Cust' || (row_number() OVER (PARTITION BY u.user_type ORDER BY u.id))
     END,
     CASE WHEN (random() * 100)::int > 50 THEN 'MALE' ELSE 'FEMALE' END,
     NOW()::date - (random() * 15000)::int,
@@ -174,7 +194,7 @@ SELECT
 FROM generate_series(1, 20) AS t(i);
 
 -- ============================================================================
--- 10. CARTS (All 20,000 customers)
+-- 10. CARTS (All 20,001 customers)
 -- ============================================================================
 INSERT INTO carts (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, total_items, total_price)
 SELECT
