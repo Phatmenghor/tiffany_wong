@@ -18,7 +18,7 @@ export const fetchAllBannerService = createApiThunk<any, AllBannerRequest>(
   "banners/fetchAll",
   async (params) => {
     const response = await axiosClientWithAuth.post(
-      "/api/v1/banners/my-business/all",
+      "/api/v1/banners/all",
       params
     );
     return response.data.data;
