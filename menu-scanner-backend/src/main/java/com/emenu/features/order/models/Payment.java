@@ -88,23 +88,7 @@ public class Payment extends BaseUUIDEntity {
         return business != null ? business.getName() : "Unknown Business";
     }
 
-    public String getPlanName() {
-        return plan != null ? plan.getName() : "Unknown Plan";
-    }
-
-    public String getSubscriptionDisplayName() {
-        return subscription != null ? subscription.getDisplayName() : "No Subscription";
-    }
-
-    public boolean hasSubscription() {
-        return subscriptionId != null;
-    }
-
     public boolean hasBusiness() {
         return businessId != null;
-    }
-
-    public boolean hasPlan() {
-        return planId != null;
     }
 }

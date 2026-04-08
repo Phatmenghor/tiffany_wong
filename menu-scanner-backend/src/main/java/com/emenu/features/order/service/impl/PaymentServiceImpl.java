@@ -4,8 +4,6 @@ import com.emenu.enums.payment.PaymentMethod;
 import com.emenu.enums.payment.PaymentStatus;
 import com.emenu.enums.payment.PaymentType;
 import com.emenu.exception.custom.NotFoundException;
-import com.emenu.features.auth.models.Business;
-import com.emenu.features.auth.repository.BusinessRepository;
 import com.emenu.features.order.dto.filter.PaymentFilterRequest;
 import com.emenu.features.order.dto.request.PaymentCreateRequest;
 import com.emenu.features.order.dto.response.PaymentResponse;
@@ -15,8 +13,6 @@ import com.emenu.features.order.models.Payment;
 import com.emenu.features.order.repository.PaymentRepository;
 import com.emenu.features.order.service.ExchangeRateService;
 import com.emenu.features.order.service.PaymentService;
-import com.emenu.features.subscription.repository.SubscriptionPlanRepository;
-import com.emenu.features.subscription.repository.SubscriptionRepository;
 import com.emenu.shared.dto.PaginationResponse;
 import com.emenu.shared.generate.PaymentReferenceGenerator;
 import com.emenu.shared.pagination.PaginationUtils;
@@ -27,7 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,9 +33,6 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final BusinessRepository businessRepository;
-    private final SubscriptionPlanRepository planRepository;
-    private final SubscriptionRepository subscriptionRepository;
     private final ExchangeRateService exchangeRateService;
     private final PaymentMapper paymentMapper;
     private final PaymentReferenceGenerator referenceGenerator;
@@ -52,8 +44,8 @@ public class PaymentServiceImpl implements PaymentService {
         String referenceNumber = determineReferenceNumber(request);
         PaymentType paymentType = request.getPaymentType();
         PaymentResponse response = switch (paymentType) {
-            case SUBSCRIPTION -> createSubscriptionPayment(request, referenceNumber);
-            case BUSINESS_RECORD -> createBusinessPayment(request, referenceNumber);
+            case SUBSCRIPTION -> createSubscriptionPaymentStubbed(referenceNumber);
+            case BUSINESS_RECORD -> createBusinessPaymentStubbed(referenceNumber);
             case USER_PLAN -> createUserPlanPayment(request, referenceNumber);
             case REFUND -> createRefundPayment(request, referenceNumber);
             case OTHER -> createOtherPayment(request, referenceNumber);
@@ -98,11 +90,6 @@ public class PaymentServiceImpl implements PaymentService {
         log.info("Updating payment: id={}", id);
         Payment payment = findPaymentById(id);
 
-        if (request.getSubscriptionId() != null) {
-            updatePaymentSubscription(payment, request.getSubscriptionId());
-        } else if (request.getBusinessId() != null) {
-            updatePaymentBusiness(payment, request.getBusinessId());
-        }
         paymentMapper.updateEntity(request, payment);
         if (request.getAmount() != null) {
             Double rate = exchangeRateService.getCurrentActiveRate().getUsdToKhrRate();
@@ -129,36 +116,16 @@ public class PaymentServiceImpl implements PaymentService {
         return referenceGenerator.generateUniqueReference();
     }
 
-    private PaymentResponse createSubscriptionPayment(PaymentCreateRequest request, String referenceNumber) {
-        log.info("Creating subscription payment: subscriptionId={}", request.getSubscriptionId());
-        Subscription subscription = subscriptionRepository.findByIdAndIsDeletedFalse(request.getSubscriptionId())
-                .orElseThrow(() -> new NotFoundException("Subscription not found"));
-        businessRepository.findByIdAndIsDeletedFalse(subscription.getBusinessId())
-                .orElseThrow(() -> new NotFoundException("Business not found"));
-        planRepository.findByIdAndIsDeletedFalse(subscription.getPlanId())
-                .orElseThrow(() -> new NotFoundException("Plan not found"));
-        Payment payment = paymentMapper.toEntity(request);
-        payment.setReferenceNumber(referenceNumber);
-        // Use pure MapStruct to update payment with subscription relationship
-        paymentMapper.updateWithSubscription(payment, subscription);
-        return savePayment(payment);
+    private PaymentResponse createSubscriptionPaymentStubbed(String referenceNumber) {
+        log.warn("SUBSCRIPTION payment type is no longer supported - this feature has been removed. Reference: {}", referenceNumber);
+        throw new UnsupportedOperationException("SUBSCRIPTION payment type is no longer supported. Use USER_PLAN or OTHER instead.");
     }
 
-    private PaymentResponse createBusinessPayment(PaymentCreateRequest request, String referenceNumber) {
-        log.info("Creating business payment: businessId={}", request.getBusinessId());
-        Business business = businessRepository.findByIdAndIsDeletedFalse(request.getBusinessId())
-                .orElseThrow(() -> new NotFoundException("Business not found"));
-        Payment payment = paymentMapper.toEntity(request);
-        payment.setReferenceNumber(referenceNumber);
-        payment.setBusinessId(business.getId());
-        subscriptionRepository.findCurrentActiveByBusinessId(business.getId(), LocalDateTime.now())
-                .ifPresent(subscription -> {
-                    payment.setPlanId(subscription.getPlanId());
-                    payment.setSubscriptionId(subscription.getId());
-                    log.info("Associated payment with active subscription: {}", subscription.getId());
-                });
-        return savePayment(payment);
+    private PaymentResponse createBusinessPaymentStubbed(String referenceNumber) {
+        log.warn("BUSINESS_RECORD payment type is no longer supported - this feature has been removed. Reference: {}", referenceNumber);
+        throw new UnsupportedOperationException("BUSINESS_RECORD payment type is no longer supported. Use USER_PLAN or OTHER instead.");
     }
+
 
     private PaymentResponse createUserPlanPayment(PaymentCreateRequest request, String referenceNumber) {
         log.info("Creating USER_PLAN payment type");
@@ -171,12 +138,6 @@ public class PaymentServiceImpl implements PaymentService {
         log.info("Creating REFUND payment type");
         Payment payment = paymentMapper.toEntity(request);
         payment.setReferenceNumber(referenceNumber);
-        if (request.getSubscriptionId() != null) {
-            Subscription subscription = subscriptionRepository.findByIdAndIsDeletedFalse(request.getSubscriptionId())
-                    .orElseThrow(() -> new NotFoundException("Subscription not found"));
-            // Use pure MapStruct to update payment with subscription relationship
-            paymentMapper.updateWithSubscription(payment, subscription);
-        }
         return savePayment(payment);
     }
 
@@ -185,38 +146,6 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = paymentMapper.toEntity(request);
         payment.setReferenceNumber(referenceNumber);
         return savePayment(payment);
-    }
-
-    private void updatePaymentSubscription(Payment payment, UUID subscriptionId) {
-        log.info("Updating payment subscription: paymentId={}, subscriptionId={}", payment.getId(), subscriptionId);
-        Subscription subscription = subscriptionRepository.findByIdAndIsDeletedFalse(subscriptionId)
-                .orElseThrow(() -> new NotFoundException("Subscription not found"));
-        businessRepository.findByIdAndIsDeletedFalse(subscription.getBusinessId())
-                .orElseThrow(() -> new NotFoundException("Business not found for subscription"));
-        planRepository.findByIdAndIsDeletedFalse(subscription.getPlanId())
-                .orElseThrow(() -> new NotFoundException("Plan not found for subscription"));
-        // Use pure MapStruct to update payment with subscription relationship
-        paymentMapper.updateWithSubscription(payment, subscription);
-    }
-
-    private void updatePaymentBusiness(Payment payment, UUID businessId) {
-        log.info("Updating payment business: paymentId={}, businessId={}", payment.getId(), businessId);
-        Business business = businessRepository.findByIdAndIsDeletedFalse(businessId)
-                .orElseThrow(() -> new NotFoundException("Business not found"));
-        payment.setBusinessId(business.getId());
-        subscriptionRepository.findCurrentActiveByBusinessId(business.getId(), LocalDateTime.now())
-                .ifPresentOrElse(
-                        subscription -> {
-                            payment.setPlanId(subscription.getPlanId());
-                            payment.setSubscriptionId(subscription.getId());
-                            log.info("Associated payment with active subscription: {}", subscription.getId());
-                        },
-                        () -> {
-                            payment.setPlanId(null);
-                            payment.setSubscriptionId(null);
-                            log.info("No active subscription found for business, cleared subscription fields");
-                        }
-                );
     }
 
     private PaymentResponse savePayment(Payment payment) {
