@@ -33,11 +33,8 @@ public interface OrderMapper {
     @Mapping(source = "customerName", target = "customerName")
     @Mapping(source = "customerPhone", target = "customerPhone")
     @Mapping(source = "customerEmail", target = "customerEmail")
-    @Mapping(source = "business.name", target = "businessName")
-    @Mapping(target = "deliveryAddress", expression = "java(mapDeliveryAddress(order))")
     @Mapping(source = "orderStatus", target = "orderStatus")
     @Mapping(target = "statusHistory", expression = "java(mapStatusHistory(order))")
-    @Mapping(target = "payment", expression = "java(mapPaymentInfo(order))")
     OrderResponse toResponse(Order order);
 
     List<OrderResponse> toResponseList(List<Order> orders);
@@ -63,7 +60,6 @@ public interface OrderMapper {
         var builder = OrderCreateHelper.builder()
                 .orderNumber(orderNumber)
                 .customerId(customerId)
-                .businessId(request.getBusinessId())
                 .paymentMethod(request.getPayment() != null ? request.getPayment().getPaymentMethod() : null)
                 .paymentStatus(request.getPayment() != null ? request.getPayment().getPaymentStatus() : null)
                 .customerNote(request.getCustomerNote())
@@ -127,39 +123,6 @@ public interface OrderMapper {
                 .build();
     }
 
-    /**
-     * Map delivery address from OrderDeliveryAddress snapshot entity to DTO
-     */
-    default com.emenu.features.order.dto.response.OrderDeliveryAddressDto mapDeliveryAddress(Order order) {
-        if (order == null || order.getDeliveryAddress() == null) {
-            return null;
-        }
-
-        var deliveryAddress = order.getDeliveryAddress();
-
-        // Check if any delivery address field is populated (address fields or location reference)
-        if (deliveryAddress.getVillage() == null && deliveryAddress.getCommune() == null &&
-            deliveryAddress.getDistrict() == null && deliveryAddress.getProvince() == null &&
-            deliveryAddress.getStreetNumber() == null && deliveryAddress.getHouseNumber() == null &&
-            deliveryAddress.getNote() == null && deliveryAddress.getLatitude() == null &&
-            deliveryAddress.getLongitude() == null && deliveryAddress.getLocationId() == null) {
-            return null;
-        }
-
-        return com.emenu.features.order.dto.response.OrderDeliveryAddressDto.builder()
-                .village(deliveryAddress.getVillage())
-                .commune(deliveryAddress.getCommune())
-                .district(deliveryAddress.getDistrict())
-                .province(deliveryAddress.getProvince())
-                .streetNumber(deliveryAddress.getStreetNumber())
-                .houseNumber(deliveryAddress.getHouseNumber())
-                .note(deliveryAddress.getNote())
-                .latitude(deliveryAddress.getLatitude())
-                .longitude(deliveryAddress.getLongitude())
-                .locationId(deliveryAddress.getLocationId())
-                .locationImages(deliveryAddress.getLocationImages())
-                .build();
-    }
 
     /**
      * Calculate total number of items in the order
@@ -184,50 +147,25 @@ public interface OrderMapper {
         }
 
         return order.getStatusHistory().stream()
-                .map(history -> OrderStatusHistoryResponse.builder()
-                        .id(history.getId())
-                        .statusName(history.getOrderStatus() != null ?
-                                history.getOrderStatus().getDisplayName() : null)
-                        .statusDescription(history.getOrderStatus() != null ?
-                                history.getOrderStatus().getDescription() : null)
-                        .note(history.getNote())
-                        .changedBy(mapStatusHistoryUserInfo(history))
-                        .changedAt(history.getCreatedAt())
-                        .build())
+                .map(history -> {
+                    String changedByUserName = null;
+                    UUID changedByUserId = null;
+                    if (history.getChangedByUser() != null) {
+                        changedByUserId = history.getChangedByUserId();
+                        changedByUserName = history.getChangedByUser().getUserIdentifier();
+                    }
+                    return OrderStatusHistoryResponse.builder()
+                            .id(history.getId())
+                            .statusName(history.getOrderStatus() != null ?
+                                    history.getOrderStatus().getDisplayName() : null)
+                            .statusDescription(history.getOrderStatus() != null ?
+                                    history.getOrderStatus().getDescription() : null)
+                            .note(history.getNote())
+                            .changedByUserId(changedByUserId)
+                            .changedByUserName(changedByUserName)
+                            .changedAt(history.getCreatedAt())
+                            .build();
+                })
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Map user details from status history
-     */
-    default OrderStatusHistoryUserInfo mapStatusHistoryUserInfo(OrderStatusHistory history) {
-        if (history.getChangedByUser() == null) {
-            return null;
-        }
-
-        com.emenu.features.auth.models.User u = history.getChangedByUser();
-        com.emenu.features.auth.models.UserProfile p = u.getProfile();
-        return OrderStatusHistoryUserInfo.builder()
-                .userId(history.getChangedByUserId())
-                .firstName(p != null ? p.getFirstName() : null)
-                .lastName(p != null ? p.getLastName() : null)
-                .phoneNumber(p != null ? p.getPhoneNumber() : null)
-                .businessId(u.getBusinessId())
-                .build();
-    }
-
-
-    /**
-     * Map payment method and status to nested payment info object
-     */
-    default OrderPaymentInfo mapPaymentInfo(Order order) {
-        if (order == null) {
-            return null;
-        }
-
-        return OrderPaymentInfo.builder()
-                .paymentMethod(order.getPaymentMethod())
-                .paymentStatus(order.getPaymentStatus())
-                .build();
     }
 }

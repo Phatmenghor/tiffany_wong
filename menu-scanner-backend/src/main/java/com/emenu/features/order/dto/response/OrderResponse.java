@@ -3,7 +3,6 @@ package com.emenu.features.order.dto.response;
 import com.emenu.enums.order.OrderStatus;
 import com.emenu.features.order.enums.OrderFromEnum;
 import com.emenu.shared.dto.BaseAuditResponse;
-import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -25,26 +24,16 @@ public class OrderResponse extends BaseAuditResponse {
     private String customerPhone;
     private String customerEmail;
 
-    // Business info
-    private UUID businessId;
-    private String businessName;
-
-    // Delivery info
-    private OrderDeliveryAddressDto deliveryAddress;
-    private OrderDeliveryOptionDto deliveryOption;
-
     // Order details
     private OrderStatus orderStatus;
     private String customerNote;
     private String businessNote;
 
-    // Pricing breakdown - nested object for cleaner structure
-    @Valid
-    private OrderPricingInfo pricing;
-
-    // Payment info - nested object
-    @Valid
-    private OrderPaymentInfo payment;
+    // Pricing breakdown
+    private BigDecimal subtotal;
+    private BigDecimal discountAmount;
+    private BigDecimal deliveryFee;
+    private BigDecimal totalAmount;
 
     // Items
     private List<OrderItemResponse> items;
