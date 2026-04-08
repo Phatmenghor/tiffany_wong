@@ -26,5 +26,6 @@ public interface ProductService {
     Map<String, Object> resetAllPromotions();
     Map<String, Object> resetSelectedPromotions(ResetSelectedPromotionsDto request);
     BulkPromotionResultDto createBulkPromotions(BulkPromotionCreateDto request);
+    int[] syncExpiredPromotions();
     int[] syncStartedPromotions();
 }

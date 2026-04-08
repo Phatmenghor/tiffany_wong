@@ -67,7 +67,7 @@ public class SystemSettingServiceImpl implements SystemSettingService {
         }
 
         SystemSetting updated = systemSettingRepository.save(setting);
-        log.info("System setting saved: company={}", updated.getCompanyName());
+        log.info("System setting saved: systemName={}", updated.getSystemName());
         return systemSettingMapper.toResponse(updated);
     }
 

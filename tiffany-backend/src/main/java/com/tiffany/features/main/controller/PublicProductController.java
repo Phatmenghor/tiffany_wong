@@ -24,14 +24,14 @@ public class PublicProductController {
     private final ProductService productService;
 
     @PostMapping("/all")
-    public ResponseEntity<ApiResponse<PaginationResponse<ProductListDto>>> getAllPublicProducts(
+    public ResponseEntity<ApiResponse<List<ProductListDto>>> getAllPublicProducts(
             @Valid @RequestBody ProductFilterDto filter) {
-        
+
         log.info("Public get all - Page: {}, Size: {}", filter.getPageNo(), filter.getPageSize());
-        PaginationResponse<ProductListDto> products = productService.getAllProducts(filter);
-        
+        List<ProductListDto> products = productService.getAllDataProducts(filter);
+
         return ResponseEntity.ok(ApiResponse.success(
-            String.format("Found %d products", products.getTotalElements()),
+            String.format("Found %d products", products.size()),
             products
         ));
     }
