@@ -1,12 +1,16 @@
 -- ============================================================================
--- TIFFANY E-MENU PLATFORM - CLEAN TEST DATA
+-- TIFFANY E-MENU PLATFORM - LARGE SCALE TEST DATA
 -- ============================================================================
--- Includes only tables that exist in the current project
--- All fields populated with NO NULL values
--- Password Hash: $2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK (password123)
+-- Users: 1000 (1 ADMIN + 1 STAFF + 20,000 CUSTOMER) = 20,002 users
+-- Products: 100,000 with 70% having sizes (70,000 sizes)
+-- Product Images: 1-5 per product
+-- Categories: 200
+-- Banners: 20
+-- Carts: All 20,000 customers
+-- Orders: 20,000 for phatmenghor21@gmail.com
 -- ============================================================================
 
--- Clear existing data (if needed)
+-- Clear existing data
 TRUNCATE TABLE user_roles CASCADE;
 TRUNCATE TABLE roles CASCADE;
 TRUNCATE TABLE users CASCADE;
@@ -42,131 +46,135 @@ VALUES
 ('550e8400-e29b-41d4-a716-446655440003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'CUSTOMER', 'Customer access - can browse and purchase products');
 
 -- ============================================================================
--- 2. USERS (3 main users + 10 test customers)
+-- 2. USERS (1000 total: 1 ADMIN + 1 STAFF + 20,000 CUSTOMER)
 -- ============================================================================
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status)
 VALUES
 ('550e8400-e29b-41d4-a716-446655550000', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor19@gmail.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'PLATFORM_USER', 'ACTIVE', 'ACTIVE'),
 ('550e8400-e29b-41d4-a716-446655550001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor20@gmail.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'BUSINESS_USER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor21@gmail.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'customer1@test.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550004', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'customer2@test.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550005', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'customer3@test.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550006', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'customer4@test.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550007', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'customer5@test.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550008', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'customer6@test.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550009', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'customer7@test.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550010', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'customer8@test.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550011', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'customer9@test.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE'),
-('550e8400-e29b-41d4-a716-446655550012', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'customer10@test.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE');
+('550e8400-e29b-41d4-a716-446655550002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor21@gmail.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE');
+
+-- Insert 20,000 CUSTOMER users
+INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status)
+SELECT
+    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    'customer' || i || '@test.com',
+    '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK',
+    'CUSTOMER', 'ACTIVE', 'ACTIVE'
+FROM generate_series(1, 20000) AS t(i);
 
 -- ============================================================================
 -- 3. USER ROLES
 -- ============================================================================
-INSERT INTO user_roles (user_id, role_id) VALUES
-('550e8400-e29b-41d4-a716-446655550000', '550e8400-e29b-41d4-a716-446655440000'),
-('550e8400-e29b-41d4-a716-446655550001', '550e8400-e29b-41d4-a716-446655440001'),
-('550e8400-e29b-41d4-a716-446655550002', '550e8400-e29b-41d4-a716-446655440003'),
-('550e8400-e29b-41d4-a716-446655550003', '550e8400-e29b-41d4-a716-446655440003'),
-('550e8400-e29b-41d4-a716-446655550004', '550e8400-e29b-41d4-a716-446655440003'),
-('550e8400-e29b-41d4-a716-446655550005', '550e8400-e29b-41d4-a716-446655440003'),
-('550e8400-e29b-41d4-a716-446655550006', '550e8400-e29b-41d4-a716-446655440003'),
-('550e8400-e29b-41d4-a716-446655550007', '550e8400-e29b-41d4-a716-446655440003'),
-('550e8400-e29b-41d4-a716-446655550008', '550e8400-e29b-41d4-a716-446655440003'),
-('550e8400-e29b-41d4-a716-446655550009', '550e8400-e29b-41d4-a716-446655440003'),
-('550e8400-e29b-41d4-a716-446655550010', '550e8400-e29b-41d4-a716-446655440003'),
-('550e8400-e29b-41d4-a716-446655550011', '550e8400-e29b-41d4-a716-446655440003'),
-('550e8400-e29b-41d4-a716-446655550012', '550e8400-e29b-41d4-a716-446655440003');
+INSERT INTO user_roles (user_id, role_id)
+SELECT id, '550e8400-e29b-41d4-a716-446655440000' FROM users WHERE user_type = 'PLATFORM_USER'
+UNION ALL
+SELECT id, '550e8400-e29b-41d4-a716-446655440001' FROM users WHERE user_type = 'BUSINESS_USER'
+UNION ALL
+SELECT id, '550e8400-e29b-41d4-a716-446655440003' FROM users WHERE user_type = 'CUSTOMER';
 
 -- ============================================================================
--- 4. USER PROFILES
+-- 4. USER PROFILES (Complete for all users)
 -- ============================================================================
 INSERT INTO user_profiles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, first_name, last_name, nickname, gender, date_of_birth, phone_number, email, profile_image_url, address)
-VALUES
-('550e8400-e29b-41d4-a716-446655550000', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655550000', 'Platform', 'Admin', 'Admin', 'MALE', '1990-01-15', '+855 10 100 0001', 'phatmenghor19@gmail.com', 'https://via.placeholder.com/300?text=Admin', 'Phnom Penh, Cambodia'),
-('550e8400-e29b-41d4-a716-446655550001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655550001', 'Business', 'Manager', 'BizMgr', 'MALE', '1992-05-20', '+855 10 100 0002', 'phatmenghor20@gmail.com', 'https://via.placeholder.com/300?text=Manager', 'Phnom Penh, Cambodia'),
-('550e8400-e29b-41d4-a716-446655550002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655550002', 'Test', 'Customer', 'TestCust', 'MALE', '1995-08-10', '+855 10 100 0003', 'phatmenghor21@gmail.com', 'https://via.placeholder.com/300?text=Customer', 'Phnom Penh, Cambodia');
-
--- Insert remaining customer profiles
-INSERT INTO user_profiles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, first_name, last_name, nickname, gender, date_of_birth, phone_number, email, profile_image_url, address)
-SELECT 
+SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     u.id,
-    'Customer' || row_number() OVER (ORDER BY u.id),
-    'Test',
-    'Cust' || row_number() OVER (ORDER BY u.id),
-    CASE WHEN random() > 0.5 THEN 'MALE' ELSE 'FEMALE' END,
-    NOW()::date - (random() * 10000)::int,
-    '+855 10 100 ' || LPAD((1000 + row_number() OVER (ORDER BY u.id))::text, 4, '0'),
+    CASE 
+        WHEN u.user_type = 'PLATFORM_USER' THEN 'Platform'
+        WHEN u.user_type = 'BUSINESS_USER' THEN 'Business'
+        ELSE 'Customer' || (row_number() OVER (ORDER BY u.id))
+    END,
+    CASE 
+        WHEN u.user_type = 'PLATFORM_USER' THEN 'Admin'
+        WHEN u.user_type = 'BUSINESS_USER' THEN 'Manager'
+        ELSE 'User'
+    END,
+    CASE 
+        WHEN u.user_type = 'PLATFORM_USER' THEN 'Admin'
+        WHEN u.user_type = 'BUSINESS_USER' THEN 'BizMgr'
+        ELSE 'Cust' || (row_number() OVER (ORDER BY u.id))
+    END,
+    CASE WHEN (random() * 100)::int > 50 THEN 'MALE' ELSE 'FEMALE' END,
+    NOW()::date - (random() * 15000)::int,
+    '+855 ' || LPAD((random() * 999999)::int::text, 9, '0'),
     u.user_identifier,
-    'https://via.placeholder.com/300?text=Customer' || row_number() OVER (ORDER BY u.id),
+    'https://via.placeholder.com/300?text=' || SUBSTR(u.user_identifier, 1, 10),
     'Phnom Penh, Cambodia'
-FROM users u
-WHERE u.user_type = 'CUSTOMER' 
-  AND u.id NOT IN ('550e8400-e29b-41d4-a716-446655550002')
-  AND NOT EXISTS (SELECT 1 FROM user_profiles up WHERE up.user_id = u.id);
+FROM users u;
 
 -- ============================================================================
--- 5. CATEGORIES
+-- 5. CATEGORIES (200 categories)
 -- ============================================================================
 INSERT INTO categories (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, icon_url, is_featured)
-VALUES
-('550e8400-e29b-41d4-a716-446655660001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Beverages', 'Drinks and beverages', 'https://via.placeholder.com/100?text=Beverages', true),
-('550e8400-e29b-41d4-a716-446655660002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Food', 'Food items and dishes', 'https://via.placeholder.com/100?text=Food', true),
-('550e8400-e29b-41d4-a716-446655660003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Snacks', 'Snacks and appetizers', 'https://via.placeholder.com/100?text=Snacks', false),
-('550e8400-e29b-41d4-a716-446655660004', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Desserts', 'Desserts and sweets', 'https://via.placeholder.com/100?text=Desserts', false);
+SELECT
+    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    'Category ' || i,
+    'Description for category ' || i,
+    'https://via.placeholder.com/100?text=Cat' || i,
+    (i <= 10)
+FROM generate_series(1, 200) AS t(i);
 
 -- ============================================================================
--- 6. PRODUCTS (20 test products)
+-- 6. PRODUCTS (100,000 products)
 -- ============================================================================
 INSERT INTO products (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, sku, barcode, price, cost, category_id, is_available, stock_quantity)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'Product ' || i,
-    'Description for product ' || i,
-    'SKU-' || i,
-    'BARCODE-' || i,
-    (10 + random() * 50)::numeric(10,2),
-    (5 + random() * 25)::numeric(10,2),
-    ARRAY['550e8400-e29b-41d4-a716-446655660001', '550e8400-e29b-41d4-a716-446655660002', '550e8400-e29b-41d4-a716-446655660003', '550e8400-e29b-41d4-a716-446655660004'][((i-1) % 4) + 1],
+    'High-quality product ' || i || ' with detailed description',
+    'SKU-' || LPAD(i::text, 7, '0'),
+    'BARCODE-' || LPAD(i::text, 10, '0'),
+    (10 + random() * 500)::numeric(10,2),
+    (5 + random() * 250)::numeric(10,2),
+    (SELECT id FROM categories ORDER BY RANDOM() LIMIT 1),
     true,
-    (5 + random() * 100)::int
-FROM generate_series(1, 20) AS t(i);
+    (5 + random() * 1000)::int
+FROM generate_series(1, 100000) AS t(i);
 
 -- ============================================================================
--- 7. PRODUCT SIZES
+-- 7. PRODUCT SIZES (70% of products = 70,000 sizes)
 -- ============================================================================
 INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, size_name, sku, barcode)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     p.id,
-    'Standard',
-    p.sku || '-S',
-    p.barcode || '-S'
-FROM products p;
+    ARRAY['Small', 'Medium', 'Large', 'Extra Large'][((random() * 3)::int + 1)],
+    p.sku || '-' || ARRAY['S', 'M', 'L', 'XL'][(random() * 3)::int + 1],
+    p.barcode || '-' || ARRAY['S', 'M', 'L', 'XL'][(random() * 3)::int + 1]
+FROM (
+    SELECT * FROM products ORDER BY RANDOM() LIMIT (100000 * 0.7)::int
+) p;
 
 -- ============================================================================
--- 8. PRODUCT IMAGES
+-- 8. PRODUCT IMAGES (1-5 per product)
 -- ============================================================================
 INSERT INTO product_images (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, image_url, alt_text, display_order)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     p.id,
-    'https://via.placeholder.com/400?text=' || p.name,
-    p.name || ' image',
-    1
-FROM products p;
+    'https://via.placeholder.com/400?text=Product' || p.id || 'Img' || img_num,
+    'Product ' || p.id || ' image ' || img_num,
+    img_num
+FROM products p
+CROSS JOIN generate_series(1, (1 + random() * 4)::int) AS img_num;
 
 -- ============================================================================
--- 9. BANNERS
+-- 9. BANNERS (20 banners)
 -- ============================================================================
 INSERT INTO banners (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, title, description, image_url, link_url, is_active, display_order)
-VALUES
-('550e8400-e29b-41d4-a716-446655770001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Summer Sale', 'Get 50% off on selected items', 'https://via.placeholder.com/1200x400?text=Summer+Sale', '/sale', true, 1),
-('550e8400-e29b-41d4-a716-446655770002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'New Arrivals', 'Check out our latest products', 'https://via.placeholder.com/1200x400?text=New+Arrivals', '/new', true, 2);
+SELECT
+    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    'Banner ' || i,
+    'Promotional banner ' || i,
+    'https://via.placeholder.com/1200x400?text=Banner' || i,
+    '/promo/' || i,
+    true,
+    i
+FROM generate_series(1, 20) AS t(i);
 
 -- ============================================================================
--- 10. CARTS (Basic carts for test customers)
+-- 10. CARTS (All 20,000 customers)
 -- ============================================================================
 INSERT INTO carts (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, total_items, total_price)
 SELECT
@@ -175,46 +183,61 @@ SELECT
     0,
     0.00
 FROM users u
-WHERE u.user_type = 'CUSTOMER'
-  AND NOT EXISTS (SELECT 1 FROM carts c WHERE c.user_id = u.id);
+WHERE u.user_type = 'CUSTOMER';
 
 -- ============================================================================
--- 11. ORDERS (5 test orders)
+-- 11. ORDERS (20,000 orders for phatmenghor21@gmail.com)
 -- ============================================================================
 INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, order_status, total_price, subtotal, tax_amount, discount_amount, delivery_fee, notes, customer_name, customer_phone, customer_email)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    ARRAY['550e8400-e29b-41d4-a716-446655550002', '550e8400-e29b-41d4-a716-446655550003', '550e8400-e29b-41d4-a716-446655550004', '550e8400-e29b-41d4-a716-446655550005', '550e8400-e29b-41d4-a716-446655550006'][i],
-    ARRAY['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'][((i-1) % 4) + 1],
-    (50 + random() * 200)::numeric(10,2),
-    (40 + random() * 180)::numeric(10,2),
-    (5 + random() * 10)::numeric(10,2),
-    (0 + random() * 20)::numeric(10,2),
+    '550e8400-e29b-41d4-a716-446655550002',
+    ARRAY['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'][(random() * 3)::int + 1],
+    (50 + random() * 500)::numeric(10,2),
+    (40 + random() * 450)::numeric(10,2),
+    (5 + random() * 20)::numeric(10,2),
+    (0 + random() * 50)::numeric(10,2),
     5.00,
-    'Test order notes ' || i,
-    'Customer ' || i,
-    '+855 10 100 ' || LPAD(i::text, 4, '0'),
-    'customer' || i || '@test.com'
-FROM generate_series(1, 5) AS t(i);
+    'Order history ' || i,
+    'Customer Phatmenghor',
+    '+855 10 100 0001',
+    'phatmenghor21@gmail.com'
+FROM generate_series(1, 20000) AS t(i);
 
 -- ============================================================================
 -- 12. REFERENCE COUNTERS
 -- ============================================================================
 INSERT INTO reference_counters (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, reference_type, current_value)
 VALUES
-('550e8400-e29b-41d4-a716-446655880001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ORDER', 1000),
-('550e8400-e29b-41d4-a716-446655880002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'INVOICE', 500);
+('550e8400-e29b-41d4-a716-446655880001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ORDER', 20000),
+('550e8400-e29b-41d4-a716-446655880002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'INVOICE', 20000);
 
 -- ============================================================================
--- 13. SYSTEM SETTINGS
+-- 13. SYSTEM SETTINGS (Full configuration)
 -- ============================================================================
 INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, setting_key, setting_value)
 VALUES
 ('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'PLATFORM_NAME', 'Tiffany E-Menu Platform'),
-('550e8400-e29b-41d4-a716-446655990002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'TAX_RATE', '10'),
-('550e8400-e29b-41d4-a716-446655990003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'CURRENCY', 'KHR'),
-('550e8400-e29b-41d4-a716-446655990004', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'DELIVERY_FEE', '5.00');
+('550e8400-e29b-41d4-a716-446655990002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'PLATFORM_VERSION', '1.0.0'),
+('550e8400-e29b-41d4-a716-446655990003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'TAX_RATE', '10'),
+('550e8400-e29b-41d4-a716-446655990004', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'CURRENCY', 'KHR'),
+('550e8400-e29b-41d4-a716-446655990005', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'DELIVERY_FEE', '5.00'),
+('550e8400-e29b-41d4-a716-446655990006', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'MIN_ORDER_AMOUNT', '10.00'),
+('550e8400-e29b-41d4-a716-446655990007', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'MAX_ORDER_AMOUNT', '10000.00'),
+('550e8400-e29b-41d4-a716-446655990008', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'BUSINESS_NAME', 'Tiffany Restaurant'),
+('550e8400-e29b-41d4-a716-446655990009', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'BUSINESS_ADDRESS', 'Phnom Penh, Cambodia'),
+('550e8400-e29b-41d4-a716-446655990010', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'BUSINESS_PHONE', '+855 23 888 9999'),
+('550e8400-e29b-41d4-a716-446655990011', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'BUSINESS_EMAIL', 'contact@tiffany.com'),
+('550e8400-e29b-41d4-a716-446655990012', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'OPENING_HOURS', '09:00-22:00'),
+('550e8400-e29b-41d4-a716-446655990013', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'CLOSING_HOURS', '22:00'),
+('550e8400-e29b-41d4-a716-446655990014', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ENABLE_DELIVERY', 'true'),
+('550e8400-e29b-41d4-a716-446655990015', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ENABLE_PICKUP', 'true'),
+('550e8400-e29b-41d4-a716-446655990016', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'MAX_DELIVERY_DISTANCE', '20'),
+('550e8400-e29b-41d4-a716-446655990017', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'DEFAULT_LANGUAGE', 'en'),
+('550e8400-e29b-41d4-a716-446655990018', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'TIMEZONE', 'Asia/Phnom_Penh'),
+('550e8400-e29b-41d4-a716-446655990019', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ENABLE_LOYALTY_PROGRAM', 'true'),
+('550e8400-e29b-41d4-a716-446655990020', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'LOYALTY_POINTS_MULTIPLIER', '1.0');
 
 -- ============================================================================
--- END OF CLEAN TEST DATA
+-- END OF LARGE SCALE TEST DATA
 -- ============================================================================
