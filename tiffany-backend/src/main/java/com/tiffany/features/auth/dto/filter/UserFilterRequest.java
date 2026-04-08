@@ -15,5 +15,4 @@ public class UserFilterRequest extends BaseFilterRequest {
     private List<AccountStatus> accountStatuses;
     private List<UserType> userTypes;
     private List<UserRole> userRoles;
-    private List<String> roles;
 }

@@ -11,7 +11,6 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -24,7 +23,6 @@ public class UserResponse extends BaseAuditResponse {
     private UserRole userRole;
     private AccountStatus accountStatus;
     private Status status;
-    private List<String> roles;
     private String remark;
 
     // ── Personal (from user_profiles) ─────────────────────────────────────

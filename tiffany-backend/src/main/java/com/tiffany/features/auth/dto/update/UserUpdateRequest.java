@@ -6,7 +6,6 @@ import com.tiffany.features.auth.dto.request.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,7 +15,6 @@ public class UserUpdateRequest {
     private AccountStatus accountStatus;
     private Status status;
     private UserRole userRole;
-    private List<String> roles;
     private String remark;
 
     // Personal

@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
         Page<User> page = userRepository.searchUsers(
                 (request.getUserTypes() != null && !request.getUserTypes().isEmpty()) ? request.getUserTypes() : null,
                 (request.getAccountStatuses() != null && !request.getAccountStatuses().isEmpty()) ? request.getAccountStatuses() : null,
-                (request.getRoles() != null && !request.getRoles().isEmpty()) ? request.getRoles() : null,
+                null,
                 request.getSearch(),
                 pageable);
 

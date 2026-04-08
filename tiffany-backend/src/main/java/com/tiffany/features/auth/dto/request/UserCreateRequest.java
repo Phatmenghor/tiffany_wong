@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 public class UserCreateRequest {
@@ -27,9 +26,6 @@ public class UserCreateRequest {
     private UserRole userRole;
 
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
-
-    @NotNull(message = "At least one role is required")
-    private List<String> roles;
 
     private String remark;
 

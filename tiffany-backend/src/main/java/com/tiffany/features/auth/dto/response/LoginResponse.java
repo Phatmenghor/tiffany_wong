@@ -4,7 +4,6 @@ import com.tiffany.enums.user.UserRole;
 import com.tiffany.enums.user.UserType;
 import lombok.Data;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -20,5 +19,4 @@ public class LoginResponse {
     private String profileImageUrl;
     private UserType userType;
     private UserRole userRole;
-    private List<String> roles;
 }
