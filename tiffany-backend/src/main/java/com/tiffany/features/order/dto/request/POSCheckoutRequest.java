@@ -100,6 +100,9 @@ public class POSCheckoutRequest {
 
         // Reason for order-level change
         private String orderLevelChangeReason;
+
+        // Whether order-level pricing changed due to POS operation
+        private Boolean hadOrderLevelChangeFromPOS = false;
     }
 
     @Data

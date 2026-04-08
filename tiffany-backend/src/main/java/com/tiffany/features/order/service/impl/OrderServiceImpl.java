@@ -877,7 +877,6 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderItem item : order.getItems()) {
             try {
-                stockService.deductStockFIFO(
                     item.getProductId(),
                     item.getProductSizeId(),
                     item.getQuantity(),

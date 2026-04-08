@@ -92,7 +92,7 @@ public class ProductServiceImpl implements ProductService {
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
                 filter.getHasSize(),
-                (filter.getStockStatuses() != null && !filter.getStockStatuses().isEmpty()) ? filter.getStockStatuses() : null,
+                (null != null && !null.isEmpty()) ? null : null,
                 filter.getSearch(),
                 pageable
         );
@@ -296,7 +296,7 @@ public class ProductServiceImpl implements ProductService {
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
                 filter.getHasSize(),
-                (filter.getStockStatuses() != null && !filter.getStockStatuses().isEmpty()) ? filter.getStockStatuses() : null,
+                (null != null && !null.isEmpty()) ? null : null,
                 filter.getSearch(),
                 pageable
         );
@@ -324,8 +324,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<ProductDetailDto> getAllProductsAdminStock(ProductFilterDto filter) {
-        log.debug("Starting getAllProductsAdminStock - Filter: Statuses={}, HasSize={}, StockStatuses={}, HasPromotion={}, Search={}",
-                filter.getStatuses(), filter.getHasSize(), filter.getStockStatuses(), filter.getHasPromotion(), filter.getSearch());
+                filter.getStatuses(), filter.getHasSize(), null, filter.getHasPromotion(), filter.getSearch());
 
         long startTime = System.currentTimeMillis();
 
@@ -349,7 +348,7 @@ public class ProductServiceImpl implements ProductService {
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
                 filter.getHasSize(),
-                (filter.getStockStatuses() != null && !filter.getStockStatuses().isEmpty()) ? filter.getStockStatuses() : null,
+                (null != null && !null.isEmpty()) ? null : null,
                 filter.getSearch(),
                 pageable
         );
@@ -820,9 +819,8 @@ public class ProductServiceImpl implements ProductService {
             log.debug("Product entity updated with request data");
 
             // Update stock status if provided
-            if (request.getStockStatus() != null) {
-                product.setStockStatus(request.getStockStatus());
-                log.debug("Product stock status updated: {}", request.getStockStatus());
+            if (null != null) {
+                log.debug("Product stock status updated: {}", null);
             }
 
             if (!product.getHasSizes()) {
@@ -1002,14 +1000,11 @@ public class ProductServiceImpl implements ProductService {
 
                 // Get stock for each size from repository
                 for (var sizeDto : dto.getSizes()) {
-                    Integer sizeStock = productStockRepository.sumOnHandQuantityByProductSizeId(sizeDto.getId());
                     int stock = sizeStock != null ? sizeStock : 0;
-                    sizeDto.setTotalStock(stock);
                     totalSizesStock += stock;
                 }
 
                 // Set parent product totalStock as sum of all sizes
-                dto.setTotalStock(totalSizesStock);
             }
             // For products without sizes, totalStock is already set by enrichTotalStockForDetails
         }
@@ -1020,18 +1015,13 @@ public class ProductServiceImpl implements ProductService {
         if (productIds.isEmpty()) return;
 
         Map<UUID, Integer> stockMap = new HashMap<>();
-        productStockRepository.sumOnHandQuantityByProductIds(productIds)
                 .forEach(row -> stockMap.put((UUID) row[0], ((Number) row[1]).intValue()));
 
-        dtoList.forEach(dto -> dto.setTotalStock(stockMap.getOrDefault(dto.getId(), 0)));
     }
 
     private void enrichTotalStockForDetail(ProductDetailDto dto, UUID productId) {
-        List<Object[]> results = productStockRepository.sumOnHandQuantityByProductIds(List.of(productId));
         if (!results.isEmpty()) {
-            dto.setTotalStock(((Number) results.get(0)[1]).intValue());
         } else {
-            dto.setTotalStock(0);
         }
     }
 
@@ -1040,10 +1030,8 @@ public class ProductServiceImpl implements ProductService {
         if (productIds.isEmpty()) return;
 
         Map<UUID, Integer> stockMap = new HashMap<>();
-        productStockRepository.sumOnHandQuantityByProductIds(productIds)
                 .forEach(row -> stockMap.put((UUID) row[0], ((Number) row[1]).intValue()));
 
-        dtoList.forEach(dto -> dto.setTotalStock(stockMap.getOrDefault(dto.getId(), 0)));
     }
 
     /**

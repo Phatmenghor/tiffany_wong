@@ -1,6 +1,8 @@
 package com.tiffany.features.order.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -8,6 +10,8 @@ import java.util.Map;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartItemResponse {
     private UUID id;
 
@@ -40,4 +44,18 @@ public class CartItemResponse {
     private BigDecimal promotionValue;
     private LocalDateTime promotionFromDate;
     private LocalDateTime promotionToDate;
+
+    // Pricing change tracking for POS operations
+    private PricingSnapshot before;            // Price snapshot before POS change
+    private PricingSnapshot after;             // Price snapshot after POS change
+    private Boolean hadChangeFromPOS = false;  // Whether price changed due to POS operation
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PricingSnapshot {
+        private BigDecimal price;
+        private BigDecimal total;
+        private BigDecimal discount;
+    }
 }

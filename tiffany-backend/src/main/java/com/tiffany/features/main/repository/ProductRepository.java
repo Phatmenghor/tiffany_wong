@@ -80,7 +80,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "WHERE pf.userId = :userId AND p.businessId = :businessId " +
            "AND p.isDeleted = false AND pf.isDeleted = false")
     Page<Product> findUserFavoritesByBusiness(@Param("userId") UUID userId,
-                                              @Param("businessId") UUID businessId,
                                               Pageable pageable);
 
     /**
@@ -106,7 +105,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "     LOWER(p.categoryName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "     LOWER(p.brandName) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Product> findAllWithFiltersOptimized(
-        @Param("businessId") UUID businessId,
         @Param("categoryId") UUID categoryId,
         @Param("brandId") UUID brandId,
         @Param("statuses") List<ProductStatus> statuses,
@@ -142,7 +140,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "     LOWER(p.categoryName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "     LOWER(p.brandName) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Product> findAllWithFilters(
-        @Param("businessId") UUID businessId,
         @Param("categoryId") UUID categoryId,
         @Param("brandId") UUID brandId,
         @Param("statuses") List<ProductStatus> statuses,
@@ -179,7 +176,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "     LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "     LOWER(b.name) LIKE LOWER(CONCAT('%', :search, '%')))")
     List<Product> findAllWithFilters(
-        @Param("businessId") UUID businessId,
         @Param("categoryId") UUID categoryId,
         @Param("brandId") UUID brandId,
         @Param("statuses") List<ProductStatus> statuses,
@@ -364,7 +360,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "WHERE business_id = :businessId " +
         "  AND is_deleted = false " +
         "  AND has_sizes = false")
-    int resetAllPromotionsForProductsWithoutSizes(@Param("businessId") UUID businessId);
 
     /**
      * Reset ALL promotions for products in a specific business - FAST native SQL query
@@ -387,7 +382,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "WHERE p.business_id = :businessId " +
         "  AND p.is_deleted = false " +
         "  AND p.has_sizes = true")
-    int resetAllPromotionsForProductsWithSizes(@Param("businessId") UUID businessId);
 
     /**
      * Reset promotion for a single product.

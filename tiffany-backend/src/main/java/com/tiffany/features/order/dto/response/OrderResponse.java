@@ -3,8 +3,10 @@ package com.tiffany.features.order.dto.response;
 import com.tiffany.enums.order.OrderStatus;
 import com.tiffany.features.order.enums.OrderFromEnum;
 import com.tiffany.shared.dto.BaseAuditResponse;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,4 +42,17 @@ public class OrderResponse extends BaseAuditResponse {
 
     // Status history
     private List<OrderStatusHistoryResponse> statusHistory;
+
+    // Pricing info wrapper
+    private PricingInfo pricing;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PricingInfo {
+        private BigDecimal finalTotal;
+        private BigDecimal subtotal;
+        private BigDecimal discountAmount;
+        private BigDecimal deliveryFee;
+    }
 }
