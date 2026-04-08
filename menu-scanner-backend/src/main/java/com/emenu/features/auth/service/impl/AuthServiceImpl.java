@@ -124,8 +124,7 @@ public class AuthServiceImpl implements AuthService {
         // Validate username uniqueness for CUSTOMER type (global uniqueness among customers)
         userValidationService.validateUsernameUniqueness(
                 request.getUserIdentifier(),
-                UserType.CUSTOMER,
-                null
+                UserType.CUSTOMER
         );
 
         User user = userMapper.toEntity(request);

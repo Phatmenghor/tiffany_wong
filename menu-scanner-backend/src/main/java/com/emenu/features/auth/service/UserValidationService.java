@@ -15,38 +15,18 @@ public class UserValidationService {
 
     private final UserRepository userRepository;
 
-    public boolean isUsernameAvailable(String userIdentifier, UserType userType, UUID businessId) {
-        log.debug("Checking username availability: {} for type: {} in business: {}", userIdentifier, userType, businessId);
+    public boolean isUsernameAvailable(String userIdentifier, UserType userType) {
+        log.debug("Checking username availability: {} for type: {}", userIdentifier, userType);
 
-        switch (userType) {
-            case PLATFORM_USER:
-            case CUSTOMER:
-                // For platform users and customers, check global uniqueness within their user type
-                boolean existsByType = userRepository.existsByUserIdentifierAndUserTypeAndIsDeletedFalse(userIdentifier, userType);
-                log.debug("Username {} exists for type {}: {}", userIdentifier, userType, existsByType);
-                return !existsByType;
-
-            case BUSINESS_USER:
-                // For business users, check uniqueness within the specific business
-                if (businessId == null) {
-                    log.warn("Business ID is required for BUSINESS_USER type validation");
-                    throw new IllegalArgumentException("Business ID is required for BUSINESS_USER type");
-                }
-                boolean existsInBusiness = userRepository.existsByUserIdentifierAndBusinessIdAndIsDeletedFalse(userIdentifier, businessId);
-                log.debug("Username {} exists in business {}: {}", userIdentifier, businessId, existsInBusiness);
-                return !existsInBusiness;
-
-            default:
-                log.error("Unknown user type: {}", userType);
-                throw new IllegalArgumentException("Unknown user type: " + userType);
-        }
+        // Check global uniqueness by user type
+        boolean existsByType = userRepository.existsByUserIdentifierAndUserTypeAndIsDeletedFalse(userIdentifier, userType);
+        log.debug("Username {} exists for type {}: {}", userIdentifier, userType, existsByType);
+        return !existsByType;
     }
 
-    public void validateUsernameUniqueness(String userIdentifier, UserType userType, UUID businessId) {
-        if (!isUsernameAvailable(userIdentifier, userType, businessId)) {
-            String context = userType == UserType.BUSINESS_USER
-                    ? " in this business"
-                    : " for " + userType.name().toLowerCase().replace("_", " ");
+    public void validateUsernameUniqueness(String userIdentifier, UserType userType) {
+        if (!isUsernameAvailable(userIdentifier, userType)) {
+            String context = " for " + userType.name().toLowerCase().replace("_", " ");
             throw new com.emenu.exception.custom.ValidationException(
                     "Username '" + userIdentifier + "' is already taken" + context
             );
