@@ -22,14 +22,14 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { demoBusinessProfile } from "@/data/business-profile-template";
-import { BusinessProfile, DayOfWeek, CustomerReview } from "@/types/business-profile";
+import { SystemAdminSettings, DayOfWeek, CustomerReview } from "@/types/system-admin";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ReviewSubmissionModal } from "@/components/business-profile/review-submission-modal";
 
 export default function BusinessProfilePage() {
-  const [profile] = useState<BusinessProfile>(demoBusinessProfile);
+  const [profile] = useState<SystemAdminSettings>(demoBusinessProfile);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   const getDayLabel = (day: DayOfWeek): string => {

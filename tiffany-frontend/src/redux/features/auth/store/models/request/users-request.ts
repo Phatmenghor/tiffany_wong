@@ -1,5 +1,5 @@
 /**
- * User Request Types
+ * User Request Types - Aligned with Tiffany Cambodia backend
  */
 
 import { BaseGetAllRequest } from "@/utils/common/get-all-request";
@@ -16,12 +16,12 @@ export interface CreateUserRequest {
   phoneNumber?: string;
   profileImageUrl?: string;
   userType: string;
-  businessId?: string;
-  roles: string[];
-  position?: string;
-  address?: string;
-  notes?: string;
+  userRole: string;
   accountStatus?: string;
+  nickname?: string;
+  gender?: string;
+  dateOfBirth?: string;
+  remark?: string;
 }
 
 /**
@@ -31,14 +31,15 @@ export interface UpdateUserRequest {
   id?: string;
   firstName?: string;
   lastName?: string;
+  email?: string;
   phoneNumber?: string;
   profileImageUrl?: string;
   accountStatus?: string;
-  businessId?: string;
-  roles?: string[];
-  position?: string;
-  address?: string;
-  notes?: string;
+  userRole?: string;
+  nickname?: string;
+  gender?: string;
+  dateOfBirth?: string;
+  remark?: string;
 }
 
 /**
@@ -46,7 +47,7 @@ export interface UpdateUserRequest {
  */
 export interface AllUserRequest extends BaseGetAllRequest {
   accountStatuses?: string[];
-  roles?: string[];
+  userRoles?: string[];
   userTypes?: string[];
 }
 

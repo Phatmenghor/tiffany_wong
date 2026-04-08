@@ -108,8 +108,8 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
         telegramAuthenticateService({ telegramData, userType: "CUSTOMER" }),
       ).unwrap();
 
-      if (result?.userType === "BUSINESS_USER") {
-        showToast.error("❌ Business accounts must use the Admin Login page");
+      if (result?.userType === "OWNER") {
+        showToast.error("❌ Owner accounts must use the Admin Login page");
         const { clearAllTokens, clearAdminTokens } = await import("@/utils/local-storage/token");
         const { clearUserInfo, clearAdminUserInfo } = await import("@/utils/local-storage/userInfo");
         clearAllTokens();

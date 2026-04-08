@@ -27,7 +27,7 @@ import {
   clearAdminUserInfo,
 } from "@/utils/local-storage/userInfo";
 
-const isAdmin = (userType?: string) => userType === "BUSINESS_USER";
+const isOwner = (userType?: string) => userType === "OWNER";
 
 /**
  * Extended auth state with social sync info
@@ -209,10 +209,10 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
 
         // Only clear tokens for the user type being logged out
-        const isAdmin = state.user?.userType === "BUSINESS_USER";
+        const isOwnerType = state.user?.userType === "OWNER";
 
-        if (isAdmin) {
-          // Admin logout - only clear admin tokens
+        if (isOwnerType) {
+          // Owner logout - only clear owner tokens
           clearAdminTokens();
           clearAdminUserInfo();
           console.log("## [LOGOUT] Cleared admin tokens only");
@@ -233,10 +233,10 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
 
         // Only clear tokens for the user type being logged out
-        const isAdmin = state.user?.userType === "BUSINESS_USER";
+        const isOwnerType = state.user?.userType === "OWNER";
 
-        if (isAdmin) {
-          // Admin logout - only clear admin tokens
+        if (isOwnerType) {
+          // Owner logout - only clear owner tokens
           clearAdminTokens();
           clearAdminUserInfo();
           console.log("## [LOGOUT] Cleared admin tokens only (on error)");

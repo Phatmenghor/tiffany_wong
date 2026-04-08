@@ -11,11 +11,8 @@ export interface UserAuthResponseModel {
   userIdentifier: string;
   email: string;
   fullName: string;
-  profileImageUrl: any;
+  profileImageUrl?: string;
   userType: string;
-  roles: string[];
-  businessId: string;
-  businessName: string;
-  businessStatus: string;
-  isSubscriptionActive: string;
+  userRole: string;
+  accountStatus: string;
 }

@@ -5,6 +5,7 @@ export enum Status {
 }
 
 // Status configuration with descriptions and helper properties
+// Note: Status enum is deprecated in favor of AccountStatus
 export const StatusConfig = {
   [Status.ACTIVE]: {
     label: "Active",
@@ -33,11 +34,11 @@ export const isInactive = (status: Status): boolean => {
   return status === Status.INACTIVE;
 };
 
+// AccountStatus aligned with backend User entity
 export enum AccountStatus {
   ALL = "ALL",
   ACTIVE = "ACTIVE",
-  END_WORK = "END_WORK",
-  LOCKED = "LOCKED",
+  INACTIVE = "INACTIVE",
 }
 
 // Types
@@ -46,33 +47,24 @@ export enum ModalMode {
   UPDATE_MODE = "update",
 }
 
+// UserRole aligned with backend User entity
 export enum UserRole {
   ALL = "ALL",
-
-  PLATFORM_OWNER = "PLATFORM_OWNER",
-  PLATFORM_ADMIN = "PLATFORM_ADMIN",
-  PLATFORM_MANAGER = "PLATFORM_MANAGER",
-  PLATFORM_SUPPORT = "PLATFORM_SUPPORT",
-
-  BUSINESS_OWNER = "BUSINESS_OWNER",
-  BUSINESS_MANAGER = "BUSINESS_MANAGER",
-  BUSINESS_STAFF = "BUSINESS_STAFF",
-
+  ADMIN = "ADMIN",
+  STAFF = "STAFF",
   CUSTOMER = "CUSTOMER",
 }
 
+// Deprecated - use UserRole enum instead
 export enum UserPlatformRole {
-  PLATFORM_OWNER = "PLATFORM_OWNER",
-  PLATFORM_ADMIN = "PLATFORM_ADMIN",
-  PLATFORM_MANAGER = "PLATFORM_MANAGER",
-  PLATFORM_SUPPORT = "PLATFORM_SUPPORT",
+  ADMIN = "ADMIN",
+  STAFF = "STAFF",
 }
 
+// Deprecated - use UserRole enum instead
 export enum BusinessUserRole {
-  BUSINESS_OWNER = "BUSINESS_OWNER",
-  BUSINESS_MANAGER = "BUSINESS_MANAGER",
-  BUSINESS_STAFF = "BUSINESS_STAFF",
-
+  ADMIN = "ADMIN",
+  STAFF = "STAFF",
   CUSTOMER = "CUSTOMER",
 }
 
@@ -82,15 +74,16 @@ export enum SubscriptionPlanStatus {
   PRIVATE = "PRIVATE",
 }
 
+// UserType aligned with backend User entity
 export enum UserGropeType {
   ALL = "ALL",
-  PLATFORM_USER = "PLATFORM_USER",
-  BUSINESS_USER = "BUSINESS_USER",
+  OWNER = "OWNER",
   CUSTOMER = "CUSTOMER",
 }
 
+// Deprecated - use UserGropeType enum instead
 export enum BusinessUserType {
-  BUSINESS_USER = "BUSINESS_USER",
+  OWNER = "OWNER",
   CUSTOMER = "CUSTOMER",
 }
 

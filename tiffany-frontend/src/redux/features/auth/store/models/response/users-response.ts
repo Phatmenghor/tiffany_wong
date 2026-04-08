@@ -55,35 +55,13 @@ export interface UserResponseModel {
   phoneNumber: string;
   profileImageUrl: string;
   userType: string;
-  accountStatus: string;          // Business user status (ACTIVE, END_WORK, LOCKED)
-  status: string;                 // System status
-  roles: string[];
-  position?: string;
-  address?: string;
-  notes?: string;
-  businessId: string;
-  businessName?: string;
+  userRole: string;
+  accountStatus: string;
+  remark?: string;
   nickname?: string;
   gender?: string;
   dateOfBirth?: string;
-  employeeId?: string;
-  department?: string;
-  employmentType?: string;
-  joinDate?: string;
-  leaveDate?: string;
-  shift?: string;
-  remark?: string;
-  telegramId?: string;
-  telegramUsername?: string;
-  telegramFirstName?: string;
-  telegramLastName?: string;
-  telegramPhotoUrl?: string;
-  telegramSyncedAt?: string;
-  telegramSynced?: boolean;
   addresses?: Address[];
-  emergencyContacts?: EmergencyContact[];
-  documents?: Document[];
-  educations?: Education[];
 }
 
 export interface UserInfoModel {

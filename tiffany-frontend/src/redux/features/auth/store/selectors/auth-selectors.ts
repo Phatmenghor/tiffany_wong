@@ -120,7 +120,7 @@ export const selectUserType = createSelector(
  */
 export const selectIsAdmin = createSelector(
   [selectUserType],
-  (userType) => userType === "BUSINESS_USER"
+  (userType) => userType === "OWNER"
 );
 
 /**

@@ -267,7 +267,7 @@ export default function BusinessSettingsPage() {
     <div className="flex flex-1 flex-col gap-6 px-4 py-6">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold">Business Settings</h1>
+        <h1 className="text-3xl font-bold">System Settings</h1>
         <p className="text-muted-foreground">
           Manage your business configuration and social media accounts
         </p>

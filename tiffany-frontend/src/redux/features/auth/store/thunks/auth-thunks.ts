@@ -26,14 +26,14 @@ export const loginService = createApiThunk<any, LoginCredentialsRequest>(
     if (data.accessToken) {
       console.log("## [THUNK] Storing tokens for userType:", data.userType);
 
-      const isAdmin = (userType?: string) => userType === "BUSINESS_USER";
+      const isOwner = (userType?: string) => userType === "OWNER";
 
-      if (isAdmin(data.userType)) {
-        console.log("## [THUNK] Storing ADMIN tokens (keeping customer auth)");
+      if (isOwner(data.userType)) {
+        console.log("## [THUNK] Storing OWNER tokens (keeping customer auth)");
         storeAdminTokens(data.accessToken, data.refreshToken);
         storeAdminUserInfo(data);
       } else {
-        console.log("## [THUNK] Storing CUSTOMER tokens (keeping admin auth)");
+        console.log("## [THUNK] Storing CUSTOMER tokens (keeping owner auth)");
         storeTokens(data.accessToken, data.refreshToken);
         storeUserInfo(data);
       }

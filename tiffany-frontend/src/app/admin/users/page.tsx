@@ -74,7 +74,7 @@ export default function UserBusinessPage() {
     dispatch(
       fetchAllRolesListService({
         includeAll: false,
-        userTypes: [UserGropeType.BUSINESS_USER],
+        userTypes: [UserGropeType.OWNER],
       }),
     );
   }, [dispatch]);
@@ -86,7 +86,7 @@ export default function UserBusinessPage() {
       pageNo: filters.pageNo,
       pageSize: globalPageSize,
       roles: filters.role === UserRole.ALL ? [] : [filters.role],
-      userTypes: [UserGropeType.BUSINESS_USER],
+      userTypes: [UserGropeType.OWNER],
       accountStatuses: filters.accountStatus === AccountStatus.ALL ? [] : [filters.accountStatus],
     };
 

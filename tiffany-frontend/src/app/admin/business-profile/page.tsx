@@ -19,14 +19,14 @@ import { Badge } from "@/components/ui/badge";
 import { showToast } from "@/components/shared/common/show-toast";
 import { demoBusinessProfile } from "@/data/business-profile-template";
 import {
-  BusinessProfile,
+  SystemAdminSettings,
   BusinessType,
   DayOfWeek,
-} from "@/types/business-profile";
+} from "@/types/system-admin";
 import Link from "next/link";
 
 export default function BusinessProfileEditorPage() {
-  const [profile, setProfile] = useState<BusinessProfile>(demoBusinessProfile);
+  const [profile, setProfile] = useState<SystemAdminSettings>(demoBusinessProfile);
   const [activeTab, setActiveTab] = useState<string>("basic");
 
   const {

@@ -11,27 +11,27 @@ import {
   UserRole,
 } from "./status";
 
+// Aligned with backend UserRole enum (ADMIN, STAFF, CUSTOMER)
 export const USER_PLATFORM_ROLE_CREATE_UPDATE = [
-  { value: UserRole.PLATFORM_OWNER, label: "Platform Owner" },
-  { value: UserRole.PLATFORM_ADMIN, label: "Platform Admin" },
-  { value: UserRole.PLATFORM_MANAGER, label: "Platform Manager" },
-  { value: UserRole.PLATFORM_SUPPORT, label: "Platform Support" },
+  { value: UserRole.ADMIN, label: "Admin" },
+  { value: UserRole.STAFF, label: "Staff" },
+  { value: UserRole.CUSTOMER, label: "Customer" },
 ];
 
+// Aligned with backend UserRole enum (ADMIN, STAFF, CUSTOMER)
 export const USER_BUSINESS_ROLE_CREATE_UPDATE = [
-  { value: UserRole.BUSINESS_OWNER, label: "Business Owner" },
-  { value: UserRole.BUSINESS_MANAGER, label: "Business Manager" },
-  { value: UserRole.BUSINESS_STAFF, label: "Business Staff" },
+  { value: UserRole.ADMIN, label: "Admin" },
+  { value: UserRole.STAFF, label: "Staff" },
 ];
 
 export const USER_CUSTOMER_ROLE_CREATE_UPDATE = [
   { value: UserRole.CUSTOMER, label: "Customer" },
 ];
 
+// Aligned with backend AccountStatus enum (ACTIVE, INACTIVE)
 export const ACCOUNT_STATUS_CREATE_UPDATE = [
   { value: AccountStatus.ACTIVE, label: "Active" },
-  { value: AccountStatus.END_WORK, label: "End Work" },
-  { value: AccountStatus.LOCKED, label: "Locked" },
+  { value: AccountStatus.INACTIVE, label: "Inactive" },
 ];
 
 export const BUSINESS_STATUS_CREATE_UPDATE = [

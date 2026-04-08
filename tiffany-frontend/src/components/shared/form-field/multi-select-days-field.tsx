@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Controller, FieldError } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { DayOfWeek } from "@/types/business-profile";
+import { DayOfWeek } from "@/types/system-admin";
 import { Check } from "lucide-react";
 
 const DAYS_OF_WEEK = [

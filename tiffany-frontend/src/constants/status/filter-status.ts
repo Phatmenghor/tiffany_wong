@@ -9,21 +9,20 @@ import {
   UserRole,
 } from "./status";
 
+// Aligned with backend UserRole enum (ADMIN, STAFF, CUSTOMER)
 export const USER_PLATFORM_ROLE_FILTER = [
   { value: UserRole.ALL, label: "All Roles" },
-
-  { value: UserRole.PLATFORM_OWNER, label: "Platform Owner" },
-  { value: UserRole.PLATFORM_ADMIN, label: "Platform Admin" },
-  { value: UserRole.PLATFORM_MANAGER, label: "Platform Manager" },
-  { value: UserRole.PLATFORM_SUPPORT, label: "Platform Support" },
+  { value: UserRole.ADMIN, label: "Admin" },
+  { value: UserRole.STAFF, label: "Staff" },
+  { value: UserRole.CUSTOMER, label: "Customer" },
 ];
 
+// Aligned with backend UserRole enum (ADMIN, STAFF, CUSTOMER)
 export const USER_BUSINESS_ROLE_FILTER = [
   { value: UserRole.ALL, label: "All Roles" },
-
-  { value: UserRole.BUSINESS_OWNER, label: "Platform Owner" },
-  { value: UserRole.BUSINESS_MANAGER, label: "Platform Admin" },
-  { value: UserRole.BUSINESS_STAFF, label: "Platform Manager" },
+  { value: UserRole.ADMIN, label: "Admin" },
+  { value: UserRole.STAFF, label: "Staff" },
+  { value: UserRole.CUSTOMER, label: "Customer" },
 ];
 
 export const BUSINESS_FILTER = [
@@ -111,11 +110,11 @@ export const SUBSCRIPT_STATUS_FILTER = [
   { value: Status.INACTIVE, label: "Expried" },
 ];
 
+// Aligned with backend AccountStatus enum (ACTIVE, INACTIVE)
 export const ACCOUNT_STATUS_FILTER = [
   { value: AccountStatus.ALL, label: "All Status" },
   { value: AccountStatus.ACTIVE, label: "Active" },
-  { value: AccountStatus.END_WORK, label: "End Work" },
-  { value: AccountStatus.LOCKED, label: "Locked" },
+  { value: AccountStatus.INACTIVE, label: "Inactive" },
 ];
 
 export const PRODUCT_STATUS_FILTER = [

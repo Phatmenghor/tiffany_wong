@@ -103,7 +103,7 @@ export const SIDEBAR_MENU: MenuItem[] = [
     icon: Settings,
     items: [
       {
-        title: "Business Settings",
+        title: "System Settings",
         href: ROUTES.ADMIN.BUSINESS_SETTINGS,
       },
     ],
@@ -171,7 +171,7 @@ export const getBreadcrumbs = (pathname: string): Breadcrumb[] => {
  */
 
 export const getDefaultAdminRoute = (): string => {
-  return "PLATFORM_USERS";
+  return ROUTES.ADMIN.DASHBOARD;
 };
 
 export const getLoginRedirectUrl = (): string => {

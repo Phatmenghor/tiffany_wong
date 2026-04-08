@@ -123,7 +123,7 @@ export default function UserBusinessModal({
       nickname: "",
       phoneNumber: "",
       password: "",
-      userType: UserGropeType.BUSINESS_USER,
+      userType: UserGropeType.OWNER,
       roles: [],
       accountStatus: AccountStatus.ACTIVE,
       gender: "",
@@ -198,7 +198,7 @@ export default function UserBusinessModal({
           pageSize: 100,
           includeAll: false,
           businessId: AppDefault.BUSINESS_ID,
-          userTypes: [UserGropeType.BUSINESS_USER],
+          userTypes: [UserGropeType.OWNER],
         }),
       );
     }
@@ -268,7 +268,7 @@ export default function UserBusinessModal({
         nickname: "",
         phoneNumber: "",
         password: "",
-        userType: UserGropeType.BUSINESS_USER,
+        userType: UserGropeType.OWNER,
         roles: [],
         accountStatus: AccountStatus.ACTIVE,
         gender: "",
