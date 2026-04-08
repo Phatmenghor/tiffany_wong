@@ -16,8 +16,8 @@ import java.util.UUID;
         @UniqueConstraint(name = "uk_user_identifier", columnNames = {"user_identifier"})
 })
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"profile", "employment", "telegram", "addresses", "emergencyContacts", "documents", "educations"})
-@ToString(exclude = {"profile", "employment", "telegram", "addresses", "emergencyContacts", "documents", "educations"})
+@EqualsAndHashCode(callSuper = true, exclude = {"profile", "employment", "telegram"})
+@ToString(exclude = {"profile", "employment", "telegram"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends BaseUUIDEntity {
@@ -56,31 +56,6 @@ public class User extends BaseUUIDEntity {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserTelegram telegram;
-
-    // ── Related Lists ─────────────────────────────────────────────────────────
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<UserAddress> addresses = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<UserEmergencyContact> emergencyContacts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<UserDocument> documents = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<UserEducation> educations = new ArrayList<>();
-
-    // ── Session Tracking ──────────────────────────────────────────────────────
-
-    @Column(name = "last_login_at")
-    private java.time.LocalDateTime lastLoginAt;
-
-    @Column(name = "last_active_at")
-    private java.time.LocalDateTime lastActiveAt;
-
-    @Column(name = "active_sessions_count")
-    private Integer activeSessionsCount = 0;
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
