@@ -1,6 +1,7 @@
 package com.tiffany.features.auth.dto.request;
 
 import com.tiffany.enums.user.AccountStatus;
+import com.tiffany.enums.user.UserRole;
 import com.tiffany.enums.user.UserType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +22,10 @@ public class RegisterRequest {
 
     @NotNull(message = "User type is required")
     private UserType userType = UserType.CUSTOMER;
+
+    @NotNull(message = "User role is required")
+    private UserRole userRole = UserRole.CUSTOMER;
+
     private String firstName;
     private String lastName;
     private String profileImageUrl;

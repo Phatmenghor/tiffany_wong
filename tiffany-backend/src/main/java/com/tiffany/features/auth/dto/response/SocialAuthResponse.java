@@ -1,5 +1,6 @@
 package com.tiffany.features.auth.dto.response;
 
+import com.tiffany.enums.user.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class SocialAuthResponse {
     private UUID userId;
     private String userIdentifier;
     private String userType;
+    private UserRole userRole;
 
     private String accessToken;
     private String refreshToken;

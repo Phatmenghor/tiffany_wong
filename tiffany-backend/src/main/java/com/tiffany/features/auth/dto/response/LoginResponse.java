@@ -1,5 +1,6 @@
 package com.tiffany.features.auth.dto.response;
 
+import com.tiffany.enums.user.UserRole;
 import com.tiffany.enums.user.UserType;
 import lombok.Data;
 
@@ -18,5 +19,6 @@ public class LoginResponse {
     private String fullName;
     private String profileImageUrl;
     private UserType userType;
+    private UserRole userRole;
     private List<String> roles;
 }
