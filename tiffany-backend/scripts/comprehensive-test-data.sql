@@ -283,12 +283,12 @@ CROSS JOIN generate_series(0, 6) AS t(day);
 -- ============================================================================
 -- 14. SOCIAL MEDIA
 -- ============================================================================
-INSERT INTO social_media (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, platform_name, platform_url, icon_url)
+INSERT INTO social_media (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, name, link_url)
 VALUES
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Facebook', 'https://facebook.com/tiffany', 'https://via.placeholder.com/40?text=FB'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Instagram', 'https://instagram.com/tiffany', 'https://via.placeholder.com/40?text=IG'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Telegram', 'https://t.me/tiffany', 'https://via.placeholder.com/40?text=TG'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'TikTok', 'https://tiktok.com/@tiffany', 'https://via.placeholder.com/40?text=TK');
+    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Facebook', 'https://facebook.com/tiffany'),
+    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Instagram', 'https://instagram.com/tiffany'),
+    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Telegram', 'https://t.me/tiffany'),
+    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'TikTok', 'https://tiktok.com/@tiffany');
 
 -- ============================================================================
 -- 15. PRODUCT FAVORITES (For phatmenghor21@gmail.com user - 50 favorites)
