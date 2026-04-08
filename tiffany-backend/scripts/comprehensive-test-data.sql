@@ -415,20 +415,19 @@ CROSS JOIN LATERAL (
 -- ============================================================================
 -- 12. ORDER DELIVERY ADDRESSES
 -- ============================================================================
-INSERT INTO order_delivery_addresses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, street, ward, district, province, country, postal_code, latitude, longitude, address_type, is_default)
+INSERT INTO order_delivery_addresses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, village, commune, district, province, street_number, house_number, note, latitude, longitude)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     o.id,
-    'Street ' || (random() * 1000)::int,
-    'Ward ' || (random() * 100)::int,
-    'District ' || (random() * 50)::int,
+    'Village ' || (random() * 100)::int,
+    'Commune ' || (random() * 50)::int,
+    'District ' || (random() * 20)::int,
     'Province',
-    'Cambodia',
-    '12345',
+    'Street ' || (random() * 1000)::int,
+    'House ' || (random() * 500)::int,
+    'Delivery note',
     11.5564 + (random() - 0.5) * 0.1,
-    104.9282 + (random() - 0.5) * 0.1,
-    'DELIVERY',
-    true
+    104.9282 + (random() - 0.5) * 0.1
 FROM orders o;
 
 -- ============================================================================
