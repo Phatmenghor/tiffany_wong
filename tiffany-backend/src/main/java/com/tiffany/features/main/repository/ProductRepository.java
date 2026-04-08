@@ -392,10 +392,4 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Transactional
     @Query("UPDATE Product p SET p.status = :status WHERE p.categoryId = :categoryId AND p.isDeleted = false")
     int updateProductsStatusByCategory(@Param("categoryId") UUID categoryId, @Param("status") ProductStatus status);
-
-    /**
-     * Find product by ID without collections (for loading separately)
-     */
-    @Query("SELECT p FROM Product p WHERE p.id = :id AND p.isDeleted = false")
-    Optional<Product> findByIdSimple(@Param("id") UUID id);
 }
