@@ -11,6 +11,7 @@ import {
   updateProfileService,
   changePasswordService,
   deleteAccountService,
+  logoutService,
 } from "../thunks/auth-thunks";
 
 import { AuthState } from "../models/type/auth-types";
