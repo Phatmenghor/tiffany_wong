@@ -4,11 +4,15 @@ import com.tiffany.enums.order.OrderStatus;
 import com.tiffany.features.order.enums.OrderFromEnum;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderCreateRequest {
 
     // Delivery info - use ID to fetch full address from database
