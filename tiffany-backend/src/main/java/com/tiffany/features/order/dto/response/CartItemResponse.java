@@ -21,14 +21,14 @@ public class CartItemResponse {
 
     private Integer quantity;
 
-    private BigDecimal basePrice;
-    private BigDecimal finalPrice;
-    private BigDecimal itemDiscountAmount;
+    private BigDecimal currentPriceBeforeDiscount;
+    private BigDecimal currentPriceAfterDiscount;
+    private BigDecimal discountAmountPerItem;
     private String discountType;
-    private BigDecimal discountPercent;
+    private BigDecimal discountPercentage;
     private Boolean hasDiscount;
 
-    private BigDecimal totalBeforeDiscount;
-    private BigDecimal totalDiscountAmount;
-    private BigDecimal totalPrice;
+    private BigDecimal subtotalBeforeDiscount;
+    private BigDecimal subtotalDiscountAmount;
+    private BigDecimal subtotalAfterDiscount;
 }

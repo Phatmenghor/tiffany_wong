@@ -23,9 +23,9 @@ public interface CartMapper {
     @Mapping(target = "productSizeId", source = "productSizeId")
     @Mapping(target = "sizeName", source = "sizeName")
     @Mapping(target = "quantity", source = "quantity")
-    @Mapping(target = "basePrice", expression = "java(cartItem.getCurrentPrice())")
-    @Mapping(target = "finalPrice", expression = "java(cartItem.getFinalPrice())")
-    @Mapping(target = "totalPrice", expression = "java(cartItem.getTotalPrice())")
+    @Mapping(target = "currentPriceBeforeDiscount", expression = "java(cartItem.getCurrentPrice())")
+    @Mapping(target = "currentPriceAfterDiscount", expression = "java(cartItem.getFinalPrice())")
+    @Mapping(target = "subtotalAfterDiscount", expression = "java(cartItem.getTotalPrice())")
     @Mapping(target = "hasDiscount", expression = "java(cartItem.hasDiscount())")
     CartItemResponse toItemResponse(CartItem cartItem);
 
@@ -58,33 +58,35 @@ public interface CartMapper {
 
     @AfterMapping
     default void calculatePricingBreakdown(@MappingTarget CartItemResponse response, CartItem cartItem) {
-        if (response.getBasePrice() != null && response.getQuantity() != null) {
-            BigDecimal totalBeforeDiscount = response.getBasePrice()
+        if (response.getCurrentPriceBeforeDiscount() != null && response.getQuantity() != null) {
+            BigDecimal subtotalBeforeDiscount = response.getCurrentPriceBeforeDiscount()
                     .multiply(new BigDecimal(response.getQuantity()));
-            response.setTotalBeforeDiscount(totalBeforeDiscount);
+            response.setSubtotalBeforeDiscount(subtotalBeforeDiscount);
 
-            if (response.getTotalPrice() != null) {
-                BigDecimal totalDiscountAmount = totalBeforeDiscount.subtract(response.getTotalPrice());
-                response.setTotalDiscountAmount(totalDiscountAmount);
+            if (response.getSubtotalAfterDiscount() != null) {
+                BigDecimal subtotalDiscountAmount = subtotalBeforeDiscount.subtract(response.getSubtotalAfterDiscount());
+                response.setSubtotalDiscountAmount(subtotalDiscountAmount);
 
-                if (response.getBasePrice().compareTo(BigDecimal.ZERO) > 0) {
-                    BigDecimal itemDiscountAmount = response.getBasePrice().subtract(response.getFinalPrice());
-                    response.setItemDiscountAmount(itemDiscountAmount);
+                if (response.getCurrentPriceBeforeDiscount().compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal itemDiscountAmount = response.getCurrentPriceBeforeDiscount()
+                            .subtract(response.getCurrentPriceAfterDiscount());
+                    response.setDiscountAmountPerItem(itemDiscountAmount);
                 }
             }
         }
     }
 
     default void calculateDiscountAmount(CartItemResponse response) {
-        if (response.getBasePrice() != null && response.getFinalPrice() != null) {
-            BigDecimal discountAmount = response.getBasePrice().subtract(response.getFinalPrice());
-            response.setItemDiscountAmount(discountAmount);
+        if (response.getCurrentPriceBeforeDiscount() != null && response.getCurrentPriceAfterDiscount() != null) {
+            BigDecimal discountAmount = response.getCurrentPriceBeforeDiscount()
+                    .subtract(response.getCurrentPriceAfterDiscount());
+            response.setDiscountAmountPerItem(discountAmount);
 
-            if ("PERCENTAGE".equals(response.getDiscountType()) && response.getBasePrice().compareTo(BigDecimal.ZERO) > 0) {
+            if ("PERCENTAGE".equals(response.getDiscountType()) && response.getCurrentPriceBeforeDiscount().compareTo(BigDecimal.ZERO) > 0) {
                 BigDecimal discountPercent = discountAmount
-                        .divide(response.getBasePrice(), 2, java.math.RoundingMode.HALF_UP)
+                        .divide(response.getCurrentPriceBeforeDiscount(), 2, java.math.RoundingMode.HALF_UP)
                         .multiply(new BigDecimal(100));
-                response.setDiscountPercent(discountPercent);
+                response.setDiscountPercentage(discountPercent);
             }
         }
     }

@@ -37,22 +37,22 @@ public interface OrderItemMapper {
             info.setStatus(orderItem.getProduct().getStatus().toString());
         }
 
-        info.setBasePrice(orderItem.getCurrentPrice());
-        info.setDiscountedPrice(orderItem.getFinalPrice());
+        info.setCurrentPriceBeforeDiscount(orderItem.getCurrentPrice());
+        info.setCurrentPriceAfterDiscount(orderItem.getFinalPrice());
         info.setHasDiscount(orderItem.getHasPromotion());
 
         if (orderItem.getHasPromotion() != null && orderItem.getHasPromotion()) {
-            BigDecimal basePrice = orderItem.getCurrentPrice() != null ? orderItem.getCurrentPrice() : BigDecimal.ZERO;
-            BigDecimal finalPrice = orderItem.getFinalPrice() != null ? orderItem.getFinalPrice() : BigDecimal.ZERO;
+            BigDecimal priceBeforeDiscount = orderItem.getCurrentPrice() != null ? orderItem.getCurrentPrice() : BigDecimal.ZERO;
+            BigDecimal priceAfterDiscount = orderItem.getFinalPrice() != null ? orderItem.getFinalPrice() : BigDecimal.ZERO;
 
-            BigDecimal discountAmount = basePrice.subtract(finalPrice);
-            info.setDiscountAmount(discountAmount);
+            BigDecimal discountAmount = priceBeforeDiscount.subtract(priceAfterDiscount);
+            info.setDiscountAmountPerItem(discountAmount);
             info.setDiscountType(orderItem.getPromotionType());
             info.setPromotionName(orderItem.getPromotionType() + " - " + orderItem.getPromotionValue());
 
-            if (basePrice.compareTo(BigDecimal.ZERO) > 0 && "PERCENTAGE".equals(orderItem.getPromotionType())) {
-                BigDecimal discountPercent = discountAmount.divide(basePrice, 2, java.math.RoundingMode.HALF_UP).multiply(new BigDecimal(100));
-                info.setDiscountPercent(discountPercent);
+            if (priceBeforeDiscount.compareTo(BigDecimal.ZERO) > 0 && "PERCENTAGE".equals(orderItem.getPromotionType())) {
+                BigDecimal discountPercent = discountAmount.divide(priceBeforeDiscount, 2, java.math.RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+                info.setDiscountPercentage(discountPercent);
             }
         }
 

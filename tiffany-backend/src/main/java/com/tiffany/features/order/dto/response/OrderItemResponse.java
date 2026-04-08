@@ -22,11 +22,11 @@ public class OrderItemResponse {
         private String sizeName;
         private String status;
 
-        private BigDecimal basePrice;
-        private BigDecimal discountedPrice;
-        private BigDecimal discountAmount;
+        private BigDecimal currentPriceBeforeDiscount;
+        private BigDecimal currentPriceAfterDiscount;
+        private BigDecimal discountAmountPerItem;
         private String discountType;
-        private BigDecimal discountPercent;
+        private BigDecimal discountPercentage;
         private Boolean hasDiscount;
 
         private String promotionName;
