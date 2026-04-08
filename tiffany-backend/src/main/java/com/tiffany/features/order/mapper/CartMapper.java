@@ -2,21 +2,15 @@ package com.tiffany.features.order.mapper;
 
 import com.tiffany.features.order.dto.helper.CartCreateHelper;
 import com.tiffany.features.order.dto.response.CartItemResponse;
-import com.tiffany.features.order.dto.response.CartResponse;
 import com.tiffany.features.order.dto.response.CartSummaryResponse;
 import com.tiffany.features.order.models.Cart;
 import com.tiffany.features.order.models.CartItem;
-import com.tiffany.shared.dto.PaginationResponse;
-import com.tiffany.shared.mapper.PaginationMapper;
 import org.mapstruct.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
-@Mapper(componentModel = "spring", uses = {PaginationMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartMapper {
 
     @Mapping(target = "productId", source = "productId")
@@ -92,24 +86,6 @@ public interface CartMapper {
     }
 
     List<CartItemResponse> toItemResponseList(List<CartItem> cartItems);
-    List<CartResponse> toResponseList(List<Cart> carts);
-
-    @Mapping(target = "totalItems", expression = "java(cart.getTotalItems())")
-    @Mapping(target = "subtotal", expression = "java(cart.getSubtotal())")
-    @Mapping(target = "totalDiscount", expression = "java(cart.getTotalDiscount())")
-    @Mapping(target = "finalTotal", expression = "java(cart.getSubtotal())")
-    CartResponse toResponse(Cart cart);
-
-    @AfterMapping
-    default void setCartItems(@MappingTarget CartResponse response, Cart cart) {
-        if (cart.getItems() != null) {
-            response.setItems(toItemResponseList(cart.getItems()));
-        }
-    }
-
-    default PaginationResponse<CartResponse> toPaginationResponse(Page<Cart> cartPage, PaginationMapper paginationMapper) {
-return paginationMapper.toPaginationResponse(cartPage, this::toResponseList);
-    }
 
     @Mapping(target = "totalItems", expression = "java(cart.getTotalItems())")
     @Mapping(target = "subtotal", expression = "java(cart.getSubtotal())")
