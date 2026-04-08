@@ -180,7 +180,91 @@ SELECT
 FROM generate_series(1, 20000) AS t(i);
 
 -- ============================================================================
--- 10. REFERENCE COUNTERS
+-- 10. ORDER ITEMS (3-10 items per order = 60,000-200,000 items)
+-- ============================================================================
+INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_size_id, quantity, unit_price, final_price)
+SELECT
+    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    o.id,
+    p.id,
+    CASE WHEN random() > 0.3 THEN ps.id ELSE NULL END,
+    (1 + (random() * 5)::int),
+    p.price,
+    p.price * (0.9 + random() * 0.1)
+FROM orders o
+CROSS JOIN (SELECT * FROM products ORDER BY RANDOM() LIMIT (3 + (random() * 8)::int)) p
+LEFT JOIN product_sizes ps ON ps.product_id = p.id;
+
+-- ============================================================================
+-- 11. ORDER DELIVERY ADDRESSES (1 per order)
+-- ============================================================================
+INSERT INTO order_delivery_addresses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, address_line, ward, district, city, postal_code, country, latitude, longitude, delivery_notes)
+SELECT
+    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    o.id,
+    CASE ((random() * 2)::int) WHEN 0 THEN 'Street 123' WHEN 1 THEN 'Avenue 456' ELSE 'Road 789' END,
+    CASE ((random() * 4)::int) WHEN 0 THEN 'Sangkat 1' WHEN 1 THEN 'Sangkat 2' WHEN 2 THEN 'Sangkat 3' ELSE 'Sangkat 4' END,
+    CASE ((random() * 3)::int) WHEN 0 THEN 'Khan 1' WHEN 1 THEN 'Khan 2' ELSE 'Khan 3' END,
+    'Phnom Penh',
+    '12000',
+    'Cambodia',
+    11.5564 + (random() - 0.5) * 0.1,
+    104.9282 + (random() - 0.5) * 0.1,
+    'Delivery instruction ' || row_number() OVER (ORDER BY o.id)
+FROM orders o;
+
+-- ============================================================================
+-- 12. ORDER STATUS HISTORY (1-3 status changes per order)
+-- ============================================================================
+INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, old_status, new_status, changed_by, change_reason)
+SELECT
+    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    o.id,
+    'PENDING',
+    CASE ((random() * 3)::int) WHEN 0 THEN 'CONFIRMED' WHEN 1 THEN 'COMPLETED' ELSE 'CANCELLED' END,
+    'system',
+    CASE ((random() * 3)::int) WHEN 0 THEN 'Order confirmed by admin' WHEN 1 THEN 'Order completed' ELSE 'Order cancelled' END
+FROM orders o
+WHERE ((random() * 100)::int > 20);
+
+INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, old_status, new_status, changed_by, change_reason)
+SELECT
+    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    o.id,
+    'CONFIRMED',
+    'COMPLETED',
+    'system',
+    'Order completed and delivered'
+FROM orders o
+WHERE o.order_status = 'COMPLETED'
+AND ((random() * 100)::int > 30);
+
+-- ============================================================================
+-- 13. BUSINESS HOURS (7 days)
+-- ============================================================================
+INSERT INTO business_hours (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, day_of_week, opening_time, closing_time, is_open)
+SELECT
+    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    ss.id,
+    day,
+    '09:00:00'::time,
+    '22:00:00'::time,
+    CASE WHEN day IN (0, 6) THEN false ELSE true END
+FROM (SELECT id FROM system_settings LIMIT 1) ss
+CROSS JOIN generate_series(0, 6) AS t(day);
+
+-- ============================================================================
+-- 14. SOCIAL MEDIA
+-- ============================================================================
+INSERT INTO social_media (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, platform_name, platform_url, icon_url)
+VALUES
+    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Facebook', 'https://facebook.com/tiffany', 'https://via.placeholder.com/40?text=FB'),
+    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Instagram', 'https://instagram.com/tiffany', 'https://via.placeholder.com/40?text=IG'),
+    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Telegram', 'https://t.me/tiffany', 'https://via.placeholder.com/40?text=TG'),
+    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'TikTok', 'https://tiktok.com/@tiffany', 'https://via.placeholder.com/40?text=TK');
+
+-- ============================================================================
+-- 15. REFERENCE COUNTERS
 -- ============================================================================
 INSERT INTO reference_counters (entity_type, counter_date, counter_value)
 VALUES
@@ -188,12 +272,32 @@ VALUES
 ('INVOICE', NOW()::date, 20000);
 
 -- ============================================================================
--- 11. SYSTEM SETTINGS (Full configuration)
+-- 16. SYSTEM SETTINGS (Full configuration)
 -- ============================================================================
 INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, tax_percentage, system_name, contact_address, contact_phone, contact_email)
 VALUES
 ('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 10.0, 'Tiffany E-Menu Platform', 'Phnom Penh, Cambodia', '+855 23 888 9999', 'contact@tiffany.com');
 
+-- ============================================================================
+-- SUMMARY OF INSERTED DATA
+-- ============================================================================
+-- Users: 60,001
+-- User Profiles: 60,001
+-- Categories: 200
+-- Products: 100,000
+-- Product Sizes: ~70,000
+-- Product Images: ~280,000-350,000
+-- Banners: 20
+-- Carts: 20,001
+-- Orders: 20,000
+-- Order Items: ~60,000-200,000
+-- Order Delivery Addresses: 20,000
+-- Order Status History: ~30,000-40,000
+-- Business Hours: 7
+-- Social Media: 4
+-- Reference Counters: 2
+-- System Settings: 1
+-- TOTAL RECORDS: ~610,000-770,000
 -- ============================================================================
 -- END OF LARGE SCALE TEST DATA
 -- ============================================================================
