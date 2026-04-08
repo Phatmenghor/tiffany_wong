@@ -34,7 +34,8 @@ export default async function RootLayout({
     <html className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" />
-        {/* Apply theme colors synchronously via script to prevent color flash */}
+      </head>
+      <body className="antialiased">
         <Script
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
@@ -104,8 +105,6 @@ export default async function RootLayout({
             `,
           }}
         />
-      </head>
-      <body className="antialiased">
         <ThemeInitializer />
         <ClientProviders>
           <AuthProvider>
