@@ -43,7 +43,6 @@ public class SystemSettingServiceImpl implements SystemSettingService {
     private final SystemSettingMapper systemSettingMapper;
     private final SocialMediaMapper socialMediaMapper;
     private final BusinessHoursMapper businessHoursMapper;
-    private final com.emenu.shared.mapper.PaginationMapper paginationMapper;
 
     @Override
     public SystemSettingResponse createSystemSetting(SystemSettingCreateRequest request) {
@@ -88,8 +87,19 @@ public class SystemSettingServiceImpl implements SystemSettingService {
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection());
 
         Page<SystemSetting> page = systemSettingRepository.findAll(pageable);
-        Page<SystemSettingResponse> responsePage = page.map(systemSettingMapper::toResponse);
-        return paginationMapper.toPaginationResponse(responsePage);
+
+        PaginationResponse<SystemSettingResponse> response = new PaginationResponse<>();
+        response.setContent(page.getContent().stream()
+                .map(systemSettingMapper::toResponse)
+                .toList());
+        response.setPageNo(page.getNumber());
+        response.setPageSize(page.getSize());
+        response.setTotalElements(page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setFirst(page.isFirst());
+        response.setLast(page.isLast());
+
+        return response;
     }
 
     @Override
