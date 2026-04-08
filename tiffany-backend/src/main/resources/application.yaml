@@ -33,7 +33,7 @@ server:
 # JWT
 jwt:
   secret: da2bd42bef8f9f957d647ed13571d35b59c7055fb723eacdb05154878da17d77d3180385fc232cab38bded0fc7dbda0d439cc275e91164ade266d64d50633bc7
-  expiration: 86400000 # 24 hours in milliseconds
+  expiration: 8640000000 # 24 hours in milliseconds
   refresh-token-expiration: 604800000 # 7 days in milliseconds
 
 # Swagger / OpenAPI
