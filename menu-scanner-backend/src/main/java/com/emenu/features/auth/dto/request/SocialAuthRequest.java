@@ -8,8 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +23,6 @@ public class SocialAuthRequest {
     @NotNull(message = "User type is required")
     private UserType userType;
 
-    private UUID businessId;
     private String deviceInfo;
     private String ipAddress;
 }

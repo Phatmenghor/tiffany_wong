@@ -5,11 +5,8 @@ import com.emenu.shared.dto.BaseFilterRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.UUID;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class BusinessExchangeRateFilterRequest extends BaseFilterRequest {
-    private UUID businessId;
     private BusinessExchangeRate.ExchangeRateStatus status;
 }

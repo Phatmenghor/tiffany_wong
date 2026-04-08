@@ -6,14 +6,9 @@ import com.emenu.shared.dto.BaseAuditResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.UUID;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class BusinessExchangeRateResponse extends BaseAuditResponse {
-
-    private UUID businessId;
-    private String businessName;
 
     // Required: USD to KHR
     private Double usdToKhrRate;
