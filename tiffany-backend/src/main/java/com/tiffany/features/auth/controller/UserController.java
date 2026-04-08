@@ -40,7 +40,7 @@ public class UserController {
     }
 
     /**
-     * Retrieves a test business owner token for development purposes
+     * Retrieves a test business owner token for development purpo
      */
     @PostMapping("customer-token")
     public ResponseEntity<String> getMyCustomerToken() {
