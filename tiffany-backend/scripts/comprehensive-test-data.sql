@@ -13,88 +13,64 @@
 -- Orders: 20,000 for phatmenghor21@gmail.com
 -- ============================================================================
 
--- Clear existing data
-TRUNCATE TABLE user_roles CASCADE;
-TRUNCATE TABLE roles CASCADE;
-TRUNCATE TABLE users CASCADE;
-TRUNCATE TABLE user_profiles CASCADE;
-TRUNCATE TABLE refresh_tokens CASCADE;
-TRUNCATE TABLE blacklisted_tokens CASCADE;
-TRUNCATE TABLE orders CASCADE;
-TRUNCATE TABLE order_items CASCADE;
-TRUNCATE TABLE order_delivery_addresses CASCADE;
-TRUNCATE TABLE order_status_history CASCADE;
-TRUNCATE TABLE order_counters CASCADE;
-TRUNCATE TABLE products CASCADE;
-TRUNCATE TABLE product_sizes CASCADE;
-TRUNCATE TABLE product_images CASCADE;
-TRUNCATE TABLE product_favorites CASCADE;
-TRUNCATE TABLE categories CASCADE;
-TRUNCATE TABLE carts CASCADE;
-TRUNCATE TABLE cart_items CASCADE;
-TRUNCATE TABLE banners CASCADE;
-TRUNCATE TABLE images CASCADE;
-TRUNCATE TABLE business_hours CASCADE;
-TRUNCATE TABLE reference_counters CASCADE;
-TRUNCATE TABLE social_media CASCADE;
-TRUNCATE TABLE system_settings CASCADE;
+-- Clear existing data (optional - uncomment if needed)
+-- TRUNCATE TABLE cart_items CASCADE;
+-- TRUNCATE TABLE carts CASCADE;
+-- TRUNCATE TABLE product_images CASCADE;
+-- TRUNCATE TABLE product_sizes CASCADE;
+-- TRUNCATE TABLE product_favorites CASCADE;
+-- TRUNCATE TABLE products CASCADE;
+-- TRUNCATE TABLE categories CASCADE;
+-- TRUNCATE TABLE order_items CASCADE;
+-- TRUNCATE TABLE order_delivery_addresses CASCADE;
+-- TRUNCATE TABLE order_status_history CASCADE;
+-- TRUNCATE TABLE orders CASCADE;
+-- TRUNCATE TABLE order_counters CASCADE;
+-- TRUNCATE TABLE banners CASCADE;
+-- TRUNCATE TABLE user_profiles CASCADE;
+-- TRUNCATE TABLE users CASCADE;
+-- TRUNCATE TABLE refresh_tokens CASCADE;
+-- TRUNCATE TABLE blacklisted_tokens CASCADE;
+-- TRUNCATE TABLE reference_counters CASCADE;
+-- TRUNCATE TABLE system_settings CASCADE;
 
 -- ============================================================================
--- 1. ROLES
--- ============================================================================
-INSERT INTO roles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description)
-VALUES
-('550e8400-e29b-41d4-a716-446655440000', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ADMIN', 'Full system access - platform administrator'),
-('550e8400-e29b-41d4-a716-446655440001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'STAFF', 'Staff member access - can manage orders and products'),
-('550e8400-e29b-41d4-a716-446655440003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'CUSTOMER', 'Customer access - can browse and purchase products');
-
--- ============================================================================
--- 2. USERS (60,001 total: 20,000 ADMIN + 20,000 STAFF + 20,001 CUSTOMER)
+-- 1. USERS (60,001 total: 20,000 ADMIN + 20,000 STAFF + 20,001 CUSTOMER)
 -- ============================================================================
 
 -- Insert 20,000 ADMIN users
-INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status)
+INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status, user_role)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'admin' || i || '@tiffany.com',
     '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK',
-    'PLATFORM_USER', 'ACTIVE', 'ACTIVE'
+    'PLATFORM_USER', 'ACTIVE', 'ACTIVE', 'ADMIN'
 FROM generate_series(1, 20000) AS t(i);
 
 -- Insert 20,000 STAFF users
-INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status)
+INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status, user_role)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'staff' || i || '@tiffany.com',
     '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK',
-    'BUSINESS_USER', 'ACTIVE', 'ACTIVE'
+    'BUSINESS_USER', 'ACTIVE', 'ACTIVE', 'STAFF'
 FROM generate_series(1, 20000) AS t(i);
 
--- Insert 20,001 CUSTOMER users (including 3 main users)
-INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status)
+-- Insert 20,001 CUSTOMER users (including main customer)
+INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status, user_role)
 VALUES
-('550e8400-e29b-41d4-a716-446655550002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor21@gmail.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE');
+('550e8400-e29b-41d4-a716-446655550002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor21@gmail.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE', 'CUSTOMER');
 
-INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status)
+INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status, user_role)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'customer' || i || '@test.com',
     '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK',
-    'CUSTOMER', 'ACTIVE', 'ACTIVE'
+    'CUSTOMER', 'ACTIVE', 'ACTIVE', 'CUSTOMER'
 FROM generate_series(1, 20000) AS t(i);
 
 -- ============================================================================
--- 3. USER ROLES
--- ============================================================================
-INSERT INTO user_roles (user_id, role_id)
-SELECT id, '550e8400-e29b-41d4-a716-446655440000' FROM users WHERE user_type = 'PLATFORM_USER'
-UNION ALL
-SELECT id, '550e8400-e29b-41d4-a716-446655440001' FROM users WHERE user_type = 'BUSINESS_USER'
-UNION ALL
-SELECT id, '550e8400-e29b-41d4-a716-446655440003' FROM users WHERE user_type = 'CUSTOMER';
-
--- ============================================================================
--- 4. USER PROFILES (Complete for all users)
+-- 2. USER PROFILES (Complete for all users)
 -- ============================================================================
 INSERT INTO user_profiles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, first_name, last_name, nickname, gender, date_of_birth, phone_number, email, profile_image_url, address)
 SELECT
@@ -121,10 +97,11 @@ SELECT
     u.user_identifier,
     'https://via.placeholder.com/300?text=' || SUBSTR(u.user_identifier, 1, 10),
     'Phnom Penh, Cambodia'
-FROM users u;
+FROM users u
+WHERE NOT EXISTS (SELECT 1 FROM user_profiles up WHERE up.user_id = u.id);
 
 -- ============================================================================
--- 5. CATEGORIES (200 categories)
+-- 3. CATEGORIES (200 categories)
 -- ============================================================================
 INSERT INTO categories (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, icon_url, is_featured)
 SELECT
@@ -136,7 +113,7 @@ SELECT
 FROM generate_series(1, 200) AS t(i);
 
 -- ============================================================================
--- 6. PRODUCTS (100,000 products)
+-- 4. PRODUCTS (100,000 products)
 -- ============================================================================
 INSERT INTO products (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, sku, barcode, price, cost, category_id, is_available, stock_quantity)
 SELECT
@@ -153,7 +130,7 @@ SELECT
 FROM generate_series(1, 100000) AS t(i);
 
 -- ============================================================================
--- 7. PRODUCT SIZES (70% of products = 70,000 sizes)
+-- 5. PRODUCT SIZES (70% of products = 70,000 sizes)
 -- ============================================================================
 INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, size_name, sku, barcode)
 SELECT
@@ -167,7 +144,7 @@ FROM (
 ) p;
 
 -- ============================================================================
--- 8. PRODUCT IMAGES (1-5 per product)
+-- 6. PRODUCT IMAGES (1-5 per product)
 -- ============================================================================
 INSERT INTO product_images (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, image_url, alt_text, display_order)
 SELECT
@@ -180,7 +157,7 @@ FROM products p
 CROSS JOIN generate_series(1, (1 + (random() * 4)::int)) AS img_num;
 
 -- ============================================================================
--- 9. BANNERS (20 banners)
+-- 7. BANNERS (20 banners)
 -- ============================================================================
 INSERT INTO banners (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, title, description, image_url, link_url, is_active, display_order)
 SELECT
@@ -194,7 +171,7 @@ SELECT
 FROM generate_series(1, 20) AS t(i);
 
 -- ============================================================================
--- 10. CARTS (All 20,001 customers)
+-- 8. CARTS (All 20,001 customers)
 -- ============================================================================
 INSERT INTO carts (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, total_items, total_price)
 SELECT
@@ -203,10 +180,11 @@ SELECT
     0,
     0.00
 FROM users u
-WHERE u.user_type = 'CUSTOMER';
+WHERE u.user_type = 'CUSTOMER'
+AND NOT EXISTS (SELECT 1 FROM carts c WHERE c.user_id = u.id);
 
 -- ============================================================================
--- 11. ORDERS (20,000 orders for phatmenghor21@gmail.com)
+-- 9. ORDERS (20,000 orders for phatmenghor21@gmail.com)
 -- ============================================================================
 INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, order_status, total_price, subtotal, tax_amount, discount_amount, delivery_fee, notes, customer_name, customer_phone, customer_email)
 SELECT
@@ -225,7 +203,7 @@ SELECT
 FROM generate_series(1, 20000) AS t(i);
 
 -- ============================================================================
--- 12. REFERENCE COUNTERS
+-- 10. REFERENCE COUNTERS
 -- ============================================================================
 INSERT INTO reference_counters (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, reference_type, current_value)
 VALUES
@@ -233,7 +211,7 @@ VALUES
 ('550e8400-e29b-41d4-a716-446655880002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'INVOICE', 20000);
 
 -- ============================================================================
--- 13. SYSTEM SETTINGS (Full configuration)
+-- 11. SYSTEM SETTINGS (Full configuration)
 -- ============================================================================
 INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, setting_key, setting_value)
 VALUES
