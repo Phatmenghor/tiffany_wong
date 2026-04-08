@@ -22,61 +22,69 @@ public interface CartMapper {
     @Mapping(target = "productId", source = "productId")
     @Mapping(target = "productSizeId", source = "productSizeId")
     @Mapping(target = "sizeName", source = "sizeName")
-    @Mapping(target = "currentPrice", expression = "java(cartItem.getCurrentPrice())")
+    @Mapping(target = "quantity", source = "quantity")
+    @Mapping(target = "basePrice", expression = "java(cartItem.getCurrentPrice())")
     @Mapping(target = "finalPrice", expression = "java(cartItem.getFinalPrice())")
     @Mapping(target = "totalPrice", expression = "java(cartItem.getTotalPrice())")
-    @Mapping(target = "hasActivePromotion", expression = "java(cartItem.hasDiscount())")
+    @Mapping(target = "hasDiscount", expression = "java(cartItem.hasDiscount())")
     CartItemResponse toItemResponse(CartItem cartItem);
 
     @AfterMapping
     default void setProductInfo(@MappingTarget CartItemResponse response, CartItem cartItem) {
-        // Flatten product info to response
         response.setProductId(cartItem.getProductId());
         response.setProductSizeId(cartItem.getProductSizeId());
         response.setSizeName(cartItem.getSizeName());
         if (cartItem.getProduct() != null) {
             response.setProductName(cartItem.getProduct().getName());
             response.setProductImageUrl(cartItem.getProduct().getMainImageUrl());
-            response.setStatus(cartItem.getProduct().getStatus() != null
-                    ? cartItem.getProduct().getStatus().name() : null);
-            // Set SKU and barcode from product master data
             response.setSku(cartItem.getProduct().getSku());
-            response.setBarcode(cartItem.getProduct().getBarcode());
         }
     }
 
     @AfterMapping
-    default void setPromotionDetails(@MappingTarget CartItemResponse response, CartItem cartItem) {
-        if (cartItem.getProductSize() != null && cartItem.getProductSize().isPromotionActive()) {
-            response.setPromotionType(cartItem.getProductSize().getPromotionType() != null ?
-                    cartItem.getProductSize().getPromotionType().name() : null);
-            response.setPromotionValue(cartItem.getProductSize().getPromotionValue());
-            response.setPromotionFromDate(cartItem.getProductSize().getPromotionFromDate());
-            response.setPromotionToDate(cartItem.getProductSize().getPromotionToDate());
-        } else if (cartItem.getProduct() != null && cartItem.getProduct().isPromotionActive()) {
-            response.setPromotionType(cartItem.getProduct().getPromotionType() != null ?
-                    cartItem.getProduct().getPromotionType().name() : null);
-            response.setPromotionValue(cartItem.getProduct().getPromotionValue());
-            response.setPromotionFromDate(cartItem.getProduct().getPromotionFromDate());
-            response.setPromotionToDate(cartItem.getProduct().getPromotionToDate());
+    default void setDiscountDetails(@MappingTarget CartItemResponse response, CartItem cartItem) {
+        if (response.getHasDiscount() != null && response.getHasDiscount()) {
+            if (cartItem.getProductSize() != null && cartItem.getProductSize().isPromotionActive()) {
+                response.setDiscountType(cartItem.getProductSize().getPromotionType() != null ?
+                        cartItem.getProductSize().getPromotionType().toString() : null);
+                calculateDiscountAmount(response);
+            } else if (cartItem.getProduct() != null && cartItem.getProduct().isPromotionActive()) {
+                response.setDiscountType(cartItem.getProduct().getPromotionType() != null ?
+                        cartItem.getProduct().getPromotionType().toString() : null);
+                calculateDiscountAmount(response);
+            }
         }
     }
 
-    /**
-     * Calculate detailed pricing breakdown for standardized format across cart/checkout/order
-     */
     @AfterMapping
     default void calculatePricingBreakdown(@MappingTarget CartItemResponse response, CartItem cartItem) {
-        if (response.getCurrentPrice() != null && response.getQuantity() != null) {
-            // totalBeforeDiscount: currentPrice * quantity
-            BigDecimal totalBeforeDiscount = response.getCurrentPrice()
+        if (response.getBasePrice() != null && response.getQuantity() != null) {
+            BigDecimal totalBeforeDiscount = response.getBasePrice()
                     .multiply(new BigDecimal(response.getQuantity()));
             response.setTotalBeforeDiscount(totalBeforeDiscount);
 
-            // discountAmount: totalBeforeDiscount - totalPrice
             if (response.getTotalPrice() != null) {
-                BigDecimal discountAmount = totalBeforeDiscount.subtract(response.getTotalPrice());
-                response.setDiscountAmount(discountAmount);
+                BigDecimal totalDiscountAmount = totalBeforeDiscount.subtract(response.getTotalPrice());
+                response.setTotalDiscountAmount(totalDiscountAmount);
+
+                if (response.getBasePrice().compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal itemDiscountAmount = response.getBasePrice().subtract(response.getFinalPrice());
+                    response.setItemDiscountAmount(itemDiscountAmount);
+                }
+            }
+        }
+    }
+
+    default void calculateDiscountAmount(CartItemResponse response) {
+        if (response.getBasePrice() != null && response.getFinalPrice() != null) {
+            BigDecimal discountAmount = response.getBasePrice().subtract(response.getFinalPrice());
+            response.setItemDiscountAmount(discountAmount);
+
+            if ("PERCENTAGE".equals(response.getDiscountType()) && response.getBasePrice().compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal discountPercent = discountAmount
+                        .divide(response.getBasePrice(), 2, java.math.RoundingMode.HALF_UP)
+                        .multiply(new BigDecimal(100));
+                response.setDiscountPercent(discountPercent);
             }
         }
     }
@@ -85,11 +93,9 @@ public interface CartMapper {
     List<CartResponse> toResponseList(List<Cart> carts);
 
     @Mapping(target = "totalItems", expression = "java(cart.getTotalItems())")
-    @Mapping(target = "subtotalBeforeDiscount", expression = "java(calculateSubtotalBeforeDiscount(cart))")
     @Mapping(target = "subtotal", expression = "java(cart.getSubtotal())")
     @Mapping(target = "totalDiscount", expression = "java(cart.getTotalDiscount())")
     @Mapping(target = "finalTotal", expression = "java(cart.getSubtotal())")
-    @Mapping(target = "unavailableItems", expression = "java(cart.getUnavailableItemsCount())")
     CartResponse toResponse(Cart cart);
 
     @AfterMapping
@@ -104,7 +110,6 @@ return paginationMapper.toPaginationResponse(cartPage, this::toResponseList);
     }
 
     @Mapping(target = "totalItems", expression = "java(cart.getTotalItems())")
-    @Mapping(target = "subtotalBeforeDiscount", expression = "java(calculateSubtotalBeforeDiscount(cart))")
     @Mapping(target = "subtotal", expression = "java(cart.getSubtotal())")
     @Mapping(target = "totalDiscount", expression = "java(cart.getTotalDiscount())")
     @Mapping(target = "finalTotal", expression = "java(cart.getSubtotal())")
@@ -120,24 +125,6 @@ return paginationMapper.toPaginationResponse(cartPage, this::toResponseList);
                     .sum();
             response.setTotalQuantity(totalQuantity);
         }
-    }
-
-    /**
-     * Calculate cart subtotal before any discounts by summing items at original price (currentPrice * quantity)
-     */
-    default BigDecimal calculateSubtotalBeforeDiscount(Cart cart) {
-        if (cart == null || cart.getItems() == null || cart.getItems().isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-
-        return cart.getItems().stream()
-                .map(item -> {
-                    if (item.getCurrentPrice() != null && item.getQuantity() != null) {
-                        return item.getCurrentPrice().multiply(new BigDecimal(item.getQuantity()));
-                    }
-                    return BigDecimal.ZERO;
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     /**

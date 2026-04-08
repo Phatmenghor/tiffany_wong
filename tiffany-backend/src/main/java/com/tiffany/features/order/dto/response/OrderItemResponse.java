@@ -2,11 +2,13 @@ package com.tiffany.features.order.dto.response;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
 public class OrderItemResponse {
     private UUID id;
+    private Integer quantity;
     private OrderItemProductInfo product;
 
     @Data
@@ -19,6 +21,14 @@ public class OrderItemResponse {
         private UUID sizeId;
         private String sizeName;
         private String status;
-        private String promotion;
+
+        private BigDecimal basePrice;
+        private BigDecimal discountedPrice;
+        private BigDecimal discountAmount;
+        private String discountType;
+        private BigDecimal discountPercent;
+        private Boolean hasDiscount;
+
+        private String promotionName;
     }
 }

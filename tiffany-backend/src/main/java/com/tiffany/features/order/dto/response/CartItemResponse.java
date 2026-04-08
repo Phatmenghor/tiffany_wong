@@ -19,15 +19,16 @@ public class CartItemResponse {
     private String sizeName;
     private String sku;
 
-    private BigDecimal currentPrice;
-    private BigDecimal finalPrice;
-    private Boolean hasActivePromotion;
     private Integer quantity;
 
-    private BigDecimal totalBeforeDiscount;
-    private BigDecimal discountAmount;
-    private BigDecimal totalPrice;
+    private BigDecimal basePrice;
+    private BigDecimal finalPrice;
+    private BigDecimal itemDiscountAmount;
+    private String discountType;
+    private BigDecimal discountPercent;
+    private Boolean hasDiscount;
 
-    private String promotionType;
-    private BigDecimal promotionValue;
+    private BigDecimal totalBeforeDiscount;
+    private BigDecimal totalDiscountAmount;
+    private BigDecimal totalPrice;
 }
