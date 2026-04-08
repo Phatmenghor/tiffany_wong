@@ -23,11 +23,9 @@ public interface BannerRepository extends JpaRepository<Banner, UUID> {
     Optional<Banner> findByIdAndIsDeletedFalse(UUID id);
 
     /**
-     * Finds a non-deleted banner by ID with business details eagerly fetched
+     * Finds a non-deleted banner by ID
      */
-    @Query("SELECT b FROM Banner b " +
-           "LEFT JOIN FETCH b.business " +
-           "WHERE b.id = :id AND b.isDeleted = false")
+    @Query("SELECT b FROM Banner b WHERE b.id = :id AND b.isDeleted = false")
     Optional<Banner> findByIdWithBusiness(@Param("id") UUID id);
 
     /**
