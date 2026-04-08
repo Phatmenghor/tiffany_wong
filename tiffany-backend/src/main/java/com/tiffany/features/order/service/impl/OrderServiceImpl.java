@@ -294,9 +294,7 @@ public class OrderServiceImpl implements OrderService {
             // Recalculate total with new delivery fee
             order.setTotalAmount(order.getSubtotal().add(request.getDeliveryOption().getPrice()));
         }
-                }
-            }
-        }
+
         if (request.getCustomerNote() != null) {
             order.setCustomerNote(request.getCustomerNote());
         }
