@@ -31,7 +31,6 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final SecurityUtils securityUtils;
 
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<PaginationResponse<ProductListDto>>> getAllProducts(

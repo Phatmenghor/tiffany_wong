@@ -25,7 +25,6 @@ import java.util.UUID;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final SecurityUtils securityUtils;
 
     /**
      * Create new category (uses current user's business from token)

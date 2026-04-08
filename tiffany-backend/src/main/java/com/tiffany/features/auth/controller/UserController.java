@@ -29,21 +29,11 @@ public class UserController {
 
     private final UserService userService;
     private final AuthService authService;
-    private final SecurityUtils securityUtils;
-
-    /**
-     * Retrieves a test admin token for development purposes
-     */
-    @PostMapping("admin-token")
-    public ResponseEntity<String> getMyAdminToken() {
-        log.info("Get my admin token");
-        return ResponseEntity.ok("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwaGF0bWVuZ2hvcjE5QGdtYWlsLmNvbSIsInJvbGVzIjoiUk9MRV9QTEFURk9STV9BRE1JTiIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3NzMxMTgzMTMsImV4cCI6MTc4MzExODMxM30.PO2yMdaf19selSkF6OEnNz2By45iEdOmV0fZKOAYcSA9LTtD_QP4t7X5IjsPTh5DCBDyEvA449GuAoidwPTQnw");
-    }
 
     /**
      * Retrieves a test business owner token for development purposes
      */
-    @PostMapping("business-token")
+    @PostMapping("owner-token")
     public ResponseEntity<String> getMyBusinessToken() {
         log.info("Get my business token");
         return ResponseEntity.ok("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwaGF0bWVuZ2hvcjIwQGdtYWlsLmNvbSIsInJvbGVzIjoiUk9MRV9CVVNJTkVTU19BRE1JTiIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3NzMxMTg0MDQsImV4cCI6MTc4MzExODQwNH0.YwU5olhCcnrys0nWji0gdYk9eG6pEwH0iZFwpyBtpPxIr8d9WrXNdDi3S9Lskz643aJGhnjc3irdEHmyFQUMzw");
