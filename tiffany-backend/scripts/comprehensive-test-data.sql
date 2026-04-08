@@ -348,7 +348,7 @@ INSERT INTO user_roles (user_id, role_id) VALUES
 
 -- Assign STAFF role to all generated staff members
 INSERT INTO user_roles (user_id, role_id)
-SELECT u.id, '550e8400-e29b-41d4-a716-446655440002'
+SELECT u.id, '550e8400-e29b-41d4-a716-446655440001'
 FROM users u
 WHERE u.user_type = 'BUSINESS_USER'
   AND u.user_identifier LIKE 'staff%@business.com';
@@ -1557,7 +1557,7 @@ WHERE name IS NULL OR name = '';
 
 -- Ensure user roles are assigned for all staff and customers
 INSERT INTO user_roles (user_id, role_id)
-SELECT DISTINCT u.id, '550e8400-e29b-41d4-a716-446655440002'
+SELECT DISTINCT u.id, '550e8400-e29b-41d4-a716-446655440001'
 FROM users u
 WHERE u.user_type = 'BUSINESS_USER'
   AND u.user_identifier LIKE 'staff%@business.com'
