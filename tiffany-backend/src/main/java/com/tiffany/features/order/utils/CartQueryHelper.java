@@ -22,11 +22,10 @@ public class CartQueryHelper {
     private final CartItemRepository cartItemRepository;
 
     /**
-     * Get cart quantities for multiple products for a specific user and business.
-     * If businessId is null, queries across all businesses.
+     * Get cart quantities for multiple products for a specific user.
      *
      * @param userId      The user ID
-     * @param businessId  The business ID (nullable)
+     * @param businessId  Ignored (provided for backward compatibility)
      * @param productIds  List of product IDs to check
      * @return Map of productId to total quantity in cart
      */
@@ -35,12 +34,7 @@ public class CartQueryHelper {
             return Map.of();
         }
 
-        List<CartQuantityProjection> results;
-        if (businessId != null) {
-            results = cartItemRepository.getProductQuantitiesInCart(userId, businessId, productIds);
-        } else {
-            results = cartItemRepository.getProductQuantitiesInCartAllBusinesses(userId, productIds);
-        }
+        List<CartQuantityProjection> results = cartItemRepository.getProductQuantitiesInCart(userId, productIds);
 
         Map<UUID, Integer> quantityMap = new HashMap<>();
         for (CartQuantityProjection result : results) {
