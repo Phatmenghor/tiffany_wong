@@ -48,20 +48,19 @@ export interface UserResponseModel {
   createdBy: string;
   updatedBy: string;
   userIdentifier: string;
+  userType: string;
+  userRole: string;
+  accountStatus: string;
+  remark: string | null;
   email: string;
   firstName: string;
   lastName: string;
   fullName: string;
-  phoneNumber: string;
-  profileImageUrl: string;
-  userType: string;
-  userRole: string;
-  accountStatus: string;
-  remark?: string;
-  nickname?: string;
-  gender?: string;
-  dateOfBirth?: string;
-  addresses?: Address[];
+  nickname: string | null;
+  gender: string | null;
+  dateOfBirth: string | null;
+  phoneNumber: string | null;
+  profileImageUrl: string | null;
 }
 
 export interface UserInfoModel {
