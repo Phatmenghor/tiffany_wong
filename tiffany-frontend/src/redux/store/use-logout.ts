@@ -7,7 +7,7 @@ import {
   selectIsAdmin,
   selectUserType,
 } from "@/redux/features/auth/store/selectors/auth-selectors";
-import { logoutService } from "@/redux/features/auth/store/thunks/social-auth-thunks";
+import { logoutService } from "@/redux/features/auth/store/thunks/auth-thunks";
 import { logout } from "@/redux/features/auth/store/slice/auth-slice";
 import { ROUTES } from "@/constants/app-routes/routes";
 

@@ -101,6 +101,18 @@ export const deleteAccountService = createApiThunk<any, void>(
 );
 
 /**
+ * Logout thunk
+ * Invalidates session on server
+ */
+export const logoutService = createApiThunk<any, void>(
+  "auth/logout",
+  async () => {
+    const response = await axiosClientWithAuth.post("/api/v1/auth/logout");
+    return response.data.data;
+  }
+);
+
+/**
  * Customer registration request
  */
 export interface CustomerRegisterRequest {
