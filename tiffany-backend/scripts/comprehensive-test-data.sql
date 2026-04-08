@@ -147,12 +147,10 @@ FROM generate_series(1, 20) AS t(i);
 -- ============================================================================
 -- 8. CARTS (All 20,001 customers)
 -- ============================================================================
-INSERT INTO carts (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, total_items, total_price)
+INSERT INTO carts (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    u.id,
-    0,
-    0.00
+    u.id
 FROM users u
 WHERE u.user_type = 'CUSTOMER'
 AND NOT EXISTS (SELECT 1 FROM carts c WHERE c.user_id = u.id);
