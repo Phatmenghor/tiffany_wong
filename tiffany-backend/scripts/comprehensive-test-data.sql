@@ -166,7 +166,7 @@ SELECT
     CASE ((random() * 3)::int) WHEN 0 THEN 'PENDING' WHEN 1 THEN 'CONFIRMED' WHEN 2 THEN 'COMPLETED' ELSE 'CANCELLED' END,
     'PUBLIC',
     'CUSTOMER',
-    CASE ((random() * 2)::int) WHEN 0 THEN 'CASH' WHEN 1 THEN 'CARD' ELSE 'MOBILE' END,
+    CASE ((random() * 1)::int) WHEN 0 THEN 'CASH' ELSE 'BANK' END,
     'UNPAID',
     (40 + random() * 450)::numeric(10,2),
     (5 + random() * 20)::numeric(10,2),
