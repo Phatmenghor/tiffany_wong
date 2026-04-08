@@ -14,7 +14,6 @@ import com.tiffany.features.main.models.ProductFavorite;
 import com.tiffany.features.main.repository.ProductFavoriteRepository;
 import com.tiffany.features.main.repository.ProductRepository;
 import com.tiffany.features.main.service.ProductFavoriteService;
-import com.tiffany.features.order.utils.CartQueryHelper;
 import com.tiffany.security.SecurityUtils;
 import com.tiffany.shared.dto.PaginationResponse;
 import com.tiffany.shared.mapper.PaginationMapper;
@@ -41,7 +40,6 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
     private final FavoriteMapper favoriteMapper;
     private final PaginationMapper paginationMapper;
     private final SecurityUtils securityUtils;
-    private final CartQueryHelper cartQueryHelper;
 
     @Override
     public FavoriteToggleDto toggleFavorite(UUID productId) {
@@ -86,12 +84,8 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
         PaginationResponse<ProductListDto> response = productMapper.toPaginationResponse(favoritePage, paginationMapper);
 
         if (!response.getContent().isEmpty()) {
-            List<UUID> productIds = response.getContent().stream().map(ProductListDto::getId).toList();
-            Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(userId, productIds);
-
             response.getContent().forEach(product -> {
                 product.setIsFavorited(true);
-                product.setQuantity(cartQuantities.getOrDefault(product.getId(), 0));
             });
         }
 

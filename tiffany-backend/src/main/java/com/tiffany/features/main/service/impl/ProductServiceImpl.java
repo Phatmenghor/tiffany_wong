@@ -27,7 +27,6 @@ import com.tiffany.features.main.repository.ProductSizeRepository;
 import com.tiffany.features.main.service.ProductService;
 import com.tiffany.features.main.utils.ProductFavoriteQueryHelper;
 import com.tiffany.features.main.utils.ProductUtils;
-import com.tiffany.features.order.utils.CartQueryHelper;
 import com.tiffany.security.SecurityUtils;
 import com.tiffany.shared.dto.PaginationResponse;
 import com.tiffany.shared.mapper.PaginationMapper;
@@ -58,7 +57,6 @@ public class ProductServiceImpl implements ProductService {
     private final SecurityUtils securityUtils;
     private final ProductUtils productUtils;
     private final ProductFavoriteQueryHelper favoriteQueryHelper;
-    private final CartQueryHelper cartQueryHelper;
 
     @Override
     @Transactional(readOnly = true)
@@ -83,16 +81,13 @@ public class ProductServiceImpl implements ProductService {
             List<UUID> productIds = products.stream().map(Product::getId).toList();
             List<UUID> favoriteIds = favoriteQueryHelper.getFavoriteProductIds(currentUser.get().getId(), productIds);
             Set<UUID> favoriteSet = new HashSet<>(favoriteIds);
-            Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(currentUser.get().getId(), productIds);
 
             dtoList.forEach(dto -> {
                 dto.setIsFavorited(favoriteSet.contains(dto.getId()));
-                dto.setQuantity(cartQuantities.getOrDefault(dto.getId(), 0));
             });
         } else {
             dtoList.forEach(dto -> {
                 dto.setIsFavorited(false);
-                dto.setQuantity(0);
             });
         }
 
@@ -164,25 +159,8 @@ public class ProductServiceImpl implements ProductService {
 
             boolean isFavorited = favoriteQueryHelper.isFavorited(userId, product.getId());
             dto.setIsFavorited(isFavorited);
-
-            Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
-                    userId,
-                    List.of(product.getId())
-            );
-            dto.setQuantity(cartQuantities.getOrDefault(product.getId(), 0));
-
-            if (dto.getSizes() != null && !dto.getSizes().isEmpty()) {
-                Map<UUID, Integer> sizeQuantities = cartQueryHelper.getSizeQuantitiesInCart(userId, product.getId());
-                dto.getSizes().forEach(size ->
-                        size.setQuantity(sizeQuantities.getOrDefault(size.getId(), 0))
-                );
-            }
         } else {
             dto.setIsFavorited(false);
-            dto.setQuantity(0);
-            if (dto.getSizes() != null) {
-                dto.getSizes().forEach(size -> size.setQuantity(0));
-            }
         }
     }
 
