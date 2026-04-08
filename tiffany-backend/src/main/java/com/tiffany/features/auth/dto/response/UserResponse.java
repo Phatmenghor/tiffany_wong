@@ -1,6 +1,5 @@
 package com.tiffany.features.auth.dto.response;
 
-import com.tiffany.enums.common.Status;
 import com.tiffany.enums.user.AccountStatus;
 import com.tiffany.enums.user.Gender;
 import com.tiffany.enums.user.UserRole;
@@ -21,7 +20,6 @@ public class UserResponse extends BaseAuditResponse {
     private UserType userType;
     private UserRole userRole;
     private AccountStatus accountStatus;
-    private Status status;
     private String remark;
 
     // ── Personal (from user_profiles) ─────────────────────────────────────

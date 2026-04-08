@@ -43,10 +43,6 @@ public class User extends BaseUUIDEntity {
     @Column(name = "account_status", nullable = false)
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
 
-    // Platform-level enable/disable (managed by platform admin)
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private Status status = Status.ACTIVE;
 
     @Column(name = "remark", columnDefinition = "TEXT")
     private String remark;

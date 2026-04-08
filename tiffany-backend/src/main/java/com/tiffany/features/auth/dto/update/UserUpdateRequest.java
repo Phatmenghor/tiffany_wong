@@ -1,6 +1,5 @@
 package com.tiffany.features.auth.dto.update;
 
-import com.tiffany.enums.common.Status;
 import com.tiffany.enums.user.*;
 import com.tiffany.features.auth.dto.request.*;
 import lombok.Data;
@@ -13,7 +12,6 @@ public class UserUpdateRequest {
 
     // Account
     private AccountStatus accountStatus;
-    private Status status;
     private UserRole userRole;
     private String remark;
 
