@@ -42,7 +42,14 @@ DELETE FROM order_counters;
 ALTER SEQUENCE reference_counters_id_seq RESTART WITH 1;
 
 -- ============================================================================
--- 1. USERS (60,001 total)
+-- 1. SYSTEM SETTINGS (Must be first - referenced by other tables)
+-- ============================================================================
+INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, tax_percentage, system_name, contact_address, contact_phone, contact_email)
+VALUES
+('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 10.0, 'Tiffany E-Menu Platform', 'Phnom Penh, Cambodia', '+855 23 888 9999', 'contact@tiffany.com');
+
+-- ============================================================================
+-- 2. USERS (60,001 total)
 -- ============================================================================
 
 -- Insert 20,000 ADMIN users (OWNER type with ADMIN role)
@@ -77,7 +84,7 @@ SELECT
 FROM generate_series(1, 20000) AS t(i);
 
 -- ============================================================================
--- 2. USER PROFILES (Complete for all users)
+-- 3. USER PROFILES (Complete for all users)
 -- ============================================================================
 INSERT INTO user_profiles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, first_name, last_name, nickname, gender, date_of_birth, phone_number, email, profile_image_url)
 SELECT
@@ -107,7 +114,7 @@ FROM users u
 WHERE NOT EXISTS (SELECT 1 FROM user_profiles up WHERE up.user_id = u.id);
 
 -- ============================================================================
--- 3. CATEGORIES (200 categories)
+-- 4. CATEGORIES (200 categories)
 -- ============================================================================
 INSERT INTO categories (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, image_url, status)
 SELECT
@@ -118,7 +125,7 @@ SELECT
 FROM generate_series(1, 200) AS t(i);
 
 -- ============================================================================
--- 4. PRODUCTS (100,000 products)
+-- 5. PRODUCTS (100,000 products)
 -- ============================================================================
 INSERT INTO products (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, sku, barcode, price, category_id, status, view_count, favorite_count)
 SELECT
@@ -135,7 +142,7 @@ SELECT
 FROM generate_series(1, 100000) AS t(i);
 
 -- ============================================================================
--- 5. PRODUCT SIZES (70% of products = 70,000 sizes)
+-- 6. PRODUCT SIZES (70% of products = 70,000 sizes)
 -- ============================================================================
 INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, name, price, sku, barcode)
 SELECT
@@ -150,7 +157,7 @@ FROM (
 ) p;
 
 -- ============================================================================
--- 6. PRODUCT IMAGES (1-5 per product)
+-- 7. PRODUCT IMAGES (1-5 per product)
 -- ============================================================================
 INSERT INTO product_images (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, image_url)
 SELECT
@@ -161,7 +168,7 @@ FROM products p
 CROSS JOIN generate_series(1, (1 + (random() * 4)::int)) AS img_num;
 
 -- ============================================================================
--- 7. BANNERS (20 banners)
+-- 8. BANNERS (20 banners)
 -- ============================================================================
 INSERT INTO banners (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, description, image_url, link_url, status)
 SELECT
@@ -173,7 +180,7 @@ SELECT
 FROM generate_series(1, 20) AS t(i);
 
 -- ============================================================================
--- 8. CARTS (All 20,001 customers)
+-- 9. CARTS (All 20,001 customers)
 -- ============================================================================
 INSERT INTO carts (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id)
 SELECT
@@ -184,7 +191,7 @@ WHERE u.user_type = 'CUSTOMER'
 AND NOT EXISTS (SELECT 1 FROM carts c WHERE c.user_id = u.id);
 
 -- ============================================================================
--- 9. ORDERS (20,000 orders for phatmenghor21@gmail.com)
+-- 10. ORDERS (20,000 orders for phatmenghor21@gmail.com)
 -- ============================================================================
 INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_number, customer_id, order_status, source, order_from, payment_method, payment_status, subtotal, tax_amount, discount_amount, delivery_fee, total_amount, customer_name, customer_phone, customer_email, customer_note)
 SELECT
@@ -208,7 +215,7 @@ SELECT
 FROM generate_series(1, 20000) AS t(i);
 
 -- ============================================================================
--- 10. ORDER ITEMS (3-10 items per order = 60,000-200,000 items)
+-- 11. ORDER ITEMS (3-10 items per order = 60,000-200,000 items)
 -- ============================================================================
 INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_size_id, product_name, quantity, unit_price, final_price, total_price)
 SELECT
@@ -226,7 +233,7 @@ CROSS JOIN (SELECT * FROM products ORDER BY RANDOM() LIMIT (3 + (random() * 8)::
 LEFT JOIN product_sizes ps ON ps.product_id = p.id;
 
 -- ============================================================================
--- 11. ORDER DELIVERY ADDRESSES (1 per order)
+-- 12. ORDER DELIVERY ADDRESSES (1 per order)
 -- ============================================================================
 INSERT INTO order_delivery_addresses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, village, commune, district, province, street_number, house_number, latitude, longitude, note)
 SELECT
@@ -244,7 +251,7 @@ SELECT
 FROM orders o;
 
 -- ============================================================================
--- 12. ORDER STATUS HISTORY (1-3 status changes per order)
+-- 13. ORDER STATUS HISTORY (1-3 status changes per order)
 -- ============================================================================
 INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, order_status, changed_by_name, note)
 SELECT
@@ -268,7 +275,7 @@ WHERE o.order_status = 'COMPLETED'
 AND ((random() * 100)::int > 30);
 
 -- ============================================================================
--- 13. BUSINESS HOURS (7 days)
+-- 14. BUSINESS HOURS (7 days)
 -- ============================================================================
 INSERT INTO business_hours (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, day, opening_time, closing_time)
 SELECT
@@ -281,7 +288,7 @@ FROM (SELECT id FROM system_settings LIMIT 1) ss
 CROSS JOIN generate_series(0, 6) AS t(day);
 
 -- ============================================================================
--- 14. SOCIAL MEDIA
+-- 15. SOCIAL MEDIA
 -- ============================================================================
 INSERT INTO social_media (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, name, link_url)
 VALUES
@@ -291,7 +298,7 @@ VALUES
     (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'TikTok', 'https://tiktok.com/@tiffany');
 
 -- ============================================================================
--- 15. PRODUCT FAVORITES (For phatmenghor21@gmail.com user - 50 favorites)
+-- 16. PRODUCT FAVORITES (For phatmenghor21@gmail.com user - 50 favorites)
 -- ============================================================================
 INSERT INTO product_favorites (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, product_id)
 SELECT
@@ -308,7 +315,7 @@ WHERE NOT EXISTS (
 );
 
 -- ============================================================================
--- 16. REFERENCE COUNTERS
+-- 17. REFERENCE COUNTERS
 -- ============================================================================
 INSERT INTO reference_counters (entity_type, counter_date, counter_value)
 VALUES
@@ -316,14 +323,7 @@ VALUES
 ('INVOICE', NOW()::date, 20000);
 
 -- ============================================================================
--- 17. SYSTEM SETTINGS (Full configuration)
--- ============================================================================
-INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, tax_percentage, system_name, contact_address, contact_phone, contact_email)
-VALUES
-('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 10.0, 'Tiffany E-Menu Platform', 'Phnom Penh, Cambodia', '+855 23 888 9999', 'contact@tiffany.com');
-
--- ============================================================================
--- SUMMARY OF INSERTED DATA
+-- SUMMARY OF INSERTED DATA (System Settings inserted at beginning - step 1)
 -- ============================================================================
 -- Users: 60,001
 -- User Profiles: 60,001
