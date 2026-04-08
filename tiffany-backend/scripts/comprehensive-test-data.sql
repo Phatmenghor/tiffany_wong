@@ -308,7 +308,7 @@ INSERT INTO users (
 INSERT INTO users (
     id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by,
     user_identifier, password, user_type, account_status, status, business_id,
-    remark, active_sessions_count
+    remark, last_login_at, last_active_at, active_sessions_count
 )
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
@@ -319,7 +319,9 @@ SELECT
     'ACTIVE',
     CASE WHEN (i <= 250) THEN '550cad56-cafd-4aba-baef-c4dcd53940d0'::uuid ELSE '550cad56-cafd-4aba-baef-c4dcd53940d1'::uuid END,
     'Auto-generated staff #' || i::text,
-    0
+    NOW() - ((i % 30)::int) * INTERVAL '1 day',
+    NOW() - ((i % 7)::int) * INTERVAL '1 day',
+    (i % 5) + 1
 FROM generate_series(1, 500) AS t(i);
 
 -- 5 CUSTOMERS
@@ -414,7 +416,7 @@ INSERT INTO user_employments (id, version, created_at, updated_at, created_by, u
 
 -- Bulk employment for 500 staff
 INSERT INTO user_employments (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by,
-    user_id, employee_id, position, department, employment_type, join_date, shift)
+    user_id, employee_id, position, department, employment_type, join_date, leave_date, shift)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     u.id,
@@ -432,6 +434,7 @@ SELECT
          WHEN (ROW_NUMBER() OVER (ORDER BY u.created_at) % 3) = 1 THEN 'PART_TIME'
          ELSE 'CONTRACT' END,
     (DATE '2020-01-01' + ((ROW_NUMBER() OVER (ORDER BY u.created_at) % 1460)::text || ' days')::INTERVAL)::DATE,
+    CASE WHEN u.account_status = 'END_WORK' THEN (DATE '2020-01-01' + ((ROW_NUMBER() OVER (ORDER BY u.created_at) % 1460 + 180)::text || ' days')::INTERVAL)::DATE ELSE (DATE '2099-12-31')::DATE END,
     CASE WHEN (ROW_NUMBER() OVER (ORDER BY u.created_at) % 3) = 0 THEN 'Morning'
          WHEN (ROW_NUMBER() OVER (ORDER BY u.created_at) % 3) = 1 THEN 'Afternoon'
          ELSE 'Night' END
@@ -606,7 +609,7 @@ SELECT
         WHEN 3 THEN 'National University of Management'
         ELSE 'Institute of Technology of Cambodia' END,
     CASE (ROW_NUMBER() OVER (ORDER BY u.created_at) % 4)
-        WHEN 0 THEN NULL
+        WHEN 0 THEN 'General Studies'
         WHEN 1 THEN 'Business Administration'
         WHEN 2 THEN 'Computer Science'
         ELSE 'Hospitality Management' END,
@@ -641,8 +644,8 @@ SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'refresh_token_' || i::text || '_' || gen_random_uuid()::text, '550e8400-e29b-41d4-a716-446655550000',
     NOW() + (30 - i)::int * INTERVAL '1 day', (i > 3),
-    CASE WHEN (i > 3) THEN NOW() - (i - 3)::int * INTERVAL '1 day' ELSE NULL END,
-    CASE WHEN (i > 3) THEN 'User logged out' ELSE NULL END,
+    CASE WHEN (i > 3) THEN NOW() - (i - 3)::int * INTERVAL '1 day' ELSE NOW() + (30 - i)::int * INTERVAL '1 day' END,
+    CASE WHEN (i > 3) THEN 'User logged out' ELSE 'Token active' END,
     'Device ' || i::text, '192.168.1.' || i::text
 FROM generate_series(1, 5) AS t(i);
 
@@ -988,7 +991,7 @@ SELECT
     CASE
       WHEN (i % 10) IN (0, 2) THEN 'PERCENTAGE'
       WHEN (i % 10) IN (1, 3) THEN 'FIXED_AMOUNT'
-      ELSE NULL
+      ELSE 'PERCENTAGE'
     END,
     2::numeric, 5::numeric,
     (50 + (i % 100)) - CASE
@@ -1010,14 +1013,14 @@ SELECT
       WHEN (i % 10) = 3 THEN 'Voucher applied ($5 off)'
       ELSE 'No order-level discount'
     END,
-    NOW() - (random() * 90)::int * INTERVAL '1 day', CASE WHEN (i % 5) = 3 THEN NOW() - (random() * 90)::int * INTERVAL '1 day' ELSE NULL END
+    NOW() - (random() * 90)::int * INTERVAL '1 day', CASE WHEN (i % 5) = 3 THEN NOW() - (random() * 90)::int * INTERVAL '1 day' ELSE NOW() - (random() * 60)::int * INTERVAL '1 hour' END
 FROM generate_series(1, 100) AS t(i);
 
 -- POS ORDERS (using separate sequence for business A)
 INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, business_id, customer_id, order_number, order_status, source, order_from, subtotal, discount_amount, discount_type, delivery_fee, tax_amount, total_amount, payment_method, payment_status, customer_name, customer_phone, customer_email, customer_note, business_note, had_order_level_change_from_pos, order_level_change_reason, confirmed_at, completed_at)
 SELECT
     gen_random_uuid(), 0, NOW() - (random() * 90)::int * INTERVAL '1 day', NOW() - (random() * 90)::int * INTERVAL '1 day', 'system', 'system', false, NULL, NULL,
-    '550cad56-cafd-4aba-baef-c4dcd53940d0'::uuid, CASE WHEN (i % 3) = 0 THEN '550e8400-e29b-41d4-a716-446655550002'::uuid ELSE NULL END,
+    '550cad56-cafd-4aba-baef-c4dcd53940d0'::uuid, COALESCE(CASE WHEN (i % 3) = 0 THEN '550e8400-e29b-41d4-a716-446655550002'::uuid ELSE NULL END, '550e8400-e29b-41d4-a716-446655550002'::uuid),
     'ORD-' || TO_CHAR(CURRENT_DATE, 'YYYYMMDD') || '-' || LPAD((100 + i)::text, 3, '0'),
     'COMPLETED', 'POS', 'BUSINESS', (45 + (i % 100))::numeric,
     -- POS discount amount (more variety with higher discounts for staff/manager adjustments)
@@ -1033,7 +1036,7 @@ SELECT
     CASE
       WHEN (i % 6) IN (0, 2, 4) THEN 'PERCENTAGE'
       WHEN (i % 6) IN (1, 3) THEN 'FIXED_AMOUNT'
-      ELSE NULL
+      ELSE 'PERCENTAGE'
     END,
     0::numeric, 4::numeric,
     (45 + (i % 100)) - CASE
@@ -1111,7 +1114,7 @@ SELECT
          WHEN (o.rn % 6) = 2 THEN 'Customer requested change after ordering'
          WHEN (o.rn % 6) = 3 THEN 'Item upgraded to premium version'
          WHEN (o.rn % 6) = 4 THEN 'Special request fulfilled with adjustment'
-         ELSE NULL END
+         ELSE 'No change from POS' END
 FROM (SELECT id, ROW_NUMBER() OVER (ORDER BY id) as rn FROM orders) o
 CROSS JOIN (SELECT 1 as item_num UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5) t
 JOIN LATERAL (
