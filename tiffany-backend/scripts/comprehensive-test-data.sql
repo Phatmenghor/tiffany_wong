@@ -270,14 +270,13 @@ AND ((random() * 100)::int > 30);
 -- ============================================================================
 -- 13. BUSINESS HOURS (7 days)
 -- ============================================================================
-INSERT INTO business_hours (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, day_of_week, opening_time, closing_time, is_open)
+INSERT INTO business_hours (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, day, opening_time, closing_time)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     ss.id,
-    day,
-    '09:00:00'::time,
-    '22:00:00'::time,
-    CASE WHEN day IN (0, 6) THEN false ELSE true END
+    CASE day WHEN 0 THEN 'Monday' WHEN 1 THEN 'Tuesday' WHEN 2 THEN 'Wednesday' WHEN 3 THEN 'Thursday' WHEN 4 THEN 'Friday' WHEN 5 THEN 'Saturday' ELSE 'Sunday' END,
+    '09:00:00',
+    '22:00:00'
 FROM (SELECT id FROM system_settings LIMIT 1) ss
 CROSS JOIN generate_series(0, 6) AS t(day);
 
