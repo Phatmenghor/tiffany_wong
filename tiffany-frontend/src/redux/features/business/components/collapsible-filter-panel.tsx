@@ -3,14 +3,12 @@
 import React, { useState } from "react";
 import { CardHeaderSection } from "@/components/layout/card-header-section";
 import { CustomSelect } from "@/components/shared/common/custom-select";
-import { ComboboxSelectBrand } from "@/components/shared/combobox/combobox_select_brand";
 import { ComboboxSelectCategories } from "@/components/shared/combobox/combobox_select_categories";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, ChevronDown, Search } from "lucide-react";
 import { FilterConfig, FilterPanelConfig } from "./filter-types";
-import { BrandResponseModel } from "@/redux/features/master-data/store/models/response/brand-response";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
 import { Badge } from "@/components/ui/badge";
 
@@ -68,20 +66,6 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
             value={filter.value}
             placeholder={filter.placeholder || "Select..."}
             onValueChange={filter.onChange}
-            label={filter.label}
-            disabled={filter.disabled}
-            size="lg"
-          />
-        );
-
-      case "combobox-brand":
-        return (
-          <ComboboxSelectBrand
-            key={filter.id}
-            dataSelect={filter.value as BrandResponseModel | null}
-            onChangeSelected={filter.onChange}
-            placeholder={filter.placeholder || "All Brand"}
-            showAllOption={(filter as any).showAllOption !== false}
             label={filter.label}
             disabled={filter.disabled}
             size="lg"
