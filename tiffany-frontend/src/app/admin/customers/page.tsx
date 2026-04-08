@@ -21,21 +21,18 @@ import {
 import {
   setAccountStatusFilter,
   setPageNo,
-  setRoleFilter,
   setSearchFilter,
   resetState,
 } from "@/redux/features/auth/store/slice/users-slice";
 import { UserResponseModel } from "@/redux/features/auth/store/models/response/users-response";
 import {
   ACCOUNT_STATUS_FILTER,
-  USER_BUSINESS_ROLE_FILTER,
 } from "@/constants/status/filter-status";
 import { useAdminCleanup } from "@/hooks/use-cleanup-on-unmount";
 import {
   AccountStatus,
   ModalMode,
   UserGropeType,
-  UserRole,
 } from "@/constants/status/status";
 import UserBusinessModal from "@/redux/features/auth/components/user-business-modal";
 import { UserBusinessDetailModal } from "@/redux/features/auth/components/user-business-detail-modal";
@@ -44,36 +41,33 @@ import { setGlobalPageSize } from "@/redux/store/slices/global-settings-slice";
 import { selectGlobalPageSize } from "@/redux/store/selectors/global-settings-selectors";
 import { useAppSelector } from "@/redux/store";
 
-export default function UserBusinessPage() {
+export default function CustomerUsersPage() {
   useAdminCleanup(resetState);
 
   const { filters, pagination, usersData, usersContent, userState, isLoading, operations, dispatch } = useUsersState();
   const globalPageSize = useAppSelector(selectGlobalPageSize);
   const debouncedSearch = useDebounce(filters.search, 400);
 
-  // Use static role filter options from constants
-  const roleFilterOptions = USER_BUSINESS_ROLE_FILTER;
-
   const { updateUrlWithPage, handlePageChange } = usePagination({
-    baseRoute: ROUTES.ADMIN.USERS,
+    baseRoute: ROUTES.ADMIN.CUSTOMERS || "/admin/customers",
     syncPageToRedux: (page) => dispatch(setPageNo(page)),
   });
 
-  // Fetch business users (OWNER type) when filters or search change
+  // Fetch customers (CUSTOMER type users) when filters or search change
   useEffect(() => {
     const filterPayload = {
       search: debouncedSearch,
       pageNo: filters.pageNo,
       pageSize: globalPageSize,
-      userRoles: filters.role === UserRole.ALL ? [] : [filters.role],
-      userTypes: [UserGropeType.OWNER], // Only OWNER type for business users
+      userRoles: [], // All customer roles
+      userTypes: ["CUSTOMER"], // Only CUSTOMER type
       accountStatuses: filters.accountStatus === AccountStatus.ALL ? [] : [filters.accountStatus],
     };
 
-    console.log("📤 Sending business users filter to API:", filterPayload);
+    console.log("📤 Sending customer filter to API:", filterPayload);
 
     dispatch(fetchAllUsersService(filterPayload));
-  }, [dispatch, debouncedSearch, filters.accountStatus, filters.role, filters.pageNo, globalPageSize]);
+  }, [dispatch, debouncedSearch, filters.accountStatus, filters.pageNo, globalPageSize]);
 
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -109,9 +103,9 @@ export default function UserBusinessPage() {
     if (!user?.id) return;
     try {
       await dispatch(toggleUserStatusService(user)).unwrap();
-      showToast.success("User business status updated successfully");
+      showToast.success("Customer status updated successfully");
     } catch (error: any) {
-      showToast.error(error || "Failed to update user business status");
+      showToast.error(error || "Failed to update customer status");
     }
   };
 
@@ -139,7 +133,7 @@ export default function UserBusinessPage() {
     if (!deleteState.user?.id) return;
     try {
       await dispatch(deleteUserService(deleteState.user.id)).unwrap();
-      showToast.success(`User business "${deleteState.user.fullName ?? ""}" deleted successfully`);
+      showToast.success(`Customer "${deleteState.user.fullName ?? ""}" deleted successfully`);
       closeDeleteModal();
       if (usersContent.length === 1 && pagination.currentPage > 1) {
         const newPage = pagination.currentPage - 1;
@@ -147,7 +141,7 @@ export default function UserBusinessPage() {
         updateUrlWithPage(newPage);
       }
     } catch (error: any) {
-      showToast.error(error || "Failed to delete user business");
+      showToast.error(error || "Failed to delete customer");
     }
   };
 
@@ -160,10 +154,10 @@ export default function UserBusinessPage() {
     <div className="flex flex-1 flex-col gap-4 px-2">
       <div className="space-y-4">
         <CardHeaderSection
-          title="Business Users (Owner & Staff)"
+          title="Customers"
           searchValue={filters.search}
-          searchPlaceholder="Search business users..."
-          buttonTooltip="Create a new business user"
+          searchPlaceholder="Search customers..."
+          buttonTooltip="Create a new customer"
           buttonIcon={<Plus className="w-3 h-3" />}
           buttonText="New"
           onSearchChange={(e) => dispatch(setSearchFilter(e.target.value))}
@@ -177,13 +171,6 @@ export default function UserBusinessPage() {
               onValueChange={(value) => dispatch(setAccountStatusFilter(value as AccountStatus))}
               label="Account Status"
             />
-            <CustomSelect
-              options={roleFilterOptions}
-              value={filters.role}
-              placeholder="All Roles"
-              onValueChange={(value) => dispatch(setRoleFilter(value as UserRole))}
-              label="Business Role"
-            />
           </div>
         </CardHeaderSection>
 
@@ -191,7 +178,7 @@ export default function UserBusinessPage() {
           data={usersContent}
           columns={columns}
           loading={isLoading}
-          emptyMessage="No users business found"
+          emptyMessage="No customers found"
           getRowKey={(user) => user.id}
           currentPage={filters.pageNo}
           totalElements={pagination.totalElements}
@@ -210,8 +197,8 @@ export default function UserBusinessPage() {
         isOpen={deleteState.isOpen}
         onClose={closeDeleteModal}
         onDelete={handleDelete}
-        title="Delete User"
-        description={`Are you sure you want to delete this user ${deleteState.user?.userIdentifier || deleteState.user?.email}?`}
+        title="Delete Customer"
+        description={`Are you sure you want to delete this customer ${deleteState.user?.userIdentifier || deleteState.user?.email}?`}
         itemName={deleteState.user?.fullName || deleteState.user?.email}
         isSubmitting={operations.isDeleting}
       />

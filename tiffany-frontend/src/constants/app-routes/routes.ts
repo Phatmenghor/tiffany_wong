@@ -21,6 +21,7 @@ export const ROUTES = {
     DASHBOARD: "/admin",
     PROFILE: "/admin/profile",
     USERS: "/admin/users",
+    CUSTOMERS: "/admin/customers",
     ROLES: "/admin/users/roles",
     BANNER: "/admin/banner",
     CATEGORIES: "/admin/categories",
@@ -58,8 +59,12 @@ export const SIDEBAR_MENU: MenuItem[] = [
     icon: Users,
     items: [
       {
-        title: "All Users",
+        title: "Business Users",
         href: ROUTES.ADMIN.USERS,
+      },
+      {
+        title: "Customers",
+        href: ROUTES.ADMIN.CUSTOMERS,
       },
     ],
   },
