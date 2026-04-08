@@ -1,15 +1,12 @@
-# ============================================================
-# application-prod.yaml  –  PRODUCTION
-# ============================================================
-# Uses the production database server.
-# Override any value with environment variables:
-#   DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD
-# ============================================================
+# Production Configuration
+# Uses the production database server
+# Override via environment variables: DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD
+
 spring:
   datasource:
-    url: jdbc:postgresql://192.168.103.106:5432/account_testing_one
-    username: postgres
-    password: 123cp!@#
+    url: jdbc:postgresql://${DB_HOST:192.168.103.106}:${DB_PORT:5432}/${DB_NAME:tiffany_cambodia}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:123cp!@#}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
@@ -20,7 +17,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
@@ -28,9 +25,7 @@ spring:
 
 logging:
   level:
-    root: INFO
+    root: WARN
     com.tiffany: INFO
     org.springframework: WARN
     org.hibernate: WARN
-    org.hibernate.SQL: WARN
-    org.hibernate.type: WARN

@@ -1,13 +1,10 @@
-# ============================================================
-# application-local.yaml  –  LOCAL DEVELOPMENT
-# ============================================================
-# Uses localhost PostgreSQL.
-# Override any value with environment variables:
-#   DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD
-# ============================================================
+# Local Development Configuration
+# Uses localhost PostgreSQL
+# Override via environment variables: DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD
+
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:e_menu_platform}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:tiffany_cambodia}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:Hour1819}
     driver-class-name: org.postgresql.Driver
@@ -32,5 +29,3 @@ logging:
     com.tiffany: INFO
     org.springframework: WARN
     org.hibernate: WARN
-    org.hibernate.SQL: WARN
-    org.hibernate.type: WARN
