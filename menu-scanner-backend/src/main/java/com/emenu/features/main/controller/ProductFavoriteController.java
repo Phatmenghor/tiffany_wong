@@ -47,15 +47,15 @@ public class ProductFavoriteController {
     }
 
     /**
-     * Get paginated list of user's favorite products (businessId from filter body)
+     * Get paginated list of user's favorite products
      */
     @PostMapping("/my-favorites")
     public ResponseEntity<ApiResponse<PaginationResponse<ProductListDto>>> getUserFavorites(
             @Valid @RequestBody ProductFilterDto filter) {
 
         long startTime = System.currentTimeMillis();
-        log.info("POST /api/v1/product-favorites/my-favorites - Get user favorites - Page: {}, Size: {}, Business: {}",
-            filter.getPageNo(), filter.getPageSize(), filter.getBusinessId());
+        log.info("POST /api/v1/product-favorites/my-favorites - Get user favorites - Page: {}, Size: {}",
+            filter.getPageNo(), filter.getPageSize());
 
         try {
             PaginationResponse<ProductListDto> favorites = favoriteService.getUserFavorites(filter);

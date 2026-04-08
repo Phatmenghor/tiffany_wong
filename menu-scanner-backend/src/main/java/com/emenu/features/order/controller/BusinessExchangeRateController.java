@@ -32,8 +32,8 @@ public class BusinessExchangeRateController {
     @PostMapping
     public ResponseEntity<ApiResponse<BusinessExchangeRateResponse>> createBusinessExchangeRate(
             @Valid @RequestBody BusinessExchangeRateCreateRequest request) {
-        log.info("POST /business-exchange-rates - businessId: {}, rate: {}", 
-                request.getBusinessId(), request.getUsdToKhrRate());
+        log.info("POST /business-exchange-rates - rate: {}",
+                request.getUsdToKhrRate());
         
         BusinessExchangeRateResponse exchangeRate = exchangeRateService.createBusinessExchangeRate(request);
         
