@@ -136,7 +136,7 @@ public class AuthServiceImpl implements AuthService {
         log.info("Admin password reset: targetUserId={}", request.getUserId());
 
         User user = userRepository.findById(request.getUserId())
-                .filter(u -> !u.isDeleted())
+                .filter(u -> !u.getIsDeleted())
                 .orElseThrow(() -> new ValidationException("User not found"));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
