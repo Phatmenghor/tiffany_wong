@@ -58,14 +58,14 @@ public class SecurityConfig {
                         // ===== ACTUATOR ENDPOINTS =====
                         .requestMatchers("/actuator/health/**").permitAll()
 
-                        // ===== ADMIN ENDPOINTS (ADMIN and STAFF only) =====
-                        .requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN", "STAFF")
-                        .requestMatchers("/api/v1/products/admin/**").hasAnyRole("ADMIN", "STAFF")
 
                         // ===== ORDER ENDPOINTS =====
                         // All authenticated users can access orders (role check in service layer)
                         .requestMatchers("/api/v1/orders/**").authenticated()
                         .requestMatchers("/api/v1/cart/**").authenticated()
+                        .requestMatchers("/api/v1/admin/reset-password").authenticated()
+
+
 
                         // All other endpoints require authentication
                         .anyRequest().authenticated()
