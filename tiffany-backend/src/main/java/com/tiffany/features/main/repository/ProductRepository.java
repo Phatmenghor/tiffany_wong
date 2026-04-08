@@ -154,7 +154,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      */
     @Query("SELECT DISTINCT p FROM Product p " +
            "LEFT JOIN FETCH p.category c " +
-           "LEFT JOIN FETCH p.business bus " +
            "LEFT JOIN FETCH p.images img " +
            "WHERE p.isDeleted = false " +
            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +

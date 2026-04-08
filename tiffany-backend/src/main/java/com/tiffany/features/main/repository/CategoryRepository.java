@@ -22,13 +22,6 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
      */
     Optional<Category> findByIdAndIsDeletedFalse(UUID id);
 
-    /**
-     * Finds a non-deleted category by ID with business details eagerly fetched
-     */
-    @Query("SELECT c FROM Category c " +
-           "LEFT JOIN FETCH c.business " +
-           "WHERE c.id = :id AND c.isDeleted = false")
-    Optional<Category> findByIdWithBusiness(@Param("id") UUID id);
 
     /**
      * Checks if a non-deleted category exists with the given name

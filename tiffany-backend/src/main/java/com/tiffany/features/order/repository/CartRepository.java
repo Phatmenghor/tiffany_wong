@@ -14,13 +14,12 @@ import java.util.UUID;
 public interface CartRepository extends JpaRepository<Cart, UUID> {
 
     /**
-     * Finds a non-deleted cart by user ID with items, products, sizes, and business eagerly fetched
+     * Finds a non-deleted cart by user ID with items, products, and sizes eagerly fetched
      */
     @Query("SELECT DISTINCT c FROM Cart c " +
            "LEFT JOIN FETCH c.items ci " +
            "LEFT JOIN FETCH ci.product p " +
            "LEFT JOIN FETCH ci.productSize ps " +
-           "LEFT JOIN FETCH c.business " +
            "WHERE c.userId = :userId AND c.isDeleted = false " +
            "ORDER BY c.updatedAt DESC")
     Optional<Cart> findByUserIdWithItems(@Param("userId") UUID userId);

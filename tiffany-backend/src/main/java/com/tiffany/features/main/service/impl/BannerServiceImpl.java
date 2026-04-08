@@ -78,9 +78,9 @@ public class BannerServiceImpl implements BannerService {
     @Override
     @Transactional(readOnly = true)
     public BannerResponse getBannerById(UUID id) {
-        Banner banner = bannerRepository.findByIdWithBusiness(id)
+        Banner banner = bannerRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new NotFoundException("Banner not found"));
-        
+
         return bannerMapper.toResponse(banner);
     }
 

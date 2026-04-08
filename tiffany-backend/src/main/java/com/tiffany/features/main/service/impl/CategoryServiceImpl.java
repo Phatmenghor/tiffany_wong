@@ -190,7 +190,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     // Private helper methods
     private Category findCategoryById(UUID id) {
-        return categoryRepository.findByIdWithBusiness(id)
+        return categoryRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new NotFoundException("Category not found"));
     }
 }

@@ -18,7 +18,7 @@ import java.util.UUID;
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     /**
-     * Finds a non-deleted order by ID with items, products, sizes, business, customer, and delivery snapshots eagerly fetched
+     * Finds a non-deleted order by ID with items, products, sizes, customer, and delivery snapshots eagerly fetched
      * NOTE: statusHistory is loaded lazily to avoid MultipleBagFetchException with multiple collections
      */
     @Query("SELECT o FROM Order o " +
@@ -26,7 +26,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
            "LEFT JOIN FETCH oi.product p " +
            "LEFT JOIN FETCH oi.productSize ps " +
            "LEFT JOIN FETCH oi.pricingSnapshot " +
-           "LEFT JOIN FETCH o.business " +
            "LEFT JOIN FETCH o.customer " +
            "LEFT JOIN FETCH o.deliveryAddress " +
            "LEFT JOIN FETCH o.deliveryOption " +
@@ -71,7 +70,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
      * NOTE: statusHistory is loaded separately to avoid MultipleBagFetchException
      */
     @Query("SELECT DISTINCT o FROM Order o " +
-           "LEFT JOIN FETCH o.business b " +
            "LEFT JOIN FETCH o.customer c " +
            "LEFT JOIN FETCH o.deliveryAddress " +
            "LEFT JOIN FETCH o.deliveryOption " +
@@ -90,7 +88,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
      * NOTE: statusHistory is loaded separately to avoid MultipleBagFetchException
      */
     @Query("SELECT DISTINCT o FROM Order o " +
-           "LEFT JOIN FETCH o.business b " +
            "LEFT JOIN FETCH o.customer c " +
            "LEFT JOIN FETCH o.deliveryAddress " +
            "LEFT JOIN FETCH o.deliveryOption " +
