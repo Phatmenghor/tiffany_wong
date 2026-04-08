@@ -33,6 +33,9 @@ public interface OrderItemMapper {
         if (orderItem.getProduct().getStatus() != null) {
             info.setStatus(orderItem.getProduct().getStatus().toString());
         }
+        if (orderItem.getHasPromotion() != null && orderItem.getHasPromotion()) {
+            info.setPromotion(orderItem.getPromotionType() + ": " + orderItem.getPromotionValue());
+        }
         return info;
     }
 }

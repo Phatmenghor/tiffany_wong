@@ -21,5 +21,6 @@ public class OrderItemResponse {
         private UUID sizeId;
         private String sizeName;
         private String status;
+        private String promotion;
     }
 }

@@ -30,9 +30,9 @@ public class CartController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<CartSummaryResponse>> getCart() {
-        log.info("Getting full cart for current user");
-        // Get all cart items without pagination - return complete cart data
-        CartSummaryResponse cart = cartService.getCartPaginated(1, 1000);
+        log.info("Get cart for current user");
+        CartSummaryResponse cart = cartService.getCart();
+        log.info("Cart retrieved successfully - items: {}", cart.getTotalItems());
         return ResponseEntity.ok(ApiResponse.success("Cart retrieved successfully", cart));
     }
 

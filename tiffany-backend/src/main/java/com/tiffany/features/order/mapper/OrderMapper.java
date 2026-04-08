@@ -34,9 +34,8 @@ public interface OrderMapper {
     @Mapping(target = "updatedAt", source = "updatedAt")
     @Mapping(target = "createdBy", source = "createdBy")
     @Mapping(target = "updatedBy", source = "updatedBy")
+    @Mapping(source = "customerId", target = "customerId", numberFormat = "")
     @Mapping(source = "customerName", target = "customerName")
-    @Mapping(source = "customerPhone", target = "customerPhone")
-    @Mapping(source = "customerEmail", target = "customerEmail")
     @Mapping(source = "orderStatus", target = "orderStatus")
     @Mapping(target = "statusHistory", expression = "java(mapStatusHistory(order))")
     OrderResponse toResponse(Order order);
