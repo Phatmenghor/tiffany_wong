@@ -40,7 +40,6 @@ DELETE FROM order_counters;
 
 -- Reset sequences/auto-increment
 ALTER SEQUENCE reference_counters_id_seq RESTART WITH 1;
-ALTER SEQUENCE order_counters_id_seq RESTART WITH 1;
 
 -- ============================================================================
 -- 1. USERS (60,001 total)
