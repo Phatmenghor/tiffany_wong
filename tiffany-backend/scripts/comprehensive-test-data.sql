@@ -210,15 +210,17 @@ FROM generate_series(1, 20000) AS t(i);
 -- ============================================================================
 -- 10. ORDER ITEMS (3-10 items per order = 60,000-200,000 items)
 -- ============================================================================
-INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_size_id, quantity, unit_price, final_price)
+INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_size_id, product_name, quantity, unit_price, final_price, total_price)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     o.id,
     p.id,
     CASE WHEN random() > 0.3 THEN ps.id ELSE NULL END,
-    (1 + (random() * 5)::int),
+    p.name,
+    (1 + (random() * 5)::int) AS qty,
     p.price,
-    p.price * (0.9 + random() * 0.1)
+    (p.price * (0.9 + random() * 0.1))::numeric(10,2) AS final_price,
+    ((p.price * (0.9 + random() * 0.1)) * (1 + (random() * 5)::int))::numeric(10,2) AS total_price
 FROM orders o
 CROSS JOIN (SELECT * FROM products ORDER BY RANDOM() LIMIT (3 + (random() * 8)::int)) p
 LEFT JOIN product_sizes ps ON ps.product_id = p.id;
