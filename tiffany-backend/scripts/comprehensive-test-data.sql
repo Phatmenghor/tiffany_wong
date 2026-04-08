@@ -234,10 +234,9 @@ INSERT INTO reference_counters (entity_type, counter_date, counter_value) VALUES
 -- ============================================================================
 
 INSERT INTO roles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, business_id, user_type) VALUES
-('550e8400-e29b-41d4-a716-446655440000', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ADMIN', 'Platform Administrator', NULL, 'PLATFORM_USER'),
-('550e8400-e29b-41d4-a716-446655440001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'MANAGER', 'Business Manager', '550cad56-cafd-4aba-baef-c4dcd53940d0', 'BUSINESS_USER'),
-('550e8400-e29b-41d4-a716-446655440002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'STAFF', 'Business Staff', '550cad56-cafd-4aba-baef-c4dcd53940d0', 'BUSINESS_USER'),
-('550e8400-e29b-41d4-a716-446655440003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'CUSTOMER', 'Customer Role', NULL, 'CUSTOMER');
+('550e8400-e29b-41d4-a716-446655440000', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ADMIN', 'Full system access - platform administrator', NULL, 'PLATFORM_USER'),
+('550e8400-e29b-41d4-a716-446655440001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'STAFF', 'Staff member access - can manage orders and products', '550cad56-cafd-4aba-baef-c4dcd53940d0', 'BUSINESS_USER'),
+('550e8400-e29b-41d4-a716-446655440003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'CUSTOMER', 'Customer access - can browse and purchase products', NULL, 'CUSTOMER');
 
 -- ============================================================================
 -- 4. BUSINESSES
@@ -245,7 +244,7 @@ INSERT INTO roles (id, version, created_at, updated_at, created_by, updated_by, 
 
 INSERT INTO businesses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, phone, email, address, description, status, owner_id, is_subscription_active) VALUES
 ('550cad56-cafd-4aba-baef-c4dcd53940d0', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Phatmenghor Business', '+855 23 9999999', 'phatmenghor20@gmail.com', 'Phnom Penh, Cambodia', 'Main business with comprehensive testing', 'ACTIVE', '550e8400-e29b-41d4-a716-446655550001', true),
-('550cad56-cafd-4aba-baef-c4dcd53940d1', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Branch 2', '+855 23 8888888', 'branch2@test.com', 'Siem Reap, Cambodia', 'Secondary branch for testing', 'ACTIVE', NULL, false);
+('550cad56-cafd-4aba-baef-c4dcd53940d1', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Branch 2', '+855 23 8888888', 'branch2@test.com', 'Siem Reap, Cambodia', 'Secondary branch for testing', 'ACTIVE', '550e8400-e29b-41d4-a716-446655550001', false);
 
 -- ============================================================================
 -- 5. BUSINESS SETTINGS
@@ -391,13 +390,13 @@ SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     u.id,
     u.user_identifier,
-    split_part(split_part(u.user_identifier, '@', 1), '_', 1) || '_' || split_part(split_part(u.user_identifier, '@', 1), '_', 2),
-    'User_' || split_part(split_part(u.user_identifier, '@', 1), 'f', 2),
+    CASE WHEN u.user_type = 'CUSTOMER' THEN 'Customer' ELSE 'Staff' END || ' ' || split_part(split_part(u.user_identifier, '@', 1), 'r', 2),
+    CASE WHEN u.user_type = 'CUSTOMER' THEN 'Buyer' ELSE 'Member' END || ' ' || (ROW_NUMBER() OVER (ORDER BY u.created_at) % 1000)::text,
     lower(split_part(u.user_identifier, '@', 1)),
     CASE WHEN (ROW_NUMBER() OVER (ORDER BY u.created_at) % 2) = 0 THEN 'MALE' ELSE 'FEMALE' END,
     (DATE '1988-01-01' + ((ROW_NUMBER() OVER (ORDER BY u.created_at) % 3650)::text || ' days')::INTERVAL)::DATE,
     '+855 10 ' || LPAD((ROW_NUMBER() OVER (ORDER BY u.created_at) % 10000000)::text, 7, '0'),
-    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce'
+    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce?q=80&w=1200'
 FROM users u
 WHERE u.user_identifier NOT IN ('phatmenghor19@gmail.com', 'phatmenghor20@gmail.com', 'phatmenghor21@gmail.com');
 
@@ -409,10 +408,10 @@ INSERT INTO user_employments (id, version, created_at, updated_at, created_by, u
     user_id, employee_id, position, department, employment_type, join_date, leave_date, shift) VALUES
 -- Platform Admin
 ('ff000000-0000-0000-0000-000000000001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
- '550e8400-e29b-41d4-a716-446655550000', 'EMP-0001', 'Administrator', 'Management', 'FULL_TIME', '2020-01-01', NULL, 'Morning'),
+ '550e8400-e29b-41d4-a716-446655550000', 'EMP-0001', 'Administrator', 'Management', 'FULL_TIME', '2020-01-01', '2099-12-31', 'Morning'),
 -- Business Manager
 ('ff000000-0000-0000-0000-000000000002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
- '550e8400-e29b-41d4-a716-446655550001', 'EMP-0002', 'Manager', 'Operations', 'FULL_TIME', '2021-03-01', NULL, 'Morning');
+ '550e8400-e29b-41d4-a716-446655550001', 'EMP-0002', 'Manager', 'Operations', 'FULL_TIME', '2021-03-01', '2099-12-31', 'Morning');
 
 -- Bulk employment for 500 staff
 INSERT INTO user_employments (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by,
@@ -1085,25 +1084,25 @@ SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     o.id,
     p.id,
-    ps.id,
-    p.name,
-    p.main_image_url,
-    ps.size_name,
-    p.product_barcode,
-    p.product_sku,
-    p.price,
-    CASE WHEN (t.item_num % 3) = 0 THEN ROUND(p.price * 0.85, 2)
-         WHEN (t.item_num % 3) = 1 THEN ROUND(p.price * 0.90, 2)
-         ELSE p.price END,
-    p.price,
+    COALESCE(ps.id, gen_random_uuid()),
+    COALESCE(p.name, 'Product Item'),
+    COALESCE(p.main_image_url, 'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce'),
+    COALESCE(ps.size_name, CASE WHEN (t.item_num % 4) = 0 THEN 'Small' WHEN (t.item_num % 4) = 1 THEN 'Medium' WHEN (t.item_num % 4) = 2 THEN 'Large' ELSE 'Medium' END),
+    COALESCE(p.product_barcode, 'BARCODE-' || (o.rn + t.item_num)::text),
+    COALESCE(p.product_sku, 'SKU-' || (o.rn + t.item_num)::text),
+    COALESCE(p.price, 25.00),
+    CASE WHEN (t.item_num % 3) = 0 THEN ROUND(COALESCE(p.price, 25.00) * 0.85, 2)
+         WHEN (t.item_num % 3) = 1 THEN ROUND(COALESCE(p.price, 25.00) * 0.90, 2)
+         ELSE COALESCE(p.price, 25.00) END,
+    COALESCE(p.price, 25.00),
     true,
     CASE WHEN (t.item_num % 3) = 0 THEN 'PERCENTAGE' WHEN (t.item_num % 3) = 1 THEN 'FIXED_AMOUNT' ELSE 'PERCENTAGE' END,
     CASE WHEN (t.item_num % 3) = 0 THEN 15 WHEN (t.item_num % 3) = 1 THEN 5 ELSE 10 END,
     NOW() - INTERVAL '5 days', NOW() + INTERVAL '25 days',
     CASE WHEN (t.item_num % 3) = 0 THEN 3 WHEN (t.item_num % 3) = 1 THEN 2 ELSE 1 END,
-    CASE WHEN (t.item_num % 3) = 0 THEN ROUND(p.price * 0.85 * CASE WHEN (t.item_num % 3) = 0 THEN 3 WHEN (t.item_num % 3) = 1 THEN 2 ELSE 1 END, 2)
-         WHEN (t.item_num % 3) = 1 THEN ROUND(p.price * 0.90 * CASE WHEN (t.item_num % 3) = 0 THEN 3 WHEN (t.item_num % 3) = 1 THEN 2 ELSE 1 END, 2)
-         ELSE ROUND(p.price * 0.90 * CASE WHEN (t.item_num % 3) = 0 THEN 3 WHEN (t.item_num % 3) = 1 THEN 2 ELSE 1 END, 2) END,
+    CASE WHEN (t.item_num % 3) = 0 THEN ROUND(COALESCE(p.price, 25.00) * 0.85 * CASE WHEN (t.item_num % 3) = 0 THEN 3 WHEN (t.item_num % 3) = 1 THEN 2 ELSE 1 END, 2)
+         WHEN (t.item_num % 3) = 1 THEN ROUND(COALESCE(p.price, 25.00) * 0.90 * CASE WHEN (t.item_num % 3) = 0 THEN 3 WHEN (t.item_num % 3) = 1 THEN 2 ELSE 1 END, 2)
+         ELSE ROUND(COALESCE(p.price, 25.00) * 0.90 * CASE WHEN (t.item_num % 3) = 0 THEN 3 WHEN (t.item_num % 3) = 1 THEN 2 ELSE 1 END, 2) END,
     'Special preparation instructions: ' || CASE WHEN (t.item_num % 4) = 0 THEN 'No onions, extra spicy'
                                                    WHEN (t.item_num % 4) = 1 THEN 'Light salt, no MSG'
                                                    WHEN (t.item_num % 4) = 2 THEN 'Well done, extra sauce'
@@ -1124,7 +1123,7 @@ JOIN LATERAL (
     ORDER BY id
     LIMIT 1 OFFSET ((o.rn + t.item_num) % 100)
 ) p ON true
-JOIN LATERAL (
+LEFT JOIN LATERAL (
     SELECT id, name as size_name, sku, barcode
     FROM product_sizes
     WHERE product_id = p.id AND name = CASE WHEN (t.item_num % 4) = 0 THEN 'Small' WHEN (t.item_num % 4) = 1 THEN 'Medium' WHEN (t.item_num % 4) = 2 THEN 'Large' ELSE 'Medium' END
@@ -1396,6 +1395,199 @@ SELECT
     CASE WHEN (i % 3) = 0 THEN 'PRODUCT' WHEN (i % 3) = 1 THEN 'BUSINESS_LOGO' ELSE 'USER_PROFILE' END,
     'base64_encoded_image_data_' || i::text
 FROM generate_series(1, 20) AS t(i);
+
+-- ============================================================================
+-- POST-PROCESSING: FILL NULL VALUES IN CRITICAL FIELDS
+-- ============================================================================
+
+-- Ensure all user profiles have full names if missing
+UPDATE user_profiles SET first_name = COALESCE(first_name, 'User')
+WHERE first_name IS NULL OR first_name = '';
+
+UPDATE user_profiles SET last_name = COALESCE(last_name, 'Account')
+WHERE last_name IS NULL OR last_name = '';
+
+UPDATE user_profiles SET nickname = COALESCE(nickname, first_name || ' ' || last_name)
+WHERE nickname IS NULL OR nickname = '';
+
+UPDATE user_profiles SET email = COALESCE(email, 'no-email-' || id::text || '@example.com')
+WHERE email IS NULL OR email = '';
+
+UPDATE user_profiles SET phone_number = COALESCE(phone_number, '+855 10 9999 9999')
+WHERE phone_number IS NULL OR phone_number = '';
+
+UPDATE user_profiles SET profile_image_url = COALESCE(profile_image_url, 'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce?q=80&w=1200')
+WHERE profile_image_url IS NULL OR profile_image_url = '';
+
+UPDATE user_profiles SET date_of_birth = COALESCE(date_of_birth, '1990-01-01'::date)
+WHERE date_of_birth IS NULL;
+
+UPDATE user_profiles SET gender = COALESCE(gender, 'MALE')
+WHERE gender IS NULL OR gender = '';
+
+-- Ensure all product images have valid URLs
+UPDATE product_images SET image_url = 'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce?q=80&w=600'
+WHERE image_url IS NULL OR image_url = '';
+
+-- Ensure all products have descriptions
+UPDATE products SET description = COALESCE(NULLIF(description, ''), 'High-quality product with excellent features')
+WHERE description IS NULL OR description = '';
+
+-- Ensure all products have SKU and barcode
+UPDATE products SET sku = COALESCE(NULLIF(sku, ''), 'SKU-' || id::text)
+WHERE sku IS NULL OR sku = '';
+
+UPDATE products SET barcode = COALESCE(NULLIF(barcode, ''), 'BARCODE-' || id::text)
+WHERE barcode IS NULL OR barcode = '';
+
+-- Ensure all order items have complete data
+UPDATE order_items SET product_name = COALESCE(NULLIF(product_name, ''), 'Order Item')
+WHERE product_name IS NULL OR product_name = '';
+
+UPDATE order_items SET product_image_url = COALESCE(product_image_url, 'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce')
+WHERE product_image_url IS NULL OR product_image_url = '';
+
+UPDATE order_items SET size_name = COALESCE(NULLIF(size_name, ''), 'Standard')
+WHERE size_name IS NULL OR size_name = '';
+
+UPDATE order_items SET barcode = COALESCE(NULLIF(barcode, ''), 'BARCODE-' || id::text)
+WHERE barcode IS NULL OR barcode = '';
+
+UPDATE order_items SET sku = COALESCE(NULLIF(sku, ''), 'SKU-' || id::text)
+WHERE sku IS NULL OR sku = '';
+
+UPDATE order_items SET special_instructions = COALESCE(NULLIF(special_instructions, ''), 'Standard preparation')
+WHERE special_instructions IS NULL OR special_instructions = '';
+
+UPDATE order_items SET change_reason = COALESCE(NULLIF(change_reason, ''), 'No change from POS')
+WHERE change_reason IS NULL OR change_reason = '';
+
+-- Ensure all customer addresses have complete location data
+UPDATE customer_addresses SET village = COALESCE(NULLIF(village, ''), 'Default Village')
+WHERE village IS NULL OR village = '';
+
+UPDATE customer_addresses SET commune = COALESCE(NULLIF(commune, ''), 'Chamkarmon')
+WHERE commune IS NULL OR commune = '';
+
+UPDATE customer_addresses SET district = COALESCE(NULLIF(district, ''), 'Chamkarmon')
+WHERE district IS NULL OR district = '';
+
+UPDATE customer_addresses SET province = COALESCE(NULLIF(province, ''), 'Phnom Penh')
+WHERE province IS NULL OR province = '';
+
+UPDATE customer_addresses SET country = COALESCE(NULLIF(country, ''), 'Cambodia')
+WHERE country IS NULL OR country = '';
+
+UPDATE customer_addresses SET street_number = COALESCE(NULLIF(street_number, ''), '1')
+WHERE street_number IS NULL OR street_number = '';
+
+UPDATE customer_addresses SET house_number = COALESCE(NULLIF(house_number, ''), 'House 1')
+WHERE house_number IS NULL OR house_number = '';
+
+UPDATE customer_addresses SET note = COALESCE(NULLIF(note, ''), 'Delivery address')
+WHERE note IS NULL OR note = '';
+
+UPDATE customer_addresses SET latitude = COALESCE(latitude, 11.5564::double precision)
+WHERE latitude IS NULL;
+
+UPDATE customer_addresses SET longitude = COALESCE(longitude, 104.9282::double precision)
+WHERE longitude IS NULL;
+
+-- Ensure all order delivery addresses have complete data
+UPDATE order_delivery_addresses SET village = COALESCE(NULLIF(village, ''), 'Village 1')
+WHERE village IS NULL OR village = '';
+
+UPDATE order_delivery_addresses SET commune = COALESCE(NULLIF(commune, ''), 'Commune 1')
+WHERE commune IS NULL OR commune = '';
+
+UPDATE order_delivery_addresses SET district = COALESCE(NULLIF(district, ''), 'District 1')
+WHERE district IS NULL OR district = '';
+
+UPDATE order_delivery_addresses SET province = COALESCE(NULLIF(province, ''), 'Phnom Penh')
+WHERE province IS NULL OR province = '';
+
+UPDATE order_delivery_addresses SET street_number = COALESCE(NULLIF(street_number, ''), 'Street 1')
+WHERE street_number IS NULL OR street_number = '';
+
+UPDATE order_delivery_addresses SET house_number = COALESCE(NULLIF(house_number, ''), 'House 1')
+WHERE house_number IS NULL OR house_number = '';
+
+UPDATE order_delivery_addresses SET note = COALESCE(NULLIF(note, ''), 'Delivery address')
+WHERE note IS NULL OR note = '';
+
+UPDATE order_delivery_addresses SET latitude = COALESCE(latitude, 11.5564::numeric)
+WHERE latitude IS NULL;
+
+UPDATE order_delivery_addresses SET longitude = COALESCE(longitude, 104.9282::numeric)
+WHERE longitude IS NULL;
+
+-- Ensure all orders have complete customer data
+UPDATE orders SET customer_name = COALESCE(NULLIF(customer_name, ''), 'Customer')
+WHERE customer_name IS NULL OR customer_name = '';
+
+UPDATE orders SET customer_phone = COALESCE(NULLIF(customer_phone, ''), '+855 10 9999 9999')
+WHERE customer_phone IS NULL OR customer_phone = '';
+
+UPDATE orders SET customer_email = COALESCE(NULLIF(customer_email, ''), 'customer@example.com')
+WHERE customer_email IS NULL OR customer_email = '';
+
+UPDATE orders SET customer_note = COALESCE(NULLIF(customer_note, ''), 'No special notes')
+WHERE customer_note IS NULL OR customer_note = '';
+
+UPDATE orders SET business_note = COALESCE(NULLIF(business_note, ''), 'Order processing')
+WHERE business_note IS NULL OR business_note = '';
+
+-- Ensure all product sizes have complete data
+UPDATE product_sizes SET barcode = COALESCE(NULLIF(barcode, ''), 'BC-' || id::text)
+WHERE barcode IS NULL OR barcode = '';
+
+UPDATE product_sizes SET sku = COALESCE(NULLIF(sku, ''), 'SKU-' || id::text)
+WHERE sku IS NULL OR sku = '';
+
+-- Ensure all deliveries have proper data
+UPDATE delivery_options SET description = COALESCE(NULLIF(description, ''), 'Standard delivery method')
+WHERE description IS NULL OR description = '';
+
+UPDATE delivery_options SET image_url = COALESCE(image_url, 'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce')
+WHERE image_url IS NULL OR image_url = '';
+
+-- Ensure all payment options have proper names
+UPDATE payment_options SET name = COALESCE(NULLIF(name, ''), 'Standard Payment')
+WHERE name IS NULL OR name = '';
+
+-- Ensure user roles are assigned for all staff and customers
+INSERT INTO user_roles (user_id, role_id)
+SELECT DISTINCT u.id, '550e8400-e29b-41d4-a716-446655440002'
+FROM users u
+WHERE u.user_type = 'BUSINESS_USER'
+  AND u.user_identifier LIKE 'staff%@business.com'
+  AND NOT EXISTS (
+    SELECT 1 FROM user_roles ur WHERE ur.user_id = u.id
+  );
+
+INSERT INTO user_roles (user_id, role_id)
+SELECT DISTINCT u.id, '550e8400-e29b-41d4-a716-446655440003'
+FROM users u
+WHERE u.user_type = 'CUSTOMER'
+  AND NOT EXISTS (
+    SELECT 1 FROM user_roles ur WHERE ur.user_id = u.id
+  );
+
+-- Ensure all business settings have values
+UPDATE business_settings SET business_name = COALESCE(NULLIF(business_name, ''), 'Business')
+WHERE business_name IS NULL OR business_name = '';
+
+UPDATE business_settings SET logo_business_url = COALESCE(logo_business_url, 'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce')
+WHERE logo_business_url IS NULL OR logo_business_url = '';
+
+UPDATE business_settings SET primary_color = COALESCE(primary_color, '#57823D')
+WHERE primary_color IS NULL OR primary_color = '';
+
+UPDATE business_settings SET secondary_color = COALESCE(secondary_color, '#404040')
+WHERE secondary_color IS NULL OR secondary_color = '';
+
+UPDATE business_settings SET accent_color = COALESCE(accent_color, '#2E74D0')
+WHERE accent_color IS NULL OR accent_color = '';
 
 -- ============================================================================
 -- SUMMARY & VERIFICATION
