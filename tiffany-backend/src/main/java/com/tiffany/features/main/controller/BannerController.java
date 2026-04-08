@@ -5,7 +5,6 @@ import com.tiffany.features.main.dto.request.BannerCreateRequest;
 import com.tiffany.features.main.dto.response.BannerResponse;
 import com.tiffany.features.main.dto.update.BannerUpdateRequest;
 import com.tiffany.features.main.service.BannerService;
-import com.tiffany.security.SecurityUtils;
 import com.tiffany.shared.dto.ApiResponse;
 import com.tiffany.shared.dto.PaginationResponse;
 import jakarta.validation.Valid;
@@ -24,58 +23,45 @@ import java.util.UUID;
 public class BannerController {
 
     private final BannerService bannerService;
-    private final SecurityUtils securityUtils;
 
-    /**
-     * Create new banner
-     */
     @PostMapping
     public ResponseEntity<ApiResponse<BannerResponse>> createBanner(@Valid @RequestBody BannerCreateRequest request) {
-        log.info("Creating banner for current user's business");
+        log.info("Creating banner");
         BannerResponse banner = bannerService.createBanner(request);
+        log.info("Banner created: id={}", banner.getId());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Banner created successfully", banner));
     }
 
-    /**
-     * Get all banners with filtering
-     */
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<PaginationResponse<BannerResponse>>> getAllBanners(@Valid @RequestBody BannerFilterRequest filter) {
-        log.info("Getting all banners");
+        log.info("Getting banners");
         PaginationResponse<BannerResponse> banners = bannerService.getAllBanners(filter);
         return ResponseEntity.ok(ApiResponse.success("Banners retrieved successfully", banners));
     }
 
-    /**
-     * Get banner by ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<BannerResponse>> getBannerById(@PathVariable UUID id) {
-        log.info("Getting banner by ID: {}", id);
+        log.info("Getting banner: id={}", id);
         BannerResponse banner = bannerService.getBannerById(id);
         return ResponseEntity.ok(ApiResponse.success("Banner retrieved successfully", banner));
     }
 
-    /**
-     * Update banner
-     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<BannerResponse>> updateBanner(
             @PathVariable UUID id,
             @Valid @RequestBody BannerUpdateRequest request) {
-        log.info("Updating banner: {}", id);
+        log.info("Updating banner: id={}", id);
         BannerResponse banner = bannerService.updateBanner(id, request);
+        log.info("Banner updated: id={}", banner.getId());
         return ResponseEntity.ok(ApiResponse.success("Banner updated successfully", banner));
     }
 
-    /**
-     * Delete banner
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<BannerResponse>> deleteBanner(@PathVariable UUID id) {
-        log.info("Deleting banner: {}", id);
+        log.info("Deleting banner: id={}", id);
         BannerResponse banner = bannerService.deleteBanner(id);
+        log.info("Banner deleted: id={}", banner.getId());
         return ResponseEntity.ok(ApiResponse.success("Banner deleted successfully", banner));
     }
 }
