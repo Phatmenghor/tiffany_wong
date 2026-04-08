@@ -26,15 +26,16 @@
 DELETE FROM product_favorites;
 DELETE FROM order_status_history;
 DELETE FROM order_items;
+DELETE FROM cart_items;
 DELETE FROM order_delivery_addresses;
 DELETE FROM orders;
 DELETE FROM carts;
-DELETE FROM cart_items;
 DELETE FROM product_images;
 DELETE FROM product_sizes;
 DELETE FROM products;
 DELETE FROM categories;
 DELETE FROM banners;
+DELETE FROM images;
 DELETE FROM social_media;
 DELETE FROM business_hours;
 DELETE FROM system_settings;
