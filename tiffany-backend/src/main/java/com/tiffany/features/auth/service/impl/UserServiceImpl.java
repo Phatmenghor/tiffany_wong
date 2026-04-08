@@ -41,15 +41,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse createUser(UserCreateRequest req) {
-        log.info("Creating user: {}", req.getUserIdentifier());
+        log.debug("Entering createUser: identifier={}, userType={}", req.getUserIdentifier(), req.getUserType());
+        log.info("User creation attempt: identifier={}, userType={}", req.getUserIdentifier(), req.getUserType());
 
-        if (userRepository.existsByUserIdentifierAndIsDeletedFalse(req.getUserIdentifier())) {
+        boolean userExists = userRepository.existsByUserIdentifierAndIsDeletedFalse(req.getUserIdentifier());
+        log.debug("User identifier uniqueness check: identifier={}, exists={}", req.getUserIdentifier(), userExists);
+
+        if (userExists) {
+            log.warn("User creation failed: Identifier already exists - identifier={}", req.getUserIdentifier());
             throw new ValidationException("User identifier already exists");
         }
 
         User user = userMapper.toEntity(req);
         user.setPassword(passwordEncoder.encode(req.getPassword()));
         User saved = userRepository.save(user);
+
+        log.debug("User entity created and saved: id={}, identifier={}, type={}, status={}",
+                saved.getId(), saved.getUserIdentifier(), saved.getUserType(), saved.getAccountStatus());
 
         // Profile
         UserProfile profile = new UserProfile();
@@ -65,13 +73,24 @@ public class UserServiceImpl implements UserService {
         saved.setProfile(profile);
 
         saved = userRepository.save(saved);
-        log.info("User created: {} type={}", saved.getUserIdentifier(), saved.getUserType());
+
+        log.debug("User profile created: id={}, email={}, name={} {}",
+                saved.getId(), profile.getEmail(), profile.getFirstName(), profile.getLastName());
+
+        log.info("User created successfully: id={}, identifier={}, userType={}, accountStatus={}",
+                saved.getId(), saved.getUserIdentifier(), saved.getUserType(), saved.getAccountStatus());
         return userMapper.toResponse(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<UserResponse> getAllUsers(UserFilterRequest request) {
+        log.debug("Entering getAllUsers: pageNo={}, pageSize={}, sortBy={}, sortDirection={}",
+                request.getPageNo(), request.getPageSize(), request.getSortBy(), request.getSortDirection());
+
+        log.debug("Filters applied: userTypes={}, accountStatuses={}, roles={}, search={}",
+                request.getUserTypes(), request.getAccountStatuses(), request.getRoles(), request.getSearch());
+
         Pageable pageable = PaginationUtils.createPageable(
                 request.getPageNo(), request.getPageSize(), request.getSortBy(), request.getSortDirection());
 
@@ -81,28 +100,55 @@ public class UserServiceImpl implements UserService {
                 (request.getRoles() != null && !request.getRoles().isEmpty()) ? request.getRoles() : null,
                 request.getSearch(),
                 pageable);
+
+        log.info("Users fetched: totalElements={}, totalPages={}, currentPage={}, pageSize={}",
+                page.getTotalElements(), page.getTotalPages(), page.getNumber(), page.getSize());
+
         return userMapper.toPaginationResponse(page, paginationMapper);
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserDetailResponse getUserById(UUID userId) {
+        log.debug("Entering getUserById: userId={}", userId);
+
         return userMapper.toDetailResponse(userRepository.findByIdAndIsDeletedFalse(userId)
-                .orElseThrow(() -> new RuntimeException("User not found")));
+                .orElseThrow(() -> {
+                    log.warn("User retrieval failed: User not found - userId={}", userId);
+                    return new RuntimeException("User not found");
+                }));
     }
 
     @Override
     public UserResponse updateUser(UUID userId, UserUpdateRequest req) {
-        log.info("Updating user: {}", userId);
+        log.debug("Entering updateUser: userId={}", userId);
+        log.info("User update initiated: userId={}", userId);
+
         User user = userRepository.findByIdAndIsDeletedFalse(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    log.warn("User update failed: User not found - userId={}", userId);
+                    return new RuntimeException("User not found");
+                });
+
+        log.debug("User found for update: id={}, identifier={}, currentStatus={}",
+                user.getId(), user.getUserIdentifier(), user.getAccountStatus());
 
         userMapper.updateEntity(req, user);
+        log.debug("User entity updated from request: userId={}",userId);
 
         // Profile
         UserProfile profile = user.getProfile();
-        if (profile == null) { profile = new UserProfile(); profile.setUser(user); user.setProfile(profile); }
-        if (req.getEmail() != null) profile.setEmail(req.getEmail());
+        if (profile == null) {
+            profile = new UserProfile();
+            profile.setUser(user);
+            user.setProfile(profile);
+            log.debug("New profile created: userId={}", userId);
+        }
+
+        if (req.getEmail() != null) {
+            log.debug("Email updated: userId={}, oldEmail={}, newEmail={}", userId, profile.getEmail(), req.getEmail());
+            profile.setEmail(req.getEmail());
+        }
         if (req.getFirstName() != null) profile.setFirstName(req.getFirstName());
         if (req.getLastName() != null) profile.setLastName(req.getLastName());
         if (req.getNickname() != null) profile.setNickname(req.getNickname());
@@ -112,25 +158,52 @@ public class UserServiceImpl implements UserService {
         if (req.getProfileImageUrl() != null) profile.setProfileImageUrl(req.getProfileImageUrl());
 
         User updated = userRepository.save(user);
-        log.info("User updated: {}", updated.getUserIdentifier());
+
+        log.debug("User entity persisted: id={}, identifier={}, status={}",
+                updated.getId(), updated.getUserIdentifier(), updated.getAccountStatus());
+
+        log.info("User updated successfully: id={}, identifier={}, accountStatus={}",
+                updated.getId(), updated.getUserIdentifier(), updated.getAccountStatus());
         return userMapper.toResponse(updated);
     }
 
     @Override
     public UserResponse deleteUser(UUID userId) {
+        log.debug("Entering deleteUser: userId={}", userId);
+
         User user = userRepository.findByIdAndIsDeletedFalse(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (user.getId().equals(securityUtils.getCurrentUser().getId())) {
+                .orElseThrow(() -> {
+                    log.warn("User deletion failed: User not found - userId={}", userId);
+                    return new RuntimeException("User not found");
+                });
+
+        log.debug("User found for deletion: id={}, identifier={}, status={}", user.getId(), user.getUserIdentifier(), user.getAccountStatus());
+
+        User currentUser = securityUtils.getCurrentUser();
+        if (user.getId().equals(currentUser.getId())) {
+            log.warn("User deletion failed: Self-deletion attempt - userId={}, currentUserId={}", userId, currentUser.getId());
             throw new ValidationException("You cannot delete your own account");
         }
+
+        log.debug("Authorization check passed: targetUserId={}, requestorUserId={}, requestorIdentifier={}",
+                userId, currentUser.getId(), currentUser.getUserIdentifier());
+
         user.softDelete();
-        return userMapper.toResponse(userRepository.save(user));
+        User deleted = userRepository.save(user);
+
+        log.info("User deleted successfully: id={}, identifier={}, deletedBy={}, deletedByIdentifier={}",
+                deleted.getId(), deleted.getUserIdentifier(), currentUser.getId(), currentUser.getUserIdentifier());
+        return userMapper.toResponse(deleted);
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserResponse getCurrentUser() {
-        return userMapper.toResponse(securityUtils.getCurrentUser());
+        log.debug("Entering getCurrentUser");
+        User currentUser = securityUtils.getCurrentUser();
+        log.debug("Current user retrieved: id={}, identifier={}, userType={}, status={}",
+                currentUser.getId(), currentUser.getUserIdentifier(), currentUser.getUserType(), currentUser.getAccountStatus());
+        return userMapper.toResponse(currentUser);
     }
 
     /**
@@ -140,7 +213,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse updateCurrentUser(UserUpdateRequest request) {
+        log.debug("Entering updateCurrentUser");
         User currentUser = securityUtils.getCurrentUser();
+        log.debug("Current user extracted for update: id={}, identifier={}, status={}",
+                currentUser.getId(), currentUser.getUserIdentifier(), currentUser.getAccountStatus());
+        log.info("Current user update initiated: id={}, identifier={}",
+                currentUser.getId(), currentUser.getUserIdentifier());
         return updateUser(currentUser.getId(), request);
     }
 }

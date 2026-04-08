@@ -40,39 +40,60 @@ public class SystemSettingServiceImpl implements SystemSettingService {
     @Override
     @Transactional(readOnly = true)
     public SystemSettingResponse getSystemSetting() {
-        log.info("Getting system setting (singleton)");
+        log.debug("Entering getSystemSetting");
+        log.info("Fetching system setting (singleton)");
 
         SystemSetting setting = systemSettingRepository.findAll().stream()
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("System setting not configured. Please initialize system settings."));
+                .orElseThrow(() -> {
+                    log.error("System setting retrieval failed: No system setting configured");
+                    return new RuntimeException("System setting not configured. Please initialize system settings.");
+                });
+
+        log.debug("System setting retrieved: id={}, companyName={}, createdAt={}",
+                setting.getId(), setting.getCompanyName(), setting.getCreatedAt());
 
         return systemSettingMapper.toResponse(setting);
     }
 
     @Override
     public SystemSettingResponse updateSystemSetting(SystemSettingUpdateRequest request) {
-        log.info("Updating system setting with nested collections");
+        log.debug("Entering updateSystemSetting");
+        log.info("System setting update initiated");
 
         SystemSetting setting = systemSettingRepository.findAll().stream()
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("System setting not configured"));
+                .orElseThrow(() -> {
+                    log.error("System setting update failed: No system setting configured");
+                    return new RuntimeException("System setting not configured");
+                });
+
+        log.debug("System setting found: id={}, companyName={}",
+                setting.getId(), setting.getCompanyName());
 
         // Update system setting fields
         systemSettingMapper.updateEntity(request, setting);
+        log.debug("System setting main fields updated: id={}", setting.getId());
 
         // Update social media list if provided
         if (request.getSocialMediaList() != null && !request.getSocialMediaList().isEmpty()) {
+            log.debug("Processing social media updates: itemCount={}", request.getSocialMediaList().size());
             updateSocialMediaCollections(setting, request.getSocialMediaList());
         }
 
         // Update business hours list if provided
         if (request.getBusinessHoursList() != null && !request.getBusinessHoursList().isEmpty()) {
+            log.debug("Processing business hours updates: itemCount={}", request.getBusinessHoursList().size());
             updateBusinessHoursCollections(setting, request.getBusinessHoursList());
         }
 
         SystemSetting updated = systemSettingRepository.save(setting);
 
-        log.info("System setting updated");
+        log.debug("System setting persisted: id={}, companyName={}",
+                updated.getId(), updated.getCompanyName());
+
+        log.info("System setting updated successfully: id={}, companyName={}",
+                updated.getId(), updated.getCompanyName());
         return systemSettingMapper.toResponse(updated);
     }
 
@@ -80,15 +101,21 @@ public class SystemSettingServiceImpl implements SystemSettingService {
      * Smart upsert logic for social media: create if no ID, update if exists, delete if not in list
      */
     private void updateSocialMediaCollections(SystemSetting setting, List<SocialMediaCreateRequest> socialMediaList) {
-        log.info("Updating social media list - {} items", socialMediaList.size());
+        log.debug("Entering updateSocialMediaCollections: settingId={}, itemCount={}",
+                setting.getId(), socialMediaList.size());
+        log.info("Updating social media list: settingId={}, itemCount={}", setting.getId(), socialMediaList.size());
 
         // Get current social media items
         List<SocialMedia> currentItems = socialMediaRepository.findBySystemSettingIdAndIsDeletedFalse(setting.getId());
+        log.debug("Current social media items retrieved: count={}", currentItems.size());
+
+        int createdCount = 0;
+        int updatedCount = 0;
 
         // Upsert logic: process provided items
         for (SocialMediaCreateRequest request : socialMediaList) {
             if (request.getName() == null) {
-                log.warn("Skipping social media item with null name");
+                log.warn("Social media item skipped: null name");
                 continue;
             }
 
@@ -99,32 +126,40 @@ public class SystemSettingServiceImpl implements SystemSettingService {
 
             if (existingItem != null) {
                 // Update existing
+                log.debug("Social media item found for update: name={}, id={}", request.getName(), existingItem.getId());
                 SocialMediaUpdateRequest updateRequest = new SocialMediaUpdateRequest();
                 updateRequest.setName(request.getName());
                 updateRequest.setLinkUrl(request.getLinkUrl());
                 socialMediaMapper.updateEntity(updateRequest, existingItem);
                 socialMediaRepository.save(existingItem);
-                log.info("Updated social media: {}", request.getName());
+                updatedCount++;
+                log.debug("Social media item updated: name={}, linkUrl={}", request.getName(), request.getLinkUrl());
             } else {
                 // Create new
                 SocialMedia newItem = socialMediaMapper.toEntity(request);
                 newItem.setSystemSettingId(setting.getId());
                 socialMediaRepository.save(newItem);
-                log.info("Created social media: {}", request.getName());
+                createdCount++;
+                log.debug("Social media item created: name={}, linkUrl={}", request.getName(), request.getLinkUrl());
             }
         }
 
         // Remove items not in the new list
-        currentItems.forEach(currentItem -> {
+        int removedCount = 0;
+        for (SocialMedia currentItem : currentItems) {
             boolean shouldKeep = socialMediaList.stream()
                     .anyMatch(req -> req.getName().equals(currentItem.getName()));
 
             if (!shouldKeep) {
+                log.debug("Social media item removed: name={}, id={}", currentItem.getName(), currentItem.getId());
                 currentItem.softDelete();
                 socialMediaRepository.save(currentItem);
-                log.info("Removed social media: {}", currentItem.getName());
+                removedCount++;
             }
-        });
+        }
+
+        log.info("Social media collection updated: settingId={}, created={}, updated={}, removed={}",
+                setting.getId(), createdCount, updatedCount, removedCount);
     }
 
     /**
