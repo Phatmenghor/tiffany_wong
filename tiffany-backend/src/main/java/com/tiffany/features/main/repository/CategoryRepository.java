@@ -69,7 +69,7 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
      */
     @Query("SELECT c.id, " +
            "COUNT(p.id) as total_count, " +
-           "COUNT(CASE WHEN CAST(p.status AS STRING) = 'ACTIVE' THEN p.id END) as active_count " +
+           "SUM(CASE WHEN p.status = 'ACTIVE' THEN 1 ELSE 0 END) as active_count " +
            "FROM Category c " +
            "LEFT JOIN Product p ON p.categoryId = c.id AND p.isDeleted = false " +
            "WHERE c.id IN :categoryIds AND c.isDeleted = false " +
