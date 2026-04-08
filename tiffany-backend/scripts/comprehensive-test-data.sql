@@ -29,7 +29,7 @@ BEGIN
     RAISE NOTICE 'TIFFANY E-MENU PLATFORM - TEST DATA GENERATION';
     RAISE NOTICE '================================================';
     RAISE NOTICE '';
-    RAISE NOTICE '[0%] Starting cleanup of existing data...';
+    RAISE NOTICE '[0 percent] Starting cleanup of existing data...';
 END $$;
 
 DELETE FROM product_favorites;
@@ -60,7 +60,7 @@ ALTER SEQUENCE reference_counters_id_seq RESTART WITH 1;
 
 DO $$
 BEGIN
-    RAISE NOTICE '[5%] Cleanup completed successfully';
+    RAISE NOTICE '[5 percent] Cleanup completed successfully';
     RAISE NOTICE '';
 END $$;
 
@@ -69,7 +69,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[10%] Inserting system settings...';
+    RAISE NOTICE '[10 percent] Inserting system settings...';
 END $$;
 
 INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, tax_percentage, system_name, logo_system_url, primary_color, contact_address, contact_phone, contact_email)
@@ -78,7 +78,7 @@ VALUES
 
 DO $$
 BEGIN
-    RAISE NOTICE '[15%] System settings inserted';
+    RAISE NOTICE '[15 percent] System settings inserted';
     RAISE NOTICE '';
 END $$;
 
@@ -87,7 +87,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[20%] Inserting users (60,003 total)...';
+    RAISE NOTICE '[20 percent] Inserting users (60,003 total)...';
     RAISE NOTICE '      - 20,000 ADMIN users';
     RAISE NOTICE '      - 20,000 STAFF users';
     RAISE NOTICE '      - 20,003 CUSTOMER users';
@@ -105,7 +105,7 @@ VALUES
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [25%] Inserted 2 main ADMIN users';
+    RAISE NOTICE '      [25 percent] Inserted 2 main ADMIN users';
 END $$;
 
 -- Insert 19,998 additional ADMIN users (OWNER type with ADMIN role)
@@ -119,7 +119,7 @@ FROM generate_series(1, 19998) AS t(i);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [35%] Inserted 19,998 additional ADMIN users';
+    RAISE NOTICE '      [35 percent] Inserted 19,998 additional ADMIN users';
 END $$;
 
 -- Insert 20,000 STAFF users (OWNER type with STAFF role)
@@ -133,7 +133,7 @@ FROM generate_series(1, 20000) AS t(i);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [45%] Inserted 20,000 STAFF users';
+    RAISE NOTICE '      [45 percent] Inserted 20,000 STAFF users';
 END $$;
 
 -- Insert 20,001 CUSTOMER users (CUSTOMER type with CUSTOMER role)
@@ -151,7 +151,7 @@ FROM generate_series(1, 20000) AS t(i);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [55%] Inserted 20,001 CUSTOMER users';
+    RAISE NOTICE '      [55 percent] Inserted 20,001 CUSTOMER users';
     RAISE NOTICE '';
 END $$;
 
@@ -160,7 +160,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[60%] Inserting 200 categories...';
+    RAISE NOTICE '[60 percent] Inserting 200 categories...';
 END $$;
 
 INSERT INTO categories (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, image_url, status)
@@ -173,7 +173,7 @@ FROM generate_series(1, 200) AS t(i);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [65%] Categories inserted';
+    RAISE NOTICE '      [65 percent] Categories inserted';
     RAISE NOTICE '';
 END $$;
 
@@ -182,7 +182,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[70%] Inserting 100,000 products with detailed descriptions...';
+    RAISE NOTICE '[70 percent] Inserting 100,000 products with detailed descriptions...';
     RAISE NOTICE '      This may take several minutes...';
 END $$;
 
@@ -237,7 +237,7 @@ FROM generate_series(1, 100000) AS t(i);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [75%] Products inserted successfully';
+    RAISE NOTICE '      [75 percent] Products inserted successfully';
     RAISE NOTICE '';
 END $$;
 
@@ -246,7 +246,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[76%] Inserting product sizes (5-10 per product with sizes)...';
+    RAISE NOTICE '[76 percent] Inserting product sizes (5-10 per product with sizes)...';
 END $$;
 
 INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, name, price, sku, barcode, promotion_type, promotion_value, promotion_from_date, promotion_to_date)
@@ -290,7 +290,7 @@ WHERE sn.size_id <= (5 + ((ABS(hashtext(p.id::text))::numeric % 6))::int);  -- 5
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [80%] Product sizes inserted successfully';
+    RAISE NOTICE '      [80 percent] Product sizes inserted successfully';
     RAISE NOTICE '';
 END $$;
 
@@ -299,7 +299,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[81%] Inserting product images (1-5 per product)...';
+    RAISE NOTICE '[81 percent] Inserting product images (1-5 per product)...';
 END $$;
 
 INSERT INTO product_images (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, image_url)
@@ -312,7 +312,7 @@ CROSS JOIN generate_series(1, (1 + (random() * 4)::int)) AS img_num;
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [83%] Product images inserted successfully';
+    RAISE NOTICE '      [83 percent] Product images inserted successfully';
     RAISE NOTICE '';
 END $$;
 
@@ -321,7 +321,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[84%] Inserting 20 banners...';
+    RAISE NOTICE '[84 percent] Inserting 20 banners...';
 END $$;
 
 INSERT INTO banners (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, description, image_url, link_url, status)
@@ -335,7 +335,7 @@ FROM generate_series(1, 20) AS t(i);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [86%] Banners inserted successfully';
+    RAISE NOTICE '      [86 percent] Banners inserted successfully';
     RAISE NOTICE '';
 END $$;
 
@@ -344,7 +344,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[87%] Inserting carts for 20,001 customers...';
+    RAISE NOTICE '[87 percent] Inserting carts for 20,001 customers...';
 END $$;
 
 INSERT INTO carts (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id)
@@ -357,7 +357,7 @@ AND NOT EXISTS (SELECT 1 FROM carts c WHERE c.user_id = u.id);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [89%] Carts inserted successfully';
+    RAISE NOTICE '      [89 percent] Carts inserted successfully';
     RAISE NOTICE '';
 END $$;
 
@@ -366,7 +366,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[90%] Inserting 20,000 orders with items, addresses, and history...';
+    RAISE NOTICE '[90 percent] Inserting 20,000 orders with items, addresses, and history...';
     RAISE NOTICE '      This is the final step, may take a few minutes...';
 END $$;
 
