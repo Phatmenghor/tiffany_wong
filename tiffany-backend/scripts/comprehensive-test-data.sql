@@ -143,9 +143,12 @@ SELECT
 FROM generate_series(1, 200) AS t(i);
 
 -- ============================================================================
--- 5. PRODUCTS (100,000 products)
+-- 5. PRODUCTS (100,000 products) - Distributed across all categories with promotions
 -- ============================================================================
-INSERT INTO products (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, sku, barcode, price, category_id, status, view_count, favorite_count)
+INSERT INTO products (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, sku, barcode, price, main_image_url, category_id, status, view_count, favorite_count, promotion_type, promotion_value, promotion_from_date, promotion_to_date)
+WITH category_list AS (
+    SELECT id, ROW_NUMBER() OVER (ORDER BY id) as cat_num FROM categories
+)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'Product ' || i,
@@ -153,23 +156,32 @@ SELECT
     'SKU-' || LPAD(i::text, 7, '0'),
     'BARCODE-' || LPAD(i::text, 10, '0'),
     (10 + random() * 500)::numeric(10,2),
-    (SELECT id FROM categories ORDER BY RANDOM() LIMIT 1),
+    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce',
+    (SELECT id FROM category_list WHERE cat_num = ((i - 1) % 200) + 1),
     'ACTIVE',
-    0,
-    0
+    (random() * 10000)::int,  -- Random view count 0-10000
+    (random() * 1000)::int,   -- Random favorite count 0-1000
+    CASE WHEN random() > 0.2 THEN 'PERCENTAGE' ELSE NULL END,  -- 80% have promotions
+    CASE WHEN random() > 0.2 THEN (5 + random() * 45)::numeric(10,2) ELSE NULL END,  -- 5-50% discount
+    NOW(),
+    NOW() + INTERVAL '30 days'
 FROM generate_series(1, 100000) AS t(i);
 
 -- ============================================================================
--- 6. PRODUCT SIZES (70% of products = 70,000 sizes)
+-- 6. PRODUCT SIZES (70% of products = 70,000 sizes) with promotions for 80%
 -- ============================================================================
-INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, name, price, sku, barcode)
+INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, name, price, sku, barcode, promotion_type, promotion_value, promotion_from_date, promotion_to_date)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     p.id,
     CASE ((random() * 3)::int) WHEN 0 THEN 'Small' WHEN 1 THEN 'Medium' WHEN 2 THEN 'Large' ELSE 'Extra Large' END,
     (p.price * (0.9 + random() * 0.2))::numeric(10,2),
     p.sku || '-' || CASE ((random() * 3)::int) WHEN 0 THEN 'S' WHEN 1 THEN 'M' WHEN 2 THEN 'L' ELSE 'XL' END,
-    p.barcode || '-' || CASE ((random() * 3)::int) WHEN 0 THEN 'S' WHEN 1 THEN 'M' WHEN 2 THEN 'L' ELSE 'XL' END
+    p.barcode || '-' || CASE ((random() * 3)::int) WHEN 0 THEN 'S' WHEN 1 THEN 'M' WHEN 2 THEN 'L' ELSE 'XL' END,
+    CASE WHEN random() > 0.2 THEN 'FIXED' ELSE NULL END,  -- 80% have promotions
+    CASE WHEN random() > 0.2 THEN (1 + random() * 20)::numeric(10,2) ELSE NULL END,  -- Fixed discount 1-20
+    NOW(),
+    NOW() + INTERVAL '30 days'
 FROM (
     SELECT * FROM products ORDER BY RANDOM() LIMIT (100000 * 0.7)::int
 ) p;
