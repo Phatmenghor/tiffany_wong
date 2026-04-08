@@ -1,17 +1,26 @@
 /**
  * Business Settings Response Model
- * Response from /api/v1/business-settings/current
+ * Response from /api/v1/system-settings
+ * @deprecated Use the response types from business-settings-service.ts instead
  */
 
-export type StockStatus = "ENABLED" | "DISABLED";
-
 export interface SocialMedia {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+  systemSettingId: string;
   name: string;
   linkUrl: string;
 }
 
 export interface BusinessHours {
-  id?: string;
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
   day: string;
   openingTime: string;
   closingTime: string;
@@ -23,17 +32,13 @@ export interface BusinessSettingsResponse {
   updatedAt: string;
   createdBy: string;
   updatedBy: string;
-  businessId: string;
-  businessName: string;
-  taxPercentage: number | null;
-  logoBusinessUrl: string;
-  enableStock: StockStatus;
+  taxPercentage: number;
+  systemName: string;
+  logoSystemUrl: string | null;
+  primaryColor: string | null;
+  contactAddress: string;
+  contactPhone: string;
+  contactEmail: string;
   socialMedia: SocialMedia[];
-  primaryColor?: string;
-  // Contact Information
-  contactAddress?: string;
-  contactPhone?: string;
-  contactEmail?: string;
-  // Business Hours
-  businessHours?: BusinessHours[];
+  businessHours: BusinessHours[];
 }
