@@ -43,8 +43,6 @@ public class BannerController {
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<PaginationResponse<BannerResponse>>> getAllBanners(@Valid @RequestBody BannerFilterRequest filter) {
         log.info("Getting all banners");
-        UUID businessId = securityUtils.getCurrentUserBusinessId();
-        filter.setBusinessId(businessId);
         PaginationResponse<BannerResponse> banners = bannerService.getAllBanners(filter);
         return ResponseEntity.ok(ApiResponse.success("Banners retrieved successfully", banners));
     }

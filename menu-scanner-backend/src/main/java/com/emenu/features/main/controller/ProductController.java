@@ -63,8 +63,7 @@ public class ProductController {
             @Valid @RequestBody ProductFilterDto filter) {
 
         log.info("Get products by admin - Page: {}, Size: {}", filter.getPageNo(), filter.getPageSize());
-        UUID businessId = securityUtils.getCurrentUserBusinessId();
-        filter.setBusinessId(businessId);
+
         PaginationResponse<ProductDetailDto> products = productService.getAllProductsAdmin(filter);
 
         return ResponseEntity.ok(ApiResponse.success(

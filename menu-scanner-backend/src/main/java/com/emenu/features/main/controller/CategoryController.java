@@ -39,26 +39,22 @@ public class CategoryController {
     }
 
     /**
-     * Get all categories with filtering (uses current user's business from token)
+     * Get all categories with filtering
      */
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<PaginationResponse<CategoryResponse>>> getAllCategories(@Valid @RequestBody CategoryFilterRequest filter) {
-        log.info("Getting all categories for current user's business");
-        UUID businessId = securityUtils.getCurrentUserBusinessId();
-        filter.setBusinessId(businessId);
+        log.info("Getting all categories");
         PaginationResponse<CategoryResponse> categories = categoryService.getAllCategories(filter);
         return ResponseEntity.ok(ApiResponse.success("Categories retrieved successfully", categories));
     }
 
     /**
-     * Get all categories with product count (for admin page) - extracts businessId from token
+     * Get all categories with product count (for admin page)
      * Includes total product count for each category
      */
     @PostMapping("/product/all")
     public ResponseEntity<ApiResponse<PaginationResponse<CategoryWithProductCountResponse>>> getCategoriesWithProductCount(@Valid @RequestBody CategoryFilterRequest filter) {
         log.info("Getting categories with product count");
-        UUID businessId = securityUtils.getCurrentUserBusinessId();
-        filter.setBusinessId(businessId);
         PaginationResponse<CategoryWithProductCountResponse> categories = categoryService.getCategoriesWithProductCount(filter);
         return ResponseEntity.ok(ApiResponse.success("Categories with product count retrieved successfully", categories));
     }

@@ -71,7 +71,7 @@ public class OrderController {
     }
 
     /**
-     * Get all orders with filtering (Admin/Business view) - Business ID extracted from token
+     * Get all orders with filtering
      */
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<PaginationResponse<OrderResponse>>> getAllOrders(@Valid @RequestBody OrderFilterRequest filter) {
@@ -81,8 +81,6 @@ public class OrderController {
         log.debug("📋 [FILTER DETAILS] Status: {}, PaymentMethod: {}, PaymentStatus: {}",
                 filter.getOrderStatus(), filter.getPaymentMethod(), filter.getPaymentStatus());
 
-        UUID businessId = securityUtils.getCurrentUserBusinessId();
-        filter.setBusinessId(businessId);
         PaginationResponse<OrderResponse> orders = orderService.getAllOrders(filter);
 
         long duration = System.currentTimeMillis() - startTime;
