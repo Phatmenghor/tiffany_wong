@@ -33,12 +33,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByIdAndIsDeletedFalse(UUID id);
 
     @Query("SELECT DISTINCT u FROM User u " +
-            "LEFT JOIN u.roles r " +
             "LEFT JOIN u.profile p " +
             "WHERE u.isDeleted = false " +
             "AND (:userTypes IS NULL OR u.userType IN :userTypes) " +
             "AND (:accountStatuses IS NULL OR u.accountStatus IN :accountStatuses) " +
-            "AND (:roles IS NULL OR r.name IN :roles) " +
             "AND (:search IS NULL OR :search = '' OR " +
             "    LOWER(u.userIdentifier) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "    LOWER(p.email) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
@@ -51,7 +49,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             @Param("search") String search,
             Pageable pageable);
 
-    @Query("SELECT DISTINCT u FROM User u LEFT JOIN u.roles r WHERE r.name = :role AND u.isDeleted = false")
+    @Query("SELECT u FROM User u WHERE u.isDeleted = false")
     List<User> findByRoleAndIsDeletedFalse(@Param("role") String role);
 
     @Query("SELECT u FROM User u WHERE u.accountStatus = 'ACTIVE' AND u.isDeleted = false")
