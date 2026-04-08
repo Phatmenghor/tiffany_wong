@@ -1,6 +1,7 @@
 package com.tiffany.config;
 
 import com.tiffany.enums.user.AccountStatus;
+import com.tiffany.enums.user.UserRole;
 import com.tiffany.enums.user.UserType;
 import com.tiffany.features.auth.models.User;
 import com.tiffany.features.auth.repository.UserRepository;
@@ -96,6 +97,7 @@ public class DataInitializationService {
                 admin.setUserIdentifier(adminUserIdentifier);
                 admin.setPassword(passwordEncoder.encode(defaultAdminPassword));
                 admin.setUserType(UserType.OWNER);
+                admin.setUserRole(UserRole.ADMIN);
                 admin.setAccountStatus(AccountStatus.ACTIVE);
 
                 admin = userRepository.save(admin);
