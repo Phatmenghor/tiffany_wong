@@ -4,7 +4,6 @@ import com.emenu.enums.payment.PaymentMethod;
 import com.emenu.enums.payment.PaymentStatus;
 import com.emenu.enums.payment.PaymentType;
 import com.emenu.features.auth.models.Business;
-import com.emenu.features.subscription.models.SubscriptionPlan;
 import com.emenu.shared.domain.BaseUUIDEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,15 +32,6 @@ public class Payment extends BaseUUIDEntity {
     @JoinColumn(name = "business_id", insertable = false, updatable = false)
     private Business business;
 
-    @Column(name = "plan_id")
-    private UUID planId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plan_id", insertable = false, updatable = false)
-    private SubscriptionPlan plan;
-
-    @Column(name = "subscription_id")
-    private UUID subscriptionId;
 
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;

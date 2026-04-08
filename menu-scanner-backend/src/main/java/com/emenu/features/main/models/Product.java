@@ -2,7 +2,6 @@ package com.emenu.features.main.models;
 
 import com.emenu.enums.product.ProductStatus;
 import com.emenu.enums.product.PromotionType;
-import com.emenu.features.auth.models.Business;
 import com.emenu.shared.domain.BaseUUIDEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,26 +26,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Product extends BaseUUIDEntity {
 
-    @Column(name = "business_id", nullable = false)
-    private UUID businessId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "business_id", insertable = false, updatable = false)
-    private Business business;
-
     @Column(name = "category_id", nullable = false)
     private UUID categoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private Category category;
-
-    @Column(name = "brand_id")
-    private UUID brandId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brand_id", insertable = false, updatable = false)
-    private Brand brand;
 
     @Column(name = "name", nullable = false, length = 255)
     private String name;

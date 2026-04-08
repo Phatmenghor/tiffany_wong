@@ -37,13 +37,6 @@ public class ProductDetailDto extends BaseAuditResponse {
     private String barcode;
     private String sku;
 
-    // Stock status and tracking - unified for all product types
-    private StockStatus stockStatus;
-    private Integer totalStock; // Total stock: for products without sizes = product stock, for products with sizes = sum of all size stocks
-    private Integer quantityAvailable; // Available quantity (not reserved)
-    private Integer quantityReserved; // Reserved/allocated quantity
-    private Integer quantityOnHand; // Physical inventory count
-
     private Long viewCount;
     private Long favoriteCount;
     private Boolean isFavorited;
@@ -56,7 +49,6 @@ public class ProductDetailDto extends BaseAuditResponse {
     private UUID categoryId;
     private String categoryName;
 
-    private UUID brandId;
     private String brandName;
 
     private List<ProductImageDto> images;

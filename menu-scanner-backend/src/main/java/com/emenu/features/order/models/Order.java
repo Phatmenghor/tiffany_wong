@@ -45,12 +45,9 @@ public class Order extends BaseUUIDEntity {
     @JoinColumn(name = "business_id", insertable = false, updatable = false)
     private Business business;
 
-    // ===== Delivery Address & Option Snapshots =====
+    // ===== Delivery Address Snapshots =====
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private OrderDeliveryAddress deliveryAddress;
-
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private OrderDeliveryOption deliveryOption;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false)

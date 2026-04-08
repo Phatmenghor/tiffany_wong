@@ -38,5 +38,4 @@ public class ProductListDto extends BaseAuditResponse {
 
     private UUID businessId;
     private UUID categoryId;
-    private UUID brandId;
 }

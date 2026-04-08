@@ -43,13 +43,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     long countByCategoryId(@Param("categoryId") UUID categoryId);
 
     /**
-     * Count active products for a brand
-     */
-    @Query("SELECT COUNT(p) FROM Product p " +
-           "WHERE p.brandId = :brandId AND p.isDeleted = false")
-    long countByBrandId(@Param("brandId") UUID brandId);
-
-    /**
      * Increment product view count
      */
     @Modifying

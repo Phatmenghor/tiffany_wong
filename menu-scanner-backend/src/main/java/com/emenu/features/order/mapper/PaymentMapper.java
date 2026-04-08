@@ -8,7 +8,6 @@ import com.emenu.features.order.dto.request.PaymentCreateRequest;
 import com.emenu.features.order.dto.response.PaymentResponse;
 import com.emenu.features.order.dto.update.PaymentUpdateRequest;
 import com.emenu.features.order.models.Payment;
-import com.emenu.features.subscription.models.Subscription;
 import com.emenu.shared.dto.PaginationResponse;
 import com.emenu.shared.mapper.PaginationMapper;
 import org.mapstruct.*;
@@ -56,11 +55,4 @@ return paginationMapper.toPaginationResponse(paymentPage, this::toResponseList);
      */
     Payment createFromHelper(PaymentCreateHelper helper);
 
-    /**
-     * Update payment with subscription relationship
-     */
-    @Mapping(source = "subscription.businessId", target = "businessId")
-    @Mapping(source = "subscription.planId", target = "planId")
-    @Mapping(source = "subscription.id", target = "subscriptionId")
-    void updateWithSubscription(@MappingTarget Payment payment, Subscription subscription);
 }

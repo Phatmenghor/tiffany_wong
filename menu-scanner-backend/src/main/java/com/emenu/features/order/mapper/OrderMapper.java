@@ -35,7 +35,6 @@ public interface OrderMapper {
     @Mapping(source = "customerEmail", target = "customerEmail")
     @Mapping(source = "business.name", target = "businessName")
     @Mapping(target = "deliveryAddress", expression = "java(mapDeliveryAddress(order))")
-    @Mapping(target = "deliveryOption", expression = "java(mapDeliveryOption(order))")
     @Mapping(source = "orderStatus", target = "orderStatus")
     @Mapping(target = "pricing", expression = "java(mapPricingInfo(order))")
     @Mapping(target = "statusHistory", expression = "java(mapStatusHistory(order))")
@@ -162,31 +161,6 @@ public interface OrderMapper {
                 .locationImages(deliveryAddress.getLocationImages())
                 .build();
     }
-
-    /**
-     * Map delivery option from OrderDeliveryOption snapshot entity to DTO
-     */
-    default com.emenu.features.order.dto.response.OrderDeliveryOptionDto mapDeliveryOption(Order order) {
-        if (order == null || order.getDeliveryOption() == null) {
-            return null;
-        }
-
-        var deliveryOption = order.getDeliveryOption();
-
-        // Check if any delivery option field is populated
-        if (deliveryOption.getName() == null && deliveryOption.getDescription() == null &&
-            deliveryOption.getImageUrl() == null && deliveryOption.getPrice() == null) {
-            return null;
-        }
-
-        return com.emenu.features.order.dto.response.OrderDeliveryOptionDto.builder()
-                .name(deliveryOption.getName())
-                .description(deliveryOption.getDescription())
-                .imageUrl(deliveryOption.getImageUrl())
-                .price(deliveryOption.getPrice())
-                .build();
-    }
-
 
     /**
      * Calculate total number of items in the order
