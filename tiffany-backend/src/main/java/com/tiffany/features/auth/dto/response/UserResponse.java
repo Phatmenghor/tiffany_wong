@@ -3,6 +3,7 @@ package com.tiffany.features.auth.dto.response;
 import com.tiffany.enums.common.Status;
 import com.tiffany.enums.user.AccountStatus;
 import com.tiffany.enums.user.Gender;
+import com.tiffany.enums.user.UserRole;
 import com.tiffany.enums.user.UserType;
 import com.tiffany.shared.dto.BaseAuditResponse;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class UserResponse extends BaseAuditResponse {
     // ── Account ────────────────────────────────────────────────────────────
     private String userIdentifier;
     private UserType userType;
+    private UserRole userRole;
     private AccountStatus accountStatus;
     private Status status;
     private List<String> roles;

@@ -23,6 +23,9 @@ public class UserCreateRequest {
     @NotNull(message = "User type is required")
     private UserType userType;
 
+    @NotNull(message = "User role is required")
+    private UserRole userRole;
+
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
 
     @NotNull(message = "At least one role is required")

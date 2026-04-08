@@ -2,6 +2,7 @@ package com.tiffany.features.auth.models;
 
 import com.tiffany.enums.common.Status;
 import com.tiffany.enums.user.AccountStatus;
+import com.tiffany.enums.user.UserRole;
 import com.tiffany.enums.user.UserType;
 import com.tiffany.shared.domain.BaseUUIDEntity;
 import jakarta.persistence.*;
@@ -35,6 +36,10 @@ public class User extends BaseUUIDEntity {
     private UserType userType;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "user_role", nullable = false)
+    private UserRole userRole;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "account_status", nullable = false)
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
 
@@ -64,4 +69,8 @@ public class User extends BaseUUIDEntity {
     public boolean isActive() { return AccountStatus.ACTIVE.equals(accountStatus); }
     public boolean isOwner() { return UserType.OWNER.equals(userType); }
     public boolean isCustomer() { return UserType.CUSTOMER.equals(userType); }
+
+    public boolean isAdmin() { return UserRole.ADMIN.equals(userRole); }
+    public boolean isStaff() { return UserRole.STAFF.equals(userRole); }
+    public boolean hasAdminAccess() { return isAdmin() || isStaff(); }
 }
