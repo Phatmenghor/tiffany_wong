@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
         List<String> roles = nullIfEmpty(request.getRoles());
 
         Page<User> page = userRepository.searchUsers(
-                null, userTypes, accountStatuses, roles, request.getSearch(), pageable);
+                userTypes, accountStatuses, roles, request.getSearch(), pageable);
         return userMapper.toPaginationResponse(page, paginationMapper);
     }
 

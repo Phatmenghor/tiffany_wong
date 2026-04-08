@@ -36,7 +36,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             "LEFT JOIN u.roles r " +
             "LEFT JOIN u.profile p " +
             "WHERE u.isDeleted = false " +
-            "AND (:businessId IS NULL OR u.businessId = :businessId) " +
             "AND (:userTypes IS NULL OR u.userType IN :userTypes) " +
             "AND (:accountStatuses IS NULL OR u.accountStatus IN :accountStatuses) " +
             "AND (:roles IS NULL OR r.name IN :roles) " +
@@ -46,7 +45,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             "    LOWER(p.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "    LOWER(p.lastName) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<User> searchUsers(
-            @Param("businessId") UUID businessId,
             @Param("userTypes") List<UserType> userTypes,
             @Param("accountStatuses") List<AccountStatus> accountStatuses,
             @Param("roles") List<String> roles,
@@ -58,7 +56,4 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u FROM User u WHERE u.accountStatus = 'ACTIVE' AND u.isDeleted = false")
     List<User> findAllActiveUsers();
-
-    @Query("SELECT u FROM User u JOIN u.telegram t WHERE t.telegramId = :telegramId AND u.isDeleted = false")
-    Optional<User> findByTelegramIdAndIsDeletedFalse(@Param("telegramId") Long telegramId);
 }
