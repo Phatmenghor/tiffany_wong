@@ -98,18 +98,6 @@ const categoriesSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchAllCategoriesWithProductCountService.fulfilled, (state, action) => {
-        // Enrich response data with default values for totalProducts and activeProducts
-        if (action.payload && action.payload.content) {
-          action.payload.content = action.payload.content.map(category => {
-            // Preserve existing totalProducts if it exists, otherwise default to 0
-            const existingCategory = state.dataWithProductCount?.content?.find(c => c.id === category.id);
-            return {
-              ...category,
-              totalProducts: category.totalProducts ?? existingCategory?.totalProducts ?? 0,
-              activeProducts: category.activeProducts ?? 0,
-            };
-          });
-        }
         state.dataWithProductCount = action.payload;
         state.isLoading = false;
       })
