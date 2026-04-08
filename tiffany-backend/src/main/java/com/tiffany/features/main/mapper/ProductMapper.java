@@ -89,7 +89,7 @@ public interface ProductMapper {
 
     List<ProductListDto> toListDtos(List<Product> products);
 
-    @Mapping(target = "categoryName", ignore = true)
+    @Mapping(source = "category.name", target = "categoryName")
     @Mapping(source = "promotionType", target = "promotionType", qualifiedByName = "promotionTypeToString")
     @Mapping(target = "hasPromotion", ignore = true)
     @Mapping(target = "isFavorited", constant = "false")
