@@ -1,0 +1,86 @@
+package com.tiffany.features.order.repository;
+
+import com.tiffany.enums.payment.PaymentMethod;
+import com.tiffany.enums.payment.PaymentStatus;
+import com.tiffany.features.order.models.OrderPayment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface OrderPaymentRepository extends JpaRepository<OrderPayment, UUID> {
+
+    /**
+     * Finds a non-deleted business order payment by ID
+     */
+    Optional<OrderPayment> findByIdAndIsDeletedFalse(UUID id);
+
+    /**
+     * Finds a non-deleted business order payment by order ID
+     */
+    Optional<OrderPayment> findByOrderIdAndIsDeletedFalse(UUID orderId);
+
+    /**
+     * Finds a non-deleted business order payment by ID with business, order, and customer details eagerly fetched
+     */
+    @Query("SELECT bop FROM OrderPayment bop " +
+           "LEFT JOIN FETCH bop.business " +
+           "LEFT JOIN FETCH bop.order o " +
+           "LEFT JOIN FETCH o.customer " +
+           "WHERE bop.id = :id AND bop.isDeleted = false")
+    Optional<OrderPayment> findByIdWithDetails(@Param("id") UUID id);
+
+    /**
+     * Finds all non-deleted order payments, ordered by creation date descending
+     */
+    @Query("SELECT bop FROM OrderPayment bop WHERE bop.isDeleted = false ORDER BY bop.createdAt DESC")
+    List<OrderPayment> findAllOrderByCreatedAtDesc();
+
+    /**
+     * Checks if a non-deleted order payment exists with the given payment reference
+     */
+    boolean existsByPaymentReferenceAndIsDeletedFalse(String paymentReference);
+
+    /**
+     * Calculates total revenue from completed payments
+     */
+    @Query("SELECT SUM(bop.totalAmount) FROM OrderPayment bop WHERE bop.status = 'COMPLETED' AND bop.isDeleted = false")
+    BigDecimal getTotalRevenue();
+
+    /**
+     * Calculates revenue within a date range from completed payments
+     */
+    @Query("SELECT SUM(bop.totalAmount) FROM OrderPayment bop WHERE bop.status = 'COMPLETED' AND bop.createdAt >= :fromDate AND bop.createdAt <= :toDate AND bop.isDeleted = false")
+    BigDecimal getRevenueByDateRange(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
+
+    /**
+     * Find all order payments with dynamic filtering
+     */
+    @Query("SELECT bop FROM OrderPayment bop " +
+           "WHERE bop.isDeleted = false " +
+           "AND (:statuses IS NULL OR bop.status IN :statuses) " +
+           "AND (:paymentMethod IS NULL OR bop.paymentMethod = :paymentMethod) " +
+           "AND (:customerPaymentMethod IS NULL OR bop.customerPaymentMethod = :customerPaymentMethod) " +
+           "AND (:createdFrom IS NULL OR bop.createdAt >= :createdFrom) " +
+           "AND (:createdTo IS NULL OR bop.createdAt <= :createdTo) " +
+           "AND (:search IS NULL OR :search = '' OR " +
+           "     LOWER(bop.paymentReference) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<OrderPayment> findAllWithFilters(
+        @Param("statuses") List<PaymentStatus> statuses,
+        @Param("paymentMethod") PaymentMethod paymentMethod,
+        @Param("customerPaymentMethod") String customerPaymentMethod,
+        @Param("createdFrom") LocalDateTime createdFrom,
+        @Param("createdTo") LocalDateTime createdTo,
+        @Param("search") String search,
+        Pageable pageable
+    );
+}

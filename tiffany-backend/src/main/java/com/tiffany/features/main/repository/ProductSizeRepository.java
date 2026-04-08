@@ -1,0 +1,99 @@
+package com.tiffany.features.main.repository;
+
+import com.tiffany.features.main.models.ProductSize;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Repository
+public interface ProductSizeRepository extends JpaRepository<ProductSize, UUID> {
+
+    /**
+     * Finds a non-deleted product size by ID
+     */
+    Optional<ProductSize> findByIdAndIsDeletedFalse(UUID id);
+
+    /**
+     * Finds all non-deleted product sizes by product ID, ordered by price ascending
+     */
+    @Query("SELECT ps FROM ProductSize ps " +
+           "WHERE ps.productId = :productId AND ps.isDeleted = false " +
+           "ORDER BY ps.price ASC")
+    List<ProductSize> findByProductId(@Param("productId") UUID productId);
+
+    /**
+     * Finds all non-deleted product sizes for multiple product IDs, ordered by product ID and price
+     */
+    @Query("SELECT ps FROM ProductSize ps " +
+           "WHERE ps.productId IN :productIds AND ps.isDeleted = false " +
+           "ORDER BY ps.productId, ps.price ASC")
+    List<ProductSize> findByProductIds(@Param("productIds") List<UUID> productIds);
+
+    /**
+     * Finds and groups product sizes by product ID for multiple products
+     */
+    default Map<UUID, List<ProductSize>> findSizesByProductIdsGrouped(List<UUID> productIds) {
+        if (productIds == null || productIds.isEmpty()) {
+            return Map.of();
+        }
+
+        List<ProductSize> sizes = findByProductIds(productIds);
+        return sizes.stream()
+                .collect(Collectors.groupingBy(ProductSize::getProductId));
+    }
+
+    /**
+     * Reset ALL promotions for all product sizes in a specific business - FAST native SQL query
+     * Clears all promotion fields for product sizes belonging to products in the business
+     */
+    @Modifying
+    @Query(nativeQuery = true, value =
+        "UPDATE product_sizes ps SET " +
+        "    promotion_type = NULL, " +
+        "    promotion_value = NULL, " +
+        "    promotion_from_date = NULL, " +
+        "    promotion_to_date = NULL " +
+        "WHERE ps.is_deleted = false " +
+        "  AND ps.product_id IN ( " +
+        "      SELECT p.id FROM products p " +
+        "      WHERE p.business_id = :businessId AND p.is_deleted = false" +
+        "  )")
+    int resetAllPromotionsForProductSizes(@Param("businessId") UUID businessId);
+
+    /**
+     * Reset promotions for all sizes of a single product - FAST native SQL query.
+     * clearAutomatically evicts stale entities from the L1 cache so subsequent reads are fresh.
+     */
+    @Modifying(clearAutomatically = true)
+    @Query(nativeQuery = true, value =
+        "UPDATE product_sizes SET " +
+        "    promotion_type = NULL, " +
+        "    promotion_value = NULL, " +
+        "    promotion_from_date = NULL, " +
+        "    promotion_to_date = NULL " +
+        "WHERE product_id = :productId " +
+        "  AND is_deleted = false")
+    int resetPromotionsByProductId(@Param("productId") UUID productId);
+
+    /**
+     * Bulk reset promotions for product sizes of specific products (by product IDs)
+     */
+    @Modifying
+    @Query(nativeQuery = true, value =
+        "UPDATE product_sizes ps SET " +
+        "    promotion_type = NULL, " +
+        "    promotion_value = NULL, " +
+        "    promotion_from_date = NULL, " +
+        "    promotion_to_date = NULL " +
+        "WHERE ps.is_deleted = false " +
+        "  AND ps.product_id IN :productIds")
+    int resetPromotionsBulkForProductSizes(@Param("productIds") List<UUID> productIds);
+}

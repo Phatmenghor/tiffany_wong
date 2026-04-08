@@ -1,0 +1,34 @@
+package com.tiffany.features.main.service;
+
+import com.tiffany.features.main.dto.filter.ProductFilterDto;
+import com.tiffany.features.main.dto.request.ProductCreateDto;
+import com.tiffany.features.main.dto.request.BulkPromotionCreateDto;
+import com.tiffany.features.main.dto.request.ResetSelectedPromotionsDto;
+import com.tiffany.features.main.dto.response.ProductDetailDto;
+import com.tiffany.features.main.dto.response.ProductListDto;
+import com.tiffany.features.main.dto.response.BulkPromotionResultDto;
+import com.tiffany.features.main.dto.update.ProductUpdateDto;
+import com.tiffany.shared.dto.PaginationResponse;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.Map;
+
+public interface ProductService {
+    ProductDetailDto createProduct(ProductCreateDto request);
+    PaginationResponse<ProductDetailDto> getAllProductsAdmin(ProductFilterDto filter);
+    PaginationResponse<ProductDetailDto> getAllProductsAdminPos(ProductFilterDto filter);
+    PaginationResponse<ProductDetailDto> getAllProductsAdminStock(ProductFilterDto filter);
+    PaginationResponse<ProductListDto> getAllProducts(ProductFilterDto filter);
+    List<ProductListDto> getAllDataProducts(ProductFilterDto filter);
+    ProductDetailDto getProductById(UUID id);
+    ProductDetailDto updateProduct(UUID id, ProductUpdateDto request);
+    ProductDetailDto deleteProduct(UUID id);
+    ProductDetailDto getProductByIdPublic(UUID id);
+    ProductDetailDto resetProductPromotion(UUID id);
+    Map<String, Object> resetAllPromotions();
+    Map<String, Object> resetSelectedPromotions(ResetSelectedPromotionsDto request);
+    BulkPromotionResultDto createBulkPromotions(BulkPromotionCreateDto request);
+    int[] syncExpiredPromotions();
+    int[] syncStartedPromotions();
+}

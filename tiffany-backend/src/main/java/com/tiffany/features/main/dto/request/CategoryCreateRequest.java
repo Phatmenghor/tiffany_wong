@@ -1,0 +1,15 @@
+package com.tiffany.features.main.dto.request;
+
+import com.tiffany.enums.common.Status;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data
+public class CategoryCreateRequest {
+    
+    @NotBlank(message = "Category name is required")
+    private String name;
+    
+    private String imageUrl;
+    private Status status = Status.ACTIVE;
+}

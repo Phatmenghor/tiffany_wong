@@ -1,0 +1,28 @@
+package com.tiffany.features.order.service;
+
+import com.tiffany.features.order.dto.filter.OrderFilterRequest;
+import com.tiffany.features.order.dto.request.OrderCreateRequest;
+import com.tiffany.features.order.dto.request.POSCheckoutRequest;
+import com.tiffany.features.order.dto.response.OrderResponse;
+import com.tiffany.features.order.dto.response.POSCheckoutResponse;
+import com.tiffany.features.order.dto.update.OrderUpdateRequest;
+import com.tiffany.shared.dto.PaginationResponse;
+
+import java.util.List;
+import java.util.UUID;
+
+public interface OrderService {
+
+    // Customer Operations
+    OrderResponse createOrderFromCart(OrderCreateRequest request);
+    PaginationResponse<OrderResponse> getCustomerOrderHistory(OrderFilterRequest filter);
+    OrderResponse getOrderById(UUID orderId);
+
+    // Business Operations
+    PaginationResponse<OrderResponse> getAllOrders(OrderFilterRequest filter);
+    OrderResponse updateOrder(UUID orderId, OrderUpdateRequest request);
+    OrderResponse deleteOrder(UUID orderId);
+
+    // POS Operations (Admin)
+    POSCheckoutResponse createPOSCheckoutOrder(POSCheckoutRequest request);
+}

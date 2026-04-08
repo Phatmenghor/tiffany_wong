@@ -1,0 +1,26 @@
+package com.tiffany.features.auth.repository;
+
+import com.tiffany.features.auth.models.SocialMedia;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Social Media Repository
+ * Data access layer for SocialMedia entity
+ */
+@Repository
+public interface SocialMediaRepository extends JpaRepository<SocialMedia, UUID> {
+
+    /**
+     * Find all active social media for a system setting
+     */
+    List<SocialMedia> findBySystemSettingIdAndIsDeletedFalse(UUID systemSettingId);
+
+    /**
+     * Delete all social media for a system setting
+     */
+    void deleteBySystemSettingId(UUID systemSettingId);
+}
