@@ -392,33 +392,25 @@ SELECT
 FROM generate_series(1, 2000) AS t(i);
 
 -- ============================================================================
--- 11. ORDER ITEMS (1-3 items per order - OPTIMIZED for speed)
+-- 11. ORDER ITEMS (6 items per order - FAST)
 -- ============================================================================
 INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_name, quantity, unit_price, total_price, final_price, product_size_id)
-WITH product_offsets AS (
-    SELECT
-        o.id as order_id,
-        p.id as product_id,
-        p.name,
-        p.price,
-        ROW_NUMBER() OVER (PARTITION BY o.id ORDER BY p.id) as item_num
-    FROM orders o
-    CROSS JOIN (
-        SELECT id, name, price FROM products LIMIT 3000
-    ) p
-    WHERE (ABS(hashtext(o.id::text || p.id::text)) % 100) < 20  -- ~20% hit rate = 1-3 items per order
-)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    po.order_id,
-    po.product_id,
-    po.name,
-    (1 + (random() * 5)::int),
-    po.price,
-    (po.price * (1 + (random() * 5)::int))::numeric(10,2),
-    (po.price * (1 + (random() * 5)::int))::numeric(10,2),
-    (SELECT id FROM product_sizes WHERE product_id = po.product_id LIMIT 1)
-FROM product_offsets po;
+    o.id,
+    p.id,
+    p.name,
+    2,
+    p.price,
+    (p.price * 2)::numeric(10,2),
+    (p.price * 2)::numeric(10,2),
+    (SELECT id FROM product_sizes WHERE product_id = p.id LIMIT 1)
+FROM orders o
+CROSS JOIN LATERAL (
+    SELECT id, name, price FROM products WHERE id IN (
+        SELECT id FROM products ORDER BY id LIMIT 6 OFFSET ((ABS(hashtext(o.id::text)) % 99994))
+    )
+) p;
 
 -- ============================================================================
 -- 12. ORDER DELIVERY ADDRESSES
