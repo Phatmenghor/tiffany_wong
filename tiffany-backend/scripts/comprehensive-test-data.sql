@@ -17,7 +17,7 @@
 -- Categories: 200
 -- Banners: 20
 -- Carts: All 20,001 customers
--- Orders: 2,000 for phatmenghor21@gmail.com
+-- Orders: 100 for phatmenghor21@gmail.com (6 items each = 600 order items)
 -- ============================================================================
 
 -- ============================================================================
@@ -362,12 +362,12 @@ BEGIN
 END $$;
 
 -- ============================================================================
--- 10. ORDERS (2,000 orders for phatmenghor21@gmail.com)
+-- 10. ORDERS (100 orders for phatmenghor21@gmail.com)
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[90 percent] Inserting 2,000 orders with items, addresses, and history...';
-    RAISE NOTICE '      This is the final step, may take a few minutes...';
+    RAISE NOTICE '[90 percent] Inserting 100 orders with items, addresses, and history...';
+    RAISE NOTICE '      [1] [2] [3] [4] [5] [6] items per order...';
 END $$;
 
 INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_number, customer_id, order_status, source, order_from, payment_method, payment_status, subtotal, tax_amount, discount_amount, delivery_fee, total_amount, customer_name, customer_phone, customer_email, customer_note)
@@ -389,11 +389,16 @@ SELECT
     '+855 98 123 456' || i,
     'customer' || i || '@test.com',
     'Please deliver quickly'
-FROM generate_series(1, 2000) AS t(i);
+FROM generate_series(1, 100) AS t(i);
 
 -- ============================================================================
 -- 11. ORDER ITEMS (6 items per order - FAST)
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '      Inserting order items... [1] [2] [3] [4] [5] [6]';
+END $$;
+
 INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_name, quantity, unit_price, total_price, final_price, product_size_id)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
@@ -415,6 +420,11 @@ CROSS JOIN LATERAL (
 -- ============================================================================
 -- 12. ORDER DELIVERY ADDRESSES
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '      Inserting order delivery addresses...';
+END $$;
+
 INSERT INTO order_delivery_addresses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, village, commune, district, province, street_number, house_number, note, latitude, longitude)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
@@ -433,6 +443,11 @@ FROM orders o;
 -- ============================================================================
 -- 13. ORDER STATUS HISTORY
 -- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '      Inserting order status history...';
+END $$;
+
 INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, old_status, new_status, changed_at, changed_by, reason)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
