@@ -35,10 +35,8 @@ import {
   PROMOTION_TYPE_CREATE_UPDATE,
 } from "@/constants/status/create-update-status";
 import { ClickableImageUpload } from "@/components/shared/form-field/clickable-image-upload";
-import { ComboboxSelectBrand } from "@/components/shared/combobox/combobox_select_brand";
 import { ComboboxSelectCategories } from "@/components/shared/combobox/combobox_select_categories";
 import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
-import { BrandResponseModel } from "@/redux/features/master-data/store/models/response/brand-response";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
 import {
   createProductSchema,
@@ -75,9 +73,6 @@ export default function ProductModal({
 
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
-  const [selectedBrand, setSelectedBrand] = useState<BrandResponseModel | null>(
-    null,
-  );
   const [selectedCategory, setSelectedCategory] =
     useState<CategoriesResponseModel | null>(null);
 
@@ -536,23 +531,6 @@ export default function ProductModal({
                           required
                           disabled={isProcessing}
                           error={errors.categoryId?.message}
-                          showAllOption={false}
-                        />
-                      </div>
-
-                      <div>
-                        <ComboboxSelectBrand
-                          dataSelect={selectedBrand}
-                          onChangeSelected={(brand) => {
-                            setSelectedBrand(brand);
-                            setValue("brandId", brand?.id || "", {
-                              shouldDirty: true,
-                            });
-                          }}
-                          label="Brand (Optional)"
-                          placeholder="Select brand"
-                          disabled={isProcessing}
-                          error={errors.brandId?.message}
                           showAllOption={false}
                         />
                       </div>
