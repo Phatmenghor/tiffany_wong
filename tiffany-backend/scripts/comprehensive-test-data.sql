@@ -392,30 +392,44 @@ SELECT
 FROM generate_series(1, 100) AS t(i);
 
 -- ============================================================================
--- 11. ORDER ITEMS (6 items per order - FAST)
+-- 11. ORDER ITEMS (6 items per order - with progress tracking)
 -- ============================================================================
 DO $$
+DECLARE
+    v_order_id UUID;
+    v_order_num INT := 0;
+    v_progress_msg TEXT := '';
 BEGIN
-    RAISE NOTICE '      Inserting order items... [1] [2] [3] [4] [5] [6]';
-END $$;
+    RAISE NOTICE '      Inserting order items: ';
 
-INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_name, quantity, unit_price, total_price, final_price, product_size_id)
-SELECT
-    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    o.id,
-    p.id,
-    p.name,
-    2,
-    p.price,
-    (p.price * 2)::numeric(10,2),
-    (p.price * 2)::numeric(10,2),
-    (SELECT id FROM product_sizes WHERE product_id = p.id LIMIT 1)
-FROM orders o
-CROSS JOIN LATERAL (
-    SELECT id, name, price FROM products WHERE id IN (
-        SELECT id FROM products ORDER BY id LIMIT 6 OFFSET ((ABS(hashtext(o.id::text)) % 99994))
-    )
-) p;
+    FOR v_order_id IN SELECT id FROM orders ORDER BY created_at
+    LOOP
+        v_order_num := v_order_num + 1;
+
+        -- Insert 6 items for this order
+        INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_name, quantity, unit_price, total_price, final_price, product_size_id)
+        SELECT
+            gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+            v_order_id,
+            p.id,
+            p.name,
+            2,
+            p.price,
+            (p.price * 2)::numeric(10,2),
+            (p.price * 2)::numeric(10,2),
+            (SELECT id FROM product_sizes WHERE product_id = p.id LIMIT 1)
+        FROM (
+            SELECT id, name, price FROM products ORDER BY id LIMIT 6 OFFSET ((ABS(hashtext(v_order_id::text)) % 99994))
+        ) p;
+
+        -- Show progress every 10 orders
+        IF v_order_num % 10 = 0 THEN
+            RAISE NOTICE '      [%]', v_order_num;
+        END IF;
+    END LOOP;
+
+    RAISE NOTICE '      [100] All order items inserted!';
+END $$;
 
 -- ============================================================================
 -- 12. ORDER DELIVERY ADDRESSES
