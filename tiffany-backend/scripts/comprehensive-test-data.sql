@@ -190,28 +190,9 @@ VALUES
 -- ============================================================================
 -- 11. SYSTEM SETTINGS (Full configuration)
 -- ============================================================================
-INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, setting_key, setting_value)
+INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, tax_percentage, system_name, contact_address, contact_phone, contact_email)
 VALUES
-('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'PLATFORM_NAME', 'Tiffany E-Menu Platform'),
-('550e8400-e29b-41d4-a716-446655990002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'PLATFORM_VERSION', '1.0.0'),
-('550e8400-e29b-41d4-a716-446655990003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'TAX_RATE', '10'),
-('550e8400-e29b-41d4-a716-446655990004', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'CURRENCY', 'KHR'),
-('550e8400-e29b-41d4-a716-446655990005', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'DELIVERY_FEE', '5.00'),
-('550e8400-e29b-41d4-a716-446655990006', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'MIN_ORDER_AMOUNT', '10.00'),
-('550e8400-e29b-41d4-a716-446655990007', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'MAX_ORDER_AMOUNT', '10000.00'),
-('550e8400-e29b-41d4-a716-446655990008', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'BUSINESS_NAME', 'Tiffany Restaurant'),
-('550e8400-e29b-41d4-a716-446655990009', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'BUSINESS_ADDRESS', 'Phnom Penh, Cambodia'),
-('550e8400-e29b-41d4-a716-446655990010', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'BUSINESS_PHONE', '+855 23 888 9999'),
-('550e8400-e29b-41d4-a716-446655990011', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'BUSINESS_EMAIL', 'contact@tiffany.com'),
-('550e8400-e29b-41d4-a716-446655990012', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'OPENING_HOURS', '09:00-22:00'),
-('550e8400-e29b-41d4-a716-446655990013', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'CLOSING_HOURS', '22:00'),
-('550e8400-e29b-41d4-a716-446655990014', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ENABLE_DELIVERY', 'true'),
-('550e8400-e29b-41d4-a716-446655990015', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ENABLE_PICKUP', 'true'),
-('550e8400-e29b-41d4-a716-446655990016', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'MAX_DELIVERY_DISTANCE', '20'),
-('550e8400-e29b-41d4-a716-446655990017', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'DEFAULT_LANGUAGE', 'en'),
-('550e8400-e29b-41d4-a716-446655990018', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'TIMEZONE', 'Asia/Phnom_Penh'),
-('550e8400-e29b-41d4-a716-446655990019', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ENABLE_LOYALTY_PROGRAM', 'true'),
-('550e8400-e29b-41d4-a716-446655990020', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'LOYALTY_POINTS_MULTIPLIER', '1.0');
+('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 10.0, 'Tiffany E-Menu Platform', 'Phnom Penh, Cambodia', '+855 23 888 9999', 'contact@tiffany.com');
 
 -- ============================================================================
 -- END OF LARGE SCALE TEST DATA
