@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/common/currency-format";
 import { sanitizeImageUrl } from "@/utils/common/common";
+import { getImageWithFallback } from "@/constants/image-defaults";
 import { CustomButton } from "../button/custom-button";
 import { ProductDetailResponseModel } from "@/redux/features/business/store/models/response/product-response";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
@@ -84,7 +85,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
     }
   }, [quantity, product.id, product.name, totalQuantity]);
 
-  const imageUrl = sanitizeImageUrl(product.mainImageUrl, appImages.NoImage);
+  const imageUrl = sanitizeImageUrl(product.mainImageUrl, getImageWithFallback(undefined, "product"));
 
   const [imageLoaded, setImageLoaded] = useState(imageLoadedCache.has(imageUrl));
   const [imageError, setImageError] = useState(false);

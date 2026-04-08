@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
+import { getImageWithFallback } from "@/constants/image-defaults";
 
 interface CategoryCardProps {
   category: CategoriesResponseModel;
@@ -62,9 +63,14 @@ export function CategoryCard({ category, className }: CategoryCardProps) {
                 />
               </>
             ) : (
-              <span className="text-3xl sm:text-4xl font-bold text-primary/80 group-hover:text-primary transition-colors">
-                {category.name.charAt(0).toUpperCase()}
-              </span>
+              <Image
+                src={getImageWithFallback(undefined, "category")}
+                alt={category.name}
+                width={80}
+                height={80}
+                className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+                onError={() => setImageError(true)}
+              />
             )}
           </div>
 

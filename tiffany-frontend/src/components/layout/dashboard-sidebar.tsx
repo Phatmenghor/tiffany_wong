@@ -11,6 +11,7 @@ import { ROUTES, SIDEBAR_MENU } from "@/constants/app-routes/routes";
 import Image from "next/image";
 import { UserAvatarCard } from "../shared/avator/user-avatar-card";
 import { useIsMobile } from "@/redux/store/use-mobile";
+import { getImageWithFallback } from "@/constants/image-defaults";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { getProfileService } from "@/redux/features/auth/store/thunks/auth-thunks";
 import { useAppSelector } from "@/redux/store";
@@ -225,13 +226,13 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg group-hover:shadow-primary/20 transition-all duration-300 overflow-hidden">
                   <img
                     key={logoUrl}
-                    src={logoUrl || "/assets/image/no-image.png"}
+                    src={getImageWithFallback(logoUrl, "logo")}
                     alt={businessName}
                     className="w-full h-full object-cover rounded"
                     onLoad={() => console.log("✅ [SIDEBAR] Logo loaded:", logoUrl)}
                     onError={(e) => {
                       console.error("❌ [SIDEBAR] Failed to load logo:", logoUrl);
-                      (e.target as HTMLImageElement).src = "/assets/image/no-image.png";
+                      (e.target as HTMLImageElement).src = getImageWithFallback(undefined, "logo");
                     }}
                   />
                 </div>

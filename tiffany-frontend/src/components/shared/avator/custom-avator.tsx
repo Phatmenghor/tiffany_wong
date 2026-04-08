@@ -1,6 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getImageWithFallback } from "@/constants/image-defaults";
 
 interface CustomerAvatarProps {
   imageUrl?: string;
@@ -40,6 +41,7 @@ export const CustomAvatar: React.FC<CustomerAvatarProps> = ({
 
   // Render banner variant
   if (variant === "banner") {
+    const bannerImageUrl = getImageWithFallback(imageUrl, "banner");
     return (
       <div className="inline-block w-full">
         <div
@@ -47,25 +49,21 @@ export const CustomAvatar: React.FC<CustomerAvatarProps> = ({
             bannerSizes[bannerHeight]
           } w-full max-w-xs rounded-lg overflow-hidden border-2 border-border bg-muted transition-all ${className}`}
         >
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={name || "Banner"}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20">
-              <span className="text-xs text-muted-foreground font-medium">
-                {name || "No image"}
-              </span>
-            </div>
-          )}
+          <img
+            src={bannerImageUrl}
+            alt={name || "Banner"}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = getImageWithFallback(undefined, "banner");
+            }}
+          />
         </div>
       </div>
     );
   }
 
   // Render avatar variant
+  const avatarImageUrl = getImageWithFallback(imageUrl, "profile");
   return (
     <div className="inline-block">
       <Avatar
@@ -73,7 +71,7 @@ export const CustomAvatar: React.FC<CustomerAvatarProps> = ({
           avatarSizes[size].avatar
         } border-2 border-background dark:border-card shadow-sm transition-all ${className}`}
       >
-        <AvatarImage src={imageUrl} alt={name || "User"} />
+        <AvatarImage src={avatarImageUrl} alt={name || "User"} />
         <AvatarFallback className="bg-primary/10 dark:bg-primary/20 text-primary font-semibold">
           {fallbackText}
         </AvatarFallback>
