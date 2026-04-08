@@ -92,7 +92,7 @@ FROM generate_series(1, 200) AS t(i);
 -- ============================================================================
 -- 4. PRODUCTS (100,000 products)
 -- ============================================================================
-INSERT INTO products (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, sku, barcode, price, category_id, status)
+INSERT INTO products (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, sku, barcode, price, category_id, status, view_count, favorite_count)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'Product ' || i,
@@ -101,7 +101,9 @@ SELECT
     'BARCODE-' || LPAD(i::text, 10, '0'),
     (10 + random() * 500)::numeric(10,2),
     (SELECT id FROM categories ORDER BY RANDOM() LIMIT 1),
-    'ACTIVE'
+    'ACTIVE',
+    0,
+    0
 FROM generate_series(1, 100000) AS t(i);
 
 -- ============================================================================
