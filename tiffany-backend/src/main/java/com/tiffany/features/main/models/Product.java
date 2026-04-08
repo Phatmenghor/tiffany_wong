@@ -59,30 +59,6 @@ public class Product extends BaseUUIDEntity {
     @Column(name = "promotion_to_date")
     private LocalDateTime promotionToDate;
 
-    @Column(name = "display_price", precision = 10, scale = 2)
-    private BigDecimal displayPrice;
-
-    @Column(name = "display_origin_price", precision = 10, scale = 2)
-    private BigDecimal displayOriginPrice;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "display_promotion_type")
-    private PromotionType displayPromotionType;
-
-    @Column(name = "display_promotion_value", precision = 10, scale = 2)
-    private BigDecimal displayPromotionValue;
-
-    @Column(name = "display_promotion_from_date")
-    private LocalDateTime displayPromotionFromDate;
-
-    @Column(name = "display_promotion_to_date")
-    private LocalDateTime displayPromotionToDate;
-
-    @Column(name = "has_sizes", nullable = false)
-    private Boolean hasSizes = false;
-
-    @Column(name = "has_active_promotion", nullable = false)
-    private Boolean hasActivePromotion = false;
 
     @Column(name = "view_count", nullable = false)
     private Long viewCount = 0L;
@@ -99,15 +75,6 @@ public class Product extends BaseUUIDEntity {
     @Column(name = "main_image_url")
     private String mainImageUrl;
 
-    @Column(name = "category_name", length = 255)
-    private String categoryName;
-
-    @Column(name = "brand_name", length = 255)
-    private String brandName;
-
-    @Column(name = "business_name", length = 255)
-    private String businessName;
-
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("createdAt DESC")
     private List<ProductImage> images = new ArrayList<>();
@@ -115,82 +82,6 @@ public class Product extends BaseUUIDEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("price ASC")
     private List<ProductSize> sizes = new ArrayList<>();
-
-    public void syncDisplayFieldsFromSizes() {
-        List<ProductSize> activeSizes = (sizes == null) ? List.of() : sizes.stream()
-                .filter(size -> size != null && !size.getIsDeleted())
-                .toList();
-
-        if (activeSizes.isEmpty()) {
-            // No active sizes - use product's own fields
-            this.hasSizes = false;
-            this.hasActivePromotion = isPromotionActive();
-            this.displayOriginPrice = this.price;
-            if (this.hasActivePromotion) {
-                this.displayPrice = getFinalPrice();
-                this.displayPromotionType = this.promotionType;
-                this.displayPromotionValue = this.promotionValue;
-                this.displayPromotionFromDate = this.promotionFromDate;
-                this.displayPromotionToDate = this.promotionToDate;
-            } else {
-                this.displayPrice = this.price != null ? this.price : BigDecimal.ZERO;
-                this.displayPromotionType = null;
-                this.displayPromotionValue = null;
-                this.displayPromotionFromDate = null;
-                this.displayPromotionToDate = null;
-            }
-        } else {
-            // Has active sizes - use size fields
-            this.hasSizes = true;
-
-            // hasActivePromotion = true if ANY size has an active promotion
-            this.hasActivePromotion = activeSizes.stream().anyMatch(ProductSize::isPromotionActive);
-
-            // Pick display size: cheapest promoted size first, otherwise cheapest overall
-            ProductSize displaySize = activeSizes.stream()
-                    .filter(ProductSize::isPromotionActive)
-                    .min(Comparator.comparing(ProductSize::getPrice))
-                    .orElseGet(() -> activeSizes.stream()
-                            .min(Comparator.comparing(ProductSize::getPrice))
-                            .orElse(null));
-
-            if (displaySize != null) {
-                this.displayOriginPrice = displaySize.getPrice();
-                if (this.hasActivePromotion) {
-                    this.displayPromotionType = displaySize.getPromotionType();
-                    this.displayPromotionValue = displaySize.getPromotionValue();
-                    this.displayPromotionFromDate = displaySize.getPromotionFromDate();
-                    this.displayPromotionToDate = displaySize.getPromotionToDate();
-                    this.displayPrice = displaySize.getFinalPrice();
-                } else {
-                    this.displayPromotionType = null;
-                    this.displayPromotionValue = null;
-                    this.displayPromotionFromDate = null;
-                    this.displayPromotionToDate = null;
-                    this.displayPrice = displaySize.getPrice();
-                }
-            }
-        }
-    }
-
-    public void initializeDisplayFields() {
-        this.hasSizes = false;
-        this.hasActivePromotion = isPromotionActive();
-        this.displayOriginPrice = this.price;
-        if (this.hasActivePromotion) {
-            this.displayPrice = getFinalPrice();
-            this.displayPromotionType = this.promotionType;
-            this.displayPromotionValue = this.promotionValue;
-            this.displayPromotionFromDate = this.promotionFromDate;
-            this.displayPromotionToDate = this.promotionToDate;
-        } else {
-            this.displayPrice = this.price != null ? this.price : BigDecimal.ZERO;
-            this.displayPromotionType = null;
-            this.displayPromotionValue = null;
-            this.displayPromotionFromDate = null;
-            this.displayPromotionToDate = null;
-        }
-    }
 
     public BigDecimal getFinalPrice() {
         if (!isPromotionActive()) {

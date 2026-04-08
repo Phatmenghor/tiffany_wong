@@ -105,9 +105,6 @@ public class ProductServiceImpl implements ProductService {
         // Batch initialize sizes to avoid lazy-loading (prevents Hibernate pagination warning)
         productPage.getContent().forEach(p -> Hibernate.initialize(p.getSizes()));
 
-        // Recalculate display fields from current sizes
-        productPage.getContent().forEach(Product::syncDisplayFieldsFromSizes);
-
         List<ProductListDto> dtoList = productMapper.toListDtos(productPage.getContent());
 
         if (currentUser.isPresent()) {
@@ -168,9 +165,6 @@ public class ProductServiceImpl implements ProductService {
         );
 
         log.info("Products fetched from database - Total count: {}", products.size());
-
-        // Recalculate display fields from current sizes
-        products.forEach(Product::syncDisplayFieldsFromSizes);
 
         List<ProductListDto> dtoList = productMapper.toListDtos(products);
 
@@ -249,9 +243,6 @@ public class ProductServiceImpl implements ProductService {
         // Batch initialize sizes to avoid lazy-loading (prevents Hibernate pagination warning)
         productPage.getContent().forEach(p -> Hibernate.initialize(p.getSizes()));
 
-        // Recalculate display fields from current sizes
-        productPage.getContent().forEach(Product::syncDisplayFieldsFromSizes);
-
         // Clear images to prevent lazy-loading (not needed for admin listing)
         productPage.getContent().forEach(p -> p.setImages(new ArrayList<>()));
 
@@ -295,9 +286,6 @@ public class ProductServiceImpl implements ProductService {
         // Clear images to avoid lazy-loading overhead (images not needed in listing)
         productPage.getContent().forEach(p -> p.setImages(new ArrayList<>()));
 
-        // Recalculate display fields from current sizes
-        productPage.getContent().forEach(Product::syncDisplayFieldsFromSizes);
-
         List<ProductDetailDto> dtoList = productMapper.toDetailDtos(productPage.getContent());
 
         return paginationMapper.toPaginationResponse(productPage, dtoList);
@@ -324,9 +312,6 @@ public class ProductServiceImpl implements ProductService {
             // Initialize images for detail view (avoids MultipleBagFetchException by loading separately)
             Hibernate.initialize(product.getImages());
             log.debug("Product images initialized - Count: {}", product.getImages().size());
-
-            // Recalculate display fields from current sizes (fixes stale DB values)
-            product.syncDisplayFieldsFromSizes();
 
             ProductDetailDto dto = productMapper.toDetailDto(product);
 
@@ -365,9 +350,6 @@ public class ProductServiceImpl implements ProductService {
             // Initialize images for detail view (avoids MultipleBagFetchException by loading separately)
             Hibernate.initialize(product.getImages());
             log.debug("Product images initialized - Count: {}", product.getImages().size());
-
-            // Recalculate display fields from current sizes (fixes stale DB values)
-            product.syncDisplayFieldsFromSizes();
 
             ProductDetailDto dto = productMapper.toDetailDto(product);
 
@@ -635,13 +617,6 @@ public class ProductServiceImpl implements ProductService {
                     productSizeRepository.saveAll(sizes);
                     log.debug("Bulk promotion applied to {} sizes, cleared {} sizes for product: {}",
                         appliedSizes, clearedSizes, product.getId());
-
-                    // Sync display fields from sizes
-                    product.syncDisplayFieldsFromSizes();
-                } else {
-                    // Initialize display fields for product without sizes
-                    product.initializeDisplayFields();
-                    log.debug("Display fields initialized for product without sizes: {}", product.getId());
                 }
 
                 productRepository.save(product);
@@ -691,7 +666,6 @@ public class ProductServiceImpl implements ProductService {
             User currentUser = securityUtils.getCurrentUser();
 
             Product product = productMapper.toEntity(request);
-            product.initializeDisplayFields();
             syncDenormalizedNames(product);
             log.debug("Product entity mapped and initialized: {}", product.getName());
 
@@ -707,7 +681,6 @@ public class ProductServiceImpl implements ProductService {
 
                 List<ProductSize> sizes = productSizeRepository.findByProductId(savedProduct.getId());
                 savedProduct.setSizes(sizes);
-                savedProduct.syncDisplayFieldsFromSizes();
                 savedProduct = productRepository.save(savedProduct);
                 log.debug("Product with {} sizes saved successfully", sizes.size());
             }
@@ -740,11 +713,6 @@ public class ProductServiceImpl implements ProductService {
             // Update stock status if provided
             // Stock tracking disabled - no-op method
 
-            if (!product.getHasSizes()) {
-                product.initializeDisplayFields();
-                log.debug("Display fields initialized for product without sizes");
-            }
-
             // Sync denormalized names in case category/brand changed
             syncDenormalizedNames(product);
 
@@ -760,7 +728,6 @@ public class ProductServiceImpl implements ProductService {
             if (sizesChanged) {
                 List<ProductSize> sizes = productSizeRepository.findByProductId(updatedProduct.getId());
                 updatedProduct.setSizes(sizes);
-                updatedProduct.syncDisplayFieldsFromSizes();
                 updatedProduct = productRepository.save(updatedProduct);
                 log.debug("Product with {} sizes saved after size changes", sizes.size());
             }

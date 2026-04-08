@@ -95,9 +95,6 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
 
         Page<Product> favoritePage = productRepository.findUserFavorites(userId, pageable);
 
-        // Recalculate display fields from current sizes
-        favoritePage.getContent().forEach(Product::syncDisplayFieldsFromSizes);
-
         PaginationResponse<ProductListDto> response = productMapper.toPaginationResponse(
             favoritePage,
             paginationMapper
