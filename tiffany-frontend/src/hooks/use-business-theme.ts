@@ -62,21 +62,20 @@ function hexToHsl(hex: string): string {
 export function useBusinessTheme() {
   const dispatch = useAppDispatch();
   const businessSettings = useAppSelector(selectBusinessSettings);
+  const SYSTEM_ID = "system-settings"; // Fixed ID for system-level settings
 
   useEffect(() => {
     // On login pages, use default business theme from AppDefault
     if (typeof window !== "undefined" && window.location.pathname.includes("/login")) {
       console.log("## [THEME] On login page, loading default business theme");
 
-      // Use default business ID
-      const defaultBusinessId = AppDefault.BUSINESS_ID;
-      const cachedColors = getCachedThemeColors(defaultBusinessId);
+      const cachedColors = getCachedThemeColors(SYSTEM_ID);
 
       if (cachedColors) {
-        console.log(`## [THEME] Applying cached colors for default business ${defaultBusinessId} on login page`);
+        console.log(`## [THEME] Applying cached colors on login page`);
         applyColors(cachedColors.primaryColor);
       } else {
-        console.log("## [THEME] No cached theme for default business, using defaults");
+        console.log("## [THEME] No cached theme, using defaults");
         applyColors(DEFAULT_COLORS.primary);
       }
       return;
@@ -84,15 +83,10 @@ export function useBusinessTheme() {
 
     // Check if settings already loaded in Redux
     if (businessSettings) {
-      // Store business ID in localStorage for ThemeInitializer
-      localStorage.setItem("businessId", businessSettings.businessId);
-
       // Try to load from cache first (instant colors)
-      const cachedColors = getCachedThemeColors(businessSettings.businessId);
+      const cachedColors = getCachedThemeColors(SYSTEM_ID);
       if (cachedColors) {
-        console.log(
-          `## [THEME] Applying cached colors for business ${businessSettings.businessId}`
-        );
+        console.log(`## [THEME] Applying cached colors`);
         applyColors(cachedColors.primaryColor);
       } else {
         // Apply from redux if no cache
@@ -104,7 +98,7 @@ export function useBusinessTheme() {
         primaryColor: businessSettings.primaryColor || "",
       };
       if (hasThemeChanged(cachedColors, currentColors)) {
-        cacheThemeColors(businessSettings.businessId, currentColors);
+        cacheThemeColors(SYSTEM_ID, currentColors);
       }
 
       return;
@@ -116,15 +110,12 @@ export function useBusinessTheme() {
       if (action.meta.requestStatus === "fulfilled" && action.payload) {
         const payload = action.payload as BusinessSettingsResponse;
 
-        // Store business ID
-        localStorage.setItem("businessId", payload.businessId);
-
         // Cache the colors
         const colors = {
           primaryColor: payload.primaryColor || "",
         };
-        cacheThemeColors(payload.businessId, colors);
-        console.log(`## [THEME] Cached colors for business ${payload.businessId}`);
+        cacheThemeColors(SYSTEM_ID, colors);
+        console.log(`## [THEME] Cached colors`);
 
         // Apply colors
         applyColors(payload.primaryColor);

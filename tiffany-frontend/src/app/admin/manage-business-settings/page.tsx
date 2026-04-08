@@ -49,10 +49,9 @@ function convertResponseToFormData(
   response: BusinessSettingsResponse
 ): BusinessSettingsFormData {
   return {
-    businessName: response.businessName || BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME,
+    systemName: response.systemName || BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME,
     taxPercentage: response.taxPercentage?.toString() || "",
-    logoBusinessUrl: response.logoBusinessUrl || "",
-    enableStock: response.enableStock || "DISABLED",
+    logoSystemUrl: response.logoSystemUrl || "",
     socialMedia: response.socialMedia || [],
     primaryColor: response.primaryColor || BUSINESS_SETTINGS_DEFAULTS.PRIMARY_COLOR,
     contactAddress: response.contactAddress || "",
@@ -73,10 +72,9 @@ export default function BusinessSettingsPage() {
     resolver: zodResolver(businessSettingsSchema),
     mode: "onChange",
     defaultValues: {
-      businessName: BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME,
+      systemName: BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME,
       taxPercentage: "",
-      logoBusinessUrl: "",
-      enableStock: "DISABLED",
+      logoSystemUrl: "",
       socialMedia: [],
       primaryColor: BUSINESS_SETTINGS_DEFAULTS.PRIMARY_COLOR,
       contactAddress: "",
@@ -94,11 +92,10 @@ export default function BusinessSettingsPage() {
     }
 
     // Load from cache first for instant color application
-    const cachedColors = getCachedThemeColors(reduxBusinessSettings.businessId);
+    const SYSTEM_ID = "system-settings";
+    const cachedColors = getCachedThemeColors(SYSTEM_ID);
     if (cachedColors) {
-      console.log(
-        `[THEME] Applied cached colors for business ${reduxBusinessSettings.businessId}`
-      );
+      console.log(`[THEME] Applied cached colors`);
       applyThemeColors(cachedColors.primaryColor);
     }
 
@@ -109,19 +106,13 @@ export default function BusinessSettingsPage() {
   }, [reduxBusinessSettings]);
 
   const fetchBusinessSettings = async () => {
+    const SYSTEM_ID = "system-settings";
     try {
       // Try to load from cache first (instant, no loading state)
       if (reduxBusinessSettings) {
-        // Store business ID in localStorage for theme initializer
-        localStorage.setItem("businessId", reduxBusinessSettings.businessId);
-
-        const cachedColors = getCachedThemeColors(
-          reduxBusinessSettings.businessId
-        );
+        const cachedColors = getCachedThemeColors(SYSTEM_ID);
         if (cachedColors) {
-          console.log(
-            `[THEME] Loading cached colors for business ${reduxBusinessSettings.businessId}`
-          );
+          console.log(`[THEME] Loading cached colors`);
           applyThemeColors(cachedColors.primaryColor);
           const formData = convertResponseToFormData(reduxBusinessSettings);
           form.reset(formData);
@@ -135,23 +126,18 @@ export default function BusinessSettingsPage() {
       if (action.meta.requestStatus === "fulfilled" && action.payload) {
         const data = action.payload as BusinessSettingsResponse;
 
-        // Store business ID for theme initializer
-        localStorage.setItem("businessId", data.businessId);
-
         const formData = convertResponseToFormData(data);
         form.reset(formData);
 
         // Check if colors changed and update cache if needed
-        const cachedColors = getCachedThemeColors(data.businessId);
+        const cachedColors = getCachedThemeColors(SYSTEM_ID);
         const currentColors = {
           primaryColor: data.primaryColor || "",
         };
 
         if (hasThemeChanged(cachedColors, currentColors)) {
-          console.log(
-            `[THEME] Colors changed, updating cache for business ${data.businessId}`
-          );
-          cacheThemeColors(data.businessId, currentColors);
+          console.log(`[THEME] Colors changed, updating cache`);
+          cacheThemeColors(SYSTEM_ID, currentColors);
         }
 
         // Apply theme colors (may have changed from cache)
@@ -170,7 +156,7 @@ export default function BusinessSettingsPage() {
   // Handle business logo selection (store base64, upload on Save)
   const handleLogoSelect = (imageData: string) => {
     // Just store the base64 in the form, don't upload yet
-    form.setValue("logoBusinessUrl", imageData, {
+    form.setValue("logoSystemUrl", imageData, {
       shouldDirty: true,
     });
     showToast.success("✓ Logo selected - click Save Changes to upload");
@@ -178,16 +164,17 @@ export default function BusinessSettingsPage() {
 
 
   const onSubmit = async (data: BusinessSettingsFormData) => {
+    const SYSTEM_ID = "system-settings";
     try {
       setIsSaving(true);
 
       // Upload logo if it's base64 (follows profile pattern)
-      let logoBusinessUrl = data.logoBusinessUrl;
-      if (isBase64Image(logoBusinessUrl)) {
+      let logoSystemUrl = data.logoSystemUrl;
+      if (logoSystemUrl && isBase64Image(logoSystemUrl)) {
         try {
           console.log("📤 [UPLOAD CDN] Uploading logo to CDN...");
-          logoBusinessUrl = await uploadImage(logoBusinessUrl);
-          console.log("✅ [UPLOAD CDN] Logo URL from CDN:", logoBusinessUrl);
+          logoSystemUrl = await uploadImage(logoSystemUrl);
+          console.log("✅ [UPLOAD CDN] Logo URL from CDN:", logoSystemUrl);
         } catch (error) {
           console.error("Failed to upload logo:", error);
           showToast.error("Failed to upload logo");
@@ -197,12 +184,11 @@ export default function BusinessSettingsPage() {
 
       // Create payload with the uploaded logo URL
       const payload = {
-        businessName: data.businessName,
+        systemName: data.systemName,
         taxPercentage: data.taxPercentage
           ? parseFloat(data.taxPercentage)
           : null,
-        logoBusinessUrl: logoBusinessUrl,
-        enableStock: data.enableStock,
+        logoSystemUrl: logoSystemUrl,
         socialMedia: data.socialMedia,
         primaryColor: data.primaryColor,
         contactAddress: data.contactAddress,
@@ -219,22 +205,17 @@ export default function BusinessSettingsPage() {
 
         // Log the saved data
         console.log("[FORM] Business settings saved to Redux:", {
-          businessName: result.businessName,
-          logoBusinessUrl: result.logoBusinessUrl,
+          systemName: result.systemName,
+          logoSystemUrl: result.logoSystemUrl,
           primaryColor: result.primaryColor,
         });
-
-        // Store business ID in localStorage for theme initializer
-        localStorage.setItem("businessId", result.businessId);
 
         // Cache the colors for instant load on next page refresh
         const colors = {
           primaryColor: result.primaryColor || "",
         };
-        cacheThemeColors(result.businessId, colors);
-        console.log(
-          `[THEME] Cached colors for business ${result.businessId}`
-        );
+        cacheThemeColors(SYSTEM_ID, colors);
+        console.log(`[THEME] Cached colors`);
 
         // Apply colors in real-time without refresh
         if (result.primaryColor) {
@@ -281,16 +262,16 @@ export default function BusinessSettingsPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Business Name */}
+              {/* System Name */}
               <div className="space-y-2">
-                <Label htmlFor="businessName">Business Name</Label>
+                <Label htmlFor="systemName">System Name</Label>
                 <Input
-                  id="businessName"
-                  placeholder="Your business name"
-                  {...form.register("businessName")}
+                  id="systemName"
+                  placeholder="System name"
+                  {...form.register("systemName")}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Your business name displayed throughout the site
+                  System name displayed throughout the site
                 </p>
               </div>
 
@@ -316,49 +297,14 @@ export default function BusinessSettingsPage() {
                   Tax rate applied to all transactions (0-100%)
                 </p>
               </div>
-
-              {/* Stock Status */}
-              <div className="space-y-2">
-                <Label htmlFor="enableStock">Stock Management</Label>
-                <Select
-                  value={form.watch("enableStock")}
-                  onValueChange={(value) =>
-                    form.setValue(
-                      "enableStock",
-                      value as "ENABLED" | "DISABLED",
-                    )
-                  }
-                >
-                  <SelectTrigger id="enableStock">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ENABLED">
-                      <span className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-green-500" />
-                        Enabled
-                      </span>
-                    </SelectItem>
-                    <SelectItem value="DISABLED">
-                      <span className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-red-500" />
-                        Disabled
-                      </span>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  Enable or disable stock management system
-                </p>
-              </div>
             </div>
 
-            {/* Business Logo Upload */}
+            {/* System Logo Upload */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <ClickableImageUpload
-                  label="Business Logo"
-                  value={form.watch("logoBusinessUrl")}
+                  label="System Logo"
+                  value={form.watch("logoSystemUrl")}
                   onChange={handleLogoSelect}
                   disabled={isSaving}
                   aspectRatio="square"

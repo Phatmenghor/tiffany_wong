@@ -1,9 +1,25 @@
 import { useState, useCallback } from "react";
 
 export interface SocialMedia {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+  systemSettingId: string;
   name: string;
-  imageUrl: string;
   linkUrl: string;
+}
+
+export interface BusinessHours {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+  day: string;
+  openingTime: string;
+  closingTime: string;
 }
 
 export interface BusinessSettings {
@@ -12,19 +28,27 @@ export interface BusinessSettings {
   updatedAt: string;
   createdBy: string;
   updatedBy: string;
-  businessId: string;
-  businessName: string;
-  taxPercentage: number | null;
-  logoBusinessUrl: string;
-  enableStock: "ENABLED" | "DISABLED";
+  taxPercentage: number;
+  systemName: string;
+  logoSystemUrl: string | null;
+  primaryColor: string | null;
+  contactAddress: string;
+  contactPhone: string;
+  contactEmail: string;
   socialMedia: SocialMedia[];
+  businessHours: BusinessHours[];
 }
 
 export interface UpdateBusinessSettingsPayload {
-  taxPercentage?: number | null;
-  logoBusinessUrl?: string;
-  enableStock?: "ENABLED" | "DISABLED";
+  taxPercentage?: number;
+  systemName?: string;
+  logoSystemUrl?: string | null;
+  primaryColor?: string | null;
+  contactAddress?: string;
+  contactPhone?: string;
+  contactEmail?: string;
   socialMedia?: SocialMedia[];
+  businessHours?: BusinessHours[];
 }
 
 /**
@@ -45,7 +69,7 @@ export const useBusinessSettings = () => {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch("/api/v1/business-settings/current");
+      const response = await fetch("/api/v1/system-settings");
       if (!response.ok) {
         throw new Error("Failed to fetch business settings");
       }
@@ -73,7 +97,7 @@ export const useBusinessSettings = () => {
         setIsSaving(true);
         setError(null);
 
-        const response = await fetch("/api/v1/business-settings", {
+        const response = await fetch("/api/v1/system-settings", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

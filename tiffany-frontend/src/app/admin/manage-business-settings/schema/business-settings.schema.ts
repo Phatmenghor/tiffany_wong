@@ -6,10 +6,9 @@ import { z } from "zod";
  */
 
 export const businessSettingsSchema = z.object({
-  businessName: z.string().min(1, "Business name is required"),
+  systemName: z.string().min(1, "System name is required"),
   taxPercentage: z.string().optional(),
-  logoBusinessUrl: z.string(),
-  enableStock: z.enum(["ENABLED", "DISABLED"]),
+  logoSystemUrl: z.string().optional(),
   socialMedia: z.array(
     z.object({
       name: z.string(),
