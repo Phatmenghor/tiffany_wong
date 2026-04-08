@@ -54,6 +54,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * Increment product favorite count
      */
     @Modifying
+    @Transactional
     @Query("UPDATE Product p SET p.favoriteCount = COALESCE(p.favoriteCount, 0) + 1 WHERE p.id = :productId")
     void incrementFavoriteCount(@Param("productId") UUID productId);
 
@@ -61,6 +62,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * Decrement product favorite count (minimum 0)
      */
     @Modifying
+    @Transactional
     @Query("UPDATE Product p SET p.favoriteCount = GREATEST(0, COALESCE(p.favoriteCount, 0) - 1) WHERE p.id = :productId")
     void decrementFavoriteCount(@Param("productId") UUID productId);
     
