@@ -18,6 +18,8 @@ public class SystemSettingInitializer {
 
     private final SystemSettingRepository systemSettingRepository;
 
+    private static final String PLACEHOLDER_IMAGE_URL = "https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce";
+
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initializeSystemSetting() {
@@ -28,6 +30,7 @@ public class SystemSettingInitializer {
 
             SystemSetting systemSetting = new SystemSetting();
             systemSetting.setSystemName("Tiffany Cambodia");
+            systemSetting.setLogoSystemUrl(PLACEHOLDER_IMAGE_URL);
             systemSetting.setPrimaryColor("#57823D");
             systemSetting.setTaxPercentage(0.0);
             systemSetting.setContactEmail("support@tiffanycambodia.com");

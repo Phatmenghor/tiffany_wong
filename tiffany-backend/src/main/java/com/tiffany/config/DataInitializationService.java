@@ -28,6 +28,7 @@ public class DataInitializationService {
 
     private static final AtomicBoolean initialized = new AtomicBoolean(false);
     private static final Object initLock = new Object();
+    private static final String PLACEHOLDER_IMAGE_URL = "https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce";
 
     @Value("${app.init.create-admin:true}")
     private boolean createDefaultAdmin;
@@ -107,6 +108,7 @@ public class DataInitializationService {
                 profile.setEmail(defaultAdminEmail);
                 profile.setFirstName("Platform");
                 profile.setLastName("Administrator");
+                profile.setProfileImageUrl(PLACEHOLDER_IMAGE_URL);
                 admin.setProfile(profile);
 
                 admin = userRepository.save(admin);

@@ -3,6 +3,7 @@
 -- ============================================================================
 -- DEFAULT PASSWORD FOR ALL USERS: 88889999
 -- Password Hash (bcrypt): $2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36
+-- PLACEHOLDER IMAGE URL: https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce
 --
 -- Users: 60,001 total
 --   - 20,000 ADMIN users (UserType: OWNER, UserRole: ADMIN)
@@ -47,9 +48,9 @@ ALTER SEQUENCE reference_counters_id_seq RESTART WITH 1;
 -- ============================================================================
 -- 1. SYSTEM SETTINGS (Must be first - referenced by other tables)
 -- ============================================================================
-INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, tax_percentage, system_name, contact_address, contact_phone, contact_email)
+INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, tax_percentage, system_name, logo_system_url, primary_color, contact_address, contact_phone, contact_email)
 VALUES
-('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 10.0, 'Tiffany E-Menu Platform', 'Phnom Penh, Cambodia', '+855 23 888 9999', 'contact@tiffany.com');
+('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 10.0, 'Tiffany E-Menu Platform', 'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce', '#57823D', 'Phnom Penh, Cambodia', '+855 23 888 9999', 'contact@tiffany.com');
 
 -- ============================================================================
 -- 2. USERS (60,001 total)
@@ -112,7 +113,7 @@ SELECT
     NOW()::date - (random() * 15000)::int,
     '+855 ' || LPAD((random() * 999999)::int::text, 9, '0'),
     u.user_identifier,
-    'https://via.placeholder.com/300?text=' || SUBSTR(u.user_identifier, 1, 10)
+    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce' || SUBSTR(u.user_identifier, 1, 10)
 FROM users u
 WHERE NOT EXISTS (SELECT 1 FROM user_profiles up WHERE up.user_id = u.id);
 
@@ -123,7 +124,7 @@ INSERT INTO categories (id, version, created_at, updated_at, created_by, updated
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'Category ' || i,
-    'https://via.placeholder.com/300?text=Cat' || i,
+    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ceCat' || i,
     'ACTIVE'
 FROM generate_series(1, 200) AS t(i);
 
