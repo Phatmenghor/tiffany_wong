@@ -1,6 +1,8 @@
 package com.tiffany.exception;
 
-import com.tiffany.exception.custom.*;
+import com.tiffany.exception.custom.CustomException;
+import com.tiffany.exception.custom.NotFoundException;
+import com.tiffany.exception.custom.ValidationException;
 import com.tiffany.security.SecurityUtils;
 import com.tiffany.shared.constants.ErrorCodes;
 import com.tiffany.shared.dto.ApiResponse;
@@ -29,7 +31,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import javax.security.auth.login.AccountLockedException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -72,34 +73,6 @@ public class GlobalExceptionHandler {
     }
 
     // Account Status Exception Handlers
-    @ExceptionHandler(AccountLockedException.class)
-    public ResponseEntity<ApiResponse<Object>> handleAccountLockedException(
-            AccountLockedException ex, HttpServletRequest request) {
-        log.warn("Login blocked - Account locked: {}", ex.getMessage());
-
-        Map<String, Object> errorDetails = createErrorDetails(ErrorCodes.ACCOUNT_LOCKED, request);
-        errorDetails.put("accountStatus", "LOCKED");
-        errorDetails.put("supportContact", "support@emenu-platform.com");
-        errorDetails.put("action", "Contact support to unlock your account");
-
-        ApiResponse<Object> response = new ApiResponse<>("error", ex.getMessage(), errorDetails);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-    }
-
-    @ExceptionHandler(AccountEndWorkException.class)
-    public ResponseEntity<ApiResponse<Object>> handleAccountEndWorkException(
-            AccountEndWorkException ex, HttpServletRequest request) {
-        log.warn("Login blocked - Account ended: {}", ex.getMessage());
-
-        Map<String, Object> errorDetails = createErrorDetails(ErrorCodes.ACCOUNT_DISABLED, request);
-        errorDetails.put("accountStatus", "END_WORK");
-        errorDetails.put("supportContact", "support@emenu-platform.com");
-        errorDetails.put("action", "This account has been marked as end of work");
-
-        ApiResponse<Object> response = new ApiResponse<>("error", ex.getMessage(), errorDetails);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-    }
-
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<ApiResponse<Object>> handleDisabledException(
             DisabledException ex, HttpServletRequest request) {
@@ -107,7 +80,7 @@ public class GlobalExceptionHandler {
 
         Map<String, Object> errorDetails = createErrorDetails(ErrorCodes.ACCOUNT_DISABLED, request);
         errorDetails.put("accountStatus", "DISABLED");
-        errorDetails.put("supportContact", "support@emenu-platform.com");
+        errorDetails.put("supportContact", "support@tiffanycambodia.com");
 
         ApiResponse<Object> response = new ApiResponse<>("error", 
             "Your account has been disabled. Please contact support.", errorDetails);
@@ -120,7 +93,7 @@ public class GlobalExceptionHandler {
         log.warn("Login blocked - Account locked by Spring Security: {}", ex.getMessage());
 
         Map<String, Object> errorDetails = createErrorDetails(ErrorCodes.ACCOUNT_LOCKED, request);
-        errorDetails.put("supportContact", "support@emenu-platform.com");
+        errorDetails.put("supportContact", "support@tiffanycambodia.com");
         
         ApiResponse<Object> response = new ApiResponse<>("error", 
             "Your account has been locked. Please contact support.", errorDetails);
@@ -217,21 +190,7 @@ public class GlobalExceptionHandler {
 
         if (ex.getMessage() != null) {
             String exMessage = ex.getMessage().toLowerCase();
-            if (exMessage.contains("subdomain")) {
-                if (exMessage.contains("already taken") || exMessage.contains("not available")) {
-                    message = "The subdomain you chose is not available. Please select a different subdomain.";
-                    errorDetails.put("field", "subdomain");
-                    errorDetails.put("type", "duplicate");
-                } else if (exMessage.contains("invalid") || exMessage.contains("format")) {
-                    message = "Invalid subdomain format. Please use only lowercase letters, numbers, and hyphens.";
-                    errorDetails.put("field", "subdomain");
-                    errorDetails.put("type", "format");
-                }
-            } else if (exMessage.contains("business name")) {
-                message = "The business name you chose is not available. Please select a different name.";
-                errorDetails.put("field", "businessName");
-                errorDetails.put("type", "duplicate");
-            } else if (exMessage.contains("email")) {
+            if (exMessage.contains("email")) {
                 message = "The email address is already in use. Please use a different email.";
                 errorDetails.put("field", "email");
                 errorDetails.put("type", "duplicate");
@@ -269,22 +228,6 @@ public class GlobalExceptionHandler {
             errorDetails.put("field", "phoneNumber");
             errorDetails.put("type", "format");
             errorDetails.put("example", "070 411260");
-        } else if (message.toLowerCase().contains("subdomain")) {
-            errorDetails.put("field", "subdomain");
-            if (message.contains("already taken") || message.contains("not available")) {
-                errorDetails.put("type", "duplicate");
-                errorDetails.put("suggestion", "Please choose a different subdomain name");
-            } else if (message.contains("reserved")) {
-                errorDetails.put("type", "reserved");
-                errorDetails.put("suggestion", "This subdomain is reserved. Please choose a different name");
-            } else if (message.contains("format") || message.contains("invalid")) {
-                errorDetails.put("type", "format");
-                errorDetails.put("suggestion", "Use only lowercase letters, numbers, and hyphens (3-63 characters)");
-            }
-        } else if (message.toLowerCase().contains("business name")) {
-            errorDetails.put("field", "businessName");
-            errorDetails.put("type", "duplicate");
-            errorDetails.put("suggestion", "Please choose a different business name");
         } else if (message.toLowerCase().contains("user identifier")) {
             errorDetails.put("field", "userIdentifier");
             errorDetails.put("type", "duplicate");
@@ -298,16 +241,6 @@ public class GlobalExceptionHandler {
     // ================================
     // NOT FOUND ERRORS
     // ================================
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleUserNotFoundException(
-            UserNotFoundException ex, HttpServletRequest request) {
-        log.warn("User not found: {}", ex.getMessage());
-
-        Map<String, Object> errorDetails = createErrorDetails(ErrorCodes.USER_NOT_FOUND, request);
-        ApiResponse<Object> response = new ApiResponse<>("error", ex.getMessage(), errorDetails);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleNotFoundException(
@@ -426,7 +359,7 @@ public class GlobalExceptionHandler {
         String rootCauseMessage = ex.getRootCause() != null ? ex.getRootCause().getMessage().toLowerCase() : "";
         String fullMessage = (exceptionMessage + " " + rootCauseMessage).toLowerCase();
 
-        // Enhanced duplicate detection patterns
+        // Duplicate detection patterns
         if (containsPattern(fullMessage, new String[]{"email", "unique.*email", "users_email"})) {
             message = "Email address is already registered. Please use a different email or sign in if you already have an account.";
             errorCode = ErrorCodes.EMAIL_ALREADY_EXISTS;
@@ -439,23 +372,6 @@ public class GlobalExceptionHandler {
             errorDetails.put("field", "phoneNumber");
             errorDetails.put("type", "duplicate");
             errorDetails.put("constraint", "UNIQUE_PHONE");
-        } else if (containsPattern(fullMessage, new String[]{"business.*email", "businesses_email"})) {
-            message = "Business email is already registered. Please use a different email for your business.";
-            errorCode = ErrorCodes.EMAIL_ALREADY_EXISTS;
-            errorDetails.put("field", "businessEmail");
-            errorDetails.put("type", "duplicate");
-            errorDetails.put("constraint", "UNIQUE_BUSINESS_EMAIL");
-        } else if (containsPattern(fullMessage, new String[]{"subdomain", "unique.*subdomain", "subdomains_subdomain"})) {
-            message = "Subdomain is already taken. Please choose a different subdomain name.";
-            errorDetails.put("field", "subdomain");
-            errorDetails.put("type", "duplicate");
-            errorDetails.put("constraint", "UNIQUE_SUBDOMAIN");
-            errorDetails.put("suggestion", "Try adding numbers or modify the name (e.g., myrestaurant2, myrestaurant-kh)");
-        } else if (containsPattern(fullMessage, new String[]{"business.*name", "businesses_name"})) {
-            message = "Business name is already registered. Please choose a different business name.";
-            errorDetails.put("field", "businessName");
-            errorDetails.put("type", "duplicate");
-            errorDetails.put("constraint", "UNIQUE_BUSINESS_NAME");
         } else if (containsPattern(fullMessage, new String[]{"user_identifier", "users_user_identifier"})) {
             message = "User identifier is already taken. Please choose a different identifier.";
             errorDetails.put("field", "userIdentifier");
@@ -550,14 +466,6 @@ public class GlobalExceptionHandler {
             }
         }
         return false;
-    }
-
-    private String getSuggestionForConstraint(String errorCode) {
-        return switch (errorCode) {
-            case ErrorCodes.EMAIL_ALREADY_EXISTS -> "Please use a different email address or sign in if you already have an account";
-            case ErrorCodes.PHONE_ALREADY_EXISTS -> "Please use a different phone number or update your existing account";
-            default -> "Please check your input and try again";
-        };
     }
 
     private Map<String, Object> createErrorDetails(String errorCode, HttpServletRequest request) {
