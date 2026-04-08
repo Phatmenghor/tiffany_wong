@@ -46,9 +46,6 @@ public class SecurityUtils {
     }
 
     public void validateAccountStatus(User user) {
-        if (user.getStatus() == Status.INACTIVE) {
-            throw new ValidationException("Account has been disabled by platform");
-        }
 
         if (user.getAccountStatus() == AccountStatus.LOCKED) {
             throw new ValidationException("Account is locked");
