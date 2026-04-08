@@ -32,31 +32,6 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @PostMapping("/all")
-    public ResponseEntity<ApiResponse<PaginationResponse<ProductListDto>>> getAllProducts(
-            @Valid @RequestBody ProductFilterDto filter) {
-
-        long startTime = System.currentTimeMillis();
-        log.info("GET /api/v1/products/all - Page: {}, Size: {}, Filters: CategoryId={}",
-                filter.getPageNo(), filter.getPageSize(), filter.getCategoryId());
-
-        try {
-            PaginationResponse<ProductListDto> products = productService.getAllProducts(filter);
-            long duration = System.currentTimeMillis() - startTime;
-            log.info("GET /api/v1/products/all succeeded in {}ms - Retrieved {} products, Total: {}",
-                    duration, products.getContent().size(), products.getTotalElements());
-
-            return ResponseEntity.ok(ApiResponse.success(
-                String.format("Found %d products", products.getTotalElements()),
-                products
-            ));
-        } catch (Exception e) {
-            long duration = System.currentTimeMillis() - startTime;
-            log.error("GET /api/v1/products/all failed after {}ms - Error: {}", duration, e.getMessage(), e);
-            throw e;
-        }
-    }
-
     @PostMapping("/admin/all")
     public ResponseEntity<ApiResponse<PaginationResponse<ProductDetailDto>>> getAllProductAdmin(
             @Valid @RequestBody ProductFilterDto filter) {
@@ -64,20 +39,6 @@ public class ProductController {
         log.info("Get products by admin - Page: {}, Size: {}", filter.getPageNo(), filter.getPageSize());
 
         PaginationResponse<ProductDetailDto> products = productService.getAllProductsAdmin(filter);
-
-        return ResponseEntity.ok(ApiResponse.success(
-                String.format("Found %d products", products.getTotalElements()),
-                products
-        ));
-    }
-
-    @PostMapping("/admin/pos/all")
-    public ResponseEntity<ApiResponse<PaginationResponse<ProductDetailDto>>> getAllProductAdminPos(
-            @Valid @RequestBody ProductFilterDto filter) {
-
-        log.info("Get products by admin for POS - Page: {}, Size: {}", filter.getPageNo(), filter.getPageSize());
-
-        PaginationResponse<ProductDetailDto> products = productService.getAllProductsAdminPos(filter);
 
         return ResponseEntity.ok(ApiResponse.success(
                 String.format("Found %d products", products.getTotalElements()),
@@ -234,17 +195,4 @@ public class ProductController {
                 .body(ApiResponse.success("Bulk promotion creation completed", result));
     }
 
-    @PostMapping("/admin/sync-promotions")
-    public ResponseEntity<ApiResponse<String>> syncExpiredPromotions() {
-        log.info("Manual sync: clearing expired promotion display fields");
-
-        int[] result = productService.syncExpiredPromotions();
-        String message = String.format(
-            "Sync complete. Updated %d products without sizes, %d products with sizes. Total: %d",
-            result[0], result[1], result[0] + result[1]
-        );
-
-        log.info(message);
-        return ResponseEntity.ok(ApiResponse.success(message, null));
-    }
 }

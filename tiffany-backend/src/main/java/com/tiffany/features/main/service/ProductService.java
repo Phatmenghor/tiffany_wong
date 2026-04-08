@@ -17,8 +17,6 @@ import java.util.Map;
 public interface ProductService {
     ProductDetailDto createProduct(ProductCreateDto request);
     PaginationResponse<ProductDetailDto> getAllProductsAdmin(ProductFilterDto filter);
-    PaginationResponse<ProductDetailDto> getAllProductsAdminPos(ProductFilterDto filter);
-    PaginationResponse<ProductListDto> getAllProducts(ProductFilterDto filter);
     List<ProductListDto> getAllDataProducts(ProductFilterDto filter);
     ProductDetailDto getProductById(UUID id);
     ProductDetailDto updateProduct(UUID id, ProductUpdateDto request);
@@ -28,6 +26,5 @@ public interface ProductService {
     Map<String, Object> resetAllPromotions();
     Map<String, Object> resetSelectedPromotions(ResetSelectedPromotionsDto request);
     BulkPromotionResultDto createBulkPromotions(BulkPromotionCreateDto request);
-    int[] syncExpiredPromotions();
     int[] syncStartedPromotions();
 }

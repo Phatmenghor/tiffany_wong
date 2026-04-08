@@ -66,82 +66,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public PaginationResponse<ProductListDto> getAllProducts(ProductFilterDto filter) {
-        log.debug("Starting getAllProducts - Filter: CategoryId={}, Search={}",
-                filter.getCategoryId(), filter.getSearch());
-
-        long startTime = System.currentTimeMillis();
-        Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-
-        Pageable pageable = PaginationUtils.createPageable(
-                filter.getPageNo(),
-                filter.getPageSize(),
-                filter.getSortBy(),
-                filter.getSortDirection()
-        );
-        log.debug("Pagination configured - Page: {}, Size: {}, SortBy: {}, Direction: {}",
-                filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection());
-
-        Page<Product> productPage = productRepository.findAllWithFilters(
-                filter.getCategoryId(),
-                (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
-                filter.getMinPrice(),
-                filter.getMaxPrice(),
-                filter.getSearch(),
-                pageable
-        );
-
-        log.info("Products fetched from database - Total: {}, Page: {}, Size: {}",
-                productPage.getTotalElements(), productPage.getNumber(), productPage.getSize());
-
-        if (productPage.getContent().isEmpty()) {
-            log.debug("No products found for filters");
-            return paginationMapper.toPaginationResponse(productPage, Collections.emptyList());
-        }
-
-        // Batch initialize sizes to avoid lazy-loading (prevents Hibernate pagination warning)
-        productPage.getContent().forEach(p -> Hibernate.initialize(p.getSizes()));
-
-        List<ProductListDto> dtoList = productMapper.toListDtos(productPage.getContent());
-
-        if (currentUser.isPresent()) {
-            List<UUID> productIds = productPage.getContent().stream()
-                    .map(Product::getId)
-                    .toList();
-
-            // Get favorite products
-            List<UUID> favoriteIds = favoriteQueryHelper.getFavoriteProductIds(
-                    currentUser.get().getId(),
-                    productIds
-            );
-            Set<UUID> favoriteSet = new HashSet<>(favoriteIds);
-
-            // Get cart quantities for products
-            Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
-                    currentUser.get().getId(),
-                    productIds
-            );
-
-            dtoList.forEach(dto -> {
-                dto.setIsFavorited(favoriteSet.contains(dto.getId()));
-                dto.setQuantity(cartQuantities.getOrDefault(dto.getId(), 0));
-            });
-        } else {
-            dtoList.forEach(dto -> {
-                dto.setIsFavorited(false);
-                dto.setQuantity(0);
-            });
-        }
-
-        long duration = System.currentTimeMillis() - startTime;
-        log.info("getAllProducts completed in {}ms - Returned {} products out of {}",
-                duration, dtoList.size(), productPage.getTotalElements());
-
-        return paginationMapper.toPaginationResponse(productPage, dtoList);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<ProductListDto> getAllDataProducts(ProductFilterDto filter) {
         log.debug("Starting getAllDataProducts - Filter: CategoryId={}, Search={}",
                 filter.getCategoryId(), filter.getSearch());
@@ -241,43 +165,6 @@ public class ProductServiceImpl implements ProductService {
 
         return paginationMapper.toPaginationResponse(productPage, dtoList);
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public PaginationResponse<ProductDetailDto> getAllProductsAdminPos(ProductFilterDto filter) {
-        Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-
-        Pageable pageable = PaginationUtils.createPageable(
-                filter.getPageNo(),
-                filter.getPageSize(),
-                filter.getSortBy(),
-                filter.getSortDirection()
-        );
-
-        Page<Product> productPage = productRepository.findAllWithFilters(
-                filter.getCategoryId(),
-                (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
-                filter.getMinPrice(),
-                filter.getMaxPrice(),
-                filter.getSearch(),
-                pageable
-        );
-
-        if (productPage.getContent().isEmpty()) {
-            return paginationMapper.toPaginationResponse(productPage, Collections.emptyList());
-        }
-
-        // Batch initialize sizes to avoid lazy-loading (prevents Hibernate pagination warning)
-        productPage.getContent().forEach(p -> Hibernate.initialize(p.getSizes()));
-
-        // Clear images to avoid lazy-loading overhead (images not needed in listing)
-        productPage.getContent().forEach(p -> p.setImages(new ArrayList<>()));
-
-        List<ProductDetailDto> dtoList = productMapper.toDetailDtos(productPage.getContent());
-
-        return paginationMapper.toPaginationResponse(productPage, dtoList);
-    }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -626,14 +513,6 @@ public class ProductServiceImpl implements ProductService {
                 .message(String.format("Successfully created promotion for %d product(s)", successCount))
                 .timestamp(java.time.LocalDateTime.now())
                 .build();
-    }
-
-    @Override
-    @Transactional
-    public int[] syncExpiredPromotions() {
-        int noSizes = productRepository.clearExpiredPromotionsForProductsWithoutSizes();
-        int withSizes = productRepository.clearExpiredPromotionsForProductsWithSizes();
-        return new int[]{noSizes, withSizes};
     }
 
     @Override
