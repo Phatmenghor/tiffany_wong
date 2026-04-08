@@ -1,6 +1,5 @@
 package com.emenu.features.main.controller;
 
-import com.emenu.features.auth.models.User;
 import com.emenu.features.main.dto.filter.BannerFilterRequest;
 import com.emenu.features.main.dto.request.BannerCreateRequest;
 import com.emenu.features.main.dto.response.BannerResponse;
@@ -43,24 +42,17 @@ public class BannerController {
      */
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<PaginationResponse<BannerResponse>>> getAllBanners(@Valid @RequestBody BannerFilterRequest filter) {
-        log.info("Getting all banners for current user's business");
+        log.info("Getting all banners");
         PaginationResponse<BannerResponse> banners = bannerService.getAllBanners(filter);
         return ResponseEntity.ok(ApiResponse.success("Banners retrieved successfully", banners));
     }
 
     /**
      * Get all banners with filtering
-     * If businessId is provided in filter, use it; otherwise use current user's business
      */
     @PostMapping("/my-business/all")
     public ResponseEntity<ApiResponse<PaginationResponse<BannerResponse>>> getMyBusinessAllBanners(@Valid @RequestBody BannerFilterRequest filter) {
-        log.info("Getting my banners for current user's business");
-        User currentUser = securityUtils.getCurrentUser();
-
-        // Use businessId from filter if provided, otherwise use current user's business
-        if (filter.getBusinessId() == null) {
-            filter.setBusinessId(currentUser.getBusinessId());
-        }
+        log.info("Getting my banners");
 
         PaginationResponse<BannerResponse> banners = bannerService.getAllBanners(filter);
         return ResponseEntity.ok(ApiResponse.success("Banners retrieved successfully", banners));

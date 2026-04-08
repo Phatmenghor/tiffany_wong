@@ -41,24 +41,16 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponse createCategory(CategoryCreateRequest request) {
         log.info("Creating category: {}", request.getName());
 
-        User currentUser = securityUtils.getCurrentUser();
-        if (currentUser.getBusinessId() == null) {
-            throw new ValidationException("User is not associated with any business");
-        }
-
-        // Check if category name already exists for this business
-        if (categoryRepository.existsByNameAndBusinessIdAndIsDeletedFalse(
-                request.getName(), currentUser.getBusinessId())) {
-            throw new ValidationException("Category name already exists in your business");
+        // Check if category name already exists
+        if (categoryRepository.existsByNameAndIsDeletedFalse(request.getName())) {
+            throw new ValidationException("Category name already exists");
         }
 
         Category category = categoryMapper.toEntity(request);
-        category.setBusinessId(currentUser.getBusinessId());
 
         Category savedCategory = categoryRepository.save(category);
 
-        log.info("Category created successfully: {} for business: {}",
-                savedCategory.getName(), currentUser.getBusinessId());
+        log.info("Category created successfully: {}", savedCategory.getName());
         return categoryMapper.toResponse(savedCategory);
     }
 
@@ -70,7 +62,6 @@ public class CategoryServiceImpl implements CategoryService {
         );
 
         Page<Category> categoryPage = categoryRepository.findAllWithFilters(
-                filter.getBusinessId(),
                 filter.getStatus(),
                 filter.getSearch(),
                 pageable
@@ -86,7 +77,6 @@ public class CategoryServiceImpl implements CategoryService {
         );
 
         Page<Category> categoryPage = categoryRepository.findAllWithFilters(
-                filter.getBusinessId(),
                 filter.getStatus(),
                 filter.getSearch(),
                 pageable
@@ -123,8 +113,6 @@ public class CategoryServiceImpl implements CategoryService {
                     response.setUpdatedAt(baseResponse.getUpdatedAt());
                     response.setCreatedBy(baseResponse.getCreatedBy());
                     response.setUpdatedBy(baseResponse.getUpdatedBy());
-                    response.setBusinessId(baseResponse.getBusinessId());
-                    response.setBusinessName(baseResponse.getBusinessName());
                     response.setName(baseResponse.getName());
                     response.setImageUrl(baseResponse.getImageUrl());
                     response.setStatus(baseResponse.getStatus());
@@ -157,7 +145,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public List<CategoryResponse> getAllItemCategories(CategoryAllFilterRequest filter) {
         List<Category> categories = categoryRepository.findAllWithFilters(
-                filter.getBusinessId(),
                 filter.getStatus(),
                 filter.getSearch(),
                 PaginationUtils.createSort(filter.getSortBy(), filter.getSortDirection())
@@ -178,9 +165,8 @@ public class CategoryServiceImpl implements CategoryService {
 
         // Check if new name already exists (if name is being changed)
         if (request.getName() != null && !request.getName().equals(category.getName())) {
-            if (categoryRepository.existsByNameAndBusinessIdAndIsDeletedFalse(
-                    request.getName(), category.getBusinessId())) {
-                throw new ValidationException("Category name already exists in your business");
+            if (categoryRepository.existsByNameAndIsDeletedFalse(request.getName())) {
+                throw new ValidationException("Category name already exists");
             }
         }
 
