@@ -33,7 +33,5 @@ public class ProductListDto extends BaseAuditResponse {
     private Long favoriteCount;
     private Boolean isFavorited;
 
-    private Integer quantity;
-
     private UUID categoryId;
 }

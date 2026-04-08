@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -26,11 +25,4 @@ public class SocialAuthResponse {
 
     private String accessToken;
     private String refreshToken;
-
-    private String socialId;
-    private String socialUsername;
-    private LocalDateTime syncedAt;
-
-    private String operationType;
-    private boolean isNewUser;
 }

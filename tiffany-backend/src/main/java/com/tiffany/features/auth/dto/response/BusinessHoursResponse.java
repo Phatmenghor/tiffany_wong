@@ -11,7 +11,6 @@ import java.util.UUID;
 public class BusinessHoursResponse extends BaseAuditResponse {
 
     private UUID id;
-    private UUID systemSettingId;
     private String day;
     private String openingTime;
     private String closingTime;

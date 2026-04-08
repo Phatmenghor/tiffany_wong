@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -35,7 +34,4 @@ public class UserResponse extends BaseAuditResponse {
     private LocalDate dateOfBirth;
     private String phoneNumber;
     private String profileImageUrl;
-
-    // ── Session ────────────────────────────────────────────────────────────
-    private LocalDateTime lastLoginAt;
 }
