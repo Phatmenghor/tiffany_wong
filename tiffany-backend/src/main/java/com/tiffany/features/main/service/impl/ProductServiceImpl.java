@@ -131,7 +131,10 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByIdWithAllDetails(id)
                 .orElseThrow(() -> new NotFoundException("Product not found"));
 
-        Hibernate.initialize(product.getImages());
+        // Load images separately to avoid MultipleBagFetchException
+        List<ProductImage> images = productImageRepository.findByProductId(id);
+        product.setImages(images);
+
         ProductDetailDto dto = productMapper.toDetailDto(product);
         populateUserFieldsForDetail(dto, securityUtils.getCurrentUserOptional(), product);
 
@@ -145,7 +148,10 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new NotFoundException("Product not found"));
 
         productRepository.incrementViewCount(id);
-        Hibernate.initialize(product.getImages());
+
+        // Load images separately to avoid MultipleBagFetchException
+        List<ProductImage> images = productImageRepository.findByProductId(id);
+        product.setImages(images);
 
         ProductDetailDto dto = productMapper.toDetailDto(product);
         populateUserFieldsForDetail(dto, securityUtils.getCurrentUserOptional(), product);
