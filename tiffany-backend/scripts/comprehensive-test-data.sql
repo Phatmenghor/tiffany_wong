@@ -135,15 +135,13 @@ CROSS JOIN generate_series(1, (1 + (random() * 4)::int)) AS img_num;
 -- ============================================================================
 -- 7. BANNERS (20 banners)
 -- ============================================================================
-INSERT INTO banners (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, title, description, image_url, link_url, is_active, display_order)
+INSERT INTO banners (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, description, image_url, link_url, status)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    'Banner ' || i,
     'Promotional banner ' || i,
     'https://via.placeholder.com/1200x400?text=Banner' || i,
     '/promo/' || i,
-    true,
-    i
+    'ACTIVE'
 FROM generate_series(1, 20) AS t(i);
 
 -- ============================================================================
