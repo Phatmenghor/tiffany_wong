@@ -92,7 +92,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      */
     @Query("SELECT DISTINCT p FROM Product p " +
            "WHERE p.isDeleted = false " +
-           "AND (:businessId IS NULL OR p.businessId = :businessId) " +
            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
            "AND (:statuses IS NULL OR p.status IN :statuses) " +
            "AND (:needsPromotion IS NULL OR p.hasActivePromotion = true) " +
@@ -125,7 +124,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      */
     @Query("SELECT DISTINCT p FROM Product p " +
            "WHERE p.isDeleted = false " +
-           "AND (:businessId IS NULL OR p.businessId = :businessId) " +
            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
            "AND (:statuses IS NULL OR p.status IN :statuses) " +
            "AND (:needsPromotion IS NULL OR p.hasActivePromotion = true) " +
@@ -159,7 +157,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "LEFT JOIN FETCH p.business bus " +
            "LEFT JOIN FETCH p.images img " +
            "WHERE p.isDeleted = false " +
-           "AND (:businessId IS NULL OR p.businessId = :businessId) " +
            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
            "AND (:statuses IS NULL OR p.status IN :statuses) " +
            "AND (:needsPromotion IS NULL OR p.hasActivePromotion = true) " +

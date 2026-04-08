@@ -159,7 +159,6 @@ public class ProductServiceImpl implements ProductService {
         Optional<User> currentUser = securityUtils.getCurrentUserOptional();
 
         List<Product> products = productRepository.findAllWithFilters(
-                null,
                 filter.getCategoryId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
                 Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
@@ -236,7 +235,6 @@ public class ProductServiceImpl implements ProductService {
 
         // Use optimized query - no category/business/images JOINs (20-30x faster)
         Page<Product> productPage = productRepository.findAllWithFiltersOptimized(
-                null,
                 filter.getCategoryId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
                 Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
@@ -806,9 +804,7 @@ public class ProductServiceImpl implements ProductService {
             log.debug("Product entity updated with request data");
 
             // Update stock status if provided
-            if (null != null) {
-                log.debug("Product stock status updated: {}", null);
-            }
+            // Stock tracking disabled - no-op method
 
             if (!product.getHasSizes()) {
                 product.initializeDisplayFields();
@@ -987,7 +983,7 @@ public class ProductServiceImpl implements ProductService {
 
                 // Get stock for each size from repository
                 for (var sizeDto : dto.getSizes()) {
-                    int stock = sizeDto.getStock() != null ? sizeDto.getStock() : 0;
+                    int stock = sizeDto.getTotalStock() != null ? sizeDto.getTotalStock() : 0;
                     totalSizesStock += stock;
                 }
 

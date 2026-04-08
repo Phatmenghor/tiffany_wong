@@ -1,6 +1,7 @@
 package com.tiffany.features.order.mapper;
 
 import com.tiffany.enums.payment.PaymentMethod;
+import com.tiffany.enums.payment.PaymentStatus;
 import com.tiffany.features.order.dto.helper.OrderCreateHelper;
 import com.tiffany.features.order.dto.helper.OrderItemCreateHelper;
 import com.tiffany.features.order.dto.request.OrderCreateRequest;
@@ -71,7 +72,8 @@ public interface OrderMapper {
                 .orderNumber(orderNumber)
                 .customerId(customerId)
                 .paymentMethod(paymentMethod)
-                .paymentStatus(request.getPayment() != null ? request.getPayment().getPaymentStatus() : null)
+                .paymentStatus(request.getPayment() != null && request.getPayment().getPaymentStatus() != null ?
+                    PaymentStatus.valueOf(request.getPayment().getPaymentStatus()) : null)
                 .customerNote(request.getCustomerNote())
                 // Initialize pricing with defaults - will be updated after items are processed
                 .subtotal(BigDecimal.ZERO)
