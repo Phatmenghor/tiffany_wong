@@ -2,7 +2,6 @@ package com.tiffany.features.main.service.impl;
 
 import com.tiffany.exception.custom.NotFoundException;
 import com.tiffany.exception.custom.ValidationException;
-import com.tiffany.features.auth.models.User;
 import com.tiffany.features.main.dto.filter.CategoryAllFilterRequest;
 import com.tiffany.features.main.dto.filter.CategoryFilterRequest;
 import com.tiffany.features.main.dto.request.CategoryCreateRequest;
@@ -13,8 +12,8 @@ import com.tiffany.features.main.mapper.CategoryMapper;
 import com.tiffany.features.main.models.Category;
 import com.tiffany.features.main.repository.CategoryRepository;
 import com.tiffany.features.main.service.CategoryService;
-import com.tiffany.security.SecurityUtils;
 import com.tiffany.shared.dto.PaginationResponse;
+import com.tiffany.shared.mapper.PaginationMapper;
 import com.tiffany.shared.pagination.PaginationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -34,8 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
-    private final SecurityUtils securityUtils;
-    private final com.tiffany.shared.mapper.PaginationMapper paginationMapper;
+    private final PaginationMapper paginationMapper;
 
     @Override
     public CategoryResponse createCategory(CategoryCreateRequest request) {
@@ -78,17 +78,14 @@ public class CategoryServiceImpl implements CategoryService {
                 pageable
         );
 
-        // Get all category IDs from the page
         List<UUID> categoryIds = categoryPage.getContent().stream()
                 .map(Category::getId)
                 .toList();
 
-        // Fetch all product counts (total and active) in a single query (batch query - optimized)
         List<Object[]> productCountData = categoryRepository.countTotalAndActiveProductsForCategories(categoryIds);
 
-        // Build maps from category ID to product counts
-        java.util.Map<UUID, Long> totalProductCountMap = new java.util.HashMap<>();
-        java.util.Map<UUID, Long> activeProductCountMap = new java.util.HashMap<>();
+        Map<UUID, Long> totalProductCountMap = new HashMap<>();
+        Map<UUID, Long> activeProductCountMap = new HashMap<>();
         for (Object[] data : productCountData) {
             UUID categoryId = (UUID) data[0];
             Long totalCount = ((Number) data[1]).longValue();
@@ -97,13 +94,11 @@ public class CategoryServiceImpl implements CategoryService {
             activeProductCountMap.put(categoryId, activeCount);
         }
 
-        // Map categories to response with product counts
         List<CategoryWithProductCountResponse> responses = categoryPage.getContent().stream()
                 .map(category -> {
                     CategoryWithProductCountResponse response = new CategoryWithProductCountResponse();
                     CategoryResponse baseResponse = categoryMapper.toResponse(category);
 
-                    // Copy base response fields
                     response.setId(baseResponse.getId());
                     response.setCreatedAt(baseResponse.getCreatedAt());
                     response.setUpdatedAt(baseResponse.getUpdatedAt());
@@ -113,7 +108,6 @@ public class CategoryServiceImpl implements CategoryService {
                     response.setImageUrl(baseResponse.getImageUrl());
                     response.setStatus(baseResponse.getStatus());
 
-                    // Get product counts from maps (optimized - no N+1 query)
                     long totalProductCount = totalProductCountMap.getOrDefault(category.getId(), 0L);
                     long activeProductCount = activeProductCountMap.getOrDefault(category.getId(), 0L);
                     response.setTotalProducts(totalProductCount);
@@ -183,7 +177,6 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.toResponse(category);
     }
 
-    // Private helper methods
     private Category findCategoryById(UUID id) {
         return categoryRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new NotFoundException("Category not found"));

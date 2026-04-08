@@ -21,12 +21,10 @@ import com.tiffany.features.main.mapper.ProductSizeMapper;
 import com.tiffany.features.main.models.Product;
 import com.tiffany.features.main.models.ProductImage;
 import com.tiffany.features.main.models.ProductSize;
-import com.tiffany.features.main.repository.CategoryRepository;
 import com.tiffany.features.main.repository.ProductImageRepository;
 import com.tiffany.features.main.repository.ProductRepository;
 import com.tiffany.features.main.repository.ProductSizeRepository;
 import com.tiffany.features.main.service.ProductService;
-import com.tiffany.features.main.models.Category;
 import com.tiffany.features.main.utils.ProductFavoriteQueryHelper;
 import com.tiffany.features.main.utils.ProductUtils;
 import com.tiffany.features.order.utils.CartQueryHelper;
@@ -39,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +51,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final ProductSizeRepository productSizeRepository;
-    private final CategoryRepository categoryRepository;
     private final ProductMapper productMapper;
     private final ProductImageMapper productImageMapper;
     private final ProductSizeMapper productSizeMapper;
@@ -75,8 +71,6 @@ public class ProductServiceImpl implements ProductService {
                 filter.getSearch(),
                 PaginationUtils.createSort(filter.getSortBy(), filter.getSortDirection())
         );
-
-        log.info("Fetching products: count={}", products.size());
 
         List<ProductListDto> dtoList = productMapper.toListDtos(products);
 
@@ -140,13 +134,12 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public ProductDetailDto getProductById(UUID id) {
         Product product = productRepository.findByIdWithAllDetails(id)
-                .orElseThrow(() -> new NotFoundException("Product not found: " + id));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
         Hibernate.initialize(product.getImages());
         ProductDetailDto dto = productMapper.toDetailDto(product);
         populateUserFieldsForDetail(dto, securityUtils.getCurrentUserOptional(), product);
 
-        log.info("Fetching product: id={}", id);
         return dto;
     }
 
@@ -154,7 +147,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductDetailDto getProductByIdPublic(UUID id) {
         Product product = productRepository.findByIdWithAllDetails(id)
-                .orElseThrow(() -> new NotFoundException("Product not found: " + id));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
         productRepository.incrementViewCount(id);
         Hibernate.initialize(product.getImages());
@@ -162,7 +155,6 @@ public class ProductServiceImpl implements ProductService {
         ProductDetailDto dto = productMapper.toDetailDto(product);
         populateUserFieldsForDetail(dto, securityUtils.getCurrentUserOptional(), product);
 
-        log.info("Fetching product public: id={}", id);
         return dto;
     }
 
@@ -173,14 +165,12 @@ public class ProductServiceImpl implements ProductService {
             boolean isFavorited = favoriteQueryHelper.isFavorited(userId, product.getId());
             dto.setIsFavorited(isFavorited);
 
-            // Get cart quantity for this product
             Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
                     userId,
                     List.of(product.getId())
             );
             dto.setQuantity(cartQuantities.getOrDefault(product.getId(), 0));
 
-            // Get per-size quantities in cart
             if (dto.getSizes() != null && !dto.getSizes().isEmpty()) {
                 Map<UUID, Integer> sizeQuantities = cartQueryHelper.getSizeQuantitiesInCart(userId, product.getId());
                 dto.getSizes().forEach(size ->
@@ -200,7 +190,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductDetailDto resetProductPromotion(UUID id) {
         Product product = productRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new NotFoundException("Product not found: " + id));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
         productSizeRepository.resetPromotionsByProductId(id);
         productRepository.resetProductPromotionById(id);
@@ -371,10 +361,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDetailDto updateProduct(UUID id, ProductUpdateDto request) {
-        log.info("Updating product: id={}", id);
-
         Product product = productRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new NotFoundException("Product not found: " + id));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
         productMapper.updateEntity(request, product);
         Product updatedProduct = productRepository.save(product);
@@ -395,7 +383,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDetailDto deleteProduct(UUID id) {
         Product product = productRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new NotFoundException("Product not found: " + id));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
         product.softDelete();
         Product deletedProduct = productRepository.save(product);

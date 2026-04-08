@@ -49,28 +49,25 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
         UUID userId = currentUser.getId();
 
         Product product = productRepository.findByIdAndIsDeletedFalse(productId)
-                .orElseThrow(() -> new NotFoundException("Product not found: " + productId));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
         if (!product.isActive()) {
             throw new ValidationException("Cannot favorite inactive product");
         }
 
         boolean isFavorited = favoriteRepository.existsByUserIdAndProductIdAndIsDeletedFalse(userId, productId);
-        boolean finalStatus;
 
         if (!isFavorited) {
             favoriteRepository.save(new ProductFavorite(userId, productId));
             productRepository.incrementFavoriteCount(productId);
-            finalStatus = true;
             log.info("Favorite added: productId={}", productId);
+            return favoriteMapper.createToggleResponse(productId, userId, true, "added");
         } else {
             favoriteRepository.deleteByUserIdAndProductId(userId, productId);
             productRepository.decrementFavoriteCount(productId);
-            finalStatus = false;
             log.info("Favorite removed: productId={}", productId);
+            return favoriteMapper.createToggleResponse(productId, userId, false, "removed");
         }
-
-        return favoriteMapper.createToggleResponse(productId, userId, finalStatus, finalStatus ? "added" : "removed");
     }
 
     @Override

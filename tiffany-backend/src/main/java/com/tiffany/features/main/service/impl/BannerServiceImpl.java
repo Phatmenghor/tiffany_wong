@@ -1,8 +1,6 @@
 package com.tiffany.features.main.service.impl;
 
 import com.tiffany.exception.custom.NotFoundException;
-import com.tiffany.exception.custom.ValidationException;
-import com.tiffany.features.auth.models.User;
 import com.tiffany.features.main.dto.filter.BannerFilterRequest;
 import com.tiffany.features.main.dto.filter.BannerAllFilterRequest;
 import com.tiffany.features.main.dto.request.BannerCreateRequest;
@@ -12,8 +10,8 @@ import com.tiffany.features.main.mapper.BannerMapper;
 import com.tiffany.features.main.models.Banner;
 import com.tiffany.features.main.repository.BannerRepository;
 import com.tiffany.features.main.service.BannerService;
-import com.tiffany.security.SecurityUtils;
 import com.tiffany.shared.dto.PaginationResponse;
+import com.tiffany.shared.mapper.PaginationMapper;
 import com.tiffany.shared.pagination.PaginationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +31,7 @@ public class BannerServiceImpl implements BannerService {
 
     private final BannerRepository bannerRepository;
     private final BannerMapper bannerMapper;
-    private final SecurityUtils securityUtils;
-    private final com.tiffany.shared.mapper.PaginationMapper paginationMapper;
+    private final PaginationMapper paginationMapper;
 
     @Override
     public BannerResponse createBanner(BannerCreateRequest request) {
@@ -70,7 +67,6 @@ public class BannerServiceImpl implements BannerService {
         );
         return bannerMapper.toResponseList(banners);
     }
-
 
     @Override
     @Transactional(readOnly = true)
