@@ -462,15 +462,13 @@ BEGIN
     RAISE NOTICE '      Inserting order status history...';
 END $$;
 
-INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, old_status, new_status, changed_at, changed_by, reason)
+INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, order_status, note, changed_by_name)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     o.id,
-    'PENDING',
     o.order_status,
-    NOW() + INTERVAL '1 hour',
-    'system',
-    'Status updated'
+    'Status: ' || o.order_status,
+    'system'
 FROM orders o;
 
 -- ============================================================================
