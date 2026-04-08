@@ -36,10 +36,4 @@ public class UserUpdateRequest {
     private LocalDate joinDate;
     private LocalDate leaveDate;
     private String shift;
-
-    // Related (null = no change, non-null = full replace)
-    private List<AddressRequest> addresses;
-    private List<EmergencyContactRequest> emergencyContacts;
-    private List<DocumentRequest> documents;
-    private List<EducationRequest> educations;
 }

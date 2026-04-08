@@ -8,7 +8,6 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 public class UserCreateRequest {
@@ -49,10 +48,4 @@ public class UserCreateRequest {
     private LocalDate joinDate;
     private LocalDate leaveDate;
     private String shift;
-
-    // Related
-    private List<AddressRequest> addresses;
-    private List<EmergencyContactRequest> emergencyContacts;
-    private List<DocumentRequest> documents;
-    private List<EducationRequest> educations;
 }
