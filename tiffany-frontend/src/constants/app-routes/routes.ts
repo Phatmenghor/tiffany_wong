@@ -4,7 +4,6 @@ import {
   Database,
   LucideIcon,
   LucideBriefcaseBusiness,
-  ShoppingCart,
   Settings,
 } from "lucide-react";
 
@@ -21,37 +20,15 @@ export const ROUTES = {
     ROOT: "/admin",
     DASHBOARD: "/admin",
     PROFILE: "/admin/profile",
-    ADMIN_SESSIONS: "/admin/admin-sessions",
     USERS: "/admin/users",
     ROLES: "/admin/users/roles",
-    USER_SESSIONS: "/admin/users/sessions",
-    BRAND: "/admin/brand",
     BANNER: "/admin/banner",
     CATEGORIES: "/admin/categories",
-    EXCHANGE_RATE: "/admin/exchange-rate",
-    DELIVERY_OPTIONS: "/admin/delivery-options",
-    PAYMENT_OPTIONS: "/admin/payment-options",
     PRODUCTS: "/admin/products",
     PRODUCTS_PROMOTION: "/admin/product-promotions",
     BULK_PROMOTION_CREATION: "/admin/bulk-promotion",
     ORDERS: "/admin/orders",
-    ORDERS_CREATE: "/admin/orders/create",
-    POS: "/admin/pos",
     BUSINESS_SETTINGS: "/admin/manage-business-settings",
-  },
-
-  MANAGE_STOCK: {
-    PRODUCTS_STOCK: "/admin/manage-stock/products-stock",
-    SIZE_STOCK: "/admin/manage-stock/size-stock",
-    STOCK_ITEMS: "/admin/manage-stock/stock-items",
-  },
-
-  HR: {
-    WORK_SCHEDULE: "/admin/hr/work-schedule",
-    WORK_SCHEDULE_TYPE: "/admin/hr/work-schedule-type",
-    LEAVE_TYPE: "/admin/hr/leave-type",
-    LEAVE: "/admin/hr/leave",
-    ATTENDANCE: "/admin/hr/attendance",
   },
 } as const;
 
@@ -81,18 +58,9 @@ export const SIDEBAR_MENU: MenuItem[] = [
     icon: Users,
     items: [
       {
-        title: "Roles",
-        href: ROUTES.ADMIN.ROLES,
-      },
-      {
         title: "All Users",
         href: ROUTES.ADMIN.USERS,
       },
-
-      // {
-      //   title: "Sessions",
-      //   href: ROUTES.ADMIN.USER_SESSIONS,
-      // },
     ],
   },
 
@@ -108,29 +76,9 @@ export const SIDEBAR_MENU: MenuItem[] = [
         title: "Categories",
         href: ROUTES.ADMIN.CATEGORIES,
       },
-      {
-        title: "Brand",
-        href: ROUTES.ADMIN.BRAND,
-      },
-      {
-        title: "Exchange Rate",
-        href: ROUTES.ADMIN.EXCHANGE_RATE,
-      },
-      {
-        title: "Delivery Options",
-        href: ROUTES.ADMIN.DELIVERY_OPTIONS,
-      },
-      {
-        title: "Payment Options",
-        href: ROUTES.ADMIN.PAYMENT_OPTIONS,
-      },
     ],
   },
-  {
-    title: "POS",
-    href: ROUTES.ADMIN.POS,
-    icon: ShoppingCart,
-  },
+
   {
     title: "Business",
     icon: LucideBriefcaseBusiness,
@@ -149,24 +97,7 @@ export const SIDEBAR_MENU: MenuItem[] = [
       },
     ],
   },
-  {
-    title: "Stock Management",
-    icon: ShoppingCart,
-    items: [
-      {
-        title: "Stock Items",
-        href: ROUTES.MANAGE_STOCK.STOCK_ITEMS,
-      },
-      {
-        title: "Products Stock",
-        href: ROUTES.MANAGE_STOCK.PRODUCTS_STOCK,
-      },
-      {
-        title: "Size Stock",
-        href: ROUTES.MANAGE_STOCK.SIZE_STOCK,
-      },
-    ],
-  },
+  ,
   {
     title: "Settings",
     icon: Settings,
@@ -177,32 +108,6 @@ export const SIDEBAR_MENU: MenuItem[] = [
       },
     ],
   },
-  // {
-  //   title: "HR",
-  //   icon: Database,
-  //   items: [
-  //     {
-  //       title: "Work Schedule Types",
-  //       href: ROUTES.HR.WORK_SCHEDULE_TYPE,
-  //     },
-  //     {
-  //       title: "Leave Type",
-  //       href: ROUTES.HR.LEAVE_TYPE,
-  //     },
-  //     {
-  //       title: "Work Schedules",
-  //       href: ROUTES.HR.WORK_SCHEDULE,
-  //     },
-  //     {
-  //       title: "Leave",
-  //       href: ROUTES.HR.LEAVE,
-  //     },
-  //     {
-  //       title: "Attendance",
-  //       href: ROUTES.HR.ATTENDANCE,
-  //     },
-  //   ],
-  // },
 ];
 
 /**
