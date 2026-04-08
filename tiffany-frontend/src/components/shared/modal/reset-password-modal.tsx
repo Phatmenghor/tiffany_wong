@@ -93,7 +93,7 @@ export default function ResetPasswordModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-full sm:max-w-lg max-h-[92dvh] p-0 flex flex-col">
+      <DialogContent className="w-full sm:max-w-3xl max-h-[92dvh] p-0 flex flex-col">
         <FormHeader
           title="Reset Password"
           description="Reset the user's password to the default value"
