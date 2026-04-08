@@ -9,6 +9,18 @@ import java.util.UUID;
 public class OrderItemResponse {
     private UUID id;
     private Integer quantity;
+
+    private BigDecimal currentPriceBeforeDiscount;
+    private BigDecimal currentPriceAfterDiscount;
+    private BigDecimal discountAmountPerItem;
+    private String discountType;
+    private BigDecimal discountPercentage;
+    private Boolean hasDiscount;
+
+    private BigDecimal subtotalBeforeDiscount;
+    private BigDecimal subtotalDiscountAmount;
+    private BigDecimal subtotalAfterDiscount;
+
     private OrderItemProductInfo product;
 
     @Data
@@ -21,14 +33,6 @@ public class OrderItemResponse {
         private UUID sizeId;
         private String sizeName;
         private String status;
-
-        private BigDecimal currentPriceBeforeDiscount;
-        private BigDecimal currentPriceAfterDiscount;
-        private BigDecimal discountAmountPerItem;
-        private String discountType;
-        private BigDecimal discountPercentage;
-        private Boolean hasDiscount;
-
         private String promotionName;
     }
 }
