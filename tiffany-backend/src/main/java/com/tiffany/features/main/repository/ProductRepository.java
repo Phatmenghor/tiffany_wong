@@ -384,4 +384,12 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    display_origin_price = (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
         "WHERE p.is_deleted = false AND p.has_sizes = true")
     int resetAllPromotionsForProductsWithSizes();
+
+    /**
+     * Update all products in a category to a specific status
+     */
+    @Modifying
+    @Transactional
+    @Query("UPDATE Product p SET p.status = :status WHERE p.categoryId = :categoryId AND p.isDeleted = false")
+    int updateProductsStatusByCategory(@Param("categoryId") UUID categoryId, @Param("status") ProductStatus status);
 }

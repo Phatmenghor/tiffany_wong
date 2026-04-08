@@ -26,9 +26,9 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(@Valid @RequestBody CategoryCreateRequest request) {
+    public ResponseEntity<ApiResponse<CategoryWithProductCountResponse>> createCategory(@Valid @RequestBody CategoryCreateRequest request) {
         log.info("Creating category: {}", request.getName());
-        CategoryResponse category = categoryService.createCategory(request);
+        CategoryWithProductCountResponse category = categoryService.createCategory(request);
         log.info("Category created: id={}", category.getId());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Category created successfully", category));
@@ -49,26 +49,26 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<CategoryResponse>> getCategoryById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<CategoryWithProductCountResponse>> getCategoryById(@PathVariable UUID id) {
         log.info("Getting category: id={}", id);
-        CategoryResponse category = categoryService.getCategoryById(id);
+        CategoryWithProductCountResponse category = categoryService.getCategoryById(id);
         return ResponseEntity.ok(ApiResponse.success("Category retrieved successfully", category));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(
+    public ResponseEntity<ApiResponse<CategoryWithProductCountResponse>> updateCategory(
             @PathVariable UUID id,
             @Valid @RequestBody CategoryUpdateRequest request) {
         log.info("Updating category: id={}", id);
-        CategoryResponse category = categoryService.updateCategory(id, request);
+        CategoryWithProductCountResponse category = categoryService.updateCategory(id, request);
         log.info("Category updated: id={}", category.getId());
         return ResponseEntity.ok(ApiResponse.success("Category updated successfully", category));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<CategoryResponse>> deleteCategory(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<CategoryWithProductCountResponse>> deleteCategory(@PathVariable UUID id) {
         log.info("Deleting category: id={}", id);
-        CategoryResponse category = categoryService.deleteCategory(id);
+        CategoryWithProductCountResponse category = categoryService.deleteCategory(id);
         log.info("Category deleted: id={}", category.getId());
         return ResponseEntity.ok(ApiResponse.success("Category deleted successfully", category));
     }

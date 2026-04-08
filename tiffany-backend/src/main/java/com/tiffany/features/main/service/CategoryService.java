@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CategoryService {
-    
+
     // CRUD Operations
-    CategoryResponse createCategory(CategoryCreateRequest request);
+    CategoryWithProductCountResponse createCategory(CategoryCreateRequest request);
     PaginationResponse<CategoryResponse> getAllCategories(CategoryFilterRequest filter);
     PaginationResponse<CategoryWithProductCountResponse> getCategoriesWithProductCount(CategoryFilterRequest filter);
     List<CategoryResponse> getAllItemCategories(CategoryAllFilterRequest filter);
-    CategoryResponse getCategoryById(UUID id);
-    CategoryResponse updateCategory(UUID id, CategoryUpdateRequest request);
-    CategoryResponse deleteCategory(UUID id);
+    CategoryWithProductCountResponse getCategoryById(UUID id);
+    CategoryWithProductCountResponse updateCategory(UUID id, CategoryUpdateRequest request);
+    CategoryWithProductCountResponse deleteCategory(UUID id);
 }

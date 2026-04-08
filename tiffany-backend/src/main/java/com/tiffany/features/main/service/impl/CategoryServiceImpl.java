@@ -2,6 +2,7 @@ package com.tiffany.features.main.service.impl;
 
 import com.tiffany.exception.custom.NotFoundException;
 import com.tiffany.exception.custom.ValidationException;
+import com.tiffany.enums.product.ProductStatus;
 import com.tiffany.features.main.dto.filter.CategoryAllFilterRequest;
 import com.tiffany.features.main.dto.filter.CategoryFilterRequest;
 import com.tiffany.features.main.dto.request.CategoryCreateRequest;
@@ -11,7 +12,9 @@ import com.tiffany.features.main.dto.update.CategoryUpdateRequest;
 import com.tiffany.features.main.mapper.CategoryMapper;
 import com.tiffany.features.main.models.Category;
 import com.tiffany.features.main.repository.CategoryRepository;
+import com.tiffany.features.main.repository.ProductRepository;
 import com.tiffany.features.main.service.CategoryService;
+import com.tiffany.enums.common.Status;
 import com.tiffany.shared.dto.PaginationResponse;
 import com.tiffany.shared.mapper.PaginationMapper;
 import com.tiffany.shared.pagination.PaginationUtils;
@@ -34,11 +37,12 @@ import java.util.UUID;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
     private final CategoryMapper categoryMapper;
     private final PaginationMapper paginationMapper;
 
     @Override
-    public CategoryResponse createCategory(CategoryCreateRequest request) {
+    public CategoryWithProductCountResponse createCategory(CategoryCreateRequest request) {
         if (categoryRepository.existsByNameAndIsDeletedFalse(request.getName())) {
             throw new ValidationException("Category name already exists");
         }
@@ -47,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category savedCategory = categoryRepository.save(category);
 
         log.info("Category created: name={}", savedCategory.getName());
-        return categoryMapper.toResponse(savedCategory);
+        return buildCategoryWithProductCount(savedCategory);
     }
 
     @Override
@@ -144,13 +148,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public CategoryResponse getCategoryById(UUID id) {
+    public CategoryWithProductCountResponse getCategoryById(UUID id) {
         Category category = findCategoryById(id);
-        return categoryMapper.toResponse(category);
+        return buildCategoryWithProductCount(category);
     }
 
     @Override
-    public CategoryResponse updateCategory(UUID id, CategoryUpdateRequest request) {
+    public CategoryWithProductCountResponse updateCategory(UUID id, CategoryUpdateRequest request) {
         Category category = findCategoryById(id);
 
         if (request.getName() != null && !request.getName().equals(category.getName())) {
@@ -159,26 +163,76 @@ public class CategoryServiceImpl implements CategoryService {
             }
         }
 
+        // Handle cascading status changes to products
+        if (request.getStatus() != null && !request.getStatus().equals(category.getStatus())) {
+            Status oldStatus = category.getStatus();
+            Status newStatus = request.getStatus();
+
+            // Convert Status to ProductStatus
+            ProductStatus productStatus = newStatus == Status.ACTIVE ? ProductStatus.ACTIVE : ProductStatus.INACTIVE;
+
+            // Update all products in this category
+            productRepository.updateProductsStatusByCategory(id, productStatus);
+            log.info("Updated all products in category {} from {} to {}", id, oldStatus, newStatus);
+        }
+
         categoryMapper.updateEntity(request, category);
         Category updatedCategory = categoryRepository.save(category);
 
         log.info("Category updated: id={}", id);
-        return categoryMapper.toResponse(updatedCategory);
+        return buildCategoryWithProductCount(updatedCategory);
     }
 
     @Override
-    public CategoryResponse deleteCategory(UUID id) {
+    public CategoryWithProductCountResponse deleteCategory(UUID id) {
         Category category = findCategoryById(id);
+
+        // Set all products in this category to INACTIVE
+        productRepository.updateProductsStatusByCategory(id, ProductStatus.INACTIVE);
+        log.info("Set all products in category {} to INACTIVE", id);
 
         category.softDelete();
         category = categoryRepository.save(category);
 
         log.info("Category deleted: id={}", id);
-        return categoryMapper.toResponse(category);
+        return buildCategoryWithProductCount(category);
     }
 
     private Category findCategoryById(UUID id) {
         return categoryRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new NotFoundException("Category not found"));
+    }
+
+    private CategoryWithProductCountResponse buildCategoryWithProductCount(Category category) {
+        CategoryResponse baseResponse = categoryMapper.toResponse(category);
+
+        // Get product counts
+        List<Object[]> productCountData = categoryRepository.countTotalAndActiveProductsForCategories(
+                List.of(category.getId())
+        );
+
+        long totalProducts = 0L;
+        long activeProducts = 0L;
+
+        if (!productCountData.isEmpty()) {
+            Object[] data = productCountData.get(0);
+            totalProducts = ((Number) data[1]).longValue();
+            activeProducts = ((Number) data[2]).longValue();
+        }
+
+        // Build response with product counts
+        CategoryWithProductCountResponse response = new CategoryWithProductCountResponse();
+        response.setId(baseResponse.getId());
+        response.setCreatedAt(baseResponse.getCreatedAt());
+        response.setUpdatedAt(baseResponse.getUpdatedAt());
+        response.setCreatedBy(baseResponse.getCreatedBy());
+        response.setUpdatedBy(baseResponse.getUpdatedBy());
+        response.setName(baseResponse.getName());
+        response.setImageUrl(baseResponse.getImageUrl());
+        response.setStatus(baseResponse.getStatus());
+        response.setTotalProducts(totalProducts);
+        response.setActiveProducts(activeProducts);
+
+        return response;
     }
 }
