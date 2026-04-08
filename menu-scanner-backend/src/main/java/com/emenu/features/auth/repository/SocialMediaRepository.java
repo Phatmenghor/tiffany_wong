@@ -15,12 +15,12 @@ import java.util.UUID;
 public interface SocialMediaRepository extends JpaRepository<SocialMedia, UUID> {
 
     /**
-     * Find all active social media for a business setting
+     * Find all active social media for a system setting
      */
-    List<SocialMedia> findByBusinessSettingIdAndIsDeletedFalse(UUID businessSettingId);
+    List<SocialMedia> findBySystemSettingIdAndIsDeletedFalse(UUID systemSettingId);
 
     /**
-     * Delete all social media for a business setting
+     * Delete all social media for a system setting
      */
-    void deleteByBusinessSettingId(UUID businessSettingId);
+    void deleteBySystemSettingId(UUID systemSettingId);
 }
