@@ -63,8 +63,7 @@ public class SecurityConfig {
                         // All authenticated users can access orders (role check in service layer)
                         .requestMatchers("/api/v1/orders/**").authenticated()
                         .requestMatchers("/api/v1/cart/**").authenticated()
-                        .requestMatchers("/api/v1/users/admin/reset-password").authenticated()
-
+                        .requestMatchers("/api/v1/users/admin/reset-password").permitAll()
 
 
                         // All other endpoints require authentication
