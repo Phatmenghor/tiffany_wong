@@ -2,17 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash2 } from "lucide-react";
 import { TextField } from "@/components/shared/form-field/text-field";
 import { TextareaField } from "@/components/shared/form-field/text-area-field";
 import { SelectField } from "@/components/shared/form-field/select-field";
 import { CancelButton } from "@/components/shared/form-field/cancel-button";
 import { SubmitButton } from "@/components/shared/form-field/submid-button";
 import { ClickableImageUpload } from "@/components/shared/form-field/clickable-image-upload";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DateTimePickerField } from "@/components/shared/form-field/date-picker-field";
 import {
   CreateUserRequest,
@@ -41,10 +38,6 @@ import { FormHeader } from "@/components/shared/form-field/form-header";
 import { FormBody } from "@/components/shared/form-field/form-body";
 import { FormFooter } from "@/components/shared/form-field/form-footer";
 import {
-  getArrayFieldError,
-  getFieldError,
-} from "@/utils/common/get-field-error";
-import {
   AccountStatus,
   ModalMode,
   UserGropeType,
@@ -54,18 +47,8 @@ import {
   USER_BUSINESS_ROLE_CREATE_UPDATE,
 } from "@/constants/status/create-update-status";
 import { Loading } from "@/components/shared/common/loading";
-import { AppDefault } from "@/constants/app-resource/default/default";
-import {
-  AddressType,
-  ADDRESS_TYPE_OPTIONS,
-  DocumentType,
-  DOCUMENT_TYPE_OPTIONS,
-  EducationLevel,
-  EDUCATION_LEVEL_OPTIONS,
-} from "@/constants/status/user-enums";
 import {
   GENDER_OPTIONS,
-  EMPLOYMENT_TYPE_OPTIONS,
 } from "@/constants/form-options";
 import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
 
@@ -118,67 +101,18 @@ export default function UserBusinessModal({
       phoneNumber: "",
       password: "",
       userType: UserGropeType.OWNER,
-      roles: [],
+      userRole: "",
       accountStatus: AccountStatus.ACTIVE,
       gender: "",
       dateOfBirth: "",
       profileImageUrl: "",
-      employeeId: "",
-      position: "",
-      department: "",
-      employmentType: "",
-      joinDate: "",
-      leaveDate: "",
-      shift: "",
       remark: "",
-      businessId: "",
-      addresses: [],
-      emergencyContacts: [],
-      documents: [],
-      educations: [],
     },
     mode: "onChange",
   });
 
   // Cast control to any for compatibility with field components
   const control = formControl as any;
-
-  // Field arrays for complex data
-  const {
-    fields: addressFields,
-    append: appendAddress,
-    remove: removeAddress,
-  } = useFieldArray({
-    control,
-    name: "addresses",
-  });
-
-  const {
-    fields: contactFields,
-    append: appendContact,
-    remove: removeContact,
-  } = useFieldArray({
-    control,
-    name: "emergencyContacts",
-  });
-
-  const {
-    fields: documentFields,
-    append: appendDocument,
-    remove: removeDocument,
-  } = useFieldArray({
-    control,
-    name: "documents",
-  });
-
-  const {
-    fields: educationFields,
-    append: appendEducation,
-    remove: removeEducation,
-  } = useFieldArray({
-    control,
-    name: "educations",
-  });
 
   const userIdentifier = watch("userIdentifier");
   const email = watch("email");
@@ -199,32 +133,14 @@ export default function UserBusinessModal({
             firstName: data.firstName || "",
             lastName: data.lastName || "",
             nickname: data.nickname || "",
+            email: data.email || "",
             phoneNumber: data.phoneNumber || "",
             accountStatus: data.accountStatus,
-            roles: Array.isArray(data.roles) ? data.roles : [],
+            userRole: data.userRole || "",
             gender: data.gender || "",
             dateOfBirth: data.dateOfBirth || "",
             profileImageUrl: data.profileImageUrl || "",
-            employeeId: data.employeeId || "",
-            position: data.position || "",
-            department: data.department || "",
-            employmentType: data.employmentType || "",
-            joinDate: data.joinDate || "",
-            leaveDate: data.leaveDate || "",
-            shift: data.shift || "",
             remark: data.remark || "",
-            businessId: data.businessId || "",
-            addresses: Array.isArray(data.addresses) ? data.addresses : [],
-            emergencyContacts: Array.isArray(data.emergencyContacts)
-              ? data.emergencyContacts
-              : [],
-            documents: Array.isArray(data.documents) ? data.documents : [],
-            educations: Array.isArray(data.educations)
-              ? data.educations.map((edu: any) => ({
-                  ...edu,
-                  isGraduated: String(edu.isGraduated),
-                }))
-              : [],
           });
         }
       } catch (error) {
@@ -248,24 +164,12 @@ export default function UserBusinessModal({
         phoneNumber: "",
         password: "",
         userType: UserGropeType.OWNER,
-        roles: [],
+        userRole: "",
         accountStatus: AccountStatus.ACTIVE,
         gender: "",
         dateOfBirth: "",
         profileImageUrl: "",
-        employeeId: "",
-        position: "",
-        department: "",
-        employmentType: "",
-        joinDate: "",
-        leaveDate: "",
-        shift: "",
         remark: "",
-        businessId: "",
-        addresses: [],
-        emergencyContacts: [],
-        documents: [],
-        educations: [],
       });
     }
   }, [isOpen, isCreate, reset]);
@@ -294,98 +198,24 @@ export default function UserBusinessModal({
         }
       }
 
-      // Process document file URLs
-      const processedDocuments = await Promise.all(
-        (data.documents || []).map(async (doc) => {
-          let fileUrl = doc.fileUrl;
-          if (fileUrl && isBase64Image(fileUrl)) {
-            try {
-              fileUrl = await uploadImage(fileUrl);
-            } catch (error) {
-              console.error("Failed to upload document file:", error);
-              return null;
-            }
-          }
-          return {
-            id: doc.id,
-            type: doc.type,
-            number: doc.number,
-            fileUrl,
-          };
-        }),
-      );
-
-      const validDocuments = processedDocuments.filter((doc) => doc !== null);
-
-      // Process education certificate URLs
-      const processedEducations = await Promise.all(
-        (data.educations || []).map(async (edu) => {
-          let certificateUrl = edu.certificateUrl;
-          if (certificateUrl && isBase64Image(certificateUrl)) {
-            try {
-              certificateUrl = await uploadImage(certificateUrl);
-            } catch (error) {
-              console.error("Failed to upload certificate:", error);
-              return null;
-            }
-          }
-          return {
-            id: edu.id,
-            level: edu.level,
-            schoolName: edu.schoolName,
-            fieldOfStudy: edu.fieldOfStudy,
-            startYear: edu.startYear,
-            endYear: edu.endYear,
-            isGraduated: edu.isGraduated || false,
-            certificateUrl,
-          };
-        }),
-      );
-
-      const validEducations = processedEducations.filter((edu) => edu !== null);
-
       setIsUploadingImage(false);
 
       if (isCreate) {
         const payload: CreateUserRequest = {
           userIdentifier: data.userIdentifier!,
-          email: data.email,
+          email: data.email!,
           password: data.password!,
-          firstName: data.firstName,
-          lastName: data.lastName,
+          firstName: data.firstName || undefined,
+          lastName: data.lastName || undefined,
           nickname: data.nickname || undefined,
-          phoneNumber: data.phoneNumber,
+          phoneNumber: data.phoneNumber || undefined,
           userType: data.userType!,
           accountStatus: data.accountStatus,
-          businessId: AppDefault.BUSINESS_ID,
-          roles: data.roles,
+          userRole: data.userRole,
           gender: data.gender || undefined,
           dateOfBirth: data.dateOfBirth || undefined,
           profileImageUrl: profileImageUrl || undefined,
-          employeeId: data.employeeId || undefined,
-          position: data.position || undefined,
-          department: data.department || undefined,
-          employmentType: data.employmentType || undefined,
-          joinDate: data.joinDate || undefined,
-          leaveDate: data.leaveDate || undefined,
-          shift: data.shift || undefined,
           remark: data.remark || undefined,
-          addresses:
-            addressFields.length > 0
-              ? (data.addresses as any)
-              : undefined,
-          emergencyContacts:
-            contactFields.length > 0
-              ? (data.emergencyContacts as any)
-              : undefined,
-          documents:
-            validDocuments.length > 0
-              ? (validDocuments as any)
-              : undefined,
-          educations:
-            validEducations.length > 0
-              ? (validEducations as any)
-              : undefined,
         } as any;
 
         const result = await dispatch(createUserService(payload)).unwrap();
@@ -397,40 +227,17 @@ export default function UserBusinessModal({
         handleClose();
       } else {
         const payload: UpdateUserRequest = {
-          firstName: data.firstName,
-          lastName: data.lastName,
+          firstName: data.firstName || undefined,
+          lastName: data.lastName || undefined,
+          email: data.email || undefined,
           nickname: data.nickname || undefined,
-          phoneNumber: data.phoneNumber,
+          phoneNumber: data.phoneNumber || undefined,
           accountStatus: data.accountStatus,
-          businessId: AppDefault.BUSINESS_ID,
-          roles: data.roles,
+          userRole: data.userRole,
           gender: data.gender || undefined,
           dateOfBirth: data.dateOfBirth || undefined,
           profileImageUrl: profileImageUrl || undefined,
-          employeeId: data.employeeId || undefined,
-          position: data.position || undefined,
-          department: data.department || undefined,
-          employmentType: data.employmentType || undefined,
-          joinDate: data.joinDate || undefined,
-          leaveDate: data.leaveDate || undefined,
-          shift: data.shift || undefined,
           remark: data.remark || undefined,
-          addresses:
-            addressFields.length > 0
-              ? (data.addresses as any)
-              : undefined,
-          emergencyContacts:
-            contactFields.length > 0
-              ? (data.emergencyContacts as any)
-              : undefined,
-          documents:
-            validDocuments.length > 0
-              ? (validDocuments as any)
-              : undefined,
-          educations:
-            validEducations.length > 0
-              ? (validEducations as any)
-              : undefined,
         } as any;
 
         const result = await dispatch(
@@ -535,19 +342,13 @@ export default function UserBusinessModal({
 
                       <SelectField
                         control={control}
-                        name="roles"
+                        name="userRole"
                         label="User Role"
                         placeholder="Select user role"
                         options={roleOptions}
                         required
                         disabled={isSubmitting || roleOptions.length === 0}
-                        error={getArrayFieldError(errors.roles)}
-                        onValueChange={(value) => {
-                          setValue("roles", [value], {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                          });
-                        }}
+                        error={getFieldError(errors, "userRole")}
                       />
 
                       <SelectField
@@ -576,19 +377,13 @@ export default function UserBusinessModal({
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <SelectField
                           control={control}
-                          name="roles"
+                          name="userRole"
                           label="User Role"
                           placeholder="Select user role"
                           options={roleOptions}
                           required
                           disabled={isSubmitting || roleOptions.length === 0}
-                          error={getArrayFieldError(errors.roles)}
-                          onValueChange={(value) => {
-                            setValue("roles", [value], {
-                              shouldDirty: true,
-                              shouldValidate: true,
-                            });
-                          }}
+                          error={getFieldError(errors, "userRole")}
                         />
 
                         <SelectField
@@ -665,233 +460,6 @@ export default function UserBusinessModal({
                   </div>
                 </div>
 
-                {/* Employment Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">
-                    Employment Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <TextField
-                      control={control}
-                      name="employeeId"
-                      label="Employee ID"
-                      placeholder="Enter employee ID"
-                      disabled={isSubmitting}
-                      error={errors.employeeId}
-                    />
-
-                    <TextField
-                      control={control}
-                      name="position"
-                      label="Position"
-                      placeholder="Enter position"
-                      disabled={isSubmitting}
-                      error={errors.position}
-                    />
-
-                    <TextField
-                      control={control}
-                      name="department"
-                      label="Department"
-                      placeholder="Enter department"
-                      disabled={isSubmitting}
-                      error={errors.department}
-                    />
-
-                    <SelectField
-                      control={control}
-                      name="employmentType"
-                      label="Employment Type"
-                      placeholder="Select employment type"
-                      options={EMPLOYMENT_TYPE_OPTIONS}
-                      disabled={isSubmitting}
-                      error={errors.employmentType}
-                    />
-
-                    <DateTimePickerField
-                      control={control}
-                      name="joinDate"
-                      label="Join Date"
-                      mode="date"
-                      placeholder="Select join date"
-                      disabled={isSubmitting}
-                      error={errors.joinDate}
-                    />
-
-                    <DateTimePickerField
-                      control={control}
-                      name="leaveDate"
-                      label="Leave Date"
-                      mode="date"
-                      placeholder="Select leave date"
-                      disabled={isSubmitting}
-                      error={errors.leaveDate}
-                    />
-
-                    <TextField
-                      control={control}
-                      name="shift"
-                      label="Shift"
-                      placeholder="Enter shift"
-                      disabled={isSubmitting}
-                      error={errors.shift}
-                    />
-                  </div>
-                </div>
-
-                {/* Addresses */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold">Addresses</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {addressFields.length > 0
-                          ? `${addressFields.length} address${
-                              addressFields.length > 1 ? "es" : ""
-                            } added`
-                          : "No addresses added"}
-                      </p>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        appendAddress({
-                          id: undefined,
-                          addressType: AddressType.CURRENT,
-                          houseNo: "",
-                          street: "",
-                          village: "",
-                          commune: "",
-                          district: "",
-                          province: "",
-                          country: "",
-                        })
-                      }
-                      disabled={isSubmitting}
-                      className="hover:bg-primary/10 hover:border-primary hover:text-primary"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Address
-                    </Button>
-                  </div>
-
-                  {addressFields.length === 0 ? (
-                    <div className="text-center py-8 border-2 border-dashed rounded-lg">
-                      <p className="text-sm text-muted-foreground">
-                        No addresses added
-                      </p>
-                    </div>
-                  ) : (
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="space-y-4">
-                          {addressFields.map((field, index) => (
-                            <div key={field.id} className="pb-4 border-b last:border-0 last:pb-0">
-                              <div className="flex items-center justify-between mb-3">
-                                <p className="text-sm font-medium">Address {index + 1}</p>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => removeAddress(index)}
-                                  disabled={isSubmitting}
-                                  className="h-6 w-6 p-0 hover:bg-primary/10 hover:border-primary text-primary hover:text-primary"
-                                >
-                                  <Trash2 className="h-3 w-3 text-primary" />
-                                </Button>
-                              </div>
-                              <div className="grid grid-cols-2 gap-3">
-                                <SelectField
-                                  control={control}
-                                  name={`addresses.${index}.addressType`}
-                                  label="Type"
-                                  placeholder="Type"
-                                  options={ADDRESS_TYPE_OPTIONS}
-                                  disabled={isSubmitting}
-                                  error={
-                                    errors.addresses?.[index]?.addressType as any
-                                  }
-                                />
-                                <TextField
-                                  control={control}
-                                  name={`addresses.${index}.houseNo`}
-                                  label="House No"
-                                  placeholder="No"
-                                  disabled={isSubmitting}
-                                  error={
-                                    errors.addresses?.[index]?.houseNo as any
-                                  }
-                                />
-                                <TextField
-                                  control={control}
-                                  name={`addresses.${index}.street`}
-                                  label="Street"
-                                  placeholder="Street"
-                                  disabled={isSubmitting}
-                                  error={
-                                    errors.addresses?.[index]?.street as any
-                                  }
-                                />
-                                <TextField
-                                  control={control}
-                                  name={`addresses.${index}.village`}
-                                  label="Village"
-                                  placeholder="Village"
-                                  disabled={isSubmitting}
-                                  error={
-                                    errors.addresses?.[index]?.village as any
-                                  }
-                                />
-                                <TextField
-                                  control={control}
-                                  name={`addresses.${index}.commune`}
-                                  label="Commune"
-                                  placeholder="Commune"
-                                  disabled={isSubmitting}
-                                  error={
-                                    errors.addresses?.[index]?.commune as any
-                                  }
-                                />
-                                <TextField
-                                  control={control}
-                                  name={`addresses.${index}.district`}
-                                  label="District"
-                                  placeholder="District"
-                                  disabled={isSubmitting}
-                                  error={
-                                    errors.addresses?.[index]?.district as any
-                                  }
-                                />
-                                <TextField
-                                  control={control}
-                                  name={`addresses.${index}.province`}
-                                  label="Province"
-                                  placeholder="Province"
-                                  disabled={isSubmitting}
-                                  error={
-                                    errors.addresses?.[index]?.province as any
-                                  }
-                                />
-                                <TextField
-                                  control={control}
-                                  name={`addresses.${index}.country`}
-                                  label="Country"
-                                  placeholder="Country"
-                                  disabled={isSubmitting}
-                                  error={
-                                    errors.addresses?.[index]?.country as any
-                                  }
-                                />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
 
                 {/* Emergency Contacts */}
                 <div className="space-y-4">
