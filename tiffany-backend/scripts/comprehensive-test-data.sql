@@ -228,16 +228,16 @@ LEFT JOIN product_sizes ps ON ps.product_id = p.id;
 -- ============================================================================
 -- 11. ORDER DELIVERY ADDRESSES (1 per order)
 -- ============================================================================
-INSERT INTO order_delivery_addresses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, address_line, ward, district, city, postal_code, country, latitude, longitude, delivery_notes)
+INSERT INTO order_delivery_addresses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, village, commune, district, province, street_number, house_number, latitude, longitude, note)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     o.id,
-    CASE ((random() * 2)::int) WHEN 0 THEN 'Street 123' WHEN 1 THEN 'Avenue 456' ELSE 'Road 789' END,
+    CASE ((random() * 4)::int) WHEN 0 THEN 'Village 1' WHEN 1 THEN 'Village 2' WHEN 2 THEN 'Village 3' ELSE 'Village 4' END,
     CASE ((random() * 4)::int) WHEN 0 THEN 'Sangkat 1' WHEN 1 THEN 'Sangkat 2' WHEN 2 THEN 'Sangkat 3' ELSE 'Sangkat 4' END,
     CASE ((random() * 3)::int) WHEN 0 THEN 'Khan 1' WHEN 1 THEN 'Khan 2' ELSE 'Khan 3' END,
     'Phnom Penh',
-    '12000',
-    'Cambodia',
+    CASE ((random() * 2)::int) WHEN 0 THEN 'Street 123' WHEN 1 THEN 'Avenue 456' ELSE 'Road 789' END,
+    LPAD((random() * 999)::int::text, 3, '0'),
     11.5564 + (random() - 0.5) * 0.1,
     104.9282 + (random() - 0.5) * 0.1,
     'Delivery instruction ' || row_number() OVER (ORDER BY o.id)
