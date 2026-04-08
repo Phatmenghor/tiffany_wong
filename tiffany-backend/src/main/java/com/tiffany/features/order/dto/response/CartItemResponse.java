@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -18,9 +17,7 @@ public class CartItemResponse {
     private String productImageUrl;
     private UUID productSizeId;
     private String sizeName;
-    private String status;
     private String sku;
-    private String barcode;
 
     private BigDecimal currentPrice;
     private BigDecimal finalPrice;
@@ -33,24 +30,4 @@ public class CartItemResponse {
 
     private String promotionType;
     private BigDecimal promotionValue;
-    private LocalDateTime promotionFromDate;
-    private LocalDateTime promotionToDate;
-
-    private PricingSnapshot before;
-    private PricingSnapshot after;
-    private Boolean hadChangeFromPOS = false;
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class PricingSnapshot {
-        private BigDecimal price;
-        private BigDecimal total;
-        private BigDecimal discount;
-        private BigDecimal finalPrice;
-        private BigDecimal currentPrice;
-        private Boolean hasActivePromotion;
-        private String promotionType;
-        private BigDecimal promotionValue;
-    }
 }
