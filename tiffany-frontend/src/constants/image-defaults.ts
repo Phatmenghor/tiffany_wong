@@ -4,34 +4,16 @@
  */
 
 export const IMAGE_DEFAULTS = {
-  // Primary default images (from Unsplash)
-  PLACEHOLDER_MAIN: "https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce",
-
-  // Fallback options
-  FALLBACK_1: "https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce",
-
-  // Local fallbacks
+  // Local fallback image (no external dependencies)
   NO_IMAGE: "/assets/image/no-image.png",
-  NO_PROFILE: "/assets/image/no-image.png",
-  NO_PRODUCT: "/assets/image/no-image.png",
-  NO_CATEGORY: "/assets/image/no-image.png",
-  NO_BANNER: "/assets/image/no-image.png",
 };
 
 /**
  * Get appropriate fallback image based on type
  */
 export function getImageFallback(type: "profile" | "product" | "category" | "banner" | "logo" | "default" = "default"): string {
-  const fallbacks = {
-    profile: IMAGE_DEFAULTS.PLACEHOLDER_MAIN,
-    product: IMAGE_DEFAULTS.PLACEHOLDER_MAIN,
-    category: IMAGE_DEFAULTS.PLACEHOLDER_MAIN,
-    banner: IMAGE_DEFAULTS.PLACEHOLDER_MAIN,
-    logo: IMAGE_DEFAULTS.PLACEHOLDER_MAIN,
-    default: IMAGE_DEFAULTS.PLACEHOLDER_MAIN,
-  };
-
-  return fallbacks[type];
+  // All types use the same local no-image fallback
+  return IMAGE_DEFAULTS.NO_IMAGE;
 }
 
 /**
@@ -43,7 +25,7 @@ export function isValidImageUrl(url?: string | null): boolean {
 
 /**
  * Get image URL with fallback
- * Returns the provided URL if valid, otherwise returns the appropriate fallback
+ * Returns the provided URL if valid, otherwise returns the local no-image fallback
  */
 export function getImageWithFallback(
   url?: string | null,
@@ -51,3 +33,4 @@ export function getImageWithFallback(
 ): string {
   return isValidImageUrl(url) ? url : getImageFallback(type);
 }
+
