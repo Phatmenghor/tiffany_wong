@@ -113,7 +113,7 @@ SELECT
     NOW()::date - (random() * 15000)::int,
     '+855 ' || LPAD((random() * 999999)::int::text, 9, '0'),
     u.user_identifier,
-    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce' || SUBSTR(u.user_identifier, 1, 10)
+    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce'
 FROM users u
 WHERE NOT EXISTS (SELECT 1 FROM user_profiles up WHERE up.user_id = u.id);
 
@@ -124,7 +124,7 @@ INSERT INTO categories (id, version, created_at, updated_at, created_by, updated
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'Category ' || i,
-    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ceCat' || i,
+    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce',
     'ACTIVE'
 FROM generate_series(1, 200) AS t(i);
 
@@ -167,7 +167,7 @@ INSERT INTO product_images (id, version, created_at, updated_at, created_by, upd
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     p.id,
-    'https://via.placeholder.com/400?text=Product' || SUBSTR(p.id::text, 1, 8) || 'Img' || img_num
+    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce'
 FROM products p
 CROSS JOIN generate_series(1, (1 + (random() * 4)::int)) AS img_num;
 
@@ -178,7 +178,7 @@ INSERT INTO banners (id, version, created_at, updated_at, created_by, updated_by
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'Promotional banner ' || i,
-    'https://via.placeholder.com/1200x400?text=Banner' || i,
+    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce',
     '/promo/' || i,
     'ACTIVE'
 FROM generate_series(1, 20) AS t(i);
