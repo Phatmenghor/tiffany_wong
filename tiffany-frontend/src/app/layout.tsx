@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { ClientProviders } from "@/context/client-provider";
 import localFont from "next/font/local";
 import "../styles/globals.css";
@@ -33,8 +34,9 @@ export default async function RootLayout({
     <html className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" />
-        {/* Apply theme colors synchronously via style tag to prevent color flash */}
-        <script
+        {/* Apply theme colors synchronously via script to prevent color flash */}
+        <Script
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
