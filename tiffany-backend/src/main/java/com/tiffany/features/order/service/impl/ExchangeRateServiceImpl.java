@@ -30,7 +30,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     private final ExchangeRateRepository exchangeRateRepository;
     private final ExchangeRateMapper exchangeRateMapper;
-    private final com.emenu.shared.mapper.PaginationMapper paginationMapper;
+    private final com.tiffany.shared.mapper.PaginationMapper paginationMapper;
 
     @Override
     public ExchangeRateResponse createExchangeRate(ExchangeRateCreateRequest request) {

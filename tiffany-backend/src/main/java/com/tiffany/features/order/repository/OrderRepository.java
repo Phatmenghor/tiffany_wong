@@ -101,7 +101,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
            "ORDER BY o.createdAt DESC")
     Page<Order> findAllWithFilters(
             @Param("orderStatus") OrderStatus orderStatus,
-            @Param("paymentMethod") com.emenu.enums.payment.PaymentMethod paymentMethod,
-            @Param("paymentStatus") com.emenu.enums.payment.PaymentStatus paymentStatus,
+            @Param("paymentMethod") com.tiffany.enums.payment.PaymentMethod paymentMethod,
+            @Param("paymentStatus") com.tiffany.enums.payment.PaymentStatus paymentStatus,
             Pageable pageable);
 }

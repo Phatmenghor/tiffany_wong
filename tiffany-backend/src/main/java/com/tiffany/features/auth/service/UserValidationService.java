@@ -27,7 +27,7 @@ public class UserValidationService {
     public void validateUsernameUniqueness(String userIdentifier, UserType userType) {
         if (!isUsernameAvailable(userIdentifier, userType)) {
             String context = " for " + userType.name().toLowerCase().replace("_", " ");
-            throw new com.emenu.exception.custom.ValidationException(
+            throw new com.tiffany.exception.custom.ValidationException(
                     "Username '" + userIdentifier + "' is already taken" + context
             );
         }

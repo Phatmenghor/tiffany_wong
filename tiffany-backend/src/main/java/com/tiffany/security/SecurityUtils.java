@@ -103,7 +103,7 @@ public class SecurityUtils {
         return getCurrentUser().getId();
     }
 
-    public com.emenu.enums.user.UserType getCurrentUserType() {
+    public com.tiffany.enums.user.UserType getCurrentUserType() {
         try {
             User currentUser = getCurrentUser();
             return currentUser.getUserType();

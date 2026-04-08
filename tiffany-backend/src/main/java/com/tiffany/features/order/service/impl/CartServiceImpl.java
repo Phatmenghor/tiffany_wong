@@ -187,8 +187,8 @@ public class CartServiceImpl implements CartService {
             return existingCart.get();
         }
 
-        com.emenu.features.order.dto.helper.CartCreateHelper helper =
-            new com.emenu.features.order.dto.helper.CartCreateHelper(userId);
+        com.tiffany.features.order.dto.helper.CartCreateHelper helper =
+            new com.tiffany.features.order.dto.helper.CartCreateHelper(userId);
         Cart newCart = cartMapper.createFromHelper(helper);
         Cart savedCart = cartRepository.save(newCart);
 

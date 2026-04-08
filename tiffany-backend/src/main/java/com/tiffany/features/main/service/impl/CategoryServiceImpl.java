@@ -35,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final SecurityUtils securityUtils;
-    private final com.emenu.shared.mapper.PaginationMapper paginationMapper;
+    private final com.tiffany.shared.mapper.PaginationMapper paginationMapper;
 
     @Override
     public CategoryResponse createCategory(CategoryCreateRequest request) {

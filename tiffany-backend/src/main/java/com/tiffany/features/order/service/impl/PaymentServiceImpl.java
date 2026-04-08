@@ -36,7 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final ExchangeRateService exchangeRateService;
     private final PaymentMapper paymentMapper;
     private final PaymentReferenceGenerator referenceGenerator;
-    private final com.emenu.shared.mapper.PaginationMapper paginationMapper;
+    private final com.tiffany.shared.mapper.PaginationMapper paginationMapper;
 
     @Override
     public PaymentResponse createPayment(PaymentCreateRequest request) {

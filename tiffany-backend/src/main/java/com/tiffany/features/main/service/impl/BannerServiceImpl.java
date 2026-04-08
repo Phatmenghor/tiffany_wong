@@ -34,7 +34,7 @@ public class BannerServiceImpl implements BannerService {
     private final BannerRepository bannerRepository;
     private final BannerMapper bannerMapper;
     private final SecurityUtils securityUtils;
-    private final com.emenu.shared.mapper.PaginationMapper paginationMapper;
+    private final com.tiffany.shared.mapper.PaginationMapper paginationMapper;
 
     @Override
     public BannerResponse createBanner(BannerCreateRequest request) {

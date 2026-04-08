@@ -100,7 +100,7 @@ public class DataInitializationService {
 
                 admin = userRepository.save(admin);
 
-                com.emenu.features.auth.models.UserProfile profile = new com.emenu.features.auth.models.UserProfile();
+                com.tiffany.features.auth.models.UserProfile profile = new com.tiffany.features.auth.models.UserProfile();
                 profile.setUser(admin);
                 profile.setEmail(defaultAdminEmail);
                 profile.setFirstName("Platform");

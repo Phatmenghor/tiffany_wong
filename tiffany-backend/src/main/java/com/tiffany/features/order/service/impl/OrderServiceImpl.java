@@ -355,7 +355,7 @@ public class OrderServiceImpl implements OrderService {
             order.getItems().clear();
 
             // Create new items from the request
-            for (com.emenu.features.order.dto.request.OrderItemUpdateRequest itemRequest : request.getItems()) {
+            for (com.tiffany.features.order.dto.request.OrderItemUpdateRequest itemRequest : request.getItems()) {
                 OrderItem item = new OrderItem();
                 item.setOrderId(orderId);
                 item.setProductId(itemRequest.getProductId());
@@ -495,13 +495,13 @@ public class OrderServiceImpl implements OrderService {
     private void createOrderItemsFromCartSummary(UUID orderId, Object cartSummary,
                                                   POSCheckoutRequest.PricingInfo pricingInfo) {
         // Handle both CartSummaryResponse and POSCheckoutRequest.CartSummary
-        if (!(cartSummary instanceof com.emenu.features.order.dto.response.CartSummaryResponse)) {
+        if (!(cartSummary instanceof com.tiffany.features.order.dto.response.CartSummaryResponse)) {
             log.warn("Invalid cart summary type: {}", cartSummary.getClass().getName());
             return;
         }
 
-        com.emenu.features.order.dto.response.CartSummaryResponse cartResponse =
-                (com.emenu.features.order.dto.response.CartSummaryResponse) cartSummary;
+        com.tiffany.features.order.dto.response.CartSummaryResponse cartResponse =
+                (com.tiffany.features.order.dto.response.CartSummaryResponse) cartSummary;
 
         log.debug("🛒 [CART SUMMARY] Processing {} items for order: {}", cartResponse.getItems().size(), orderId);
 
@@ -688,7 +688,7 @@ public class OrderServiceImpl implements OrderService {
             order.setOrderStatus(OrderStatus.COMPLETED); // POS orders are always completed
             order.setSource("POS"); // Mark as POS order
             // Set orderFrom for POS orders
-            order.setOrderFrom(com.emenu.features.order.enums.OrderFromEnum.BUSINESS);
+            order.setOrderFrom(com.tiffany.features.order.enums.OrderFromEnum.BUSINESS);
             order.setPaymentMethod(PaymentMethod.CASH);
             order.setPaymentStatus(PaymentStatus.PAID);
             order.setDeliveryFee(deliveryPrice);
@@ -897,7 +897,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderDeliveryAddress createDeliveryAddressSnapshot(UUID orderId, UUID addressId) {
         try {
             // Fetch location from database
-            com.emenu.features.location.models.Location location = locationRepository.findById(addressId)
+            com.tiffany.features.location.models.Location location = locationRepository.findById(addressId)
                     .orElseThrow(() -> new NotFoundException("Address not found: " + addressId));
 
             // Create snapshot with all location details

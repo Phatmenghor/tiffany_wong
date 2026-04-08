@@ -32,7 +32,7 @@ public class BusinessExchangeRateServiceImpl implements BusinessExchangeRateServ
 
     private final BusinessExchangeRateRepository exchangeRateRepository;
     private final BusinessExchangeRateMapper exchangeRateMapper;
-    private final com.emenu.shared.mapper.PaginationMapper paginationMapper;
+    private final com.tiffany.shared.mapper.PaginationMapper paginationMapper;
 
     @Override
     public BusinessExchangeRateResponse createBusinessExchangeRate(BusinessExchangeRateCreateRequest request) {

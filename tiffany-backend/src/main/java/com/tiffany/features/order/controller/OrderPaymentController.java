@@ -60,7 +60,7 @@ public class OrderPaymentController {
     @PostMapping("/cash/all")
     public ResponseEntity<ApiResponse<PaginationResponse<OrderPaymentResponse>>> getCashPayments(@Valid @RequestBody OrderPaymentFilterRequest filter) {
         log.info("Getting cash payments");
-        filter.setPaymentMethod(com.emenu.enums.payment.PaymentMethod.CASH);
+        filter.setPaymentMethod(com.tiffany.enums.payment.PaymentMethod.CASH);
         PaginationResponse<OrderPaymentResponse> payments = paymentService.getAllPayments(filter);
         return ResponseEntity.ok(ApiResponse.success("Cash payments retrieved successfully", payments));
     }
