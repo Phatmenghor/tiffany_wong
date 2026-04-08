@@ -18,9 +18,6 @@ import {
   fetchAllUsersService,
   toggleUserStatusService,
 } from "@/redux/features/auth/store/thunks/users-thunks";
-import { fetchAllRolesListService } from "@/redux/features/auth/store/thunks/role-thunks";
-import { selectRolesList } from "@/redux/features/auth/store/selectors/role-selectors";
-import { formatEnumValue } from "@/utils/format/enum-formatter";
 import {
   setAccountStatusFilter,
   setPageNo,
@@ -53,31 +50,14 @@ export default function UserBusinessPage() {
   const { filters, pagination, usersData, usersContent, userState, isLoading, operations, dispatch } = useUsersState();
   const globalPageSize = useAppSelector(selectGlobalPageSize);
   const debouncedSearch = useDebounce(filters.search, 400);
-  const rolesContent = useAppSelector(selectRolesList);
 
-  // Build dynamic role filter options with static ALL_ROLES option
-  const roleFilterOptions = [
-    { value: UserRole.ALL, label: "All Roles" },
-    ...rolesContent.map((role) => ({
-      value: role.name,
-      label: formatEnumValue(role.name),
-    })),
-  ];
+  // Use static role filter options from constants
+  const roleFilterOptions = USER_BUSINESS_ROLE_FILTER;
 
   const { updateUrlWithPage, handlePageChange } = usePagination({
     baseRoute: ROUTES.ADMIN.USERS,
     syncPageToRedux: (page) => dispatch(setPageNo(page)),
   });
-
-  // Fetch roles for the filter (all roles as list, no pagination needed)
-  useEffect(() => {
-    dispatch(
-      fetchAllRolesListService({
-        includeAll: false,
-        userTypes: [UserGropeType.OWNER],
-      }),
-    );
-  }, [dispatch]);
 
   // Fetch users when filters or search change
   useEffect(() => {

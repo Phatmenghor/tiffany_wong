@@ -51,11 +51,9 @@ import {
 } from "@/constants/status/status";
 import {
   ACCOUNT_STATUS_CREATE_UPDATE,
+  USER_BUSINESS_ROLE_CREATE_UPDATE,
 } from "@/constants/status/create-update-status";
 import { Loading } from "@/components/shared/common/loading";
-import { fetchAllRoleService } from "../store/thunks/role-thunks";
-import { selectRoleContent } from "../store/selectors/role-selectors";
-import { formatEnumValue } from "@/utils/format/enum-formatter";
 import { AppDefault } from "@/constants/app-resource/default/default";
 import {
   AddressType,
@@ -94,14 +92,10 @@ export default function UserBusinessModal({
   const isFetchingDetail = useAppSelector(selectIsFetchingDetail);
   const reduxError = useAppSelector(selectError);
   const userData = useAppSelector(selectSelectedUser);
-  const rolesContent = useAppSelector(selectRoleContent);
   const { isCreating, isUpdating } = operations;
 
-  // Build role options from fetched data
-  const roleOptions = rolesContent.map((role) => ({
-    value: role.name,
-    label: formatEnumValue(role.name),
-  }));
+  // Use static role options from constants
+  const roleOptions = USER_BUSINESS_ROLE_CREATE_UPDATE;
 
   const {
     control: formControl,
@@ -188,21 +182,6 @@ export default function UserBusinessModal({
 
   const userIdentifier = watch("userIdentifier");
   const email = watch("email");
-
-  // Fetch roles for the dropdown
-  useEffect(() => {
-    if (isOpen) {
-      dispatch(
-        fetchAllRoleService({
-          pageNo: 1,
-          pageSize: 100,
-          includeAll: false,
-          businessId: AppDefault.BUSINESS_ID,
-          userTypes: [UserGropeType.OWNER],
-        }),
-      );
-    }
-  }, [isOpen, dispatch]);
 
   // Fetch user data for edit mode
   useEffect(() => {
