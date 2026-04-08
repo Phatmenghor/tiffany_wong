@@ -293,17 +293,16 @@ public class AuthServiceImpl implements AuthService {
         // Extract user context from refresh token JWT
         String userIdentifier = jwtGenerator.getUsernameFromJWT(refreshTokenString);
         String userTypeStr = jwtGenerator.getUserTypeFromJWT(refreshTokenString);
-        String businessIdStr = jwtGenerator.getBusinessIdFromJWT(refreshTokenString);
 
-        log.info("Refresh token context: userIdentifier={}, userType={}, businessId={}",
-                userIdentifier, userTypeStr, businessIdStr);
+        log.info("Refresh token context: userIdentifier={}, userType={}",
+                userIdentifier, userTypeStr);
 
         // Verify refresh token exists in database and is valid
         RefreshToken refreshToken = refreshTokenService.verifyRefreshToken(refreshTokenString)
                 .orElseThrow(() -> new ValidationException("Invalid or expired refresh token"));
 
         // Find user using context from refresh token JWT
-        User user = findUserByRefreshTokenContext(userIdentifier, userTypeStr, businessIdStr);
+        User user = findUserByRefreshTokenContext(userIdentifier, userTypeStr);
 
         // Validate that the found user matches the refresh token's userId
         if (!user.getId().equals(refreshToken.getUserId())) {
@@ -338,16 +337,16 @@ public class AuthServiceImpl implements AuthService {
         // Revoke old refresh token
         refreshTokenService.revokeRefreshToken(refreshTokenString, "TOKEN_REFRESH");
 
-        log.info("Token refresh successful: {} (type: {}, businessId: {})",
-                user.getUserIdentifier(), user.getUserType(), user.getBusinessId());
+        log.info("Token refresh successful: {} (type: {})",
+                user.getUserIdentifier(), user.getUserType());
 
         return new RefreshTokenResponse(newAccessToken, newRefreshToken.getToken());
     }
 
     /**
-     * Find user by refresh token context (userIdentifier, userType, businessId)
+     * Find user by refresh token context (userIdentifier, userType)
      */
-    private User findUserByRefreshTokenContext(String userIdentifier, String userTypeStr, String businessIdStr) {
+    private User findUserByRefreshTokenContext(String userIdentifier, String userTypeStr) {
         if (userTypeStr == null) {
             throw new ValidationException("Invalid refresh token: missing user type");
         }

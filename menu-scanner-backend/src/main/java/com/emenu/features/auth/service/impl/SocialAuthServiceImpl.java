@@ -47,7 +47,7 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         SocialAuthProvider provider = SocialAuthProvider.fromProviderKey(request.getProvider());
         SocialUserInfo userInfo = fetchUserInfo(provider, request.getAccessToken());
 
-        User user = findOrCreateUser(userInfo, provider, request.getUserType(), request.getBusinessId());
+        User user = findOrCreateUser(userInfo, provider, request.getUserType());
         syncSocialData(user, provider, userInfo);
         userRepository.save(user);
 

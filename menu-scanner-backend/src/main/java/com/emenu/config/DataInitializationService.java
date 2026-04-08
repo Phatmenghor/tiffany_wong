@@ -99,7 +99,6 @@ public class DataInitializationService {
                     Role role = new Role();
                     role.setName(roleConfig.name());
                     role.setDescription("System role: " + roleConfig.name());
-                    role.setBusinessId(null);
                     role.setUserType(roleConfig.userType());
                     roleRepository.save(role);
                     createdCount++;

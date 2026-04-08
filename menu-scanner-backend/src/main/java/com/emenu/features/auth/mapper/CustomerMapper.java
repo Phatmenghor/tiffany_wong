@@ -23,7 +23,6 @@ public interface CustomerMapper {
     @Mapping(target = "accountStatus", constant = "ACTIVE")
     User toEntity(UserCreateRequest request);
 
-    @Mapping(source = "business.name", target = "businessName")
     @Mapping(source = "roles", target = "roles", qualifiedByName = "rolesToRoleEnums")
     @Mapping(target = "fullName", expression = "java(user.getFullName())")
     UserResponse toResponse(User user);
