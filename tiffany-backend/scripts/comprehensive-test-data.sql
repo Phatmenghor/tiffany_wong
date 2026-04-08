@@ -14,6 +14,35 @@
 -- ============================================================================
 
 -- ============================================================================
+-- 0. CLEANUP - DELETE ALL EXISTING DATA (Foreign Key Order)
+-- ============================================================================
+DELETE FROM product_favorites;
+DELETE FROM order_status_history;
+DELETE FROM order_items;
+DELETE FROM order_delivery_addresses;
+DELETE FROM orders;
+DELETE FROM carts;
+DELETE FROM cart_items;
+DELETE FROM product_images;
+DELETE FROM product_sizes;
+DELETE FROM products;
+DELETE FROM categories;
+DELETE FROM banners;
+DELETE FROM social_media;
+DELETE FROM business_hours;
+DELETE FROM system_settings;
+DELETE FROM refresh_tokens;
+DELETE FROM blacklisted_tokens;
+DELETE FROM user_profiles;
+DELETE FROM users;
+DELETE FROM reference_counters;
+DELETE FROM order_counters;
+
+-- Reset sequences/auto-increment
+ALTER SEQUENCE reference_counters_id_seq RESTART WITH 1;
+ALTER SEQUENCE order_counters_id_seq RESTART WITH 1;
+
+-- ============================================================================
 -- 1. USERS (60,001 total)
 -- ============================================================================
 
