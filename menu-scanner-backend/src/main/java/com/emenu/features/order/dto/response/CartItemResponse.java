@@ -40,14 +40,4 @@ public class CartItemResponse {
     private BigDecimal promotionValue;
     private LocalDateTime promotionFromDate;
     private LocalDateTime promotionToDate;
-
-    // ===== AUDIT TRAIL: Before/After snapshots for POS orders =====
-    // Snapshot BEFORE any POS modifications (original product price)
-    private OrderItemPricingSnapshot before;
-
-    // Was the item modified from POS?
-    private Boolean hadChangeFromPOS;
-
-    // Snapshot AFTER POS modifications
-    private OrderItemPricingSnapshot after;
 }

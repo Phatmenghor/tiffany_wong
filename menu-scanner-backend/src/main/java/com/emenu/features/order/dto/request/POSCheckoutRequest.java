@@ -1,6 +1,5 @@
 package com.emenu.features.order.dto.request;
 
-import com.emenu.features.order.dto.response.OrderPricingSnapshot;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -14,8 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Unified POS checkout request - matches both PUBLIC (customer) and POS (admin) orders
- * Includes full audit trail for all item modifications and order-level discounts
+ * Unified POS checkout request
  *
  * Frontend → Backend mapping:
  * - deliveryAddress: full address object
@@ -103,15 +101,6 @@ public class POSCheckoutRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PricingInfo {
-        // Snapshot BEFORE any order-level modifications
-        private OrderPricingSnapshot before;
-
-        // Was order total modified?
-        private Boolean hadOrderLevelChangeFromPOS;
-
-        // Snapshot AFTER order-level modifications
-        private OrderPricingSnapshot after;
-
         // Type of order-level discount (PERCENTAGE or FIXED_AMOUNT)
         private String discountType;
 

@@ -36,7 +36,6 @@ public interface OrderMapper {
     @Mapping(source = "business.name", target = "businessName")
     @Mapping(target = "deliveryAddress", expression = "java(mapDeliveryAddress(order))")
     @Mapping(source = "orderStatus", target = "orderStatus")
-    @Mapping(target = "pricing", expression = "java(mapPricingInfo(order))")
     @Mapping(target = "statusHistory", expression = "java(mapStatusHistory(order))")
     @Mapping(target = "payment", expression = "java(mapPaymentInfo(order))")
     OrderResponse toResponse(Order order);
@@ -217,98 +216,6 @@ public interface OrderMapper {
                 .build();
     }
 
-    /**
-     * Map pricing details to nested pricing info object with before/after snapshots
-     */
-    default OrderPricingInfo mapPricingInfo(Order order) {
-        if (order == null) {
-            return null;
-        }
-
-        BigDecimal subtotalBeforeDiscount = calculateSubtotalBeforeDiscount(order);
-        BigDecimal itemLevelDiscounts = calculateItemLevelDiscounts(order);  // Sum of all item discounts
-        BigDecimal subtotalAfterItemDiscounts = subtotalBeforeDiscount.subtract(itemLevelDiscounts);
-        BigDecimal orderLevelDiscount = order.getDiscountAmount() != null ? order.getDiscountAmount() : BigDecimal.ZERO;
-        BigDecimal deliveryFee = order.getDeliveryFee() != null ? order.getDeliveryFee() : BigDecimal.ZERO;
-        BigDecimal taxAmount = order.getTaxAmount() != null ? order.getTaxAmount() : BigDecimal.ZERO;
-
-        // Build before snapshot (before order-level changes, but after item-level discounts)
-        OrderPricingSnapshot before = OrderPricingSnapshot.builder()
-                .totalItems(calculateTotalItems(order))
-                .subtotalBeforeDiscount(subtotalBeforeDiscount)
-                .subtotal(subtotalAfterItemDiscounts)  // After item-level discounts
-                .discountAmount(itemLevelDiscounts)  // Sum of item-level discounts
-                .hasActivePromotion(itemLevelDiscounts.compareTo(BigDecimal.ZERO) > 0)  // True if item discounts exist
-                .promotionType(null)  // No order-level discount in before state
-                .promotionValue(null)  // No order-level discount value in before state
-                .deliveryFee(deliveryFee)
-                .taxAmount(taxAmount)
-                .finalTotal(subtotalAfterItemDiscounts.add(deliveryFee).add(taxAmount))
-                .build();
-
-        // Build after snapshot (after order-level changes if any)
-        BigDecimal subtotalAfterAllDiscounts = subtotalAfterItemDiscounts.subtract(orderLevelDiscount);
-        BigDecimal totalAllDiscounts = itemLevelDiscounts.add(orderLevelDiscount);
-        OrderPricingSnapshot after = OrderPricingSnapshot.builder()
-                .totalItems(calculateTotalItems(order))
-                .subtotalBeforeDiscount(subtotalBeforeDiscount)
-                .subtotal(subtotalAfterAllDiscounts)  // After both item-level and order-level discounts
-                .discountAmount(totalAllDiscounts)  // Sum of all discounts
-                .hasActivePromotion(totalAllDiscounts.compareTo(BigDecimal.ZERO) > 0)  // True if any discount exists
-                .promotionType(order.getDiscountType())  // Show order-level discount type after changes
-                .promotionValue(orderLevelDiscount)  // Show order-level discount value after changes
-                .deliveryFee(deliveryFee)
-                .taxAmount(taxAmount)
-                .finalTotal(order.getTotalAmount() != null ? order.getTotalAmount() :
-                           subtotalAfterAllDiscounts.add(deliveryFee).add(taxAmount))
-                .build();
-
-        boolean hadChange = order.getHadOrderLevelChangeFromPOS() != null && order.getHadOrderLevelChangeFromPOS();
-
-        return OrderPricingInfo.builder()
-                .before(before)
-                .hadOrderLevelChangeFromPOS(hadChange)
-                .after(hadChange ? after : null)  // Only include after if there were changes
-                .reason(order.getOrderLevelChangeReason() != null ? order.getOrderLevelChangeReason() : "No order-level changes")
-                .build();
-    }
-
-    /**
-     * Calculate sum of item-level discounts
-     */
-    default BigDecimal calculateItemLevelDiscounts(Order order) {
-        if (order == null || order.getItems() == null || order.getItems().isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-
-        return order.getItems().stream()
-                .map(item -> {
-                    if (item.getCurrentPrice() != null && item.getFinalPrice() != null && item.getQuantity() != null) {
-                        BigDecimal discountPerItem = item.getCurrentPrice().subtract(item.getFinalPrice());
-                        return discountPerItem.multiply(new BigDecimal(item.getQuantity()));
-                    }
-                    return BigDecimal.ZERO;
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    /**
-     * Calculate subtotal before any discounts by summing items at original price (currentPrice * quantity)
-     */
-    default BigDecimal calculateSubtotalBeforeDiscount(Order order) {
-        if (order == null || order.getItems() == null || order.getItems().isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-
-        return order.getItems().stream()
-                .map(item -> {
-                    if (item.getCurrentPrice() != null && item.getQuantity() != null) {
-                        return item.getCurrentPrice().multiply(new BigDecimal(item.getQuantity()));
-                    }
-                    return BigDecimal.ZERO;
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
 
     /**
      * Map payment method and status to nested payment info object

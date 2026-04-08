@@ -1,7 +1,5 @@
 package com.emenu.features.order.dto.request;
 
-import com.emenu.features.order.dto.response.OrderItemPricingSnapshot;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -13,8 +11,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
- * Item in POS checkout with complete before/after audit trail
- * Captures: before snapshot → after snapshot with detailed metadata
+ * Item in POS checkout request
  */
 @Data
 @Builder
@@ -40,18 +37,6 @@ public class POSCheckoutItemRequest {
     // SKU and barcode (optional - from request, fallback if not in product master data)
     private String sku;
     private String barcode;
-
-    // ===== AUDIT TRAIL: Before/After snapshots =====
-    // Snapshot BEFORE any POS modifications
-    @Valid
-    private OrderItemPricingSnapshot before;
-
-    // Was the item modified?
-    private Boolean hadChangeFromPOS;
-
-    // Snapshot AFTER POS modifications
-    @Valid
-    private OrderItemPricingSnapshot after;
 
     // ===== DEPRECATED - Kept for backward compatibility =====
     // Price history for audit trail

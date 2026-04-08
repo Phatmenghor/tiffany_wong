@@ -25,14 +25,11 @@ import com.emenu.features.order.models.Cart;
 import com.emenu.features.order.models.Order;
 import com.emenu.features.order.models.OrderItem;
 import com.emenu.features.order.models.OrderDeliveryAddress;
-import com.emenu.features.order.models.OrderItemPricingSnapshot;
-import com.emenu.features.order.dto.response.OrderPricingSnapshot;
 import com.emenu.features.order.repository.OrderPaymentRepository;
 import com.emenu.features.order.repository.CartRepository;
 import com.emenu.features.order.repository.OrderRepository;
 import com.emenu.features.order.repository.OrderStatusHistoryRepository;
 import com.emenu.features.order.repository.OrderDeliveryAddressRepository;
-import com.emenu.features.order.repository.OrderItemPricingSnapshotRepository;
 import com.emenu.features.order.models.OrderStatusHistory;
 import com.emenu.features.order.service.OrderService;
 import com.emenu.security.SecurityUtils;
@@ -66,7 +63,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderStatusHistoryRepository orderStatusHistoryRepository;
     private final ProductRepository productRepository;
     private final OrderDeliveryAddressRepository orderDeliveryAddressRepository;
-    private final OrderItemPricingSnapshotRepository orderItemPricingSnapshotRepository;
     private final OrderMapper orderMapper;
     private final OrderPaymentMapper paymentMapper;
     private final SecurityUtils securityUtils;
@@ -407,18 +403,14 @@ public class OrderServiceImpl implements OrderService {
             order.setSubtotal(newSubtotal);
         }
 
-        // Full update fields (from pricing info if available)
-        if (request.getPricing() != null && request.getPricing().getAfter() != null) {
-            OrderPricingSnapshot after = request.getPricing().getAfter();
-            if (after.getDiscountAmount() != null) {
-                order.setDiscountAmount(after.getDiscountAmount());
+        // Pricing is updated from request fields directly
+        if (request.getPricing() != null) {
+            // Update discount type and reason if provided
+            if (request.getPricing().getDiscountType() != null) {
+                order.setDiscountType(request.getPricing().getDiscountType());
             }
-            if (after.getTaxAmount() != null) {
-                order.setTaxAmount(after.getTaxAmount());
-            }
-            if (after.getDeliveryFee() != null && request.getDeliveryOption() == null) {
-                // Only update delivery fee directly if delivery option is not provided
-                order.setDeliveryFee(after.getDeliveryFee());
+            if (request.getPricing().getOrderLevelChangeReason() != null) {
+                order.setOrderLevelChangeReason(request.getPricing().getOrderLevelChangeReason());
             }
         }
 
@@ -587,36 +579,9 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setOrder(order);
             order.getItems().add(orderItem);
 
-            // Save the order item first to get its ID for creating the pricing snapshot
+            // Save the order item
             orderRepository.save(order);
 
-            // Create pricing snapshot with before/after snapshots
-            OrderItemPricingSnapshot snapshot = new OrderItemPricingSnapshot();
-            snapshot.setOrderItemId(orderItem.getId());
-
-            // Store before snapshot fields
-            if (item.getBefore() != null) {
-                snapshot.setBeforeCurrentPrice(item.getBefore().getCurrentPrice());
-                snapshot.setBeforeFinalPrice(item.getBefore().getFinalPrice());
-                snapshot.setBeforeHasActivePromotion(item.getBefore().getHasActivePromotion());
-                snapshot.setBeforeDiscountAmount(item.getBefore().getDiscountAmount());
-                snapshot.setBeforeTotalPrice(item.getBefore().getTotalPrice());
-                snapshot.setBeforePromotionType(item.getBefore().getPromotionType());
-                snapshot.setBeforePromotionValue(item.getBefore().getPromotionValue());
-            }
-
-            // Store after snapshot fields
-            if (item.getAfter() != null && item.getHadChangeFromPOS() != null && item.getHadChangeFromPOS()) {
-                snapshot.setAfterCurrentPrice(item.getAfter().getCurrentPrice());
-                snapshot.setAfterFinalPrice(item.getAfter().getFinalPrice());
-                snapshot.setAfterHasActivePromotion(item.getAfter().getHasActivePromotion());
-                snapshot.setAfterDiscountAmount(item.getAfter().getDiscountAmount());
-                snapshot.setAfterTotalPrice(item.getAfter().getTotalPrice());
-                snapshot.setAfterPromotionType(item.getAfter().getPromotionType());
-                snapshot.setAfterPromotionValue(item.getAfter().getPromotionValue());
-            }
-
-            orderItemPricingSnapshotRepository.save(snapshot);
             log.debug("✅ [ITEM ADDED] Item {} added to order, total items now: {}", itemCount, order.getItems().size());
         }
 
@@ -854,27 +819,6 @@ public class OrderServiceImpl implements OrderService {
 
             // Save order with items
             orderRepository.save(savedOrder);
-
-            // Create pricing snapshots for each item
-            for (OrderItem item : createdItems) {
-                OrderItemPricingSnapshot snapshot = new OrderItemPricingSnapshot();
-                snapshot.setOrderItemId(item.getId());
-                // Store current pricing as before snapshot (no previous state in POS)
-                snapshot.setBeforeCurrentPrice(item.getCurrentPrice());
-                snapshot.setBeforeFinalPrice(item.getFinalPrice());
-                snapshot.setBeforeHasActivePromotion(item.getHasPromotion());
-                snapshot.setBeforePromotionType(item.getPromotionType());
-                snapshot.setBeforePromotionValue(item.getPromotionValue());
-                snapshot.setBeforePromotionFromDate(item.getPromotionFromDate());
-                snapshot.setBeforePromotionToDate(item.getPromotionToDate());
-
-                BigDecimal discountAmount = item.getCurrentPrice().subtract(item.getFinalPrice()).multiply(BigDecimal.valueOf(item.getQuantity()));
-                snapshot.setBeforeDiscountAmount(discountAmount);
-                snapshot.setBeforeTotalPrice(item.getTotalPrice());
-
-                orderItemPricingSnapshotRepository.save(snapshot);
-                log.debug("✅ [PRICING SNAPSHOT] Created for POS item: {}", item.getId());
-            }
 
             // Update order totals
             log.debug("💰 [STEP 5/6] Calculating totals...");

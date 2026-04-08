@@ -5,7 +5,6 @@ import com.emenu.enums.payment.PaymentMethod;
 import com.emenu.enums.payment.PaymentStatus;
 import com.emenu.features.order.dto.request.DeliveryAddressRequest;
 import com.emenu.features.order.dto.request.OrderItemUpdateRequest;
-import com.emenu.features.order.dto.response.OrderPricingSnapshot;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,8 +17,6 @@ import java.util.UUID;
 
 /**
  * Full order update request - allows admins to modify all order details
- * Mirrors POSCheckoutRequest structure for consistency
- * Supports complete order modifications with pricing adjustments and item updates
  */
 @Data
 @Builder
@@ -61,15 +58,6 @@ public class OrderUpdateRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PricingInfo {
-        // Snapshot BEFORE any modifications
-        private OrderPricingSnapshot before;
-
-        // Was order modified?
-        private Boolean hadOrderLevelChangeFromPOS;
-
-        // Snapshot AFTER modifications
-        private OrderPricingSnapshot after;
-
         // Type of order-level discount (PERCENTAGE or FIXED_AMOUNT)
         private String discountType;
 
