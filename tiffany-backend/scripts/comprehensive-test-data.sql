@@ -81,13 +81,12 @@ WHERE NOT EXISTS (SELECT 1 FROM user_profiles up WHERE up.user_id = u.id);
 -- ============================================================================
 -- 3. CATEGORIES (200 categories)
 -- ============================================================================
-INSERT INTO categories (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, icon_url, is_featured)
+INSERT INTO categories (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, image_url, status)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'Category ' || i,
-    'Description for category ' || i,
-    'https://via.placeholder.com/100?text=Cat' || i,
-    (i <= 10)
+    'https://via.placeholder.com/300?text=Cat' || i,
+    'ACTIVE'
 FROM generate_series(1, 200) AS t(i);
 
 -- ============================================================================
