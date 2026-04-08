@@ -577,8 +577,9 @@ public class ProductServiceImpl implements ProductService {
                     product.getId(), request.getPromotionType(), request.getPromotionValue());
 
                 // Apply promotion to sizes if product has sizes
-                if (product.getHasSizes()) {
-                    List<ProductSize> sizes = productSizeRepository.findByProductId(product.getId());
+                List<ProductSize> sizes = productSizeRepository.findByProductId(product.getId());
+                if (!sizes.isEmpty()) {
+                    // Product has sizes, apply promotion selectively
                     log.debug("Product has {} sizes, applying promotion selectively", sizes.size());
 
                     // Check if there's a specific size mapping for this product
@@ -877,10 +878,7 @@ public class ProductServiceImpl implements ProductService {
      * Called when a product is created or updated
      */
     private void syncDenormalizedNames(Product product) {
-        // Sync category name
-        if (product.getCategoryId() != null) {
-            categoryRepository.findByIdAndIsDeletedFalse(product.getCategoryId())
-                    .ifPresent(category -> product.setCategoryName(category.getName()));
-        }
+        // Category name is no longer denormalized in the Product entity
+        // It's derived from the category relationship when needed
     }
 }

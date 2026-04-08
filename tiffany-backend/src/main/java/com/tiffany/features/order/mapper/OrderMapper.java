@@ -2,6 +2,7 @@ package com.tiffany.features.order.mapper;
 
 import com.tiffany.enums.payment.PaymentMethod;
 import com.tiffany.enums.payment.PaymentStatus;
+import com.tiffany.features.main.models.Product;
 import com.tiffany.features.order.dto.helper.OrderCreateHelper;
 import com.tiffany.features.order.dto.helper.OrderItemCreateHelper;
 import com.tiffany.features.order.dto.request.OrderCreateRequest;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -106,7 +108,7 @@ public interface OrderMapper {
         LocalDateTime promotionFromDate = null;
         LocalDateTime promotionToDate = null;
 
-        if (cartItem.getProduct() != null && cartItem.getProduct().getHasActivePromotion()) {
+        if (cartItem.getProduct() != null && isPromotionActive(cartItem.getProduct())) {
             promotionType = cartItem.getProduct().getPromotionType() != null ?
                     cartItem.getProduct().getPromotionType().toString() : null;
             promotionValue = cartItem.getProduct().getPromotionValue();
@@ -179,5 +181,26 @@ public interface OrderMapper {
                             .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Check if promotion is active for a product
+     */
+    default boolean isPromotionActive(Product product) {
+        if (product.getPromotionValue() == null || product.getPromotionType() == null) {
+            return false;
+        }
+
+        LocalDateTime today = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+
+        if (product.getPromotionFromDate() != null && today.isBefore(product.getPromotionFromDate().truncatedTo(ChronoUnit.DAYS))) {
+            return false;
+        }
+
+        if (product.getPromotionToDate() != null && today.isAfter(product.getPromotionToDate().truncatedTo(ChronoUnit.DAYS))) {
+            return false;
+        }
+
+        return true;
     }
 }
