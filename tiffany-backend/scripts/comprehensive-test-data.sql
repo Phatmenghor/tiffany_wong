@@ -124,13 +124,11 @@ FROM (
 -- ============================================================================
 -- 6. PRODUCT IMAGES (1-5 per product)
 -- ============================================================================
-INSERT INTO product_images (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, image_url, alt_text, display_order)
+INSERT INTO product_images (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, image_url)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     p.id,
-    'https://via.placeholder.com/400?text=Product' || SUBSTR(p.id::text, 1, 8) || 'Img' || img_num,
-    'Product image ' || img_num,
-    img_num
+    'https://via.placeholder.com/400?text=Product' || SUBSTR(p.id::text, 1, 8) || 'Img' || img_num
 FROM products p
 CROSS JOIN generate_series(1, (1 + (random() * 4)::int)) AS img_num;
 
