@@ -150,7 +150,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<OrderResponse> getCustomerOrderHistory(OrderFilterRequest filter) {
-        long startTime = System.currentTimeMillis();
         User currentUser = securityUtils.getCurrentUser();
 
         log.info("📋 [CUSTOMER ORDER HISTORY] Fetching orders for customer: {} | Page: {}, Size: {}",
@@ -175,9 +174,8 @@ public class OrderServiceImpl implements OrderService {
         log.debug("🔄 [MAPPING] Converting {} orders to response DTOs...", page.getNumberOfElements());
         PaginationResponse<OrderResponse> response = orderMapper.toPaginationResponse(page, paginationMapper);
 
-        long duration = System.currentTimeMillis() - startTime;
-        log.info("✅ [CUSTOMER ORDER HISTORY COMPLETE] Retrieved {} orders in {} ms | Total: {} | Page: {}/{}",
-                page.getNumberOfElements(), duration, page.getTotalElements(),
+        log.info("✅ [CUSTOMER ORDER HISTORY COMPLETE] Retrieved {} orders | Total: {} | Page: {}/{}",
+                page.getNumberOfElements(), page.getTotalElements(),
                 page.getNumber() + 1, page.getTotalPages());
 
         return response;
@@ -200,7 +198,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<OrderResponse> getAllOrders(OrderFilterRequest filter) {
-        long startTime = System.currentTimeMillis();
         User currentUser = securityUtils.getCurrentUser();
 
         log.info("📊 [GET ALL ORDERS] Starting retrieval | User: {}",
@@ -217,16 +214,14 @@ public class OrderServiceImpl implements OrderService {
 
         // Apply filters: orderStatus, paymentMethod, paymentStatus
         log.debug("🗄️  [DB QUERY START] Executing filtered query with eager loading...");
-        long queryStartTime = System.currentTimeMillis();
         Page<Order> page = orderRepository.findAllWithFilters(
                 filter.getOrderStatus(),
                 filter.getPaymentMethod(),
                 filter.getPaymentStatus(),
                 pageable
         );
-        long queryDuration = System.currentTimeMillis() - queryStartTime;
-        log.info("✅ [DB QUERY COMPLETE] Retrieved {} orders (query took {} ms) | Total: {} | Pages: {}",
-                page.getNumberOfElements(), queryDuration, page.getTotalElements(), page.getTotalPages());
+        log.info("✅ [DB QUERY COMPLETE] Retrieved {} orders | Total: {} | Pages: {}",
+                page.getNumberOfElements(), page.getTotalElements(), page.getTotalPages());
 
         // Eagerly load statusHistory for all orders to prevent lazy loading during mapping
         log.debug("📌 [LOADING STATUS HISTORY] Loading status history for {} orders...", page.getNumberOfElements());
@@ -240,14 +235,11 @@ public class OrderServiceImpl implements OrderService {
         log.debug("✅ [STATUS HISTORY LOADED] Total history records: {}", historyCount);
 
         log.debug("🔄 [MAPPING] Converting {} orders to response DTOs...", page.getNumberOfElements());
-        long mappingStartTime = System.currentTimeMillis();
         PaginationResponse<OrderResponse> response = orderMapper.toPaginationResponse(page, paginationMapper);
-        long mappingDuration = System.currentTimeMillis() - mappingStartTime;
-        log.debug("✅ [MAPPING COMPLETE] Conversion took {} ms", mappingDuration);
+        log.debug("✅ [MAPPING COMPLETE] Converted {} orders to response DTOs", page.getNumberOfElements());
 
-        long totalDuration = System.currentTimeMillis() - startTime;
-        log.info("✅ [GET ALL ORDERS COMPLETE] Total time: {} ms | Orders: {} | Total records: {} | Pages: {}/{}",
-                totalDuration, page.getNumberOfElements(), page.getTotalElements(),
+        log.info("✅ [GET ALL ORDERS COMPLETE] Orders: {} | Total records: {} | Pages: {}/{}",
+                page.getNumberOfElements(), page.getTotalElements(),
                 page.getNumber() + 1, page.getTotalPages());
 
         return response;

@@ -70,7 +70,6 @@ public class ProductServiceImpl implements ProductService {
         log.debug("Starting getAllDataProducts - Filter: CategoryId={}, Search={}",
                 filter.getCategoryId(), filter.getSearch());
 
-        long startTime = System.currentTimeMillis();
         Optional<User> currentUser = securityUtils.getCurrentUserOptional();
 
         List<Product> products = productRepository.findAllWithFilters(
@@ -120,9 +119,7 @@ public class ProductServiceImpl implements ProductService {
             });
         }
 
-        long duration = System.currentTimeMillis() - startTime;
-        log.info("getAllDataProducts completed in {}ms - Returned {} products",
-                duration, dtoList.size());
+        log.info("getAllDataProducts - Returned {} products", dtoList.size());
 
         return dtoList;
     }
@@ -170,7 +167,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public ProductDetailDto getProductById(UUID id) {
         log.debug("Starting getProductById - ID: {}", id);
-        long startTime = System.currentTimeMillis();
 
         try {
             Product product = productRepository.findByIdWithAllDetails(id)
@@ -191,14 +187,11 @@ public class ProductServiceImpl implements ProductService {
 
             populateUserFieldsForDetail(dto, currentUser, product);
 
-            long duration = System.currentTimeMillis() - startTime;
-            log.info("getProductById completed in {}ms - ID: {}, Name: '{}'",
-                    duration, id, product.getName());
+            log.info("getProductById - ID: {}, Name: '{}'", id, product.getName());
 
             return dto;
         } catch (Exception e) {
-            long duration = System.currentTimeMillis() - startTime;
-            log.error("getProductById failed after {}ms - ID: {}, Error: {}", duration, id, e.getMessage());
+            log.error("getProductById failed - ID: {}, Error: {}", id, e.getMessage());
             throw e;
         }
     }
@@ -207,7 +200,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductDetailDto getProductByIdPublic(UUID id) {
         log.debug("Starting getProductByIdPublic - ID: {}", id);
-        long startTime = System.currentTimeMillis();
 
         try {
             Product product = productRepository.findByIdWithAllDetails(id)
@@ -230,14 +222,11 @@ public class ProductServiceImpl implements ProductService {
             Optional<User> currentUser = securityUtils.getCurrentUserOptional();
             populateUserFieldsForDetail(dto, currentUser, product);
 
-            long duration = System.currentTimeMillis() - startTime;
-            log.info("getProductByIdPublic completed in {}ms - ID: {}, Name: '{}'",
-                    duration, id, product.getName());
+            log.info("getProductByIdPublic - ID: {}, Name: '{}'", id, product.getName());
 
             return dto;
         } catch (Exception e) {
-            long duration = System.currentTimeMillis() - startTime;
-            log.error("getProductByIdPublic failed after {}ms - ID: {}, Error: {}", duration, id, e.getMessage());
+            log.error("getProductByIdPublic failed - ID: {}, Error: {}", id, e.getMessage());
             throw e;
         }
     }
@@ -304,7 +293,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public Map<String, Object> resetAllPromotions() {
         log.info("Starting reset all promotions for business");
-        long startTime = System.currentTimeMillis();
 
         try {
             User currentUser = securityUtils.getCurrentUser();
@@ -325,23 +313,20 @@ public class ProductServiceImpl implements ProductService {
             log.info("Reset promotions for {} products with sizes via SQL", productsWithSizes);
 
             int totalProductsReset = productsWithoutSizes + productsWithSizes;
-            long duration = System.currentTimeMillis() - startTime;
 
-            log.info("Reset all promotions completed in {}ms - Products: {}, Sizes: {}, Total: {}",
-                duration, totalProductsReset, sizesReset, totalProductsReset + sizesReset);
+            log.info("Reset all promotions completed - Products: {}, Sizes: {}, Total: {}",
+                totalProductsReset, sizesReset, totalProductsReset + sizesReset);
 
             Map<String, Object> response = new HashMap<>();
-            response.put("message", String.format("Successfully reset promotions for %d products and %d sizes in %dms",
-                totalProductsReset, sizesReset, duration));
+            response.put("message", String.format("Successfully reset promotions for %d products and %d sizes",
+                totalProductsReset, sizesReset));
             response.put("resetCount", totalProductsReset + sizesReset);
             response.put("productsReset", totalProductsReset);
             response.put("sizesReset", sizesReset);
-            response.put("durationMs", duration);
 
             return response;
         } catch (Exception e) {
-            long duration = System.currentTimeMillis() - startTime;
-            log.error("Reset all promotions failed after {}ms - Error: {}", duration, e.getMessage(), e);
+            log.error("Reset all promotions failed - Error: {}", e.getMessage(), e);
             throw e;
         }
     }
@@ -350,7 +335,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public Map<String, Object> resetSelectedPromotions(ResetSelectedPromotionsDto request) {
         log.info("Starting reset promotions for {} selected products", request.getProductIds().size());
-        long startTime = System.currentTimeMillis();
 
         try {
             if (request.getProductIds() == null || request.getProductIds().isEmpty()) {
@@ -401,23 +385,19 @@ public class ProductServiceImpl implements ProductService {
             productsReset = productRepository.resetPromotionsBulk(request.getProductIds());
             log.debug("Reset promotions for {} products", productsReset);
 
-            long duration = System.currentTimeMillis() - startTime;
-
             Map<String, Object> response = new HashMap<>();
-            response.put("message", String.format("Successfully reset promotions for %d products and %d sizes in %dms",
-                productsReset, sizesReset, duration));
+            response.put("message", String.format("Successfully reset promotions for %d products and %d sizes",
+                productsReset, sizesReset));
             response.put("resetCount", productsReset + sizesReset);
             response.put("productsReset", productsReset);
             response.put("sizesReset", sizesReset);
-            response.put("durationMs", duration);
 
-            log.info("Reset selected promotions completed in {}ms - Products: {}, Sizes: {}, Total: {}",
-                duration, productsReset, sizesReset, productsReset + sizesReset);
+            log.info("Reset selected promotions completed - Products: {}, Sizes: {}, Total: {}",
+                productsReset, sizesReset, productsReset + sizesReset);
 
             return response;
         } catch (Exception e) {
-            long duration = System.currentTimeMillis() - startTime;
-            log.error("Reset selected promotions failed after {}ms - Error: {}", duration, e.getMessage(), e);
+            log.error("Reset selected promotions failed - Error: {}", e.getMessage(), e);
             throw e;
         }
     }
@@ -427,7 +407,6 @@ public class ProductServiceImpl implements ProductService {
     public BulkPromotionResultDto createBulkPromotions(BulkPromotionCreateDto request) {
         log.info("Starting bulk promotion creation for {} products, Type: {}, Value: {}",
             request.getProductIds().size(), request.getPromotionType(), request.getPromotionValue());
-        long startTime = System.currentTimeMillis();
 
         User currentUser = securityUtils.getCurrentUser();
 
@@ -502,9 +481,8 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        long duration = System.currentTimeMillis() - startTime;
-        log.info("Bulk promotion creation completed in {}ms - Success: {}, Failed: {}, Total: {}",
-            duration, successCount, failedProductIds.size(), request.getProductIds().size());
+        log.info("Bulk promotion creation completed - Success: {}, Failed: {}, Total: {}",
+            successCount, failedProductIds.size(), request.getProductIds().size());
 
         return BulkPromotionResultDto.builder()
                 .successCount(successCount)
@@ -526,7 +504,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDetailDto createProduct(ProductCreateDto request) {
         log.debug("Starting product creation with name: '{}', has sizes: {}", request.getName(), request.getSizes() != null && !request.getSizes().isEmpty());
-        long startTime = System.currentTimeMillis();
 
         try {
             User currentUser = securityUtils.getCurrentUser();
@@ -551,12 +528,10 @@ public class ProductServiceImpl implements ProductService {
                 log.debug("Product with {} sizes saved successfully", sizes.size());
             }
 
-            long duration = System.currentTimeMillis() - startTime;
-            log.info("Product creation completed successfully in {}ms: {}", duration, savedProduct.getId());
+            log.info("Product creation completed successfully: {}", savedProduct.getId());
             return getProductById(savedProduct.getId());
         } catch (Exception e) {
-            long duration = System.currentTimeMillis() - startTime;
-            log.error("Product creation failed after {}ms - Name: '{}', Error: {}", duration, request.getName(), e.getMessage(), e);
+            log.error("Product creation failed - Name: '{}', Error: {}", request.getName(), e.getMessage(), e);
             throw e;
         }
     }
@@ -564,7 +539,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDetailDto updateProduct(UUID id, ProductUpdateDto request) {
         log.debug("Starting product update: ID={}", id);
-        long startTime = System.currentTimeMillis();
 
         try {
             Product product = productRepository.findByIdAndIsDeletedFalse(id)
@@ -598,12 +572,10 @@ public class ProductServiceImpl implements ProductService {
                 log.debug("Product with {} sizes saved after size changes", sizes.size());
             }
 
-            long duration = System.currentTimeMillis() - startTime;
-            log.info("Product updated successfully in {}ms: ID={}", duration, id);
+            log.info("Product updated successfully: ID={}", id);
             return getProductById(updatedProduct.getId());
         } catch (Exception e) {
-            long duration = System.currentTimeMillis() - startTime;
-            log.error("Product update failed after {}ms - ID: {}, Error: {}", duration, id, e.getMessage(), e);
+            log.error("Product update failed - ID: {}, Error: {}", id, e.getMessage(), e);
             throw e;
         }
     }
