@@ -20,16 +20,8 @@ import java.util.UUID;
 @Mapper(componentModel = "spring", uses = {PaginationMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PaymentMapper {
 
-    @Mapping(target = "plan", ignore = true)
-    @Mapping(target = "subscription", ignore = true)
-    @Mapping(target = "planId", ignore = true)
-    @Mapping(target = "subscriptionId", ignore = true)
-    @Mapping(target = "amountKhr", ignore = true)
-    @Mapping(target = "referenceNumber", ignore = true)
     Payment toEntity(PaymentCreateRequest request);
 
-    @Mapping(source = "subscription.id", target = "subscriptionId")
-    @Mapping(target = "subscriptionDisplayName", expression = "java(payment.getSubscriptionDisplayName())")
     @Mapping(target = "formattedAmount", expression = "java(payment.getFormattedAmount())")
     @Mapping(target = "formattedAmountKhr", expression = "java(payment.getFormattedAmountKhr())")
     PaymentResponse toResponse(Payment payment);
@@ -37,11 +29,6 @@ public interface PaymentMapper {
     List<PaymentResponse> toResponseList(List<Payment> payments);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "plan", ignore = true)
-    @Mapping(target = "subscription", ignore = true)
-    @Mapping(target = "planId", ignore = true)
-    @Mapping(target = "subscriptionId", ignore = true)
-    @Mapping(target = "amountKhr", ignore = true)
     void updateEntity(PaymentUpdateRequest request, @MappingTarget Payment payment);
 
     default PaginationResponse<PaymentResponse> toPaginationResponse(Page<Payment> paymentPage, PaginationMapper paginationMapper) {

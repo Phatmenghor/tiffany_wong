@@ -2,9 +2,7 @@ package com.emenu.config;
 
 import com.emenu.enums.user.AccountStatus;
 import com.emenu.enums.user.UserType;
-import com.emenu.features.auth.models.Role;
 import com.emenu.features.auth.models.User;
-import com.emenu.features.auth.repository.RoleRepository;
 import com.emenu.features.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -25,7 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Order(1)
 public class DataInitializationService {
 
-    private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -59,11 +55,6 @@ public class DataInitializationService {
             try {
                 log.info("🚀 Starting Cambodia E-Menu Platform data initialization...");
 
-                // Initialize in strict order
-                int rolesCreated = ensureRolesExist();
-                log.info("✅ Roles initialization completed - {} roles processed", rolesCreated);
-
-
                 if (createDefaultAdmin) {
                     int usersCreated = initializeDefaultUsers();
                     log.info("✅ Default users initialization completed - {} users processed", usersCreated);
@@ -78,45 +69,6 @@ public class DataInitializationService {
                 // Don't set initialized flag on failure so it can be retried
                 throw new RuntimeException("Data initialization failed", e);
             }
-        }
-    }
-
-    private int ensureRolesExist() {
-        try {
-            log.info("🔄 Ensuring system roles exist...");
-
-            // System roles with their user types
-            record RoleConfig(String name, UserType userType) {}
-            RoleConfig[] systemRoles = {
-                    new RoleConfig("PLATFORM_OWNER", UserType.PLATFORM_USER),
-                    new RoleConfig("BUSINESS_OWNER", UserType.BUSINESS_USER),
-                    new RoleConfig("CUSTOMER", UserType.CUSTOMER)
-            };
-            int createdCount = 0;
-
-            for (RoleConfig roleConfig : systemRoles) {
-                if (!roleRepository.existsByNameAndIsDeletedFalse(roleConfig.name())) {
-                    Role role = new Role();
-                    role.setName(roleConfig.name());
-                    role.setDescription("System role: " + roleConfig.name());
-                    role.setUserType(roleConfig.userType());
-                    roleRepository.save(role);
-                    createdCount++;
-                    log.info("✅ Created system role: {} for user type: {}", roleConfig.name(), roleConfig.userType());
-                }
-            }
-
-            if (createdCount > 0) {
-                log.info("✅ Created {} system roles", createdCount);
-            } else {
-                log.info("✅ All system roles already exist");
-            }
-
-            return systemRoles.length;
-
-        } catch (Exception e) {
-            log.error("❌ Error during roles verification: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to ensure roles exist", e);
         }
     }
 
@@ -145,10 +97,6 @@ public class DataInitializationService {
                 admin.setPassword(passwordEncoder.encode(defaultAdminPassword));
                 admin.setUserType(UserType.PLATFORM_USER);
                 admin.setAccountStatus(AccountStatus.ACTIVE);
-
-                Role platformOwnerRole = roleRepository.findByNameAndIsDeletedFalse("PLATFORM_OWNER")
-                        .orElseThrow(() -> new RuntimeException("Platform owner role not found"));
-                admin.setRoles(List.of(platformOwnerRole));
 
                 admin = userRepository.save(admin);
 

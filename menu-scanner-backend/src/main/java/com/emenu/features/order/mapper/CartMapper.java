@@ -103,7 +103,6 @@ public interface CartMapper {
 return paginationMapper.toPaginationResponse(cartPage, this::toResponseList);
     }
 
-    @Mapping(source = "business.name", target = "businessName")
     @Mapping(target = "totalItems", expression = "java(cart.getTotalItems())")
     @Mapping(target = "subtotalBeforeDiscount", expression = "java(calculateSubtotalBeforeDiscount(cart))")
     @Mapping(target = "subtotal", expression = "java(cart.getSubtotal())")

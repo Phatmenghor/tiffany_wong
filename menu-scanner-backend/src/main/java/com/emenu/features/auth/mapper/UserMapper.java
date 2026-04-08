@@ -16,7 +16,6 @@ import java.util.List;
 public interface UserMapper {
 
     @Mapping(target = "fullName",          expression = "java(user.getFullName())")
-    @Mapping(target = "roles",             source = "roles", qualifiedByName = "rolesToStrings")
     // Personal from profile
     @Mapping(target = "email",             source = "profile.email")
     @Mapping(target = "firstName",         source = "profile.firstName")
@@ -29,7 +28,6 @@ public interface UserMapper {
     UserResponse toResponse(User user);
 
     @Mapping(target = "fullName",          expression = "java(user.getFullName())")
-    @Mapping(target = "roles",             source = "roles", qualifiedByName = "rolesToStrings")
     // Personal from profile
     @Mapping(target = "email",             source = "profile.email")
     @Mapping(target = "firstName",         source = "profile.firstName")
@@ -50,7 +48,6 @@ public interface UserMapper {
 
     @Mapping(target = "userId",            source = "user.id")
     @Mapping(target = "fullName",          expression = "java(user.getFullName())")
-    @Mapping(target = "roles",             source = "user.roles", qualifiedByName = "rolesToStrings")
     @Mapping(target = "accessToken",       source = "token")
     @Mapping(target = "tokenType",         constant = "Bearer")
     @Mapping(target = "email",             source = "user.profile.email")
@@ -74,15 +71,6 @@ public interface UserMapper {
     @Mapping(target = "password",          ignore = true)
     @Mapping(target = "profile",           ignore = true)
     User toEntity(RegisterRequest request);
-
-    @Named("rolesToStrings")
-    default List<String> rolesToStrings(List<Role> roles) {
-        if (roles == null) return List.of();
-        return roles.stream()
-                .map(role -> role != null ? role.getName() : null)
-                .filter(name -> name != null)
-                .toList();
-    }
 
     default PaginationResponse<UserResponse> toPaginationResponse(Page<User> page, PaginationMapper paginationMapper) {
         return paginationMapper.toPaginationResponse(page, this::toResponseList);
