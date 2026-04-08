@@ -1,11 +1,7 @@
 package com.emenu.features.auth.service.impl;
 
-import com.emenu.features.auth.dto.filter.SystemSettingFilterRequest;
 import com.emenu.features.auth.dto.request.BusinessHoursCreateRequest;
 import com.emenu.features.auth.dto.request.SocialMediaCreateRequest;
-import com.emenu.features.auth.dto.request.SystemSettingCreateRequest;
-import com.emenu.features.auth.dto.response.BusinessHoursResponse;
-import com.emenu.features.auth.dto.response.SocialMediaResponse;
 import com.emenu.features.auth.dto.response.SystemSettingResponse;
 import com.emenu.features.auth.dto.update.BusinessHoursUpdateRequest;
 import com.emenu.features.auth.dto.update.SocialMediaUpdateRequest;
@@ -20,15 +16,12 @@ import com.emenu.features.auth.repository.BusinessHoursRepository;
 import com.emenu.features.auth.repository.SocialMediaRepository;
 import com.emenu.features.auth.repository.SystemSettingRepository;
 import com.emenu.features.auth.service.SystemSettingService;
-import com.emenu.shared.dto.PaginationResponse;
-import com.emenu.shared.pagination.PaginationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,203 +38,142 @@ public class SystemSettingServiceImpl implements SystemSettingService {
     private final BusinessHoursMapper businessHoursMapper;
 
     @Override
-    public SystemSettingResponse createSystemSetting(SystemSettingCreateRequest request) {
-        log.info("Creating system setting: {}", request.getSystemName());
-
-        SystemSetting setting = systemSettingMapper.toEntity(request);
-        SystemSetting saved = systemSettingRepository.save(setting);
-
-        log.info("System setting created: {} with ID: {}", saved.getSystemName(), saved.getId());
-        return systemSettingMapper.toResponse(saved);
-    }
-
-    @Override
-    public SystemSettingResponse updateSystemSetting(UUID id, SystemSettingUpdateRequest request) {
-        log.info("Updating system setting: {}", id);
-        SystemSetting setting = systemSettingRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("System setting not found"));
-
-        systemSettingMapper.updateEntity(request, setting);
-        SystemSetting updated = systemSettingRepository.save(setting);
-
-        log.info("System setting updated: {}", id);
-        return systemSettingMapper.toResponse(updated);
-    }
-
-    @Override
     @Transactional(readOnly = true)
-    public SystemSettingResponse getSystemSetting(UUID id) {
-        log.info("Getting system setting: {}", id);
-        SystemSetting setting = systemSettingRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("System setting not found"));
+    public SystemSettingResponse getSystemSetting() {
+        log.info("Getting system setting (singleton)");
+
+        SystemSetting setting = systemSettingRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("System setting not configured. Please initialize system settings."));
 
         return systemSettingMapper.toResponse(setting);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public PaginationResponse<SystemSettingResponse> getAllSystemSettings(SystemSettingFilterRequest filter) {
-        log.info("Getting all system settings - Page: {}, Size: {}", filter.getPageNo(), filter.getPageSize());
+    public SystemSettingResponse updateSystemSetting(SystemSettingUpdateRequest request) {
+        log.info("Updating system setting");
 
-        Pageable pageable = PaginationUtils.createPageable(
-                filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection());
+        SystemSetting setting = systemSettingRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("System setting not configured"));
 
-        Page<SystemSetting> page = systemSettingRepository.findAll(pageable);
+        systemSettingMapper.updateEntity(request, setting);
+        SystemSetting updated = systemSettingRepository.save(setting);
 
-        PaginationResponse<SystemSettingResponse> response = new PaginationResponse<>();
-        response.setContent(page.getContent().stream()
-                .map(systemSettingMapper::toResponse)
-                .toList());
-        response.setPageNo(page.getNumber());
-        response.setPageSize(page.getSize());
-        response.setTotalElements(page.getTotalElements());
-        response.setTotalPages(page.getTotalPages());
-        response.setFirst(page.isFirst());
-        response.setLast(page.isLast());
-
-        return response;
+        log.info("System setting updated");
+        return systemSettingMapper.toResponse(updated);
     }
 
     @Override
-    public SystemSettingResponse deleteSystemSetting(UUID id) {
-        log.info("Deleting system setting: {}", id);
-        SystemSetting setting = systemSettingRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("System setting not found"));
+    public SystemSettingResponse updateSocialMediaList(List<SocialMediaCreateRequest> socialMediaList) {
+        log.info("Updating social media list - {} items", socialMediaList.size());
 
-        setting.softDelete();
-        SystemSetting deleted = systemSettingRepository.save(setting);
+        SystemSetting setting = systemSettingRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("System setting not configured"));
 
-        log.info("System setting deleted: {}", id);
-        return systemSettingMapper.toResponse(deleted);
-    }
+        // Get current social media items
+        List<SocialMedia> currentItems = socialMediaRepository.findBySystemSettingIdAndIsDeletedFalse(setting.getId());
 
-    @Override
-    public SocialMediaResponse addSocialMedia(UUID settingId, SocialMediaCreateRequest request) {
-        log.info("Adding social media to system setting: {}", settingId);
+        // Upsert logic: process provided items
+        for (SocialMediaCreateRequest request : socialMediaList) {
+            if (request.getName() == null) {
+                log.warn("Skipping social media item with null name");
+                continue;
+            }
 
-        SystemSetting setting = systemSettingRepository.findByIdAndIsDeletedFalse(settingId)
-                .orElseThrow(() -> new RuntimeException("System setting not found"));
+            SocialMedia existingItem = currentItems.stream()
+                    .filter(item -> item.getName().equals(request.getName()))
+                    .findFirst()
+                    .orElse(null);
 
-        SocialMedia media = socialMediaMapper.toEntity(request);
-        media.setSystemSettingId(settingId);
-        SocialMedia saved = socialMediaRepository.save(media);
-
-        log.info("Social media added: {} for setting: {}", saved.getId(), settingId);
-        return socialMediaMapper.toResponse(saved);
-    }
-
-    @Override
-    public SocialMediaResponse updateSocialMedia(UUID settingId, UUID socialMediaId, SocialMediaUpdateRequest request) {
-        log.info("Updating social media: {} for setting: {}", socialMediaId, settingId);
-
-        SocialMedia media = socialMediaRepository.findById(socialMediaId)
-                .orElseThrow(() -> new RuntimeException("Social media not found"));
-
-        if (!media.getSystemSettingId().equals(settingId)) {
-            throw new RuntimeException("Social media does not belong to this setting");
+            if (existingItem != null) {
+                // Update existing
+                SocialMediaUpdateRequest updateRequest = new SocialMediaUpdateRequest();
+                updateRequest.setName(request.getName());
+                updateRequest.setLinkUrl(request.getLinkUrl());
+                socialMediaMapper.updateEntity(updateRequest, existingItem);
+                socialMediaRepository.save(existingItem);
+                log.info("Updated social media: {}", request.getName());
+            } else {
+                // Create new
+                SocialMedia newItem = socialMediaMapper.toEntity(request);
+                newItem.setSystemSettingId(setting.getId());
+                socialMediaRepository.save(newItem);
+                log.info("Created social media: {}", request.getName());
+            }
         }
 
-        socialMediaMapper.updateEntity(request, media);
-        SocialMedia updated = socialMediaRepository.save(media);
+        // Remove items not in the new list
+        currentItems.forEach(currentItem -> {
+            boolean shouldKeep = socialMediaList.stream()
+                    .anyMatch(req -> req.getName().equals(currentItem.getName()));
 
-        log.info("Social media updated: {}", socialMediaId);
-        return socialMediaMapper.toResponse(updated);
+            if (!shouldKeep) {
+                currentItem.softDelete();
+                socialMediaRepository.save(currentItem);
+                log.info("Removed social media: {}", currentItem.getName());
+            }
+        });
+
+        SystemSetting updated = systemSettingRepository.save(setting);
+        return systemSettingMapper.toResponse(updated);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public SocialMediaResponse getSocialMedia(UUID settingId, UUID socialMediaId) {
-        log.info("Getting social media: {} for setting: {}", socialMediaId, settingId);
+    public SystemSettingResponse updateBusinessHoursList(List<BusinessHoursCreateRequest> businessHoursList) {
+        log.info("Updating business hours list - {} items", businessHoursList.size());
 
-        SocialMedia media = socialMediaRepository.findById(socialMediaId)
-                .orElseThrow(() -> new RuntimeException("Social media not found"));
+        SystemSetting setting = systemSettingRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("System setting not configured"));
 
-        if (!media.getSystemSettingId().equals(settingId)) {
-            throw new RuntimeException("Social media does not belong to this setting");
+        // Get current business hours items
+        List<BusinessHours> currentItems = businessHoursRepository.findBySystemSettingIdAndIsDeletedFalse(setting.getId());
+
+        // Upsert logic: process provided items
+        for (BusinessHoursCreateRequest request : businessHoursList) {
+            if (request.getDay() == null) {
+                log.warn("Skipping business hours item with null day");
+                continue;
+            }
+
+            BusinessHours existingItem = currentItems.stream()
+                    .filter(item -> item.getDay().equals(request.getDay()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (existingItem != null) {
+                // Update existing
+                BusinessHoursUpdateRequest updateRequest = new BusinessHoursUpdateRequest();
+                updateRequest.setDay(request.getDay());
+                updateRequest.setOpeningTime(request.getOpeningTime());
+                updateRequest.setClosingTime(request.getClosingTime());
+                businessHoursMapper.updateEntity(updateRequest, existingItem);
+                businessHoursRepository.save(existingItem);
+                log.info("Updated business hours: {}", request.getDay());
+            } else {
+                // Create new
+                BusinessHours newItem = businessHoursMapper.toEntity(request);
+                newItem.setSystemSettingId(setting.getId());
+                businessHoursRepository.save(newItem);
+                log.info("Created business hours: {}", request.getDay());
+            }
         }
 
-        return socialMediaMapper.toResponse(media);
-    }
+        // Remove items not in the new list
+        currentItems.forEach(currentItem -> {
+            boolean shouldKeep = businessHoursList.stream()
+                    .anyMatch(req -> req.getDay().equals(currentItem.getDay()));
 
-    @Override
-    public void deleteSocialMedia(UUID settingId, UUID socialMediaId) {
-        log.info("Deleting social media: {} for setting: {}", socialMediaId, settingId);
+            if (!shouldKeep) {
+                currentItem.softDelete();
+                businessHoursRepository.save(currentItem);
+                log.info("Removed business hours: {}", currentItem.getDay());
+            }
+        });
 
-        SocialMedia media = socialMediaRepository.findById(socialMediaId)
-                .orElseThrow(() -> new RuntimeException("Social media not found"));
-
-        if (!media.getSystemSettingId().equals(settingId)) {
-            throw new RuntimeException("Social media does not belong to this setting");
-        }
-
-        media.softDelete();
-        socialMediaRepository.save(media);
-
-        log.info("Social media deleted: {}", socialMediaId);
-    }
-
-    @Override
-    public BusinessHoursResponse addBusinessHours(UUID settingId, BusinessHoursCreateRequest request) {
-        log.info("Adding business hours to system setting: {}", settingId);
-
-        SystemSetting setting = systemSettingRepository.findByIdAndIsDeletedFalse(settingId)
-                .orElseThrow(() -> new RuntimeException("System setting not found"));
-
-        BusinessHours hours = businessHoursMapper.toEntity(request);
-        hours.setSystemSettingId(settingId);
-        BusinessHours saved = businessHoursRepository.save(hours);
-
-        log.info("Business hours added: {} for setting: {}", saved.getId(), settingId);
-        return businessHoursMapper.toResponse(saved);
-    }
-
-    @Override
-    public BusinessHoursResponse updateBusinessHours(UUID settingId, UUID businessHoursId, BusinessHoursUpdateRequest request) {
-        log.info("Updating business hours: {} for setting: {}", businessHoursId, settingId);
-
-        BusinessHours hours = businessHoursRepository.findByIdAndIsDeletedFalse(businessHoursId)
-                .orElseThrow(() -> new RuntimeException("Business hours not found"));
-
-        if (!hours.getSystemSettingId().equals(settingId)) {
-            throw new RuntimeException("Business hours does not belong to this setting");
-        }
-
-        businessHoursMapper.updateEntity(request, hours);
-        BusinessHours updated = businessHoursRepository.save(hours);
-
-        log.info("Business hours updated: {}", businessHoursId);
-        return businessHoursMapper.toResponse(updated);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public BusinessHoursResponse getBusinessHours(UUID settingId, UUID businessHoursId) {
-        log.info("Getting business hours: {} for setting: {}", businessHoursId, settingId);
-
-        BusinessHours hours = businessHoursRepository.findByIdAndIsDeletedFalse(businessHoursId)
-                .orElseThrow(() -> new RuntimeException("Business hours not found"));
-
-        if (!hours.getSystemSettingId().equals(settingId)) {
-            throw new RuntimeException("Business hours does not belong to this setting");
-        }
-
-        return businessHoursMapper.toResponse(hours);
-    }
-
-    @Override
-    public void deleteBusinessHours(UUID settingId, UUID businessHoursId) {
-        log.info("Deleting business hours: {} for setting: {}", businessHoursId, settingId);
-
-        BusinessHours hours = businessHoursRepository.findByIdAndIsDeletedFalse(businessHoursId)
-                .orElseThrow(() -> new RuntimeException("Business hours not found"));
-
-        if (!hours.getSystemSettingId().equals(settingId)) {
-            throw new RuntimeException("Business hours does not belong to this setting");
-        }
-
-        hours.softDelete();
-        businessHoursRepository.save(hours);
-
-        log.info("Business hours deleted: {}", businessHoursId);
+        SystemSetting updated = systemSettingRepository.save(setting);
+        return systemSettingMapper.toResponse(updated);
     }
 }
