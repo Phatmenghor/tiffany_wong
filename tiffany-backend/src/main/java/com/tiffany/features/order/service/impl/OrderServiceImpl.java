@@ -491,7 +491,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void createOrderItemsFromCartSummary(UUID orderId, Object cartSummary,
-                                                  PricingInfo pricingInfo) {
+                                                  OrderUpdateRequest.PricingInfo pricingInfo) {
         // Handle both CartSummaryResponse and CartSummary
         if (!(cartSummary instanceof com.tiffany.features.order.dto.response.CartSummaryResponse)) {
             log.warn("Invalid cart summary type: {}", cartSummary.getClass().getName());

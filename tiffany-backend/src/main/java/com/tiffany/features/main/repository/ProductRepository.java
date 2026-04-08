@@ -344,6 +344,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * Clears promotions for products WITHOUT sizes
      */
     @Modifying
+    @Transactional
     @Query(nativeQuery = true, value =
         "UPDATE products SET " +
         "    promotion_type = NULL, " +
@@ -360,12 +361,14 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "WHERE business_id = :businessId " +
         "  AND is_deleted = false " +
         "  AND has_sizes = false")
+    int resetPromotionsForProductsWithoutSizesByBusiness(@Param("businessId") UUID businessId);
 
     /**
      * Reset ALL promotions for products in a specific business - FAST native SQL query
      * Clears promotions and recalculates display fields for products WITH sizes
      */
     @Modifying
+    @Transactional
     @Query(nativeQuery = true, value =
         "UPDATE products p SET " +
         "    promotion_type = NULL, " +
@@ -382,6 +385,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "WHERE p.business_id = :businessId " +
         "  AND p.is_deleted = false " +
         "  AND p.has_sizes = true")
+    int resetPromotionsForProductsWithSizesByBusiness(@Param("businessId") UUID businessId);
 
     /**
      * Reset promotion for a single product.

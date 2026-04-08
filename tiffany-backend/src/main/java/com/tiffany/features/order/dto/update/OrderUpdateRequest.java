@@ -68,6 +68,9 @@ public class OrderUpdateRequest {
         // Reason for order-level change
         private String orderLevelChangeReason;
 
+        // Flag indicating if there were POS-level changes to pricing
+        private Boolean hadOrderLevelChangeFromPOS;
+
         // Pricing snapshots for tracking changes
         private BigDecimal before;
         private BigDecimal after;
