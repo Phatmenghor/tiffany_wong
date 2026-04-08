@@ -21,29 +21,32 @@
 -- ============================================================================
 
 -- ============================================================================
--- 0. DROP ALL TABLES (Foreign Key Order)
+-- 0. CLEANUP - DELETE ALL EXISTING DATA (Foreign Key Order)
 -- ============================================================================
-DROP TABLE IF EXISTS product_favorites;
-DROP TABLE IF EXISTS order_status_history;
-DROP TABLE IF EXISTS order_items;
-DROP TABLE IF EXISTS order_delivery_addresses;
-DROP TABLE IF EXISTS orders;
-DROP TABLE IF EXISTS carts;
-DROP TABLE IF EXISTS cart_items;
-DROP TABLE IF EXISTS product_images;
-DROP TABLE IF EXISTS product_sizes;
-DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS categories;
-DROP TABLE IF EXISTS banners;
-DROP TABLE IF EXISTS social_media;
-DROP TABLE IF EXISTS business_hours;
-DROP TABLE IF EXISTS system_settings;
-DROP TABLE IF EXISTS refresh_tokens;
-DROP TABLE IF EXISTS blacklisted_tokens;
-DROP TABLE IF EXISTS user_profiles;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS reference_counters;
-DROP TABLE IF EXISTS order_counters;
+DELETE FROM product_favorites;
+DELETE FROM order_status_history;
+DELETE FROM order_items;
+DELETE FROM order_delivery_addresses;
+DELETE FROM orders;
+DELETE FROM carts;
+DELETE FROM cart_items;
+DELETE FROM product_images;
+DELETE FROM product_sizes;
+DELETE FROM products;
+DELETE FROM categories;
+DELETE FROM banners;
+DELETE FROM social_media;
+DELETE FROM business_hours;
+DELETE FROM system_settings;
+DELETE FROM refresh_tokens;
+DELETE FROM blacklisted_tokens;
+DELETE FROM user_profiles;
+DELETE FROM users;
+DELETE FROM reference_counters;
+DELETE FROM order_counters;
+
+-- Reset sequences/auto-increment
+ALTER SEQUENCE reference_counters_id_seq RESTART WITH 1;
 
 -- ============================================================================
 -- 1. SYSTEM SETTINGS (Must be first - referenced by other tables)
