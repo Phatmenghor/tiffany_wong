@@ -158,20 +158,25 @@ AND NOT EXISTS (SELECT 1 FROM carts c WHERE c.user_id = u.id);
 -- ============================================================================
 -- 9. ORDERS (20,000 orders for phatmenghor21@gmail.com)
 -- ============================================================================
-INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, order_status, total_price, subtotal, tax_amount, discount_amount, delivery_fee, notes, customer_name, customer_phone, customer_email)
+INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_number, customer_id, order_status, source, order_from, payment_method, payment_status, subtotal, tax_amount, discount_amount, delivery_fee, total_amount, customer_name, customer_phone, customer_email, customer_note)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    'ORD-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || LPAD(i::text, 6, '0'),
     '550e8400-e29b-41d4-a716-446655550002',
     CASE ((random() * 3)::int) WHEN 0 THEN 'PENDING' WHEN 1 THEN 'CONFIRMED' WHEN 2 THEN 'COMPLETED' ELSE 'CANCELLED' END,
-    (50 + random() * 500)::numeric(10,2),
+    'PUBLIC',
+    'CUSTOMER',
+    CASE ((random() * 2)::int) WHEN 0 THEN 'CASH' WHEN 1 THEN 'CARD' ELSE 'MOBILE' END,
+    'UNPAID',
     (40 + random() * 450)::numeric(10,2),
     (5 + random() * 20)::numeric(10,2),
     (0 + random() * 50)::numeric(10,2),
     5.00,
-    'Order history ' || i,
+    (40 + random() * 450)::numeric(10,2) + 5.00 + (5 + random() * 20)::numeric(10,2) - (0 + random() * 50)::numeric(10,2),
     'Customer Phatmenghor',
     '+855 10 100 0001',
-    'phatmenghor21@gmail.com'
+    'phatmenghor21@gmail.com',
+    'Order history ' || i
 FROM generate_series(1, 20000) AS t(i);
 
 -- ============================================================================
