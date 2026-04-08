@@ -46,16 +46,6 @@ public class CartQueryHelper {
 
         return quantityMap;
     }
-
-    /**
-     * Backward compatibility method - delegates to main method without businessId parameter.
-     * @deprecated The businessId parameter is no longer used
-     */
-    @Deprecated
-    public Map<UUID, Integer> getProductQuantitiesInCart(UUID userId, UUID businessId, List<UUID> productIds) {
-        return getProductQuantitiesInCart(userId, productIds);
-    }
-
     /**
      * Get per-size quantities for a specific product in user's cart.
      *
