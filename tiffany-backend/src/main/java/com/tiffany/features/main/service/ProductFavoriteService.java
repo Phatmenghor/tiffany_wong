@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface ProductFavoriteService {
     FavoriteToggleDto toggleFavorite(UUID productId);
     PaginationResponse<ProductListDto> getUserFavorites(ProductFilterDto filter);
-    FavoriteRemoveAllDto removeAllFavorites(UUID businessId);
+    FavoriteRemoveAllDto removeAllFavorites();
 }

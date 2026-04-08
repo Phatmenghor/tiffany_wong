@@ -119,7 +119,6 @@ public class ProductServiceImpl implements ProductService {
             // Get cart quantities for products
             Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
                     currentUser.get().getId(),
-                    null,
                     productIds
             );
 
@@ -183,7 +182,6 @@ public class ProductServiceImpl implements ProductService {
             // Get cart quantities for products
             Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
                     currentUser.get().getId(),
-                    null,
                     productIds
             );
 

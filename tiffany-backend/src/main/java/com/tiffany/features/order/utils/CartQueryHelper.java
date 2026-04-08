@@ -25,11 +25,10 @@ public class CartQueryHelper {
      * Get cart quantities for multiple products for a specific user.
      *
      * @param userId      The user ID
-     * @param businessId  Ignored (provided for backward compatibility)
      * @param productIds  List of product IDs to check
      * @return Map of productId to total quantity in cart
      */
-    public Map<UUID, Integer> getProductQuantitiesInCart(UUID userId, UUID businessId, List<UUID> productIds) {
+    public Map<UUID, Integer> getProductQuantitiesInCart(UUID userId, List<UUID> productIds) {
         if (userId == null || productIds == null || productIds.isEmpty()) {
             return Map.of();
         }
@@ -46,6 +45,15 @@ public class CartQueryHelper {
         }
 
         return quantityMap;
+    }
+
+    /**
+     * Backward compatibility method - delegates to main method without businessId parameter.
+     * @deprecated The businessId parameter is no longer used
+     */
+    @Deprecated
+    public Map<UUID, Integer> getProductQuantitiesInCart(UUID userId, UUID businessId, List<UUID> productIds) {
+        return getProductQuantitiesInCart(userId, productIds);
     }
 
     /**

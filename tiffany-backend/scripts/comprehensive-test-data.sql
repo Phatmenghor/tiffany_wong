@@ -123,47 +123,9 @@ END $$;
 COMMENT ON COLUMN orders.order_from IS 'Order source: CUSTOMER (public checkout) or BUSINESS (admin/POS)';
 
 -- ============================================================================
--- V3: Add business_id column to order_counters for per-business sequences
+-- V3: REMOVED - No longer adding business_id to order_counters
+-- Order counters are now system-wide, not per-business
 -- ============================================================================
-DO $$
-BEGIN
-  -- Add business_id column if it doesn't exist
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                 WHERE table_name = 'order_counters' AND column_name = 'business_id'
-                 ) THEN
-    ALTER TABLE order_counters ADD COLUMN business_id UUID NOT NULL DEFAULT '550cad56-cafd-4aba-baef-c4dcd53940d0'::uuid;
-  END IF;
-
-  -- Add foreign key if it doesn't exist
-  IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints
-                 WHERE table_name = 'order_counters' AND constraint_name = 'fk_order_counter_business') THEN
-    ALTER TABLE order_counters ADD CONSTRAINT fk_order_counter_business FOREIGN KEY (business_id) REFERENCES businesses(id) ON DELETE CASCADE;
-  END IF;
-
-  -- Drop old unique constraint if it exists
-  IF EXISTS (SELECT 1 FROM information_schema.table_constraints
-             WHERE table_name = 'order_counters' AND constraint_name = 'uk_order_counter_date') THEN
-    ALTER TABLE order_counters DROP CONSTRAINT uk_order_counter_date;
-  END IF;
-
-  -- Add new unique constraint if it doesn't exist
-  IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints
-                 WHERE table_name = 'order_counters' AND constraint_name = 'uk_order_counter_business_date') THEN
-    ALTER TABLE order_counters ADD CONSTRAINT uk_order_counter_business_date UNIQUE (business_id, counter_date);
-  END IF;
-
-  -- Create indexes if they don't exist
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND tablename = 'order_counters' AND indexname = 'idx_order_counter_business_date') THEN
-    CREATE INDEX idx_order_counter_business_date ON order_counters(business_id, counter_date);
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND tablename = 'order_counters' AND indexname = 'idx_order_counter_business') THEN
-    CREATE INDEX idx_order_counter_business ON order_counters(business_id);
-  END IF;
-END $$;
-
--- Add comment to column
-COMMENT ON COLUMN order_counters.counter_value IS 'Daily counter per business: 001 → 999 → 1000 → 9999 → 10000 onwards (unlimited)';
 
 -- ============================================================================
 -- TRUNCATE ALL TABLES (preserve order of cascade)
@@ -295,9 +257,8 @@ INSERT INTO business_settings (id, version, created_at, updated_at, created_by, 
 
 -- Initialize order counters for businesses (per-business sequences with migration V3)
 -- Must be after businesses table is populated due to foreign key constraint
-INSERT INTO order_counters (id, business_id, counter_date, counter_value) VALUES
-(gen_random_uuid(), '550cad56-cafd-4aba-baef-c4dcd53940d0', CURRENT_DATE, 200),
-(gen_random_uuid(), '550cad56-cafd-4aba-baef-c4dcd53940d1', CURRENT_DATE, 0);
+INSERT INTO order_counters (id, counter_date, counter_value) VALUES
+(gen_random_uuid(), CURRENT_DATE, 200);
 
 -- ============================================================================
 -- 6. BANNERS (18 items)

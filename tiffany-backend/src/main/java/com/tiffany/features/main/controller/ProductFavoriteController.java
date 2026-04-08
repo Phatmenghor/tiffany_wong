@@ -73,15 +73,15 @@ public class ProductFavoriteController {
     }
 
     /**
-     * Remove all favorites for current user within a business
+     * Remove all favorites for current user
      */
     @DeleteMapping("/all")
-    public ResponseEntity<ApiResponse<FavoriteRemoveAllDto>> removeAllFavorites(@RequestParam UUID businessId) {
+    public ResponseEntity<ApiResponse<FavoriteRemoveAllDto>> removeAllFavorites() {
         long startTime = System.currentTimeMillis();
-        log.info("DELETE /api/v1/product-favorites/all - Remove all favorites - Business: {}", businessId);
+        log.info("DELETE /api/v1/product-favorites/all - Remove all favorites");
 
         try {
-            FavoriteRemoveAllDto result = favoriteService.removeAllFavorites(businessId);
+            FavoriteRemoveAllDto result = favoriteService.removeAllFavorites();
             long duration = System.currentTimeMillis() - startTime;
 
             log.info("DELETE /api/v1/product-favorites/all succeeded in {}ms - Removed {} favorites",
@@ -89,8 +89,8 @@ public class ProductFavoriteController {
             return ResponseEntity.ok(ApiResponse.success("All favorites removed successfully", result));
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
-            log.error("DELETE /api/v1/product-favorites/all failed after {}ms - Business: {}, Error: {}",
-                duration, businessId, e.getMessage(), e);
+            log.error("DELETE /api/v1/product-favorites/all failed after {}ms - Error: {}",
+                duration, e.getMessage(), e);
             throw e;
         }
     }

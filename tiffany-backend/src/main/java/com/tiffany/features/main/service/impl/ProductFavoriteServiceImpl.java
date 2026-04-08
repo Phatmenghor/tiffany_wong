@@ -106,7 +106,7 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
                     .toList();
 
             Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
-                    userId, null, productIds
+                    userId, productIds
             );
 
             response.getContent().forEach(product -> {
@@ -120,7 +120,7 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
     }
 
     @Override
-    public FavoriteRemoveAllDto removeAllFavorites(UUID businessId) {
+    public FavoriteRemoveAllDto removeAllFavorites() {
         UUID userId = securityUtils.getCurrentUserId();
         log.info("Removing all favorites - User: {}", userId);
 
