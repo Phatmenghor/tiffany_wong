@@ -139,7 +139,7 @@ public class Order extends BaseUUIDEntity {
     }
 
     public void failOrder() {
-        this.orderStatus = OrderStatus.FAILED;
+        this.orderStatus = OrderStatus.CANCELLED;
     }
 
     public void confirm() {
