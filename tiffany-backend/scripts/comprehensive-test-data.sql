@@ -159,9 +159,9 @@ INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, upda
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     p.id,
-    ARRAY['Small', 'Medium', 'Large', 'Extra Large'][((random() * 3)::int + 1)],
-    p.sku || '-' || ARRAY['S', 'M', 'L', 'XL'][(random() * 3)::int + 1],
-    p.barcode || '-' || ARRAY['S', 'M', 'L', 'XL'][(random() * 3)::int + 1]
+    CASE ((random() * 3)::int) WHEN 0 THEN 'Small' WHEN 1 THEN 'Medium' WHEN 2 THEN 'Large' ELSE 'Extra Large' END,
+    p.sku || '-' || CASE ((random() * 3)::int) WHEN 0 THEN 'S' WHEN 1 THEN 'M' WHEN 2 THEN 'L' ELSE 'XL' END,
+    p.barcode || '-' || CASE ((random() * 3)::int) WHEN 0 THEN 'S' WHEN 1 THEN 'M' WHEN 2 THEN 'L' ELSE 'XL' END
 FROM (
     SELECT * FROM products ORDER BY RANDOM() LIMIT (100000 * 0.7)::int
 ) p;
@@ -173,11 +173,11 @@ INSERT INTO product_images (id, version, created_at, updated_at, created_by, upd
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     p.id,
-    'https://via.placeholder.com/400?text=Product' || p.id || 'Img' || img_num,
-    'Product ' || p.id || ' image ' || img_num,
+    'https://via.placeholder.com/400?text=Product' || SUBSTR(p.id::text, 1, 8) || 'Img' || img_num,
+    'Product image ' || img_num,
     img_num
 FROM products p
-CROSS JOIN generate_series(1, (1 + random() * 4)::int) AS img_num;
+CROSS JOIN generate_series(1, (1 + (random() * 4)::int)) AS img_num;
 
 -- ============================================================================
 -- 9. BANNERS (20 banners)
@@ -212,7 +212,7 @@ INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by,
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     '550e8400-e29b-41d4-a716-446655550002',
-    ARRAY['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'][(random() * 3)::int + 1],
+    CASE ((random() * 3)::int) WHEN 0 THEN 'PENDING' WHEN 1 THEN 'CONFIRMED' WHEN 2 THEN 'COMPLETED' ELSE 'CANCELLED' END,
     (50 + random() * 500)::numeric(10,2),
     (40 + random() * 450)::numeric(10,2),
     (5 + random() * 20)::numeric(10,2),
