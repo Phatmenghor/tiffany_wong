@@ -148,7 +148,10 @@ public class AuthServiceImpl implements AuthService {
         tokenBlacklistService.blacklistAllUserTokens(user.getUserIdentifier(), "ADMIN_PASSWORD_RESET");
         refreshTokenService.revokeAllUserTokens(user.getId(), "ADMIN_PASSWORD_RESET");
 
-        log.info("Admin password reset completed: targetUserId={}, adminId={}", savedUser.getId(), securityUtils.getCurrentUser().getId());
+        String adminId = securityUtils.getCurrentUserOptional()
+                .map(u -> u.getId().toString())
+                .orElse("SYSTEM");
+        log.info("Admin password reset completed: targetUserId={}, adminId={}", savedUser.getId(), adminId);
         return userMapper.toResponse(savedUser);
     }
 
