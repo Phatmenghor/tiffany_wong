@@ -31,6 +31,8 @@ import com.tiffany.features.order.repository.OrderRepository;
 import com.tiffany.features.order.repository.OrderStatusHistoryRepository;
 import com.tiffany.features.order.repository.OrderDeliveryAddressRepository;
 import com.tiffany.features.order.models.OrderStatusHistory;
+import com.tiffany.features.order.models.OrderDeliveryOption;
+import com.tiffany.features.order.repository.OrderDeliveryOptionRepository;
 import com.tiffany.features.order.service.OrderService;
 import com.tiffany.security.SecurityUtils;
 import com.tiffany.shared.dto.PaginationResponse;
@@ -63,6 +65,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderStatusHistoryRepository orderStatusHistoryRepository;
     private final ProductRepository productRepository;
     private final OrderDeliveryAddressRepository orderDeliveryAddressRepository;
+    private final OrderDeliveryOptionRepository orderDeliveryOptionRepository;
     private final OrderMapper orderMapper;
     private final OrderPaymentMapper paymentMapper;
     private final SecurityUtils securityUtils;
@@ -891,45 +894,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * Create delivery address snapshot by fetching location from database
-     * Stores complete address details + location images for order history preservation
+     * Create delivery address snapshot by storing reference to location
+     * Address details can be updated later through OrderUpdateRequest
      */
     private OrderDeliveryAddress createDeliveryAddressSnapshot(UUID orderId, UUID addressId) {
         try {
-            // Fetch location from database
-            com.tiffany.features.location.models.Location location = locationRepository.findById(addressId)
-                    .orElseThrow(() -> new NotFoundException("Address not found: " + addressId));
-
-            // Create snapshot with all location details
+            // Create snapshot with reference to location
             OrderDeliveryAddress deliveryAddress = new OrderDeliveryAddress();
             deliveryAddress.setOrderId(orderId);
-            deliveryAddress.setVillage(location.getVillage());
-            deliveryAddress.setCommune(location.getCommune());
-            deliveryAddress.setDistrict(location.getDistrict());
-            deliveryAddress.setProvince(location.getProvince());
-            deliveryAddress.setStreetNumber(location.getStreetNumber());
-            deliveryAddress.setHouseNumber(location.getHouseNumber());
-            deliveryAddress.setNote(location.getNote());
-            deliveryAddress.setLatitude(location.getLatitude());
-            deliveryAddress.setLongitude(location.getLongitude());
-
-            // Store reference to original location
             deliveryAddress.setLocationId(addressId);
 
-            // Snapshot location images at time of order
-            // If location images are updated later, orders preserve the images from checkout
-            if (location.getLocationImages() != null && !location.getLocationImages().isEmpty()) {
-                java.util.List<String> imageUrls = location.getLocationImages().stream()
-                        .map(img -> img.getImageUrl())
-                        .collect(java.util.stream.Collectors.toList());
-                deliveryAddress.setLocationImages(imageUrls);
-                log.debug("✅ [LOCATION IMAGES SNAPSHOT] Stored {} images for order history", imageUrls.size());
-            }
-
+            log.debug("✅ [DELIVERY ADDRESS SNAPSHOT] Created with location reference for order: {}", orderId);
             return deliveryAddress;
-        } catch (NotFoundException e) {
-            log.error("❌ [ADDRESS ERROR] Failed to fetch address: {}", e.getMessage());
-            throw e;
         } catch (Exception e) {
             log.error("❌ [ADDRESS ERROR] Error creating delivery address snapshot: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to create delivery address snapshot", e);
