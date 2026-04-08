@@ -12,7 +12,7 @@
 --     - 19,998 additional ADMIN users
 --   - 20,000 STAFF users (UserType: OWNER, UserRole: STAFF)
 --   - 20,003 CUSTOMER users (UserType: CUSTOMER, UserRole: CUSTOMER)
--- Products: 100,000 with 70% having sizes (70,000 sizes)
+-- Products: 100,000 with detailed descriptions and varying sizes (5-10 per product)
 -- Product Images: 1-5 per product
 -- Categories: 200
 -- Banners: 20
@@ -102,37 +102,7 @@ SELECT
 FROM generate_series(1, 20000) AS t(i);
 
 -- ============================================================================
--- 3. USER PROFILES (Complete for all users)
--- ============================================================================
-INSERT INTO user_profiles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, first_name, last_name, nickname, gender, date_of_birth, phone_number, email, profile_image_url)
-SELECT
-    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    u.id,
-    CASE 
-        WHEN u.user_role = 'ADMIN' THEN 'Admin'
-        WHEN u.user_role = 'STAFF' THEN 'Staff'
-        ELSE 'Customer'
-    END || ' ' || (row_number() OVER (PARTITION BY u.user_role ORDER BY u.id)),
-    CASE 
-        WHEN u.user_role = 'ADMIN' THEN 'Administrator'
-        WHEN u.user_role = 'STAFF' THEN 'Manager'
-        ELSE 'User'
-    END,
-    CASE 
-        WHEN u.user_role = 'ADMIN' THEN 'Admin' || (row_number() OVER (PARTITION BY u.user_role ORDER BY u.id))
-        WHEN u.user_role = 'STAFF' THEN 'Staff' || (row_number() OVER (PARTITION BY u.user_role ORDER BY u.id))
-        ELSE 'Cust' || (row_number() OVER (PARTITION BY u.user_role ORDER BY u.id))
-    END,
-    CASE WHEN (random() * 100)::int > 50 THEN 'MALE' ELSE 'FEMALE' END,
-    NOW()::date - (random() * 15000)::int,
-    '+855 ' || LPAD((random() * 999999)::int::text, 9, '0'),
-    u.user_identifier,
-    'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce'
-FROM users u
-WHERE NOT EXISTS (SELECT 1 FROM user_profiles up WHERE up.user_id = u.id);
-
--- ============================================================================
--- 4. CATEGORIES (200 categories)
+-- 3. CATEGORIES (200 categories)
 -- ============================================================================
 INSERT INTO categories (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, image_url, status)
 SELECT
@@ -143,16 +113,35 @@ SELECT
 FROM generate_series(1, 200) AS t(i);
 
 -- ============================================================================
--- 5. PRODUCTS (100,000 products) - Distributed across all categories with promotions
+-- 5. PRODUCTS (100,000 with detailed descriptions)
 -- ============================================================================
 INSERT INTO products (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, sku, barcode, price, main_image_url, category_id, status, view_count, favorite_count, promotion_type, promotion_value, promotion_from_date, promotion_to_date)
 WITH category_list AS (
     SELECT id, ROW_NUMBER() OVER (ORDER BY id) as cat_num FROM categories
+),
+descriptions AS (
+    SELECT 1 as desc_id, 'A high-quality wireless Bluetooth mouse designed with an ergonomic shape for maximum comfort, offering smooth and precise tracking, long-lasting battery life, and seamless compatibility with multiple devices, making it ideal for office work, travel, and everyday use.
+This premium wireless mouse delivers reliable performance with fast Bluetooth connectivity, a comfortable grip for extended use, energy-efficient battery consumption, and wide compatibility across laptops, tablets, and desktops, ensuring a smooth and productive user experience anywhere.
+Designed for both style and functionality, this wireless mouse features a sleek modern look, responsive controls, stable connection, and durable build quality, making it perfect for professionals, students, and anyone who needs precision and convenience in daily computing tasks.
+Experience effortless navigation with this advanced wireless mouse that combines ergonomic comfort, high-precision tracking, long battery life, and universal compatibility, providing a reliable and efficient solution for work, study, and entertainment needs.
+This versatile Bluetooth mouse is built to enhance productivity with its lightweight design, smooth cursor control, strong wireless connection, and extended battery performance, making it an excellent choice for users who demand both performance and portability in one device.' as desc
+    UNION ALL
+    SELECT 2 as desc_id, 'Premium quality product engineered for excellence, combining innovative technology with elegant design. Features advanced ergonomic construction, superior durability, and seamless integration with modern systems.
+This exceptional product delivers outstanding performance across various environments, providing reliable functionality and consistent quality. Built with premium materials and precision engineering, it ensures longevity and user satisfaction.
+Experience superior comfort and functionality with this thoughtfully designed product. Perfect for professionals and everyday users alike, offering reliable performance that exceeds expectations.
+Engineered for maximum efficiency and user convenience, this product combines cutting-edge technology with practical design. Delivers exceptional value with outstanding build quality and performance.
+Invest in this premium product for reliable, long-lasting performance. Combines modern innovation with user-friendly design, making it the ideal choice for discerning customers.' as desc
+    UNION ALL
+    SELECT 3 as desc_id, 'Discover excellence with this high-performance product designed for modern users. Features innovative technology, superior materials, and exceptional craftsmanship throughout.
+Built to deliver outstanding results in any situation, this product combines reliability with advanced functionality. Perfect for users seeking quality and performance in equal measure.
+Experience the difference that premium design and engineering make. This product offers exceptional value, combining cutting-edge features with intuitive usability.
+Crafted with precision and attention to detail, this product represents the pinnacle of quality manufacturing. Ideal for users who demand the best in performance and reliability.
+Transform your daily experience with this innovative product. Combines smart design with powerful functionality, providing reliable performance for all your needs.'as desc
 )
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'Product ' || i,
-    'High-quality product ' || i || ' with detailed description',
+    (SELECT desc FROM descriptions WHERE desc_id = ((i - 1) % 3) + 1),
     'SKU-' || LPAD(i::text, 7, '0'),
     'BARCODE-' || LPAD(i::text, 10, '0'),
     (10 + random() * 500)::numeric(10,2),
@@ -176,16 +165,31 @@ SELECT
 FROM generate_series(1, 100000) AS t(i);
 
 -- ============================================================================
--- 6. PRODUCT SIZES (70% of products = 70,000 sizes) with promotions (80% total)
+-- 6. PRODUCT SIZES (70% of products = 70,000 with 5-10 sizes each)
 -- ============================================================================
 INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, name, price, sku, barcode, promotion_type, promotion_value, promotion_from_date, promotion_to_date)
+WITH product_with_sizes AS (
+    SELECT * FROM products ORDER BY RANDOM() LIMIT (100000 * 0.7)::int
+),
+size_names AS (
+    SELECT 1 as size_id, 'Extra Small' as name UNION ALL
+    SELECT 2, 'Small' UNION ALL
+    SELECT 3, 'Medium' UNION ALL
+    SELECT 4, 'Large' UNION ALL
+    SELECT 5, 'Extra Large' UNION ALL
+    SELECT 6, 'XXL' UNION ALL
+    SELECT 7, 'XXXL' UNION ALL
+    SELECT 8, 'Standard' UNION ALL
+    SELECT 9, 'Premium' UNION ALL
+    SELECT 10, 'Deluxe'
+)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     p.id,
-    CASE ((random() * 3)::int) WHEN 0 THEN 'Small' WHEN 1 THEN 'Medium' WHEN 2 THEN 'Large' ELSE 'Extra Large' END,
-    (p.price * (0.9 + random() * 0.2))::numeric(10,2),
-    p.sku || '-' || CASE ((random() * 3)::int) WHEN 0 THEN 'S' WHEN 1 THEN 'M' WHEN 2 THEN 'L' ELSE 'XL' END,
-    p.barcode || '-' || CASE ((random() * 3)::int) WHEN 0 THEN 'S' WHEN 1 THEN 'M' WHEN 2 THEN 'L' ELSE 'XL' END,
+    sn.name,
+    (p.price * (0.8 + random() * 0.4))::numeric(10,2),
+    p.sku || '-' || LPAD(sn.size_id::text, 2, '0'),
+    p.barcode || '-' || LPAD(sn.size_id::text, 2, '0'),
     CASE
         WHEN random() < 0.4 THEN 'PERCENTAGE'       -- 40% PERCENTAGE
         WHEN random() < 0.8 THEN 'FIXED_AMOUNT'     -- 40% FIXED_AMOUNT
@@ -198,9 +202,9 @@ SELECT
     END,
     NOW(),
     NOW() + INTERVAL '30 days'
-FROM (
-    SELECT * FROM products ORDER BY RANDOM() LIMIT (100000 * 0.7)::int
-) p;
+FROM product_with_sizes p
+CROSS JOIN size_names sn
+WHERE sn.size_id <= (5 + ((ABS(hashtext(p.id::text))::numeric % 6))::int);  -- 5-10 sizes per product
 
 -- ============================================================================
 -- 7. PRODUCT IMAGES (1-5 per product)
@@ -244,178 +248,76 @@ SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'ORD-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || LPAD(i::text, 6, '0'),
     '550e8400-e29b-41d4-a716-446655550002',
-    CASE ((random() * 3)::int) WHEN 0 THEN 'PENDING' WHEN 1 THEN 'CONFIRMED' WHEN 2 THEN 'COMPLETED' ELSE 'CANCELLED' END,
+    CASE ((i - 1) % 4) WHEN 0 THEN 'PENDING' WHEN 1 THEN 'CONFIRMED' WHEN 2 THEN 'COMPLETED' ELSE 'CANCELLED' END,
     'PUBLIC',
     'CUSTOMER',
-    CASE ((random() * 1)::int) WHEN 0 THEN 'CASH' ELSE 'BANK' END,
-    'UNPAID',
-    (40 + random() * 450)::numeric(10,2),
-    (5 + random() * 20)::numeric(10,2),
-    (0 + random() * 50)::numeric(10,2),
+    CASE ((i - 1) % 3) WHEN 0 THEN 'CREDIT_CARD' WHEN 1 THEN 'DEBIT_CARD' ELSE 'CASH' END,
+    CASE ((i - 1) % 3) WHEN 0 THEN 'COMPLETED' WHEN 1 THEN 'PENDING' ELSE 'FAILED' END,
+    (50 + random() * 500)::numeric(10,2),
+    ((50 + random() * 500) * 0.1)::numeric(10,2),
+    (random() * 50)::numeric(10,2),
     5.00,
-    (40 + random() * 450)::numeric(10,2) + 5.00 + (5 + random() * 20)::numeric(10,2) - (0 + random() * 50)::numeric(10,2),
-    'Customer Phatmenghor',
-    '+855 10 100 0001',
-    'phatmenghor21@gmail.com',
-    'Order history ' || i
+    ((50 + random() * 500) * 1.1 + 5)::numeric(10,2),
+    'Customer ' || i,
+    '+855 98 123 456' || i,
+    'customer' || i || '@test.com',
+    'Please deliver quickly'
 FROM generate_series(1, 20000) AS t(i);
 
 -- ============================================================================
--- 11. ORDER ITEMS (3-10 items per order = 60,000-200,000 items)
+-- 11. ORDER ITEMS (Multiple items per order)
 -- ============================================================================
-INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_size_id, product_name, quantity, unit_price, final_price, total_price)
+INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, quantity, unit_price, total_price, product_size_id)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     o.id,
-    p.id,
-    CASE WHEN random() > 0.3 THEN ps.id ELSE NULL END,
-    p.name,
-    (1 + (random() * 5)::int) AS qty,
-    p.price,
-    (p.price * (0.9 + random() * 0.1))::numeric(10,2) AS final_price,
-    ((p.price * (0.9 + random() * 0.1)) * (1 + (random() * 5)::int))::numeric(10,2) AS total_price
+    (SELECT id FROM products ORDER BY RANDOM() LIMIT 1),
+    (1 + (random() * 5)::int),
+    (10 + random() * 500)::numeric(10,2),
+    ((1 + (random() * 5)::int) * (10 + random() * 500))::numeric(10,2),
+    (SELECT id FROM product_sizes ORDER BY RANDOM() LIMIT 1)
 FROM orders o
-CROSS JOIN (SELECT * FROM products ORDER BY RANDOM() LIMIT (3 + (random() * 8)::int)) p
-LEFT JOIN product_sizes ps ON ps.product_id = p.id;
+CROSS JOIN generate_series(1, (1 + (random() * 3)::int)) AS item_num;
 
 -- ============================================================================
--- 12. ORDER DELIVERY ADDRESSES (1 per order)
+-- 12. ORDER DELIVERY ADDRESSES
 -- ============================================================================
-INSERT INTO order_delivery_addresses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, village, commune, district, province, street_number, house_number, latitude, longitude, note)
+INSERT INTO order_delivery_addresses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, street, ward, district, province, country, postal_code, latitude, longitude, address_type, is_default)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     o.id,
-    CASE ((random() * 4)::int) WHEN 0 THEN 'Village 1' WHEN 1 THEN 'Village 2' WHEN 2 THEN 'Village 3' ELSE 'Village 4' END,
-    CASE ((random() * 4)::int) WHEN 0 THEN 'Sangkat 1' WHEN 1 THEN 'Sangkat 2' WHEN 2 THEN 'Sangkat 3' ELSE 'Sangkat 4' END,
-    CASE ((random() * 3)::int) WHEN 0 THEN 'Khan 1' WHEN 1 THEN 'Khan 2' ELSE 'Khan 3' END,
-    'Phnom Penh',
-    CASE ((random() * 2)::int) WHEN 0 THEN 'Street 123' WHEN 1 THEN 'Avenue 456' ELSE 'Road 789' END,
-    LPAD((random() * 999)::int::text, 3, '0'),
+    'Street ' || (random() * 1000)::int,
+    'Ward ' || (random() * 100)::int,
+    'District ' || (random() * 50)::int,
+    'Province',
+    'Cambodia',
+    '12345',
     11.5564 + (random() - 0.5) * 0.1,
     104.9282 + (random() - 0.5) * 0.1,
-    'Delivery instruction ' || row_number() OVER (ORDER BY o.id)
+    'DELIVERY',
+    true
 FROM orders o;
 
 -- ============================================================================
--- 13. ORDER STATUS HISTORY (1-3 status changes per order)
+-- 13. ORDER STATUS HISTORY
 -- ============================================================================
-INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, order_status, changed_by_name, note)
+INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, old_status, new_status, changed_at, changed_by, reason)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     o.id,
-    CASE ((random() * 3)::int) WHEN 0 THEN 'CONFIRMED' WHEN 1 THEN 'COMPLETED' ELSE 'CANCELLED' END,
-    'System Admin',
-    CASE ((random() * 3)::int) WHEN 0 THEN 'Order confirmed by admin' WHEN 1 THEN 'Order completed' ELSE 'Order cancelled' END
-FROM orders o
-WHERE ((random() * 100)::int > 20);
-
-INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, order_status, changed_by_name, note)
-SELECT
-    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    o.id,
-    'COMPLETED',
-    'System Admin',
-    'Order completed and delivered'
-FROM orders o
-WHERE o.order_status = 'COMPLETED'
-AND ((random() * 100)::int > 30);
+    'PENDING',
+    o.order_status,
+    NOW() + INTERVAL '1 hour',
+    'system',
+    'Status updated'
+FROM orders o;
 
 -- ============================================================================
--- 14. BUSINESS HOURS (7 days)
+-- Final Statistics
 -- ============================================================================
-INSERT INTO business_hours (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, day, opening_time, closing_time)
-SELECT
-    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    ss.id,
-    CASE day WHEN 0 THEN 'Monday' WHEN 1 THEN 'Tuesday' WHEN 2 THEN 'Wednesday' WHEN 3 THEN 'Thursday' WHEN 4 THEN 'Friday' WHEN 5 THEN 'Saturday' ELSE 'Sunday' END,
-    '09:00:00',
-    '22:00:00'
-FROM (SELECT id FROM system_settings LIMIT 1) ss
-CROSS JOIN generate_series(0, 6) AS t(day);
-
--- ============================================================================
--- 15. SOCIAL MEDIA
--- ============================================================================
-INSERT INTO social_media (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, name, link_url)
-VALUES
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Facebook', 'https://facebook.com/tiffany'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Instagram', 'https://instagram.com/tiffany'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'Telegram', 'https://t.me/tiffany'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'TikTok', 'https://tiktok.com/@tiffany');
-
--- ============================================================================
--- 16. PRODUCT FAVORITES (For phatmenghor21@gmail.com user - 50 favorites)
--- ============================================================================
-INSERT INTO product_favorites (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, product_id)
-SELECT
-    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    '550e8400-e29b-41d4-a716-446655550002',
-    p.id
-FROM (
-    SELECT id FROM products ORDER BY RANDOM() LIMIT 50
-) p
-WHERE NOT EXISTS (
-    SELECT 1 FROM product_favorites pf
-    WHERE pf.user_id = '550e8400-e29b-41d4-a716-446655550002'
-    AND pf.product_id = p.id
-);
-
--- ============================================================================
--- 17. REFERENCE COUNTERS
--- ============================================================================
-INSERT INTO reference_counters (entity_type, counter_date, counter_value)
-VALUES
-('ORDER', NOW()::date, 20000),
-('INVOICE', NOW()::date, 20000);
-
--- ============================================================================
--- SUMMARY OF INSERTED DATA (System Settings inserted at beginning - step 1)
--- ============================================================================
--- Users: 60,003
---   - phatmenghor19@gmail.com (OWNER/ADMIN)
---   - phatmenghor20@gmail.com (OWNER/ADMIN)
--- User Profiles: 60,003
--- Categories: 200
--- Products: 100,000
--- Product Sizes: ~70,000
--- Product Images: ~280,000-350,000
--- Banners: 20
--- Carts: 20,001
--- Orders: 20,000
--- Order Items: ~60,000-200,000
--- Order Delivery Addresses: 20,000
--- Order Status History: ~30,000-40,000
--- Product Favorites: 50 (for phatmenghor21@gmail.com)
--- Business Hours: 7
--- Social Media: 4
--- Reference Counters: 2
--- System Settings: 1
--- TOTAL RECORDS: ~610,000-770,070
--- ============================================================================
--- END OF LARGE SCALE TEST DATA
--- ============================================================================
-
--- Count all records in every table
-SELECT 'banners' as table_name, COUNT(*) as record_count FROM banners
-UNION ALL SELECT 'blacklisted_tokens', COUNT(*) FROM blacklisted_tokens
-UNION ALL SELECT 'business_hours', COUNT(*) FROM business_hours
-UNION ALL SELECT 'cart_items', COUNT(*) FROM cart_items
-UNION ALL SELECT 'carts', COUNT(*) FROM carts
-UNION ALL SELECT 'categories', COUNT(*) FROM categories
-UNION ALL SELECT 'images', COUNT(*) FROM images
-UNION ALL SELECT 'order_counters', COUNT(*) FROM order_counters
-UNION ALL SELECT 'order_delivery_addresses', COUNT(*) FROM order_delivery_addresses
-UNION ALL SELECT 'order_items', COUNT(*) FROM order_items
-UNION ALL SELECT 'order_status_history', COUNT(*) FROM order_status_history
-UNION ALL SELECT 'orders', COUNT(*) FROM orders
-UNION ALL SELECT 'product_favorites', COUNT(*) FROM product_favorites
-UNION ALL SELECT 'product_images', COUNT(*) FROM product_images
-UNION ALL SELECT 'product_sizes', COUNT(*) FROM product_sizes
-UNION ALL SELECT 'products', COUNT(*) FROM products
-UNION ALL SELECT 'reference_counters', COUNT(*) FROM reference_counters
-UNION ALL SELECT 'refresh_tokens', COUNT(*) FROM refresh_tokens
-UNION ALL SELECT 'social_media', COUNT(*) FROM social_media
-UNION ALL SELECT 'system_settings', COUNT(*) FROM system_settings
-UNION ALL SELECT 'user_profiles', COUNT(*) FROM user_profiles
-UNION ALL SELECT 'users', COUNT(*) FROM users
-ORDER BY table_name;
+SELECT 'Data generation completed!' as status;
+SELECT COUNT(*) as total_users FROM users;
+SELECT COUNT(*) as total_products FROM products;
+SELECT COUNT(*) as total_sizes FROM product_sizes;
+SELECT COUNT(*) as total_orders FROM orders;
+SELECT COUNT(*) as total_order_items FROM order_items;
