@@ -2,6 +2,7 @@ package com.tiffany.security;
 
 import com.tiffany.enums.common.Status;
 import com.tiffany.enums.user.AccountStatus;
+import com.tiffany.enums.user.UserRole;
 import com.tiffany.exception.custom.*;
 import com.tiffany.features.auth.models.User;
 import com.tiffany.features.auth.repository.UserRepository;
@@ -110,6 +111,43 @@ public class SecurityUtils {
         } catch (Exception e) {
             log.debug("Error getting user type: {}", e.getMessage());
             return null;
+        }
+    }
+
+    public UserRole getCurrentUserRole() {
+        try {
+            User currentUser = getCurrentUser();
+            return currentUser.getUserRole();
+        } catch (Exception e) {
+            log.debug("Error getting user role: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean isCurrentUserAdmin() {
+        try {
+            User currentUser = getCurrentUser();
+            return currentUser.isAdmin();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isCurrentUserStaff() {
+        try {
+            User currentUser = getCurrentUser();
+            return currentUser.isStaff();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean hasCurrentUserAdminAccess() {
+        try {
+            User currentUser = getCurrentUser();
+            return currentUser.hasAdminAccess();
+        } catch (Exception e) {
+            return false;
         }
     }
 }

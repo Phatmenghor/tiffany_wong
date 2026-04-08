@@ -37,6 +37,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private Collection<? extends GrantedAuthority> mapUserTypeToAuthorities(User user) {
+        // Map UserRole to Spring Security authorities for fine-grained access control
+        if (user.getUserRole() != null) {
+            return Collections.singletonList(
+                    new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name())
+            );
+        }
+        // Fallback to UserType if userRole is not set (for backwards compatibility)
         return Collections.singletonList(
                 new SimpleGrantedAuthority("ROLE_" + user.getUserType().name())
         );

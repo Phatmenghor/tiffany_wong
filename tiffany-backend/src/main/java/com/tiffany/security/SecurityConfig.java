@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // ===== PUBLIC ENDPOINTS =====
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/public/**").permitAll() // Includes /api/v1/public/business-settings/**
+                        .requestMatchers("/api/v1/public/**").permitAll()
                         .requestMatchers("/api/images/**").permitAll()
 
                         .requestMatchers("/api/v1/users/admin-token").permitAll()
@@ -57,6 +57,15 @@ public class SecurityConfig {
 
                         // ===== ACTUATOR ENDPOINTS =====
                         .requestMatchers("/actuator/health/**").permitAll()
+
+                        // ===== ADMIN ENDPOINTS (ADMIN and STAFF only) =====
+                        .requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/api/v1/products/admin/**").hasAnyRole("ADMIN", "STAFF")
+
+                        // ===== ORDER ENDPOINTS =====
+                        // All authenticated users can access orders (role check in service layer)
+                        .requestMatchers("/api/v1/orders/**").authenticated()
+                        .requestMatchers("/api/v1/cart/**").authenticated()
 
                         // All other endpoints require authentication
                         .anyRequest().authenticated()
