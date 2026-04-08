@@ -1,6 +1,5 @@
 package com.emenu.features.auth.dto.response;
 
-import com.emenu.enums.social.SocialAuthProvider;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,7 @@ public class SocialAuthResponse {
 
     private boolean success;
     private String message;
-    private SocialAuthProvider provider;
+    private String provider;
 
     private UUID userId;
     private String userIdentifier;
