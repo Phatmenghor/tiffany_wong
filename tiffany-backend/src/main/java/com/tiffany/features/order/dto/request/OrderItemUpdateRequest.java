@@ -3,6 +3,7 @@ package com.tiffany.features.order.dto.request;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -23,6 +24,8 @@ public class OrderItemUpdateRequest {
 
     private String promotionType;
     private BigDecimal promotionValue;
+    private LocalDateTime promotionFromDate;
+    private LocalDateTime promotionToDate;
 
     private Integer quantity;
 }
