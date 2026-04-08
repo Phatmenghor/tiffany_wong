@@ -24,7 +24,6 @@ public class OrderNumberGenerator {
     private final OrderCounterRepository orderCounterRepository;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
     private static final String ORDER_PREFIX = "ORD";
-    private static final java.util.UUID SYSTEM_BUSINESS_ID = java.util.UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     /**
      * Generate a unique order number with a counter.
@@ -37,10 +36,9 @@ public class OrderNumberGenerator {
         LocalDate today = LocalDate.now();
 
         // Get or create counter for today's date
-        OrderCounter counter = orderCounterRepository.findByBusinessIdAndCounterDate(SYSTEM_BUSINESS_ID, today)
+        OrderCounter counter = orderCounterRepository.findByCounterDate(today)
                 .orElseGet(() -> {
                     OrderCounter newCounter = new OrderCounter();
-                    newCounter.setBusinessId(SYSTEM_BUSINESS_ID);
                     newCounter.setCounterDate(today);
                     newCounter.setCounterValue(0L);
                     return orderCounterRepository.save(newCounter);

@@ -295,54 +295,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     int clearExpiredPromotionsForProductsWithSizes();
 
     /**
-     * Reset ALL promotions for products in a specific business - FAST native SQL query
-     * Clears promotions for products WITHOUT sizes
-     */
-    @Modifying
-    @Transactional
-    @Query(nativeQuery = true, value =
-        "UPDATE products SET " +
-        "    promotion_type = NULL, " +
-        "    promotion_value = NULL, " +
-        "    promotion_from_date = NULL, " +
-        "    promotion_to_date = NULL, " +
-        "    has_active_promotion = false, " +
-        "    display_promotion_type = NULL, " +
-        "    display_promotion_value = NULL, " +
-        "    display_promotion_from_date = NULL, " +
-        "    display_promotion_to_date = NULL, " +
-        "    display_price = price, " +
-        "    display_origin_price = price " +
-        "WHERE business_id = :businessId " +
-        "  AND is_deleted = false " +
-        "  AND has_sizes = false")
-    int resetPromotionsForProductsWithoutSizesByBusiness(@Param("businessId") UUID businessId);
-
-    /**
-     * Reset ALL promotions for products in a specific business - FAST native SQL query
-     * Clears promotions and recalculates display fields for products WITH sizes
-     */
-    @Modifying
-    @Transactional
-    @Query(nativeQuery = true, value =
-        "UPDATE products p SET " +
-        "    promotion_type = NULL, " +
-        "    promotion_value = NULL, " +
-        "    promotion_from_date = NULL, " +
-        "    promotion_to_date = NULL, " +
-        "    has_active_promotion = false, " +
-        "    display_promotion_type = NULL, " +
-        "    display_promotion_value = NULL, " +
-        "    display_promotion_from_date = NULL, " +
-        "    display_promotion_to_date = NULL, " +
-        "    display_price = (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false), " +
-        "    display_origin_price = (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
-        "WHERE p.business_id = :businessId " +
-        "  AND p.is_deleted = false " +
-        "  AND p.has_sizes = true")
-    int resetPromotionsForProductsWithSizesByBusiness(@Param("businessId") UUID businessId);
-
-    /**
      * Reset promotion for a single product.
      * Handles both with/without sizes for display_price calculation.
      * clearAutomatically evicts stale entities from the L1 cache so subsequent reads are fresh.
@@ -410,7 +362,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    display_price = price, " +
         "    display_origin_price = price " +
         "WHERE is_deleted = false AND has_sizes = false")
-    int resetAllPromotionsForProductsWithoutSizes(@Param("businessId") UUID businessId);
+    int resetAllPromotionsForProductsWithoutSizes();
 
     /**
      * Reset ALL promotions for products with sizes (system-wide)
@@ -431,5 +383,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    display_price = (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false), " +
         "    display_origin_price = (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
         "WHERE p.is_deleted = false AND p.has_sizes = true")
-    int resetAllPromotionsForProductsWithSizes(@Param("businessId") UUID businessId);
+    int resetAllPromotionsForProductsWithSizes();
 }

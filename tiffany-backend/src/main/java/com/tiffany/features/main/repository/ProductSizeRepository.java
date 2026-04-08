@@ -51,8 +51,7 @@ public interface ProductSizeRepository extends JpaRepository<ProductSize, UUID> 
     }
 
     /**
-     * Reset ALL promotions for all product sizes in a specific business - FAST native SQL query
-     * Clears all promotion fields for product sizes belonging to products in the business
+     * Reset ALL promotions for all product sizes (system-wide) - FAST native SQL query
      */
     @Modifying
     @Query(nativeQuery = true, value =
@@ -61,12 +60,8 @@ public interface ProductSizeRepository extends JpaRepository<ProductSize, UUID> 
         "    promotion_value = NULL, " +
         "    promotion_from_date = NULL, " +
         "    promotion_to_date = NULL " +
-        "WHERE ps.is_deleted = false " +
-        "  AND ps.product_id IN ( " +
-        "      SELECT p.id FROM products p " +
-        "      WHERE p.business_id = :businessId AND p.is_deleted = false" +
-        "  )")
-    int resetAllPromotionsForProductSizes(@Param("businessId") UUID businessId);
+        "WHERE ps.is_deleted = false")
+    int resetAllPromotionsForProductSizes();
 
     /**
      * Reset promotions for all sizes of a single product - FAST native SQL query.

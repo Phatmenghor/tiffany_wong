@@ -429,15 +429,15 @@ public class ProductServiceImpl implements ProductService {
             log.info("Executing native SQL bulk reset for all products");
 
             // Reset product sizes first (faster query)
-            int sizesReset = productSizeRepository.resetAllPromotionsForProductSizes(null);
+            int sizesReset = productSizeRepository.resetAllPromotionsForProductSizes();
             log.info("Reset promotions for {} product sizes via SQL", sizesReset);
 
             // Reset products without sizes
-            int productsWithoutSizes = productRepository.resetAllPromotionsForProductsWithoutSizes(null);
+            int productsWithoutSizes = productRepository.resetAllPromotionsForProductsWithoutSizes();
             log.info("Reset promotions for {} products without sizes via SQL", productsWithoutSizes);
 
             // Reset products with sizes (recalculates display fields from min size price)
-            int productsWithSizes = productRepository.resetAllPromotionsForProductsWithSizes(null);
+            int productsWithSizes = productRepository.resetAllPromotionsForProductsWithSizes();
             log.info("Reset promotions for {} products with sizes via SQL", productsWithSizes);
 
             int totalProductsReset = productsWithoutSizes + productsWithSizes;
