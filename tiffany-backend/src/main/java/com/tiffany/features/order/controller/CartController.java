@@ -5,13 +5,10 @@ import com.tiffany.features.order.dto.response.CartSummaryResponse;
 import com.tiffany.features.order.service.CartService;
 import com.tiffany.shared.dto.ApiResponse;
 import jakarta.validation.Valid;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/cart")
