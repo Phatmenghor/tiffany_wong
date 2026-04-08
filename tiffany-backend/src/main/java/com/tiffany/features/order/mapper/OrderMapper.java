@@ -61,21 +61,9 @@ public interface OrderMapper {
      * Helper to build OrderCreateHelper for checkout order
      */
     default OrderCreateHelper buildOrderHelper(OrderCreateRequest request, UUID customerId, String orderNumber) {
-        PaymentMethod paymentMethod = null;
-        if (request.getPayment() != null && request.getPayment().getPaymentMethod() != null) {
-            try {
-                paymentMethod = PaymentMethod.valueOf(request.getPayment().getPaymentMethod());
-            } catch (IllegalArgumentException e) {
-                paymentMethod = null;
-            }
-        }
-
         var builder = OrderCreateHelper.builder()
                 .orderNumber(orderNumber)
                 .customerId(customerId)
-                .paymentMethod(paymentMethod)
-                .paymentStatus(request.getPayment() != null && request.getPayment().getPaymentStatus() != null ?
-                    PaymentStatus.valueOf(request.getPayment().getPaymentStatus()) : null)
                 .customerNote(request.getCustomerNote())
                 // Initialize pricing with defaults - will be updated after items are processed
                 .subtotal(BigDecimal.ZERO)

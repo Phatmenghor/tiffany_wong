@@ -102,16 +102,8 @@ public class OrderServiceImpl implements OrderService {
             // Save customer details
             orderRepository.save(savedOrder);
 
-            if (request.getDeliveryOption() != null) {
-                OrderDeliveryOption deliveryOption = new OrderDeliveryOption();
-                deliveryOption.setOrderId(savedOrder.getId());
-                deliveryOption.setName(request.getDeliveryOption().getName());
-                deliveryOption.setDescription(request.getDeliveryOption().getDescription());
-                deliveryOption.setImageUrl(request.getDeliveryOption().getImageUrl());
-                deliveryOption.setPrice(request.getDeliveryOption().getPrice());
-                orderDeliveryOptionRepository.save(deliveryOption);
-                log.debug("✅ [DELIVERY OPTION SNAPSHOT] Created for order: {}", savedOrder.getId());
-
+            // Delivery option handling removed - OrderDeliveryOption entity deleted
+            if (request.getDeliveryOption() != null && request.getDeliveryOption().getPrice() != null) {
                 // Update delivery fee in order
                 savedOrder.setDeliveryFee(request.getDeliveryOption().getPrice());
             }
@@ -297,34 +289,11 @@ public class OrderServiceImpl implements OrderService {
 
         // Update delivery option snapshot if provided
         if (request.getDeliveryOption() != null) {
-            OrderDeliveryOption deliveryOption = orderDeliveryOptionRepository.findByOrderId(orderId)
-                    .orElse(new OrderDeliveryOption());
-            deliveryOption.setOrderId(orderId);
-            deliveryOption.setName(request.getDeliveryOption().getName());
-            deliveryOption.setDescription(request.getDeliveryOption().getDescription());
-            deliveryOption.setImageUrl(request.getDeliveryOption().getImageUrl());
-            deliveryOption.setPrice(request.getDeliveryOption().getPrice());
-            orderDeliveryOptionRepository.save(deliveryOption);
-
             order.setDeliveryFee(request.getDeliveryOption().getPrice());
 
             // Recalculate total with new delivery fee
             order.setTotalAmount(order.getSubtotal().add(request.getDeliveryOption().getPrice()));
         }
-
-        if (request.getPayment() != null) {
-            if (request.getPayment().getPaymentMethod() != null) {
-                try {
-                    order.setPaymentMethod(PaymentMethod.valueOf(request.getPayment().getPaymentMethod()));
-                } catch (IllegalArgumentException e) {
-                    log.warn("Invalid payment method: {}", request.getPayment().getPaymentMethod());
-                }
-            }
-            if (request.getPayment().getPaymentStatus() != null) {
-                try {
-                    order.setPaymentStatus(PaymentStatus.valueOf(request.getPayment().getPaymentStatus()));
-                } catch (IllegalArgumentException e) {
-                    log.warn("Invalid payment status: {}", request.getPayment().getPaymentStatus());
                 }
             }
         }
@@ -591,24 +560,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void createPaymentRecord(Order order) {
-        BigDecimal subtotal = order.getSubtotal() != null ? order.getSubtotal() : BigDecimal.ZERO;
-        BigDecimal discountAmount = order.getDiscountAmount() != null ? order.getDiscountAmount() : BigDecimal.ZERO;
-        BigDecimal deliveryFee = order.getDeliveryFee() != null ? order.getDeliveryFee() : BigDecimal.ZERO;
-        BigDecimal taxAmount = order.getTaxAmount() != null ? order.getTaxAmount() : BigDecimal.ZERO;
-
-        OrderPaymentCreateHelper helper = OrderPaymentCreateHelper.builder()
-                .orderId(order.getId())
-                .referenceNumber(paymentReferenceGenerator.generateUniqueReference())
-                .subtotal(subtotal)
-                .discountAmount(discountAmount)
-                .deliveryFee(deliveryFee)
-                .taxAmount(taxAmount)
-                .totalAmount(order.getTotalAmount())
-                .paymentMethod(order.getPaymentMethod())
-                .customerPaymentMethod(null)
-                .build();
-        OrderPayment payment = paymentMapper.createFromHelper(helper);
-        paymentRepository.save(payment);
+        // Payment record creation removed - Payment entity deleted
+        // Payment handling is now managed separately from orders
     }
 
     private void clearCartAfterOrder(UUID customerId) {
