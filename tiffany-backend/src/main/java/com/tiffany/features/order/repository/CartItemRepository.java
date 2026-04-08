@@ -1,7 +1,5 @@
 package com.tiffany.features.order.repository;
 
-import com.tiffany.features.order.dto.CartQuantityProjection;
-import com.tiffany.features.order.dto.SizeCartQuantityProjection;
 import com.tiffany.features.order.models.CartItem;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -84,37 +82,4 @@ public interface CartItemRepository extends JpaRepository<CartItem, UUID> {
     @Query("SELECT COUNT(ci) FROM CartItem ci WHERE ci.createdAt < :cutoffDate")
     long countOldCartItems(@Param("cutoffDate") LocalDateTime cutoffDate);
 
-    /**
-     * Get total quantities for products in user's cart.
-     * Uses interface projection for reliable field mapping with Hibernate 6.
-     */
-    @Query("""
-            SELECT ci.productId as productId, SUM(ci.quantity) as totalQuantity
-            FROM CartItem ci
-            JOIN Cart c ON ci.cartId = c.id
-            WHERE c.userId = :userId
-            AND ci.productId IN :productIds
-            AND ci.isDeleted = false
-            AND c.isDeleted = false
-            GROUP BY ci.productId
-            """)
-    List<CartQuantityProjection> getProductQuantitiesInCart(@Param("userId") UUID userId,
-                                                             @Param("productIds") List<UUID> productIds);
-
-    /**
-     * Get per-size quantities for a specific product in user's cart.
-     * Uses interface projection for reliable field mapping with Hibernate 6.
-     */
-    @Query("""
-            SELECT ci.productSizeId as productSizeId, ci.quantity as quantity
-            FROM CartItem ci
-            JOIN Cart c ON ci.cartId = c.id
-            WHERE c.userId = :userId
-            AND ci.productId = :productId
-            AND ci.productSizeId IS NOT NULL
-            AND ci.isDeleted = false
-            AND c.isDeleted = false
-            """)
-    List<SizeCartQuantityProjection> getSizeQuantitiesInCart(@Param("userId") UUID userId,
-                                                              @Param("productId") UUID productId);
 }
