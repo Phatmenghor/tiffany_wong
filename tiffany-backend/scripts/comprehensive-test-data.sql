@@ -267,13 +267,14 @@ FROM generate_series(1, 20000) AS t(i);
 -- ============================================================================
 -- 11. ORDER ITEMS (Multiple items per order)
 -- ============================================================================
-INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, quantity, unit_price, total_price, product_size_id)
+INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, quantity, unit_price, total_price, final_price, product_size_id)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     o.id,
     (SELECT id FROM products ORDER BY RANDOM() LIMIT 1),
     (1 + (random() * 5)::int),
     (10 + random() * 500)::numeric(10,2),
+    ((1 + (random() * 5)::int) * (10 + random() * 500))::numeric(10,2),
     ((1 + (random() * 5)::int) * (10 + random() * 500))::numeric(10,2),
     (SELECT id FROM product_sizes ORDER BY RANDOM() LIMIT 1)
 FROM orders o
