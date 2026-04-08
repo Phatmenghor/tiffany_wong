@@ -51,7 +51,7 @@ FROM generate_series(1, 20000) AS t(i);
 -- ============================================================================
 -- 2. USER PROFILES (Complete for all users)
 -- ============================================================================
-INSERT INTO user_profiles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, first_name, last_name, nickname, gender, date_of_birth, phone_number, email, profile_image_url, address)
+INSERT INTO user_profiles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, first_name, last_name, nickname, gender, date_of_birth, phone_number, email, profile_image_url)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     u.id,
@@ -74,8 +74,7 @@ SELECT
     NOW()::date - (random() * 15000)::int,
     '+855 ' || LPAD((random() * 999999)::int::text, 9, '0'),
     u.user_identifier,
-    'https://via.placeholder.com/300?text=' || SUBSTR(u.user_identifier, 1, 10),
-    'Phnom Penh, Cambodia'
+    'https://via.placeholder.com/300?text=' || SUBSTR(u.user_identifier, 1, 10)
 FROM users u
 WHERE NOT EXISTS (SELECT 1 FROM user_profiles up WHERE up.user_id = u.id);
 
