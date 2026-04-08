@@ -20,7 +20,7 @@ export const fetchAllCategoriesService = createApiThunk<
   AllCategoriesRequest
 >("categories/fetchAll", async (params) => {
   const response = await axiosClientWithAuth.post(
-    "/api/v1/categories/my-business/all",
+    "/api/v1/categories/all",
     params
   );
   return response.data.data;
@@ -34,7 +34,7 @@ export const fetchAllCategoriesWithProductCountService = createApiThunk<
   AllCategoriesRequest
 >("categories/fetchAllWithProductCount", async (params) => {
   const response = await axiosClientWithAuth.post(
-    "/api/v1/categories/my-business/product/all",
+    "/api/v1/categories/all",
     params
   );
   return response.data.data;

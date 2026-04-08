@@ -20,7 +20,7 @@ export const fetchAllProductAdminService = createApiThunk<
   AllProductRequest
 >("products/fetchAllByAdmin", async (params) => {
   const response = await axiosClientWithAuth.post(
-    "/api/v1/products/admin/my-business/all",
+    "/api/v1/products/all",
     params
   );
   return response.data.data;

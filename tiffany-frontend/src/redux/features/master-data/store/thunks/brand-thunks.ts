@@ -18,7 +18,7 @@ export const fetchAllBrandService = createApiThunk<any, AllBrandRequest>(
   "brands/fetchAll",
   async (params) => {
     const response = await axiosClientWithAuth.post(
-      "/api/v1/brands/my-business/all",
+      "/api/v1/brands/all",
       params
     );
     return response.data.data;
@@ -33,7 +33,7 @@ export const fetchAllBrandWithProductCountService = createApiThunk<
   AllBrandRequest
 >("brands/fetchAllWithProductCount", async (params) => {
   const response = await axiosClientWithAuth.post(
-    "/api/v1/brands/my-business/with-product-count",
+    "/api/v1/brands/all",
     params
   );
   return response.data.data;
