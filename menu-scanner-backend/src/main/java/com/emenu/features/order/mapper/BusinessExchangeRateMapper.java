@@ -17,7 +17,6 @@ public interface BusinessExchangeRateMapper {
     @Mapping(target = "status", constant = "ACTIVE")
     BusinessExchangeRate toEntity(BusinessExchangeRateCreateRequest request);
 
-    @Mapping(source = "business.name", target = "businessName")
     BusinessExchangeRateResponse toResponse(BusinessExchangeRate exchangeRate);
 
     List<BusinessExchangeRateResponse> toResponseList(List<BusinessExchangeRate> exchangeRates);

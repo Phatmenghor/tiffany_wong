@@ -15,7 +15,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {PaginationMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrderPaymentMapper {
 
-    @Mapping(source = "business.name", target = "businessName")
     @Mapping(source = "order.orderNumber", target = "orderNumber")
     @Mapping(source = "discountAmount", target = "totalDiscount")
     @Mapping(source = "totalAmount", target = "finalTotal")

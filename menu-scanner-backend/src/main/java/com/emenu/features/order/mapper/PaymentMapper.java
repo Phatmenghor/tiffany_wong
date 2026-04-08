@@ -28,8 +28,6 @@ public interface PaymentMapper {
     @Mapping(target = "referenceNumber", ignore = true)
     Payment toEntity(PaymentCreateRequest request);
 
-    @Mapping(source = "business.name", target = "businessName")
-    @Mapping(source = "plan.name", target = "planName")
     @Mapping(source = "subscription.id", target = "subscriptionId")
     @Mapping(target = "subscriptionDisplayName", expression = "java(payment.getSubscriptionDisplayName())")
     @Mapping(target = "formattedAmount", expression = "java(payment.getFormattedAmount())")

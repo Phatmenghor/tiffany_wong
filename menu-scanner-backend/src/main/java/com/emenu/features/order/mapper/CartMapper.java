@@ -84,7 +84,6 @@ public interface CartMapper {
     List<CartItemResponse> toItemResponseList(List<CartItem> cartItems);
     List<CartResponse> toResponseList(List<Cart> carts);
 
-    @Mapping(source = "business.name", target = "businessName")
     @Mapping(target = "totalItems", expression = "java(cart.getTotalItems())")
     @Mapping(target = "subtotalBeforeDiscount", expression = "java(calculateSubtotalBeforeDiscount(cart))")
     @Mapping(target = "subtotal", expression = "java(cart.getSubtotal())")
