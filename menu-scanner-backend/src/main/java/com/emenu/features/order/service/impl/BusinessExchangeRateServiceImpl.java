@@ -64,7 +64,6 @@ public class BusinessExchangeRateServiceImpl implements BusinessExchangeRateServ
         );
 
         Page<BusinessExchangeRate> page = exchangeRateRepository.findAllWithFilters(
-                null,
                 filter.getStatus(),
                 filter.getSearch(),
                 pageable
@@ -149,7 +148,7 @@ public class BusinessExchangeRateServiceImpl implements BusinessExchangeRateServ
 
     @Override
     @Transactional(readOnly = true)
-    public BusinessExchangeRateResponse getActiveRateByBusinessId(UUID businessId) {
+    public BusinessExchangeRateResponse getActiveRate() {
         log.info("Fetching active exchange rate");
 
         BusinessExchangeRate activeRate = exchangeRateRepository.findActiveRate()

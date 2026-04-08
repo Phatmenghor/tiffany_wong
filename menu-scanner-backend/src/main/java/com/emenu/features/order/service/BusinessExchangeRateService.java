@@ -36,7 +36,7 @@ public interface BusinessExchangeRateService {
     BusinessExchangeRateResponse deleteBusinessExchangeRate(UUID id);
     
     /**
-     * Get current active exchange rate for a business
+     * Get current active exchange rate (system-wide, only one active rate exists)
      */
-    BusinessExchangeRateResponse getActiveRateByBusinessId(UUID businessId);
+    BusinessExchangeRateResponse getActiveRate();
 }

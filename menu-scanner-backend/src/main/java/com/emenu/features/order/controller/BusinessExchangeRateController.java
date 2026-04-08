@@ -5,7 +5,6 @@ import com.emenu.features.order.dto.request.BusinessExchangeRateCreateRequest;
 import com.emenu.features.order.dto.response.BusinessExchangeRateResponse;
 import com.emenu.features.order.dto.update.BusinessExchangeRateUpdateRequest;
 import com.emenu.features.order.service.BusinessExchangeRateService;
-import com.emenu.security.SecurityUtils;
 import com.emenu.shared.dto.ApiResponse;
 import com.emenu.shared.dto.PaginationResponse;
 import jakarta.validation.Valid;
@@ -24,7 +23,6 @@ import java.util.UUID;
 public class BusinessExchangeRateController {
 
     private final BusinessExchangeRateService exchangeRateService;
-    private final SecurityUtils securityUtils;
 
     /**
      * Create new business exchange rate (deactivates previous active rate)
@@ -96,14 +94,13 @@ public class BusinessExchangeRateController {
     }
 
     /**
-     * Get current active exchange rate for a business
+     * Get current active exchange rate (system-wide, only one active rate exists)
      */
-    @GetMapping("/business/{businessId}/active")
-    public ResponseEntity<ApiResponse<BusinessExchangeRateResponse>> getActiveRateByBusinessId(
-            @PathVariable UUID businessId) {
-        log.info("GET /business-exchange-rates/business/{}/active", businessId);
+    @GetMapping("/active")
+    public ResponseEntity<ApiResponse<BusinessExchangeRateResponse>> getActiveRate() {
+        log.info("GET /business-exchange-rates/active");
 
-        BusinessExchangeRateResponse exchangeRate = exchangeRateService.getActiveRateByBusinessId(businessId);
+        BusinessExchangeRateResponse exchangeRate = exchangeRateService.getActiveRate();
 
         return ResponseEntity.ok(ApiResponse.success("Active business exchange rate retrieved successfully", exchangeRate));
     }
