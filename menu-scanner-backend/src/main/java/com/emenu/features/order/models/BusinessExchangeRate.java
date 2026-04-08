@@ -1,6 +1,5 @@
 package com.emenu.features.order.models;
 
-import com.emenu.features.auth.models.Business;
 import com.emenu.shared.domain.BaseUUIDEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,13 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BusinessExchangeRate extends BaseUUIDEntity {
-
-    @Column(name = "business_id", nullable = false)
-    private UUID businessId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "business_id", insertable = false, updatable = false)
-    private Business business;
 
     // Required: USD to KHR exchange rate
     @Column(name = "usd_to_khr_rate", nullable = false)

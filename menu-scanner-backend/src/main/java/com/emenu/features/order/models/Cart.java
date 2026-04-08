@@ -1,6 +1,5 @@
 package com.emenu.features.order.models;
 
-import com.emenu.features.auth.models.Business;
 import com.emenu.features.auth.models.User;
 import com.emenu.shared.domain.BaseUUIDEntity;
 import jakarta.persistence.*;
@@ -15,7 +14,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "carts",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "business_id"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id"})
 )
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -29,13 +28,6 @@ public class Cart extends BaseUUIDEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
-
-    @Column(name = "business_id", nullable = false)
-    private UUID businessId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "business_id", insertable = false, updatable = false)
-    private Business business;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<CartItem> items;

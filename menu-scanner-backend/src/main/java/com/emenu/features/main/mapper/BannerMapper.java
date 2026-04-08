@@ -16,7 +16,6 @@ public interface BannerMapper {
 
     Banner toEntity(BannerCreateRequest request);
 
-    @Mapping(source = "business.name", target = "businessName")
     BannerResponse toResponse(Banner banner);
 
     List<BannerResponse> toResponseList(List<Banner> banners);

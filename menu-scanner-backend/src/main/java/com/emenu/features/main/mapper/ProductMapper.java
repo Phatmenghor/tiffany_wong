@@ -29,27 +29,6 @@ public interface ProductMapper {
     @Mapping(source = "promotionType", target = "promotionType", qualifiedByName = "stringToPromotionType")
     Product toEntity(ProductCreateDto dto);
 
-    /**
-     * Apply business-specific fields to product after creation
-     */
-    @Mapping(target = "businessId", source = "businessId")
-    @Mapping(target = "viewCount", source = "viewCount")
-    @Mapping(target = "favoriteCount", source = "favoriteCount")
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void applyBusinessFields(ProductCreateHelper helper, @MappingTarget Product product);
-
-    /**
-     * Helper method to set business fields on product
-     */
-    default Product setBusinessFields(Product product, UUID businessId) {
-        ProductCreateHelper helper = ProductCreateHelper.builder()
-                .businessId(businessId)
-                .viewCount(0L)
-                .favoriteCount(0L)
-                .build();
-        applyBusinessFields(helper, product);
-        return product;
-    }
 
     @AfterMapping
     default void truncateProductPromotionDates(ProductCreateDto dto, @MappingTarget Product entity) {
@@ -89,9 +68,7 @@ public interface ProductMapper {
 
     List<ProductListDto> toListDtos(List<Product> products);
 
-    @Mapping(source = "businessName", target = "businessName")
     @Mapping(source = "categoryName", target = "categoryName")
-    @Mapping(source = "brandName", target = "brandName")
     @Mapping(source = "promotionType", target = "promotionType", qualifiedByName = "promotionTypeToString")
     @Mapping(source = "displayPromotionType", target = "displayPromotionType", qualifiedByName = "promotionTypeToString")
     @Mapping(target = "hasPromotion", source = "hasActivePromotion")
