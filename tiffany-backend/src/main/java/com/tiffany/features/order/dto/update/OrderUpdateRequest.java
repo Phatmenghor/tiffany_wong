@@ -16,45 +16,30 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Full order update request - allows admins to modify all order details
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderUpdateRequest {
 
-    // Customer info - editable
-    private String customerName;
-    private String customerPhone;
-    private String customerEmail;
+    private OrderStatus orderStatus;
 
-    // Delivery info
     @Valid
     private DeliveryAddressRequest deliveryAddress;
 
     @Valid
     private DeliveryOptionRequest deliveryOption;
 
-    // Order status
-    private OrderStatus orderStatus;
-
-    // Items update - allows modifying items
     @Valid
     private List<OrderItemUpdateRequest> items;
 
-    // Pricing information with audit trail
     @Valid
     private PricingInfo pricing;
 
-    // Payment information - editable
     @Valid
     private PaymentInfo payment;
 
-    // Notes
     private String customerNote;
-    private String businessNote;
 
     // ─── Nested Classes ───
     @Data

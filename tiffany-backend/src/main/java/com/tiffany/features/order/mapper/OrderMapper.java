@@ -64,16 +64,9 @@ public interface OrderMapper {
                 .orderNumber(orderNumber)
                 .customerId(customerId)
                 .customerNote(request.getCustomerNote())
-                // Initialize pricing with defaults - will be updated after items are processed
                 .subtotal(BigDecimal.ZERO)
-                .totalAmount(BigDecimal.ZERO)
-                // Initialize businessNote as empty (will be set later if provided)
-                .businessNote("");
+                .totalAmount(BigDecimal.ZERO);
 
-        // Delivery address will be created from addressId in service layer
-        // by fetching from database - not set here
-
-        // Set delivery option fields (no JSON serialization)
         if (request.getDeliveryOption() != null) {
             builder.deliveryOptionName(request.getDeliveryOption().getName());
             builder.deliveryOptionDescription(request.getDeliveryOption().getDescription());

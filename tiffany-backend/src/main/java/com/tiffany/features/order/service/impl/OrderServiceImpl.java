@@ -62,62 +62,35 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse createOrderFromCart(OrderCreateRequest request) {
-        log.info("🛍️  [CHECKOUT START] Creating order from cart - Customer: {}",
-            securityUtils.getCurrentUser().getId());
-
         User currentUser = securityUtils.getCurrentUser();
+        log.info("Create order from cart - userId: {}", currentUser.getId());
 
         try {
-            log.debug("📋 [STEP 1/6] Creating base order...");
             Order order = createBaseOrder(request, currentUser.getId());
 
-            // Set order status - default to PENDING if not specified
             OrderStatus status = request.getOrderStatus() != null ? request.getOrderStatus() : OrderStatus.PENDING;
-            log.debug("📋 [STEP 2/6] Setting order status: {}", status);
             order.setOrderStatus(status);
 
-            log.debug("📋 [STEP 3/6] Saving base order...");
             Order savedOrder = orderRepository.save(order);
-            log.info("✅ [ORDER CREATED] Order #{} saved with ID: {}", savedOrder.getOrderNumber(), savedOrder.getId());
+            log.info("Order created - orderNumber: {}, orderId: {}", savedOrder.getOrderNumber(), savedOrder.getId());
 
-            // Create delivery snapshots from request - fetch address by ID
             if (request.getAddressId() != null) {
                 OrderDeliveryAddress deliveryAddress = createDeliveryAddressSnapshot(savedOrder.getId(), request.getAddressId());
                 if (deliveryAddress != null) {
                     orderDeliveryAddressRepository.save(deliveryAddress);
-                    log.debug("✅ [DELIVERY ADDRESS SNAPSHOT] Created for order: {}", savedOrder.getId());
                 }
             }
 
-            // Set customer details
-            if (request.getCustomerName() != null) {
-                savedOrder.setCustomerName(request.getCustomerName());
-            }
-            if (request.getCustomerPhone() != null) {
-                savedOrder.setCustomerPhone(request.getCustomerPhone());
-            }
-            if (request.getCustomerEmail() != null) {
-                savedOrder.setCustomerEmail(request.getCustomerEmail());
-            }
-            // Save customer details
-            orderRepository.save(savedOrder);
-
-            // Delivery option handling removed - OrderDeliveryOption entity deleted
             if (request.getDeliveryOption() != null && request.getDeliveryOption().getPrice() != null) {
-                // Update delivery fee in order
                 savedOrder.setDeliveryFee(request.getDeliveryOption().getPrice());
             }
 
-            // Create initial order status history to track when order was created
-            log.debug("📋 [STEP 3.5/6] Creating initial status history...");
             createInitialOrderStatusHistory(savedOrder, currentUser.getId());
 
-            // Create order items from cart summary (frontend) or database cart
             if (request.getCart() != null && request.getCart().getItems() != null && !request.getCart().getItems().isEmpty()) {
-                log.info("📋 [STEP 4/7] Processing {} items from frontend cart summary", request.getCart().getItems().size());
+                log.info("Processing cart items - count: {}", request.getCart().getItems().size());
                 createOrderItemsFromCartSummary(savedOrder.getId(), request.getCart(), null);
             } else {
-                log.info("📋 [STEP 4/7] Processing items from database cart");
                 Cart cart = cartRepository.findByUserIdWithItems(currentUser.getId())
                         .orElseThrow(() -> new ValidationException("Cart is empty or not found"));
 
@@ -128,21 +101,14 @@ public class OrderServiceImpl implements OrderService {
                 createOrderItemsFromCart(savedOrder.getId(), cart);
             }
 
-            log.debug("📋 [STEP 5/7] Creating payment record...");
             createPaymentRecord(savedOrder);
-
-            log.debug("📋 [STEP 6/7] Clearing cart...");
             clearCartAfterOrder(currentUser.getId());
 
-            log.info("✅ [CHECKOUT SUCCESS] Order created successfully: {} - Fetching full response...", savedOrder.getOrderNumber());
             OrderResponse response = getOrderById(savedOrder.getId());
-            log.info("🎉 [CHECKOUT COMPLETE] Order #{} - Total: {}, Items: {}",
-                response.getOrderNumber(),
-                response.getPricing() != null ? response.getPricing().getFinalTotal() : "N/A",
-                response.getItems().size());
+            log.info("Order created successfully - orderNumber: {}, itemCount: {}", response.getOrderNumber(), response.getItems().size());
             return response;
         } catch (Exception e) {
-            log.error("❌ [CHECKOUT ERROR] Failed to create order: {}", e.getMessage(), e);
+            log.error("Failed to create order - error: {}", e.getMessage(), e);
             throw e;
         }
     }
@@ -151,32 +117,22 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public PaginationResponse<OrderResponse> getCustomerOrderHistory(OrderFilterRequest filter) {
         User currentUser = securityUtils.getCurrentUser();
-
-        log.info("📋 [CUSTOMER ORDER HISTORY] Fetching orders for customer: {} | Page: {}, Size: {}",
+        log.info("Get customer order history - userId: {}, page: {}, size: {}",
                 currentUser.getId(), filter.getPageNo(), filter.getPageSize());
 
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection()
         );
 
-        log.debug("🔍 [DB QUERY] Executing paginated query with eager loading of business and customer...");
         Page<Order> page = orderRepository.findByCustomerIdAndIsDeletedFalseOrderByCreatedAtDesc(currentUser.getId(), pageable);
-        log.debug("✅ [DB QUERY COMPLETE] Retrieved {} orders from database", page.getNumberOfElements());
 
-        // Eagerly load statusHistory for all orders to prevent lazy loading during mapping
-        log.debug("📌 [LOADING STATUS HISTORY] Loading status history for {} orders...", page.getNumberOfElements());
         page.getContent().forEach(order -> {
             List<OrderStatusHistory> statusHistory = orderRepository.findStatusHistoryByOrderId(order.getId());
             order.setStatusHistory(statusHistory);
-            log.debug("   - Order {}: {} status history records", order.getOrderNumber(), statusHistory.size());
         });
 
-        log.debug("🔄 [MAPPING] Converting {} orders to response DTOs...", page.getNumberOfElements());
         PaginationResponse<OrderResponse> response = orderMapper.toPaginationResponse(page, paginationMapper);
-
-        log.info("✅ [CUSTOMER ORDER HISTORY COMPLETE] Retrieved {} orders | Total: {} | Page: {}/{}",
-                page.getNumberOfElements(), page.getTotalElements(),
-                page.getNumber() + 1, page.getTotalPages());
+        log.info("Customer orders retrieved - count: {}, total: {}", page.getNumberOfElements(), page.getTotalElements());
 
         return response;
     }
@@ -198,49 +154,26 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<OrderResponse> getAllOrders(OrderFilterRequest filter) {
-        User currentUser = securityUtils.getCurrentUser();
-
-        log.info("📊 [GET ALL ORDERS] Starting retrieval | User: {}",
-                currentUser.getId());
-
-        log.debug("🔍 [FILTER PARAMETERS] OrderStatus: {}, PaymentMethod: {}, PaymentStatus: {}",
-                filter.getOrderStatus(), filter.getPaymentMethod(), filter.getPaymentStatus());
+        log.info("Get all orders - page: {}, size: {}", filter.getPageNo(), filter.getPageSize());
 
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection()
         );
-        log.debug("📑 [PAGINATION] PageNo: {}, PageSize: {}, SortBy: {}, Direction: {}",
-                filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection());
 
-        // Apply filters: orderStatus, paymentMethod, paymentStatus
-        log.debug("🗄️  [DB QUERY START] Executing filtered query with eager loading...");
         Page<Order> page = orderRepository.findAllWithFilters(
                 filter.getOrderStatus(),
                 filter.getPaymentMethod(),
                 filter.getPaymentStatus(),
                 pageable
         );
-        log.info("✅ [DB QUERY COMPLETE] Retrieved {} orders | Total: {} | Pages: {}",
-                page.getNumberOfElements(), page.getTotalElements(), page.getTotalPages());
 
-        // Eagerly load statusHistory for all orders to prevent lazy loading during mapping
-        log.debug("📌 [LOADING STATUS HISTORY] Loading status history for {} orders...", page.getNumberOfElements());
-        int historyCount = 0;
         for (Order order : page.getContent()) {
             List<OrderStatusHistory> statusHistory = orderRepository.findStatusHistoryByOrderId(order.getId());
             order.setStatusHistory(statusHistory);
-            historyCount += statusHistory.size();
-            log.debug("   - Order {}: {} status history records", order.getOrderNumber(), statusHistory.size());
         }
-        log.debug("✅ [STATUS HISTORY LOADED] Total history records: {}", historyCount);
 
-        log.debug("🔄 [MAPPING] Converting {} orders to response DTOs...", page.getNumberOfElements());
         PaginationResponse<OrderResponse> response = orderMapper.toPaginationResponse(page, paginationMapper);
-        log.debug("✅ [MAPPING COMPLETE] Converted {} orders to response DTOs", page.getNumberOfElements());
-
-        log.info("✅ [GET ALL ORDERS COMPLETE] Orders: {} | Total records: {} | Pages: {}/{}",
-                page.getNumberOfElements(), page.getTotalElements(),
-                page.getNumber() + 1, page.getTotalPages());
+        log.info("Orders retrieved - count: {}, total: {}", page.getNumberOfElements(), page.getTotalElements());
 
         return response;
     }
@@ -289,9 +222,6 @@ public class OrderServiceImpl implements OrderService {
 
         if (request.getCustomerNote() != null) {
             order.setCustomerNote(request.getCustomerNote());
-        }
-        if (request.getBusinessNote() != null) {
-            order.setBusinessNote(request.getBusinessNote());
         }
 
         // Update order items if provided
