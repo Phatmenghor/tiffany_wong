@@ -246,24 +246,22 @@ FROM orders o;
 -- ============================================================================
 -- 12. ORDER STATUS HISTORY (1-3 status changes per order)
 -- ============================================================================
-INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, old_status, new_status, changed_by, change_reason)
+INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, order_status, changed_by_name, note)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     o.id,
-    'PENDING',
     CASE ((random() * 3)::int) WHEN 0 THEN 'CONFIRMED' WHEN 1 THEN 'COMPLETED' ELSE 'CANCELLED' END,
-    'system',
+    'System Admin',
     CASE ((random() * 3)::int) WHEN 0 THEN 'Order confirmed by admin' WHEN 1 THEN 'Order completed' ELSE 'Order cancelled' END
 FROM orders o
 WHERE ((random() * 100)::int > 20);
 
-INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, old_status, new_status, changed_by, change_reason)
+INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, order_status, changed_by_name, note)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     o.id,
-    'CONFIRMED',
     'COMPLETED',
-    'system',
+    'System Admin',
     'Order completed and delivered'
 FROM orders o
 WHERE o.order_status = 'COMPLETED'
