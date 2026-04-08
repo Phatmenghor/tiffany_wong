@@ -83,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection());
 
         Page<Product> productPage = productRepository.findAllWithFilters(
-                filter.getBusinessId(),
+                null,
                 filter.getCategoryId(),
                 filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
@@ -130,7 +130,7 @@ public class ProductServiceImpl implements ProductService {
             // Get cart quantities for products
             Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
                     currentUser.get().getId(),
-                    filter.getBusinessId(),
+                    null,
                     productIds
             );
 
@@ -155,8 +155,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public List<ProductListDto> getAllDataProducts(ProductFilterDto filter) {
-        log.debug("Starting getAllDataProducts - Filter: BusinessId={}, CategoryId={}, BrandId={}, Search={}",
-                filter.getBusinessId(), filter.getCategoryId(), filter.getBrandId(), filter.getSearch());
+        log.debug("Starting getAllDataProducts - Filter: CategoryId={}, BrandId={}, Search={}",
+                filter.getCategoryId(), filter.getBrandId(), filter.getSearch());
 
         long startTime = System.currentTimeMillis();
         Optional<User> currentUser = securityUtils.getCurrentUserOptional();
@@ -203,7 +203,7 @@ public class ProductServiceImpl implements ProductService {
             // Get cart quantities for products
             Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
                     currentUser.get().getId(),
-                    filter.getBusinessId(),
+                    null,
                     productIds
             );
 
@@ -324,8 +324,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<ProductDetailDto> getAllProductsAdminStock(ProductFilterDto filter) {
-        log.debug("Starting getAllProductsAdminStock - Filter: BusinessId={}, Statuses={}, HasSize={}, StockStatuses={}, HasPromotion={}, Search={}",
-                filter.getBusinessId(), filter.getStatuses(), filter.getHasSize(), filter.getStockStatuses(), filter.getHasPromotion(), filter.getSearch());
+        log.debug("Starting getAllProductsAdminStock - Filter: Statuses={}, HasSize={}, StockStatuses={}, HasPromotion={}, Search={}",
+                filter.getStatuses(), filter.getHasSize(), filter.getStockStatuses(), filter.getHasPromotion(), filter.getSearch());
 
         long startTime = System.currentTimeMillis();
 
@@ -478,7 +478,7 @@ public class ProductServiceImpl implements ProductService {
             // Get cart quantity for this product
             Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
                     userId,
-                    product.getBusinessId(),
+                    null,
                     List.of(product.getId())
             );
             dto.setQuantity(cartQuantities.getOrDefault(product.getId(), 0));
@@ -505,12 +505,11 @@ public class ProductServiceImpl implements ProductService {
         log.debug("Starting product promotion reset: ID={}", id);
 
         try {
-            // Load product only to validate existence and business ownership
+            // Load product only to validate existence
             Product product = productRepository.findByIdAndIsDeletedFalse(id)
                     .orElseThrow(() -> new NotFoundException("Product not found: " + id));
 
             User currentUser = securityUtils.getCurrentUser();
-            validateBusinessOwnership(product, currentUser);
 
             // Reset sizes via native SQL (clearAutomatically evicts L1 cache)
             int sizesReset = productSizeRepository.resetPromotionsByProductId(id);
@@ -658,8 +657,6 @@ public class ProductServiceImpl implements ProductService {
         long startTime = System.currentTimeMillis();
 
         User currentUser = securityUtils.getCurrentUser();
-        validateUserBusinessAssociation(currentUser);
-        log.debug("Bulk promotion - Current user: {}, Business: {}", currentUser.getUserIdentifier(), currentUser.getBusinessId());
 
         List<UUID> failedProductIds = new ArrayList<>();
         int successCount = 0;
@@ -670,13 +667,6 @@ public class ProductServiceImpl implements ProductService {
 
         for (Product product : products) {
             try {
-                // Verify business ownership
-                if (!product.getBusinessId().equals(currentUser.getBusinessId())) {
-                    log.warn("Business ownership mismatch for product: {}, Expected: {}, Got: {}",
-                        product.getId(), currentUser.getBusinessId(), product.getBusinessId());
-                    failedProductIds.add(product.getId());
-                    continue;
-                }
 
                 // Set promotion fields on product
                 product.setPromotionType(request.getPromotionType());
@@ -781,17 +771,14 @@ public class ProductServiceImpl implements ProductService {
 
         try {
             User currentUser = securityUtils.getCurrentUser();
-            log.debug("Current user: {}, Business: {}", currentUser.getUserIdentifier(), currentUser.getBusinessId());
-            validateUserBusinessAssociation(currentUser);
 
             Product product = productMapper.toEntity(request);
-            productMapper.setBusinessFields(product, currentUser.getBusinessId());
             product.initializeDisplayFields();
             syncDenormalizedNames(product);
             log.debug("Product entity mapped and initialized: {}", product.getName());
 
             Product savedProduct = productRepository.save(product);
-            log.info("Product created successfully: ID={}, Name='{}', Business={}", savedProduct.getId(), savedProduct.getName(), savedProduct.getBusinessId());
+            log.info("Product created successfully: ID={}, Name='{}'", savedProduct.getId(), savedProduct.getName());
 
             handleProductImages(savedProduct, request.getImages());
             log.debug("Product images handled: {} images", request.getImages() != null ? request.getImages().size() : 0);
@@ -825,10 +812,9 @@ public class ProductServiceImpl implements ProductService {
         try {
             Product product = productRepository.findByIdAndIsDeletedFalse(id)
                     .orElseThrow(() -> new NotFoundException("Product not found: " + id));
-            log.debug("Product found: Name='{}', Current business={}", product.getName(), product.getBusinessId());
+            log.debug("Product found: Name='{}'", product.getName());
 
             User currentUser = securityUtils.getCurrentUser();
-            validateBusinessOwnership(product, currentUser);
 
             productMapper.updateEntity(request, product);
             log.debug("Product entity updated with request data");
@@ -881,17 +867,15 @@ public class ProductServiceImpl implements ProductService {
         try {
             Product product = productRepository.findByIdAndIsDeletedFalse(id)
                     .orElseThrow(() -> new NotFoundException("Product not found: " + id));
-            log.debug("Product found for deletion: Name='{}', Business={}", product.getName(), product.getBusinessId());
+            log.debug("Product found for deletion: Name='{}'", product.getName());
 
             User currentUser = securityUtils.getCurrentUser();
-            validateBusinessOwnership(product, currentUser);
-            log.debug("Business ownership validation passed for user: {}", currentUser.getUserIdentifier());
 
             product.softDelete();
             log.debug("Product marked for soft delete: {}", id);
 
             Product deletedProduct = productRepository.save(product);
-            log.info("Product deleted successfully (soft delete): ID={}, Name='{}', Business={}", deletedProduct.getId(), deletedProduct.getName(), deletedProduct.getBusinessId());
+            log.info("Product deleted successfully (soft delete): ID={}, Name='{}'", deletedProduct.getId(), deletedProduct.getName());
 
             return productMapper.toDetailDto(deletedProduct);
         } catch (Exception e) {
@@ -1003,18 +987,6 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return changed;
-    }
-
-    private void validateUserBusinessAssociation(User user) {
-        if (user.getBusinessId() == null) {
-            throw new ValidationException("User is not associated with any business");
-        }
-    }
-
-    private void validateBusinessOwnership(Product product, User user) {
-        if (!product.getBusinessId().equals(user.getBusinessId())) {
-            throw new ValidationException("You can only modify products from your own business");
-        }
     }
 
     /**

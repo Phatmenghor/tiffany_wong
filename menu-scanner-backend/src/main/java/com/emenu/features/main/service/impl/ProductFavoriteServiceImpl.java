@@ -84,8 +84,7 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
     @Transactional(readOnly = true)
     public PaginationResponse<ProductListDto> getUserFavorites(ProductFilterDto filter) {
         UUID userId = securityUtils.getCurrentUserId();
-        UUID businessId = filter.getBusinessId();
-        log.info("Getting favorites - User: {}, Business: {}", userId, businessId);
+        log.info("Getting favorites - User: {}", userId);
 
         Pageable pageable = PaginationUtils.createPageable(
             filter.getPageNo(),
@@ -94,12 +93,7 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
             "DESC"
         );
 
-        Page<Product> favoritePage;
-        if (businessId != null) {
-            favoritePage = productRepository.findUserFavoritesByBusiness(userId, businessId, pageable);
-        } else {
-            favoritePage = productRepository.findUserFavorites(userId, pageable);
-        }
+        Page<Product> favoritePage = productRepository.findUserFavorites(userId, pageable);
 
         // Recalculate display fields from current sizes
         favoritePage.getContent().forEach(Product::syncDisplayFieldsFromSizes);
@@ -115,7 +109,7 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
                     .toList();
 
             Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
-                    userId, businessId, productIds
+                    userId, null, productIds
             );
 
             response.getContent().forEach(product -> {

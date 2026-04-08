@@ -38,8 +38,8 @@ public class ProductController {
             @Valid @RequestBody ProductFilterDto filter) {
 
         long startTime = System.currentTimeMillis();
-        log.info("GET /api/v1/products/all - Page: {}, Size: {}, Filters: BusinessId={}, CategoryId={}, BrandId={}",
-                filter.getPageNo(), filter.getPageSize(), filter.getBusinessId(), filter.getCategoryId(), filter.getBrandId());
+        log.info("GET /api/v1/products/all - Page: {}, Size: {}, Filters: CategoryId={}, BrandId={}",
+                filter.getPageNo(), filter.getPageSize(), filter.getCategoryId(), filter.getBrandId());
 
         try {
             PaginationResponse<ProductListDto> products = productService.getAllProducts(filter);
