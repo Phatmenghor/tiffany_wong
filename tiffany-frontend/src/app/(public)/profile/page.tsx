@@ -35,7 +35,6 @@ import { isBase64Image, uploadImage } from "@/utils/common/upload-image";
 import { clearToken } from "@/utils/local-storage/token";
 import { clearUserInfo } from "@/utils/local-storage/userInfo";
 import { Loading } from "@/components/shared/common/loading";
-import { TelegramSyncCard } from "@/components/shared/telegram/telegram-sync-card";
 import { PageContainer } from "@/components/shared/common/page-container";
 import { GENDER_OPTIONS } from "@/constants/form-options";
 import { ROUTES } from "@/constants/app-routes/routes";
@@ -513,14 +512,6 @@ export default function PublicProfilePage() {
           {/* Security Section */}
           {activeSection === "security" && (
             <div className="space-y-4">
-              {/* Connected Accounts */}
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                  Connected Accounts
-                </h3>
-                <TelegramSyncCard socialSync={socialSync} />
-              </div>
-
               {/* Change Password */}
               <Card>
                 <CardContent className="p-4 sm:p-6">

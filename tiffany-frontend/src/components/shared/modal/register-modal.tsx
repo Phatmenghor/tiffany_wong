@@ -20,11 +20,7 @@ import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import {
   registerCustomerService,
 } from "@/redux/features/auth/store/thunks/auth-thunks";
-import { telegramAuthenticateService } from "@/redux/features/auth/store/thunks/social-auth-thunks";
 import { showToast } from "@/components/shared/common/show-toast";
-import { TelegramLoginButton } from "@/components/shared/telegram/telegram-login-widget";
-import { TelegramAuthData } from "@/redux/features/auth/store/models/request/social-auth-request";
-import { SocialAuthConfig } from "@/constants/app-resource/default/default";
 import { useAppSelector } from "@/redux/store";
 import { selectBusinessName } from "@/redux/features/business/store/selectors/business-settings-selector";
 
@@ -64,12 +60,10 @@ function Divider() {
 export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isTelegramLoading, setIsTelegramLoading] = useState(false);
 
   const { isLoading, dispatch } = useAuthState();
-  const isSocialLoading = useAppSelector((state) => state.auth.isSocialLoading);
   const businessName = useAppSelector(selectBusinessName);
-  const isAnyLoading = isLoading || isSocialLoading || isTelegramLoading;
+  const isAnyLoading = isLoading;
 
   const registerForm = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -101,38 +95,6 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
     }
   }
 
-  const handleTelegramAuth = async (telegramData: TelegramAuthData) => {
-    setIsTelegramLoading(true);
-    try {
-      const result = await dispatch(
-        telegramAuthenticateService({ telegramData, userType: "CUSTOMER" }),
-      ).unwrap();
-
-      if (result?.userType === "OWNER") {
-        showToast.error("❌ Owner accounts must use the Admin Login page");
-        const { clearAllTokens, clearAdminTokens } = await import("@/utils/local-storage/token");
-        const { clearUserInfo, clearAdminUserInfo } = await import("@/utils/local-storage/userInfo");
-        clearAllTokens();
-        clearAdminTokens();
-        clearUserInfo();
-        clearAdminUserInfo();
-        setIsTelegramLoading(false);
-        return;
-      }
-
-      if (result) {
-        showToast.success(
-          result.isNewUser ? "Welcome! Your account has been created." : "Welcome back!",
-        );
-        onOpenChange(false);
-        window.location.reload();
-      }
-    } catch (err: any) {
-      showToast.error(err || "Telegram login failed. Please try again.");
-    } finally {
-      setIsTelegramLoading(false);
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -230,15 +192,6 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
           </DialogFooter>
 
           <Divider />
-
-          <TelegramLoginButton
-            botName={SocialAuthConfig.TELEGRAM_BOT_NAME}
-            botId={SocialAuthConfig.TELEGRAM_BOT_ID}
-            onAuth={handleTelegramAuth}
-            disabled={isAnyLoading}
-            loading={isTelegramLoading}
-            className="w-full"
-          />
 
           <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}

@@ -45,7 +45,6 @@ import { clearToken } from "@/utils/local-storage/token";
 import { CustomAvatar } from "@/components/shared/avator/custom-avator";
 import { isBase64Image, uploadImage } from "@/utils/common/upload-image";
 import { clearUserInfo } from "@/utils/local-storage/userInfo";
-import { TelegramSyncCard } from "@/components/shared/telegram/telegram-sync-card";
 import Link from "next/link";
 import { Loading } from "@/components/shared/common/loading";
 import { DisplayField } from "@/components/shared/form-field/display-field";
@@ -1458,11 +1457,6 @@ export default function AdminProfilePage() {
           <div className="w-full space-y-4">
             {/* Connected Accounts */}
             <div>
-              <h3 className="text-sm font-medium text-primary mb-3 flex items-center gap-2 font-semibold">
-                <Link2 className="h-4 w-4" />
-                Connected Accounts
-              </h3>
-              <TelegramSyncCard socialSync={socialSync} />
             </div>
 
             {/* Active Sessions */}
