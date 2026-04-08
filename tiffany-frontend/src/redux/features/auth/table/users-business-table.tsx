@@ -118,16 +118,14 @@ export const userBusinessTableColumns = ({
       ),
     },
     {
-      key: "roles",
+      key: "userRole",
       label: "Role",
       minWidth: "10px",
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
         <span className="text-xs text-muted-foreground">
-          {user.roles?.length > 0
-            ? user.roles.map((role: string) => formatEnumValue(role)).join(", ")
-            : "---"}
+          {user.userRole ? formatEnumValue(user.userRole) : "---"}
         </span>
       ),
     },
