@@ -1,6 +1,9 @@
 -- ============================================================================
 -- TIFFANY E-MENU PLATFORM - LARGE SCALE TEST DATA
 -- ============================================================================
+-- DEFAULT PASSWORD FOR ALL USERS: 88889999
+-- Password Hash (bcrypt): $2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lm
+--
 -- Users: 60,001 total
 --   - 20,000 ADMIN users (UserType: OWNER, UserRole: ADMIN)
 --   - 20,000 STAFF users (UserType: OWNER, UserRole: STAFF)
@@ -57,7 +60,7 @@ INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, 
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'admin' || i || '@tiffany.com',
-    '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK',
+    '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lm',
     'OWNER', 'ACTIVE', 'ACTIVE', 'ADMIN'
 FROM generate_series(1, 20000) AS t(i);
 
@@ -66,20 +69,20 @@ INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, 
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'staff' || i || '@tiffany.com',
-    '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK',
+    '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lm',
     'OWNER', 'ACTIVE', 'ACTIVE', 'STAFF'
 FROM generate_series(1, 20000) AS t(i);
 
 -- Insert 20,001 CUSTOMER users (CUSTOMER type with CUSTOMER role)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status, user_role)
 VALUES
-('550e8400-e29b-41d4-a716-446655550002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor21@gmail.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE', 'CUSTOMER');
+('550e8400-e29b-41d4-a716-446655550002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor21@gmail.com', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lm', 'CUSTOMER', 'ACTIVE', 'ACTIVE', 'CUSTOMER');
 
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status, user_role)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'customer' || i || '@test.com',
-    '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK',
+    '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lm',
     'CUSTOMER', 'ACTIVE', 'ACTIVE', 'CUSTOMER'
 FROM generate_series(1, 20000) AS t(i);
 
