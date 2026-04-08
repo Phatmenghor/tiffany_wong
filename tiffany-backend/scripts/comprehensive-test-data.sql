@@ -197,3 +197,28 @@ VALUES
 -- ============================================================================
 -- END OF LARGE SCALE TEST DATA
 -- ============================================================================
+
+-- Count all records in every table
+SELECT 'banners' as table_name, COUNT(*) as record_count FROM banners
+UNION ALL SELECT 'blacklisted_tokens', COUNT(*) FROM blacklisted_tokens
+UNION ALL SELECT 'business_hours', COUNT(*) FROM business_hours
+UNION ALL SELECT 'cart_items', COUNT(*) FROM cart_items
+UNION ALL SELECT 'carts', COUNT(*) FROM carts
+UNION ALL SELECT 'categories', COUNT(*) FROM categories
+UNION ALL SELECT 'images', COUNT(*) FROM images
+UNION ALL SELECT 'order_counters', COUNT(*) FROM order_counters
+UNION ALL SELECT 'order_delivery_addresses', COUNT(*) FROM order_delivery_addresses
+UNION ALL SELECT 'order_items', COUNT(*) FROM order_items
+UNION ALL SELECT 'order_status_history', COUNT(*) FROM order_status_history
+UNION ALL SELECT 'orders', COUNT(*) FROM orders
+UNION ALL SELECT 'product_favorites', COUNT(*) FROM product_favorites
+UNION ALL SELECT 'product_images', COUNT(*) FROM product_images
+UNION ALL SELECT 'product_sizes', COUNT(*) FROM product_sizes
+UNION ALL SELECT 'products', COUNT(*) FROM products
+UNION ALL SELECT 'reference_counters', COUNT(*) FROM reference_counters
+UNION ALL SELECT 'refresh_tokens', COUNT(*) FROM refresh_tokens
+UNION ALL SELECT 'social_media', COUNT(*) FROM social_media
+UNION ALL SELECT 'system_settings', COUNT(*) FROM system_settings
+UNION ALL SELECT 'user_profiles', COUNT(*) FROM user_profiles
+UNION ALL SELECT 'users', COUNT(*) FROM users
+ORDER BY table_name;
