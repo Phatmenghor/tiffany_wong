@@ -74,7 +74,17 @@ public interface ProductMapper {
 
     @AfterMapping
     default void calculateListDtoDisplayFields(Product product, @MappingTarget ProductListDto dto) {
-        calculateDisplayFields(product, dto);
+        boolean hasSizes = product.getSizes() != null && !product.getSizes().isEmpty();
+        dto.setHasSizes(hasSizes);
+
+        if (hasSizes) {
+            // When product has sizes, clear product-level promotion fields
+            // (price is not in ListDto but we set hasSizes)
+            calculateDisplayFieldsFromSizes(product, dto);
+            dto.setHasActivePromotion(hasActivePromotionInSizes(product));
+        } else {
+            calculateDisplayFields(product, dto);
+        }
     }
 
     List<ProductListDto> toListDtos(List<Product> products);
@@ -95,8 +105,25 @@ public interface ProductMapper {
 
     @AfterMapping
     default void calculateDetailDtoFields(Product product, @MappingTarget ProductDetailDto dto) {
-        calculateDisplayFields(product, dto);
-        dto.setHasPromotion(isPromotionActive(product));
+        boolean hasSizes = product.getSizes() != null && !product.getSizes().isEmpty();
+        dto.setHasSizes(hasSizes);
+
+        if (hasSizes) {
+            // When product has sizes, clear product-level promotion fields
+            dto.setPrice(null);
+            dto.setPromotionType(null);
+            dto.setPromotionValue(null);
+            dto.setPromotionFromDate(null);
+            dto.setPromotionToDate(null);
+
+            // Calculate display fields from sizes
+            calculateDisplayFieldsFromSizes(product, dto);
+            dto.setHasPromotion(hasActivePromotionInSizes(product));
+        } else {
+            // When product doesn't have sizes, use product-level fields
+            calculateDisplayFields(product, dto);
+            dto.setHasPromotion(isPromotionActive(product));
+        }
     }
 
     List<ProductDetailDto> toDetailDtos(List<Product> products);
@@ -161,6 +188,141 @@ return promotionType != null ? promotionType.name() : null;
             dto.setDisplayPromotionValue(null);
             dto.setDisplayPromotionFromDate(null);
             dto.setDisplayPromotionToDate(null);
+        }
+    }
+
+    /**
+     * Calculate display fields for products with sizes (DetailDto version)
+     * Uses size with active promotion if any, otherwise uses cheapest size
+     */
+    default void calculateDisplayFieldsFromSizes(Product product, ProductDetailDto dto) {
+        if (product.getSizes() == null || product.getSizes().isEmpty()) {
+            dto.setDisplayPrice(java.math.BigDecimal.ZERO);
+            dto.setDisplayOriginPrice(java.math.BigDecimal.ZERO);
+            return;
+        }
+
+        // Find size with active promotion
+        var sizeWithPromotion = product.getSizes().stream()
+                .filter(this::isSizePromotionActive)
+                .findFirst();
+
+        if (sizeWithPromotion.isPresent()) {
+            var size = sizeWithPromotion.get();
+            dto.setDisplayOriginPrice(size.getPrice());
+            dto.setDisplayPrice(getSizeFinalPrice(size));
+            dto.setDisplayPromotionType(promotionTypeToString(size.getPromotionType()));
+            dto.setDisplayPromotionValue(size.getPromotionValue());
+            dto.setDisplayPromotionFromDate(size.getPromotionFromDate());
+            dto.setDisplayPromotionToDate(size.getPromotionToDate());
+        } else {
+            // Use cheapest size
+            var cheapestSize = product.getSizes().stream()
+                    .min(java.util.Comparator.comparing(com.tiffany.features.main.models.ProductSize::getPrice))
+                    .orElse(product.getSizes().get(0));
+
+            dto.setDisplayOriginPrice(cheapestSize.getPrice());
+            dto.setDisplayPrice(cheapestSize.getPrice());
+            dto.setDisplayPromotionType(null);
+            dto.setDisplayPromotionValue(null);
+            dto.setDisplayPromotionFromDate(null);
+            dto.setDisplayPromotionToDate(null);
+        }
+    }
+
+    /**
+     * Calculate display fields for products with sizes (ListDto version)
+     * Uses size with active promotion if any, otherwise uses cheapest size
+     */
+    default void calculateDisplayFieldsFromSizes(Product product, ProductListDto dto) {
+        if (product.getSizes() == null || product.getSizes().isEmpty()) {
+            dto.setDisplayPrice(java.math.BigDecimal.ZERO);
+            dto.setDisplayOriginPrice(java.math.BigDecimal.ZERO);
+            return;
+        }
+
+        // Find size with active promotion
+        var sizeWithPromotion = product.getSizes().stream()
+                .filter(this::isSizePromotionActive)
+                .findFirst();
+
+        if (sizeWithPromotion.isPresent()) {
+            var size = sizeWithPromotion.get();
+            dto.setDisplayOriginPrice(size.getPrice());
+            dto.setDisplayPrice(getSizeFinalPrice(size));
+            dto.setDisplayPromotionType(promotionTypeToString(size.getPromotionType()));
+            dto.setDisplayPromotionValue(size.getPromotionValue());
+            dto.setDisplayPromotionFromDate(size.getPromotionFromDate());
+            dto.setDisplayPromotionToDate(size.getPromotionToDate());
+        } else {
+            // Use cheapest size
+            var cheapestSize = product.getSizes().stream()
+                    .min(java.util.Comparator.comparing(com.tiffany.features.main.models.ProductSize::getPrice))
+                    .orElse(product.getSizes().get(0));
+
+            dto.setDisplayOriginPrice(cheapestSize.getPrice());
+            dto.setDisplayPrice(cheapestSize.getPrice());
+            dto.setDisplayPromotionType(null);
+            dto.setDisplayPromotionValue(null);
+            dto.setDisplayPromotionFromDate(null);
+            dto.setDisplayPromotionToDate(null);
+        }
+    }
+
+    /**
+     * Check if any size in product has active promotion
+     */
+    default boolean hasActivePromotionInSizes(Product product) {
+        if (product.getSizes() == null) {
+            return false;
+        }
+        return product.getSizes().stream().anyMatch(this::isSizePromotionActive);
+    }
+
+    /**
+     * Check if a size promotion is active
+     */
+    default boolean isSizePromotionActive(com.tiffany.features.main.models.ProductSize size) {
+        if (size.getPromotionValue() == null || size.getPromotionType() == null) {
+            return false;
+        }
+
+        LocalDateTime today = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+
+        if (size.getPromotionFromDate() != null && today.isBefore(size.getPromotionFromDate().truncatedTo(ChronoUnit.DAYS))) {
+            return false;
+        }
+
+        if (size.getPromotionToDate() != null && today.isAfter(size.getPromotionToDate().truncatedTo(ChronoUnit.DAYS))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Calculate final price for a size based on its promotion
+     */
+    default java.math.BigDecimal getSizeFinalPrice(com.tiffany.features.main.models.ProductSize size) {
+        if (!isSizePromotionActive(size)) {
+            return size.getPrice() != null ? size.getPrice() : java.math.BigDecimal.ZERO;
+        }
+
+        java.math.BigDecimal basePrice = size.getPrice() != null ? size.getPrice() : java.math.BigDecimal.ZERO;
+
+        switch (size.getPromotionType()) {
+            case PERCENTAGE -> {
+                java.math.BigDecimal discount = basePrice.multiply(size.getPromotionValue())
+                        .divide(java.math.BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP);
+                return basePrice.subtract(discount);
+            }
+            case FIXED_AMOUNT -> {
+                java.math.BigDecimal finalPrice = basePrice.subtract(size.getPromotionValue());
+                return finalPrice.compareTo(java.math.BigDecimal.ZERO) < 0 ? java.math.BigDecimal.ZERO : finalPrice;
+            }
+            default -> {
+                return basePrice;
+            }
         }
     }
 
