@@ -182,10 +182,10 @@ FROM generate_series(1, 20000) AS t(i);
 -- ============================================================================
 -- 10. REFERENCE COUNTERS
 -- ============================================================================
-INSERT INTO reference_counters (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, reference_type, current_value)
+INSERT INTO reference_counters (entity_type, counter_date, counter_value)
 VALUES
-('550e8400-e29b-41d4-a716-446655880001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'ORDER', 20000),
-('550e8400-e29b-41d4-a716-446655880002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'INVOICE', 20000);
+('ORDER', NOW()::date, 20000),
+('INVOICE', NOW()::date, 20000);
 
 -- ============================================================================
 -- 11. SYSTEM SETTINGS (Full configuration)
