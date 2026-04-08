@@ -7,8 +7,6 @@ import java.util.UUID;
 @Data
 public class OrderItemResponse {
     private UUID id;
-
-    // Product info grouped for easy identification
     private OrderItemProductInfo product;
 
     @Data

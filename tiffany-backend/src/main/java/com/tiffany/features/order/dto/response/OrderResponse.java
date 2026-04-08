@@ -12,24 +12,16 @@ import java.util.List;
 @Data
 public class OrderResponse extends BaseAuditResponse {
     private String orderNumber;
-
-    // Customer info - from Users
     private String customerId;
     private String customerName;
-
-    // Order details
     private OrderStatus orderStatus;
     private String customerNote;
 
-    // Pricing breakdown
     private BigDecimal subtotal;
     private BigDecimal discountAmount;
     private BigDecimal deliveryFee;
     private BigDecimal totalAmount;
 
-    // Items
     private List<OrderItemResponse> items;
-
-    // Status history
     private List<OrderStatusHistoryResponse> statusHistory;
 }

@@ -4,15 +4,14 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 public class CartSummaryResponse {
     private List<CartItemResponse> items;
-    private Integer totalItems;                  // Total number of unique products
-    private Integer totalQuantity;               // Total quantity across all items
-    private BigDecimal subtotalBeforeDiscount;  // Sum of all items at original price
-    private BigDecimal subtotal;                 // Sum of all items after discount
-    private BigDecimal totalDiscount;            // Total discount on all items
-    private BigDecimal finalTotal;               // subtotal + fees (delivery, tax)
+    private Integer totalItems;
+    private Integer totalQuantity;
+    private BigDecimal subtotalBeforeDiscount;
+    private BigDecimal subtotal;
+    private BigDecimal totalDiscount;
+    private BigDecimal finalTotal;
 }

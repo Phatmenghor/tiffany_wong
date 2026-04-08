@@ -46,7 +46,6 @@ public class CartItem extends BaseUUIDEntity {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    // Business Methods - Always get current pricing from product/size
     public BigDecimal getCurrentPrice() {
         if (productSize != null) {
             return productSize.getPrice();
@@ -57,7 +56,6 @@ public class CartItem extends BaseUUIDEntity {
     }
 
     public BigDecimal getFinalPrice() {
-        // Always get current final price with active promotions
         if (productSize != null) {
             return productSize.getFinalPrice();
         } else if (product != null) {
@@ -78,26 +76,13 @@ public class CartItem extends BaseUUIDEntity {
         return productSize != null ? productSize.getName() : "Standard";
     }
 
-    // NEW: Added missing method for compilation
     public BigDecimal getUnitPrice() {
         return getCurrentPrice();
     }
 
-    // ✅ UPDATED: Single availability check that combines both availability and stock status
     public Boolean isAvailable() {
         if (product == null) return false;
         return product.isActive() && !product.getIsDeleted();
-    }
-
-    // ✅ DEPRECATED: Keep these methods for backward compatibility but use the single isAvailable() method
-    @Deprecated
-    public Boolean isProductAvailable() {
-        return isAvailable();
-    }
-
-    @Deprecated
-    public Boolean isProductInStock() {
-        return isAvailable();
     }
 
     public String getUnavailabilityReason() {
@@ -107,7 +92,6 @@ public class CartItem extends BaseUUIDEntity {
         return null;
     }
 
-    // Constructor for creating cart item (no price storage)
     public CartItem(UUID cartId, UUID productId, UUID productSizeId, Integer quantity) {
         this.cartId = cartId;
         this.productId = productId;

@@ -3,6 +3,7 @@ package com.tiffany.features.order.service.impl;
 import com.tiffany.exception.custom.NotFoundException;
 import com.tiffany.exception.custom.ValidationException;
 import com.tiffany.features.auth.models.User;
+import com.tiffany.features.order.dto.helper.CartCreateHelper;
 import com.tiffany.features.order.dto.request.CartItemCreateRequest;
 import com.tiffany.features.order.dto.response.CartSummaryResponse;
 import com.tiffany.features.order.mapper.CartMapper;
@@ -24,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -187,8 +190,7 @@ public class CartServiceImpl implements CartService {
             return existingCart.get();
         }
 
-        com.tiffany.features.order.dto.helper.CartCreateHelper helper =
-            new com.tiffany.features.order.dto.helper.CartCreateHelper(userId);
+        CartCreateHelper helper = new CartCreateHelper(userId);
         Cart newCart = cartMapper.createFromHelper(helper);
         Cart savedCart = cartRepository.save(newCart);
 
@@ -213,18 +215,16 @@ public class CartServiceImpl implements CartService {
             return;
         }
 
-        // Keep track of (productId, productSizeId) pairs and their IDs
-        java.util.Map<String, java.util.UUID> latestByKey = new java.util.LinkedHashMap<>();
-        java.util.Map<String, java.time.LocalDateTime> latestTimeByKey = new java.util.LinkedHashMap<>();
-        java.util.List<java.util.UUID> duplicateIds = new java.util.ArrayList<>();
+        Map<String, UUID> latestByKey = new LinkedHashMap<>();
+        Map<String, LocalDateTime> latestTimeByKey = new LinkedHashMap<>();
+        List<UUID> duplicateIds = new ArrayList<>();
 
         for (CartItem item : cart.getItems()) {
             String key = item.getProductId() + "|" + item.getProductSizeId();
-            java.time.LocalDateTime itemTime = item.getCreatedAt();
+            LocalDateTime itemTime = item.getCreatedAt();
 
             if (latestByKey.containsKey(key)) {
-                // Check which one is newer
-                java.time.LocalDateTime existingTime = latestTimeByKey.get(key);
+                LocalDateTime existingTime = latestTimeByKey.get(key);
                 if (itemTime != null && existingTime != null && itemTime.isAfter(existingTime)) {
                     // Current item is newer, mark old one as duplicate
                     duplicateIds.add(latestByKey.get(key));
