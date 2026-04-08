@@ -1,7 +1,6 @@
 package com.tiffany.features.main.mapper;
 
 import com.tiffany.enums.product.PromotionType;
-import com.tiffany.features.main.dto.helper.ProductCreateHelper;
 import com.tiffany.features.main.dto.request.ProductCreateDto;
 import com.tiffany.features.main.dto.response.ProductDetailDto;
 import com.tiffany.features.main.dto.response.ProductListDto;

@@ -16,7 +16,6 @@ import com.tiffany.features.auth.models.User;
 import com.tiffany.features.auth.repository.UserRepository;
 import com.tiffany.features.auth.service.AuthService;
 import com.tiffany.features.auth.service.RefreshTokenService;
-import com.tiffany.features.auth.service.UserSessionService;
 import com.tiffany.features.auth.service.UserValidationService;
 import com.tiffany.security.SecurityUtils;
 import com.tiffany.security.jwt.JWTGenerator;
@@ -50,7 +49,6 @@ public class AuthServiceImpl implements AuthService {
     private final SecurityUtils securityUtils;
     private final TokenBlacklistService tokenBlacklistService;
     private final RefreshTokenService refreshTokenService;
-    private final UserSessionService userSessionService;
     private final UserValidationService userValidationService;
 
     /**
@@ -86,12 +84,6 @@ public class AuthServiceImpl implements AuthService {
             String ipAddress = getClientIpAddress();
             String deviceInfo = getDeviceInfo();
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(user, ipAddress, deviceInfo);
-
-            // Create user session for device tracking
-            HttpServletRequest httpRequest = getHttpServletRequest();
-            if (httpRequest != null) {
-                userSessionService.createSession(user, refreshToken, httpRequest);
-            }
 
             // Build login response
             LoginResponse response = userMapper.toLoginResponse(user, accessToken);
@@ -307,12 +299,6 @@ public class AuthServiceImpl implements AuthService {
         String ipAddress = getClientIpAddress();
         String deviceInfo = getDeviceInfo();
         RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user, ipAddress, deviceInfo);
-
-        // Create/update user session for device tracking
-        HttpServletRequest httpRequest = getHttpServletRequest();
-        if (httpRequest != null) {
-            userSessionService.createSession(user, newRefreshToken, httpRequest);
-        }
 
         // Revoke old refresh token
         refreshTokenService.revokeRefreshToken(refreshTokenString, "TOKEN_REFRESH");

@@ -39,13 +39,6 @@ public interface UserMapper {
     @Mapping(target = "profileImageUrl",   source = "profile.profileImageUrl")
     UserDetailResponse toDetailResponse(User user);
 
-    @Mapping(target = "firstName",         source = "profile.firstName")
-    @Mapping(target = "lastName",          source = "profile.lastName")
-    @Mapping(target = "email",             source = "profile.email")
-    @Mapping(target = "phoneNumber",       source = "profile.phoneNumber")
-    @Mapping(target = "profileImageUrl",   source = "profile.profileImageUrl")
-    UserResponse toUserBasicInfo(User user);
-
     @Mapping(target = "userId",            source = "user.id")
     @Mapping(target = "fullName",          expression = "java(user.getFullName())")
     @Mapping(target = "accessToken",       source = "token")
