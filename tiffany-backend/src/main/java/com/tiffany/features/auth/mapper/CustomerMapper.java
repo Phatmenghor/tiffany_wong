@@ -15,7 +15,6 @@ import java.util.List;
 public interface CustomerMapper {
 
     @Mapping(target = "userType", constant = "CUSTOMER")
-    @Mapping(target = "roles", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "accountStatus", constant = "ACTIVE")
     User toEntity(UserCreateRequest request);
@@ -28,7 +27,6 @@ public interface CustomerMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "userType", ignore = true)
-    @Mapping(target = "roles", ignore = true)
     @Mapping(target = "accountStatus", ignore = true)
     void updateEntity(UserUpdateRequest request, @MappingTarget User user);
 
@@ -38,7 +36,6 @@ public interface CustomerMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "userType", ignore = true)
-    @Mapping(target = "roles", ignore = true)
     @Mapping(target = "accountStatus", ignore = true)
     void updateCurrentUserProfile(UserUpdateRequest request, @MappingTarget User user);
 

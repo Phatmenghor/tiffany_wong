@@ -10,7 +10,6 @@ import com.tiffany.features.auth.dto.response.UserResponse;
 import com.tiffany.features.auth.dto.update.UserUpdateRequest;
 import com.tiffany.features.auth.mapper.UserMapper;
 import com.tiffany.features.auth.models.*;
-import com.tiffany.features.auth.repository.RoleRepository;
 import com.tiffany.features.auth.repository.UserRepository;
 import com.tiffany.features.auth.service.UserService;
 import com.tiffany.security.SecurityUtils;
@@ -34,7 +33,6 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtils securityUtils;
@@ -48,13 +46,8 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("User identifier already exists");
         }
 
-        List<Role> roles = roleRepository.findByNameInAndIsDeletedFalse(req.getRoles());
-        if (roles.size() != req.getRoles().size()) throw new ValidationException("One or more roles not found");
-        validateRoleUserTypeCompatibility(roles, req.getUserType());
-
         User user = userMapper.toEntity(req);
         user.setPassword(passwordEncoder.encode(req.getPassword()));
-        user.setRoles(roles);
         User saved = userRepository.save(user);
 
         // Profile
@@ -102,14 +95,6 @@ public class UserServiceImpl implements UserService {
         log.info("Updating user: {}", userId);
         User user = userRepository.findByIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (req.getRoles() != null && !req.getRoles().isEmpty()) {
-            List<Role> roles = roleRepository.findByNameInAndIsDeletedFalse(req.getRoles());
-            if (roles.size() != req.getRoles().size()) throw new ValidationException("One or more roles not found");
-            validateRoleUserTypeCompatibility(roles, user.getUserType());
-            user.getRoles().clear();
-            user.getRoles().addAll(roles);
-        }
 
         userMapper.updateEntity(req, user);
 
@@ -160,15 +145,6 @@ public class UserServiceImpl implements UserService {
 
 
     // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private void validateRoleUserTypeCompatibility(List<Role> roles, UserType userType) {
-        roles.forEach(r -> {
-            if (!r.isCompatibleWithUserType(userType)) {
-                throw new ValidationException(String.format(
-                        "Role '%s' is not compatible with user type '%s'.", r.getName(), userType));
-            }
-        });
-    }
 
     private <T> List<T> nullIfEmpty(List<T> list) {
         return (list != null && !list.isEmpty()) ? list : null;

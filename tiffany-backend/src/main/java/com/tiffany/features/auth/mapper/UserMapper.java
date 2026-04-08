@@ -57,17 +57,14 @@ public interface UserMapper {
     List<UserResponse> toResponseList(List<User> users);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "roles",             ignore = true)
     @Mapping(target = "password",          ignore = true)
     @Mapping(target = "profile",           ignore = true)
     void updateEntity(UserUpdateRequest request, @MappingTarget User user);
 
-    @Mapping(target = "roles",             ignore = true)
     @Mapping(target = "password",          ignore = true)
     @Mapping(target = "profile",           ignore = true)
     User toEntity(UserCreateRequest request);
 
-    @Mapping(target = "roles",             ignore = true)
     @Mapping(target = "password",          ignore = true)
     @Mapping(target = "profile",           ignore = true)
     User toEntity(RegisterRequest request);

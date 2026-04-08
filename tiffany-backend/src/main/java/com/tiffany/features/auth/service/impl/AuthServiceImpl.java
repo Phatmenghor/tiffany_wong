@@ -12,9 +12,7 @@ import com.tiffany.features.auth.dto.response.RefreshTokenResponse;
 import com.tiffany.features.auth.dto.response.UserResponse;
 import com.tiffany.features.auth.mapper.UserMapper;
 import com.tiffany.features.auth.models.RefreshToken;
-import com.tiffany.features.auth.models.Role;
 import com.tiffany.features.auth.models.User;
-import com.tiffany.features.auth.repository.RoleRepository;
 import com.tiffany.features.auth.repository.UserRepository;
 import com.tiffany.features.auth.service.AuthService;
 import com.tiffany.features.auth.service.RefreshTokenService;
@@ -45,7 +43,6 @@ import java.util.UUID;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -130,16 +127,6 @@ public class AuthServiceImpl implements AuthService {
         User user = userMapper.toEntity(request);
         user.setUserType(UserType.CUSTOMER);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        Role customerRole = roleRepository.findByNameAndIsDeletedFalse("CUSTOMER")
-                .orElseThrow(() -> new ValidationException("Customer role not found"));
-
-        // Validate role is compatible with CUSTOMER user type
-        if (!customerRole.isCompatibleWithUserType(UserType.CUSTOMER)) {
-            throw new ValidationException("CUSTOMER role is not properly configured for CUSTOMER user type");
-        }
-
-        user.setRoles(List.of(customerRole));
 
         User savedUser = userRepository.save(user);
 
@@ -313,14 +300,8 @@ public class AuthServiceImpl implements AuthService {
         // Validate account status
         securityUtils.validateAccountStatus(user);
 
-
-        // Get user roles
-        List<String> roles = user.getRoles().stream()
-                .map(Role::getName)
-                .toList();
-
         // Generate new access token
-        String newAccessToken = jwtGenerator.generateAccessTokenFromUsername(user.getUserIdentifier(), roles);
+        String newAccessToken = jwtGenerator.generateAccessToken(authentication);
 
         // Generate a new refresh token (rotate refresh tokens for better security)
         String ipAddress = getClientIpAddress();
