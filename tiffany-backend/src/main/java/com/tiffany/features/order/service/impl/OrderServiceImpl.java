@@ -1,33 +1,33 @@
 package com.tiffany.features.order.service.impl;
 
 import com.tiffany.enums.order.OrderStatus;
+import com.tiffany.enums.payment.PaymentMethod;
 import com.tiffany.enums.payment.PaymentStatus;
 import com.tiffany.exception.custom.NotFoundException;
 import com.tiffany.exception.custom.ValidationException;
 import com.tiffany.features.auth.models.User;
+import com.tiffany.features.main.models.Product;
+import com.tiffany.features.main.repository.ProductRepository;
 import com.tiffany.features.order.dto.filter.OrderFilterRequest;
 import com.tiffany.features.order.dto.helper.OrderCreateHelper;
 import com.tiffany.features.order.dto.helper.OrderItemCreateHelper;
 import com.tiffany.features.order.dto.request.OrderCreateRequest;
+import com.tiffany.features.order.dto.response.CartSummaryResponse;
 import com.tiffany.features.order.dto.response.OrderResponse;
 import com.tiffany.features.order.dto.update.OrderUpdateRequest;
-import com.tiffany.enums.payment.PaymentMethod;
-import com.tiffany.features.main.models.Product;
-import com.tiffany.features.main.repository.ProductRepository;
 import com.tiffany.features.order.mapper.OrderMapper;
 import com.tiffany.features.order.models.Cart;
 import com.tiffany.features.order.models.Order;
-import com.tiffany.features.order.models.OrderItem;
 import com.tiffany.features.order.models.OrderDeliveryAddress;
+import com.tiffany.features.order.models.OrderItem;
+import com.tiffany.features.order.models.OrderStatusHistory;
 import com.tiffany.features.order.repository.CartRepository;
+import com.tiffany.features.order.repository.OrderDeliveryAddressRepository;
 import com.tiffany.features.order.repository.OrderRepository;
 import com.tiffany.features.order.repository.OrderStatusHistoryRepository;
-import com.tiffany.features.order.repository.OrderDeliveryAddressRepository;
-import com.tiffany.features.order.models.OrderStatusHistory;
 import com.tiffany.features.order.service.OrderService;
 import com.tiffany.security.SecurityUtils;
 import com.tiffany.shared.dto.PaginationResponse;
-import com.tiffany.shared.generate.ReferenceNumberGenerator;
 import com.tiffany.shared.generate.OrderNumberGenerator;
 import com.tiffany.shared.mapper.PaginationMapper;
 import com.tiffany.shared.pagination.PaginationUtils;
@@ -56,7 +56,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDeliveryAddressRepository orderDeliveryAddressRepository;
     private final OrderMapper orderMapper;
     private final SecurityUtils securityUtils;
-    private final ReferenceNumberGenerator referenceNumberGenerator;
     private final OrderNumberGenerator orderNumberGenerator;
     private final PaginationMapper paginationMapper;
 
@@ -313,14 +312,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private Order createBaseOrder(OrderCreateRequest request, UUID customerId) {
-        // Generate order number (ORD-YYYYMMDD-XXXXX)
         String orderNumber = orderNumberGenerator.generateOrderNumber();
         OrderCreateHelper helper = orderMapper.buildOrderHelper(request, customerId, orderNumber);
-        Order order = orderMapper.createFromHelper(helper);
-        if (request.getOrderFrom() != null) {
-            order.setOrderFrom(request.getOrderFrom());
-        }
-        return order;
+        return orderMapper.createFromHelper(helper);
     }
 
     private void createOrderItemsFromCart(UUID orderId, Cart cart) {
@@ -369,43 +363,25 @@ public class OrderServiceImpl implements OrderService {
 
     private void createOrderItemsFromCartSummary(UUID orderId, Object cartSummary,
                                                   OrderUpdateRequest.PricingInfo pricingInfo) {
-        // Handle both CartSummaryResponse and CartSummary
-        if (!(cartSummary instanceof com.tiffany.features.order.dto.response.CartSummaryResponse)) {
+        if (!(cartSummary instanceof CartSummaryResponse)) {
             log.warn("Invalid cart summary type: {}", cartSummary.getClass().getName());
             return;
         }
 
-        com.tiffany.features.order.dto.response.CartSummaryResponse cartResponse =
-                (com.tiffany.features.order.dto.response.CartSummaryResponse) cartSummary;
-
-        log.debug("🛒 [CART SUMMARY] Processing {} items for order: {}", cartResponse.getItems().size(), orderId);
+        CartSummaryResponse cartResponse = (CartSummaryResponse) cartSummary;
+        log.info("Processing cart items - count: {}, orderId: {}", cartResponse.getItems().size(), orderId);
 
         BigDecimal subtotal = cartResponse.getSubtotal() != null ? cartResponse.getSubtotal() : BigDecimal.ZERO;
         BigDecimal discountAmount = cartResponse.getTotalDiscount() != null ? cartResponse.getTotalDiscount() : BigDecimal.ZERO;
 
-        log.debug("💰 [PRICING] Subtotal: {}, Discount: {}", subtotal, discountAmount);
-
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> {
-                    log.error("❌ [ERROR] Order not found: {}", orderId);
-                    return new NotFoundException("Order not found: " + orderId);
-                });
+                .orElseThrow(() -> new NotFoundException("Order not found: " + orderId));
 
-        log.debug("✅ [ORDER LOADED] Order ID: {}, Items List: {}", orderId, order.getItems() != null ? "initialized" : "null");
-
-        int itemCount = 0;
         for (var item : cartResponse.getItems()) {
-            itemCount++;
-
-            // Get product for SKU/barcode
             Product product = productRepository.findById(item.getProductId())
                     .orElseThrow(() -> new NotFoundException("Product not found: " + item.getProductId()));
 
-            // Use after snapshot for final pricing if available (new audit trail structure)
             BigDecimal finalPrice = item.getAfter() != null ? item.getAfter().getFinalPrice() : item.getFinalPrice();
-
-            log.debug("📦 [ITEM {}] Product: {} (ID: {}), Qty: {}, Price: {}, HasChangeFromPOS: {}",
-                itemCount, item.getProductName(), item.getProductId(), item.getQuantity(), finalPrice, item.getHadChangeFromPOS());
 
             OrderItemCreateHelper helper = OrderItemCreateHelper.builder()
                     .orderId(orderId)
@@ -437,11 +413,7 @@ public class OrderServiceImpl implements OrderService {
 
             orderItem.setOrder(order);
             order.getItems().add(orderItem);
-
-            // Save the order item
             orderRepository.save(order);
-
-            log.debug("✅ [ITEM ADDED] Item {} added to order, total items now: {}", itemCount, order.getItems().size());
         }
 
         order.setSubtotal(subtotal);
@@ -452,31 +424,22 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal totalAmount = subtotal.subtract(discountAmount).add(deliveryFee).add(taxAmount);
         order.setTotalAmount(totalAmount);
 
-        // Store order-level pricing audit trail if provided
         if (pricingInfo != null) {
-            // Always set hadOrderLevelChangeFromPOS (true/false, never null)
             order.setHadOrderLevelChangeFromPOS(pricingInfo.getHadOrderLevelChangeFromPOS() != null && pricingInfo.getHadOrderLevelChangeFromPOS());
 
-            // Store the discount type (PERCENTAGE or FIXED_AMOUNT)
             if (pricingInfo.getDiscountType() != null && !pricingInfo.getDiscountType().isEmpty()) {
                 order.setDiscountType(pricingInfo.getDiscountType());
             }
 
-            // Store the reason for order-level changes
             if (pricingInfo.getOrderLevelChangeReason() != null && !pricingInfo.getOrderLevelChangeReason().isEmpty()) {
                 order.setOrderLevelChangeReason(pricingInfo.getOrderLevelChangeReason());
             } else if (!order.getHadOrderLevelChangeFromPOS()) {
-                // Set default reason if no change occurred
                 order.setOrderLevelChangeReason("No order-level changes from POS");
             }
-            // Note: Pricing snapshots are reconstructed from order fields (subtotal, discount, delivery, tax, total) when needed
         }
 
-        log.info("💾 [SAVING ORDER] Order ID: {}, Items: {}, Total: {} (Subtotal: {}, Discount: {}, Delivery: {}, Tax: {})",
-            orderId, order.getItems().size(), totalAmount, subtotal, discountAmount, deliveryFee, taxAmount);
-
+        log.info("Order items saved - orderId: {}, itemCount: {}, total: {}", orderId, order.getItems().size(), totalAmount);
         orderRepository.save(order);
-        log.info("✅ [ORDER ITEMS SAVED] Successfully saved {} items for order: {}", order.getItems().size(), orderId);
     }
 
     private void createPaymentRecord(Order order) {
@@ -496,7 +459,6 @@ public class OrderServiceImpl implements OrderService {
 
     private void createInitialOrderStatusHistory(Order order, UUID userId) {
         try {
-            // Create initial status history entry to track order creation
             User user = securityUtils.getCurrentUser();
             String changedByName = user != null ? user.getFullName() : "System";
 
@@ -504,15 +466,13 @@ public class OrderServiceImpl implements OrderService {
             history.setOrderId(order.getId());
             history.setOrderStatus(order.getOrderStatus());
             history.setChangedByUserId(userId);
-            history.setChangedByName(changedByName);  // Snapshot of user's name at time of change
+            history.setChangedByName(changedByName);
             history.setNote("Order created from checkout");
 
             orderStatusHistoryRepository.save(history);
-            log.debug("✅ [STATUS HISTORY] Created initial status history for order: {} with status: {} by user: {}",
-                order.getOrderNumber(), order.getOrderStatus(), changedByName);
+            log.info("Status history created - orderNumber: {}, status: {}", order.getOrderNumber(), order.getOrderStatus());
         } catch (Exception e) {
-            log.warn("⚠️  [STATUS HISTORY] Failed to create initial status history: {}", e.getMessage());
-            // Don't throw exception - order creation should not fail if history creation fails
+            log.warn("Failed to create status history: {}", e.getMessage());
         }
     }
 
@@ -527,21 +487,15 @@ public class OrderServiceImpl implements OrderService {
         // Stock deduction disabled - no-op method
     }
 
-    /**
-     * Create delivery address snapshot by storing reference to location
-     * Address details can be updated later through OrderUpdateRequest
-     */
     private OrderDeliveryAddress createDeliveryAddressSnapshot(UUID orderId, UUID addressId) {
         try {
-            // Create snapshot with reference to location
             OrderDeliveryAddress deliveryAddress = new OrderDeliveryAddress();
             deliveryAddress.setOrderId(orderId);
             deliveryAddress.setLocationId(addressId);
-
-            log.debug("✅ [DELIVERY ADDRESS SNAPSHOT] Created with location reference for order: {}", orderId);
+            log.info("Delivery address snapshot created - orderId: {}", orderId);
             return deliveryAddress;
         } catch (Exception e) {
-            log.error("❌ [ADDRESS ERROR] Error creating delivery address snapshot: {}", e.getMessage(), e);
+            log.error("Failed to create delivery address snapshot: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to create delivery address snapshot", e);
         }
     }
