@@ -470,20 +470,20 @@ BEGIN
 
     -- Print results
     RAISE NOTICE '';
-    RAISE NOTICE '[100%] DATA GENERATION COMPLETED SUCCESSFULLY!';
+    RAISE NOTICE '[100] DATA GENERATION COMPLETED SUCCESSFULLY!';
     RAISE NOTICE '';
     RAISE NOTICE '================================================';
     RAISE NOTICE 'FINAL STATISTICS';
     RAISE NOTICE '================================================';
-    RAISE NOTICE '📊 Users:             %', v_total_users;
-    RAISE NOTICE '📦 Products:          %', v_total_products;
-    RAISE NOTICE '📐 Product Sizes:     %', v_total_sizes;
-    RAISE NOTICE '🖼️  Product Images:    %', v_total_images;
-    RAISE NOTICE '🏷️  Categories:         %', v_total_categories;
-    RAISE NOTICE '🎯 Banners:           %', v_total_banners;
-    RAISE NOTICE '🛒 Shopping Carts:    %', v_total_carts;
-    RAISE NOTICE '📝 Orders:            %', v_total_orders;
-    RAISE NOTICE '📋 Order Items:       %', v_total_order_items;
+    RAISE NOTICE 'Users:             ' || v_total_users;
+    RAISE NOTICE 'Products:          ' || v_total_products;
+    RAISE NOTICE 'Product Sizes:     ' || v_total_sizes;
+    RAISE NOTICE 'Product Images:    ' || v_total_images;
+    RAISE NOTICE 'Categories:         ' || v_total_categories;
+    RAISE NOTICE 'Banners:           ' || v_total_banners;
+    RAISE NOTICE 'Shopping Carts:    ' || v_total_carts;
+    RAISE NOTICE 'Orders:            ' || v_total_orders;
+    RAISE NOTICE 'Order Items:       ' || v_total_order_items;
     RAISE NOTICE '';
     RAISE NOTICE '================================================';
     RAISE NOTICE 'TEST DATA READY FOR USE!';
