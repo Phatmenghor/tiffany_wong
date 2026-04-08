@@ -124,24 +124,24 @@ descriptions AS (
 This premium wireless mouse delivers reliable performance with fast Bluetooth connectivity, a comfortable grip for extended use, energy-efficient battery consumption, and wide compatibility across laptops, tablets, and desktops, ensuring a smooth and productive user experience anywhere.
 Designed for both style and functionality, this wireless mouse features a sleek modern look, responsive controls, stable connection, and durable build quality, making it perfect for professionals, students, and anyone who needs precision and convenience in daily computing tasks.
 Experience effortless navigation with this advanced wireless mouse that combines ergonomic comfort, high-precision tracking, long battery life, and universal compatibility, providing a reliable and efficient solution for work, study, and entertainment needs.
-This versatile Bluetooth mouse is built to enhance productivity with its lightweight design, smooth cursor control, strong wireless connection, and extended battery performance, making it an excellent choice for users who demand both performance and portability in one device.' as desc
+This versatile Bluetooth mouse is built to enhance productivity with its lightweight design, smooth cursor control, strong wireless connection, and extended battery performance, making it an excellent choice for users who demand both performance and portability in one device.' as description_text
     UNION ALL
     SELECT 2 as desc_id, 'Premium quality product engineered for excellence, combining innovative technology with elegant design. Features advanced ergonomic construction, superior durability, and seamless integration with modern systems.
 This exceptional product delivers outstanding performance across various environments, providing reliable functionality and consistent quality. Built with premium materials and precision engineering, it ensures longevity and user satisfaction.
 Experience superior comfort and functionality with this thoughtfully designed product. Perfect for professionals and everyday users alike, offering reliable performance that exceeds expectations.
 Engineered for maximum efficiency and user convenience, this product combines cutting-edge technology with practical design. Delivers exceptional value with outstanding build quality and performance.
-Invest in this premium product for reliable, long-lasting performance. Combines modern innovation with user-friendly design, making it the ideal choice for discerning customers.' as desc
+Invest in this premium product for reliable, long-lasting performance. Combines modern innovation with user-friendly design, making it the ideal choice for discerning customers.' as description_text
     UNION ALL
     SELECT 3 as desc_id, 'Discover excellence with this high-performance product designed for modern users. Features innovative technology, superior materials, and exceptional craftsmanship throughout.
 Built to deliver outstanding results in any situation, this product combines reliability with advanced functionality. Perfect for users seeking quality and performance in equal measure.
 Experience the difference that premium design and engineering make. This product offers exceptional value, combining cutting-edge features with intuitive usability.
 Crafted with precision and attention to detail, this product represents the pinnacle of quality manufacturing. Ideal for users who demand the best in performance and reliability.
-Transform your daily experience with this innovative product. Combines smart design with powerful functionality, providing reliable performance for all your needs.'as desc
+Transform your daily experience with this innovative product. Combines smart design with powerful functionality, providing reliable performance for all your needs.' as description_text
 )
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'Product ' || i,
-    (SELECT desc FROM descriptions WHERE desc_id = ((i - 1) % 3) + 1),
+    (SELECT description_text FROM descriptions WHERE desc_id = ((i - 1) % 3) + 1),
     'SKU-' || LPAD(i::text, 7, '0'),
     'BARCODE-' || LPAD(i::text, 10, '0'),
     (10 + random() * 500)::numeric(10,2),
