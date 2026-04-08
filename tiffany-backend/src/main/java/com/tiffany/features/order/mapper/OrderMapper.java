@@ -1,7 +1,5 @@
 package com.tiffany.features.order.mapper;
 
-import com.tiffany.enums.payment.PaymentMethod;
-import com.tiffany.enums.payment.PaymentStatus;
 import com.tiffany.features.main.models.Product;
 import com.tiffany.features.order.dto.helper.OrderCreateHelper;
 import com.tiffany.features.order.dto.helper.OrderItemCreateHelper;
@@ -60,22 +58,13 @@ public interface OrderMapper {
      * Helper to build OrderCreateHelper for checkout order
      */
     default OrderCreateHelper buildOrderHelper(OrderCreateRequest request, UUID customerId, String orderNumber) {
-        var builder = OrderCreateHelper.builder()
+        return OrderCreateHelper.builder()
                 .orderNumber(orderNumber)
                 .customerId(customerId)
                 .customerNote(request.getCustomerNote())
                 .subtotal(BigDecimal.ZERO)
-                .totalAmount(BigDecimal.ZERO);
-
-        if (request.getDeliveryOption() != null) {
-            builder.deliveryOptionName(request.getDeliveryOption().getName());
-            builder.deliveryOptionDescription(request.getDeliveryOption().getDescription());
-            builder.deliveryOptionImageUrl(request.getDeliveryOption().getImageUrl());
-            builder.deliveryOptionPrice(request.getDeliveryOption().getPrice());
-            builder.deliveryFee(request.getDeliveryOption().getPrice());
-        }
-
-        return builder.build();
+                .totalAmount(BigDecimal.ZERO)
+                .build();
     }
 
     /**

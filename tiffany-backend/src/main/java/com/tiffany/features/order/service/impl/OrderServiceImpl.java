@@ -1,8 +1,6 @@
 package com.tiffany.features.order.service.impl;
 
 import com.tiffany.enums.order.OrderStatus;
-import com.tiffany.enums.payment.PaymentMethod;
-import com.tiffany.enums.payment.PaymentStatus;
 import com.tiffany.exception.custom.NotFoundException;
 import com.tiffany.exception.custom.ValidationException;
 import com.tiffany.features.auth.models.User;
@@ -38,7 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -170,8 +167,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse updateOrder(UUID orderId, OrderUpdateRequest request) {
-        User currentUser = securityUtils.getCurrentUser();
-
         Order order = orderRepository.findByIdWithDetails(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
 
@@ -281,8 +276,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse deleteOrder(UUID orderId) {
-        User currentUser = securityUtils.getCurrentUser();
-
         Order order = orderRepository.findByIdWithDetails(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
 
