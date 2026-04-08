@@ -44,19 +44,6 @@ const registerSchema = z.object({
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-function Divider() {
-  return (
-    <div className="relative my-3">
-      <div className="absolute inset-0 flex items-center">
-        <span className="w-full border-t border-border/40" />
-      </div>
-      <div className="relative flex justify-center">
-        <span className="bg-background px-2 text-xs text-muted-foreground">or</span>
-      </div>
-    </div>
-  );
-}
-
 export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -190,8 +177,6 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
               {isLoading ? "Creating account..." : "Create Account"}
             </Button>
           </DialogFooter>
-
-          <Divider />
 
           <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}

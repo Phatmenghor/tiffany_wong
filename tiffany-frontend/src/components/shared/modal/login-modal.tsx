@@ -37,19 +37,6 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-function Divider() {
-  return (
-    <div className="relative my-3">
-      <div className="absolute inset-0 flex items-center">
-        <span className="w-full border-t border-border/40" />
-      </div>
-      <div className="relative flex justify-center">
-        <span className="bg-background px-2 text-xs text-muted-foreground">or</span>
-      </div>
-    </div>
-  );
-}
-
 export function LoginModal({ open, onOpenChange, onRegisterClick }: LoginModalProps) {
   const [showPassword, setShowPassword] = useState(false);
 
