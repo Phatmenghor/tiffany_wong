@@ -20,10 +20,6 @@ public class LoginResponse {
     private String profileImageUrl;
     private UserType userType;
     private List<String> roles;
-    private UUID businessId;
-    private String businessName;
-    private String businessStatus;
-    private Boolean isSubscriptionActive;
 
     // Telegram
     private Long telegramId;

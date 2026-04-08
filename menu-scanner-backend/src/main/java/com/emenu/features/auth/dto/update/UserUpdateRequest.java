@@ -15,7 +15,6 @@ public class UserUpdateRequest {
     // Account
     private AccountStatus accountStatus;
     private Status status;
-    private UUID businessId;
     private List<String> roles;
     private String remark;
 

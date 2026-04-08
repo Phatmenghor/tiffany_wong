@@ -26,17 +26,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByUserIdentifierAndUserTypeAndIsDeletedFalse(
             @Param("userIdentifier") String userIdentifier, @Param("userType") UserType userType);
 
-    @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.userIdentifier = :userIdentifier AND u.businessId = :businessId AND u.isDeleted = false")
-    boolean existsByUserIdentifierAndBusinessIdAndIsDeletedFalse(
-            @Param("userIdentifier") String userIdentifier, @Param("businessId") UUID businessId);
-
     @Query("SELECT u FROM User u WHERE u.userIdentifier = :userIdentifier AND u.userType = :userType AND u.isDeleted = false")
     Optional<User> findByUserIdentifierAndUserTypeAndIsDeletedFalse(
             @Param("userIdentifier") String userIdentifier, @Param("userType") UserType userType);
-
-    @Query("SELECT u FROM User u WHERE u.userIdentifier = :userIdentifier AND u.businessId = :businessId AND u.isDeleted = false")
-    Optional<User> findByUserIdentifierAndBusinessIdAndIsDeletedFalse(
-            @Param("userIdentifier") String userIdentifier, @Param("businessId") UUID businessId);
 
     Optional<User> findByIdAndIsDeletedFalse(UUID id);
 
@@ -60,9 +52,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             @Param("roles") List<String> roles,
             @Param("search") String search,
             Pageable pageable);
-
-    @Query("SELECT u FROM User u WHERE u.businessId = :businessId AND u.isDeleted = false")
-    List<User> findAllByBusinessIdAndIsDeletedFalse(@Param("businessId") UUID businessId);
 
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN u.roles r WHERE r.name = :role AND u.isDeleted = false")
     List<User> findByRoleAndIsDeletedFalse(@Param("role") String role);

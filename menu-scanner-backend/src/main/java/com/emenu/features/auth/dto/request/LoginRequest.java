@@ -5,10 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.util.UUID;
-
 /**
- * Login request with context for dynamic username uniqueness.
+ * Login request with user type for disambiguation.
  */
 @Data
 public class LoginRequest {
@@ -21,6 +19,4 @@ public class LoginRequest {
 
     @NotNull(message = "User type is required")
     private UserType userType;
-
-    private UUID businessId;
 }

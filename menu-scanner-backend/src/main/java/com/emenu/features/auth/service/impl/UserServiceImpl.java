@@ -10,10 +10,8 @@ import com.emenu.features.auth.dto.response.UserResponse;
 import com.emenu.features.auth.dto.update.UserUpdateRequest;
 import com.emenu.features.auth.mapper.UserMapper;
 import com.emenu.features.auth.models.*;
-import com.emenu.features.auth.repository.BusinessRepository;
 import com.emenu.features.auth.repository.RoleRepository;
 import com.emenu.features.auth.repository.UserRepository;
-import com.emenu.features.auth.service.BusinessService;
 import com.emenu.features.auth.service.UserService;
 import com.emenu.security.SecurityUtils;
 import com.emenu.shared.dto.PaginationResponse;
@@ -42,8 +40,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final BusinessRepository businessRepository;
-    private final BusinessService businessService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtils securityUtils;
@@ -55,13 +51,6 @@ public class UserServiceImpl implements UserService {
 
         if (userRepository.existsByUserIdentifierAndIsDeletedFalse(req.getUserIdentifier())) {
             throw new ValidationException("User identifier already exists");
-        }
-        if (req.getUserType() == UserType.BUSINESS_USER && req.getBusinessId() == null) {
-            throw new ValidationException("Business ID is required for BUSINESS_USER type");
-        }
-        if (req.getBusinessId() != null) {
-            businessRepository.findByIdAndIsDeletedFalse(req.getBusinessId())
-                    .orElseThrow(() -> new ValidationException("Business not found"));
         }
 
         List<Role> roles = roleRepository.findByNameInAndIsDeletedFalse(req.getRoles());
@@ -131,10 +120,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<UserResponse> getAllUsers(UserFilterRequest request) {
-        User currentUser = securityUtils.getCurrentUser();
-        if (currentUser.isBusinessUser() && request.getBusinessId() == null) {
-            request.setBusinessId(currentUser.getBusinessId());
-        }
         Pageable pageable = PaginationUtils.createPageable(
                 request.getPageNo(), request.getPageSize(), request.getSortBy(), request.getSortDirection());
 
@@ -143,7 +128,7 @@ public class UserServiceImpl implements UserService {
         List<String> roles = nullIfEmpty(request.getRoles());
 
         Page<User> page = userRepository.searchUsers(
-                request.getBusinessId(), userTypes, accountStatuses, roles, request.getSearch(), pageable);
+                null, userTypes, accountStatuses, roles, request.getSearch(), pageable);
         return userMapper.toPaginationResponse(page, paginationMapper);
     }
 
@@ -159,12 +144,6 @@ public class UserServiceImpl implements UserService {
         log.info("Updating user: {}", userId);
         User user = userRepository.findByIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (req.getBusinessId() != null && !req.getBusinessId().equals(user.getBusinessId())) {
-            businessRepository.findByIdAndIsDeletedFalse(req.getBusinessId())
-                    .orElseThrow(() -> new ValidationException("Business not found"));
-            user.setBusinessId(req.getBusinessId());
-        }
 
         if (req.getRoles() != null && !req.getRoles().isEmpty()) {
             List<Role> roles = roleRepository.findByNameInAndIsDeletedFalse(req.getRoles());

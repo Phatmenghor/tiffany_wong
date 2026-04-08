@@ -85,27 +85,20 @@ public class JWTGenerator {
      * Generate refresh token for a user
      *
      * @param username the username
-     * @param userType the user type (PLATFORM_USER, BUSINESS_USER, CUSTOMER)
-     * @param businessId the business ID (nullable, required for BUSINESS_USER)
+     * @param userType the user type (OWNER, CUSTOMER)
      * @return JWT refresh token
      */
-    public String generateRefreshToken(String username, String userType, String businessId) {
+    public String generateRefreshToken(String username, String userType) {
         Date currentDate = new Date();
         Date expiryDate = new Date(currentDate.getTime() + refreshTokenExpiration);
 
-        var builder = Jwts.builder()
+        return Jwts.builder()
                 .subject(username)
                 .claim("type", "refresh")
                 .claim("userType", userType)
                 .issuedAt(currentDate)
-                .expiration(expiryDate);
-
-        // Add businessId claim only if it's not null
-        if (businessId != null) {
-            builder.claim("businessId", businessId);
-        }
-
-        return builder.signWith(getSigningKey(), Jwts.SIG.HS512)
+                .expiration(expiryDate)
+                .signWith(getSigningKey(), Jwts.SIG.HS512)
                 .compact();
     }
 
@@ -134,15 +127,6 @@ public class JWTGenerator {
                 .parseSignedClaims(token)
                 .getPayload();
         return claims.get("userType", String.class);
-    }
-
-    public String getBusinessIdFromJWT(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-        return claims.get("businessId", String.class);
     }
 
     public Date getExpirationDateFromJWT(String token) {

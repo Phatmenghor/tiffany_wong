@@ -4,7 +4,6 @@ import com.emenu.enums.social.SocialAuthProvider;
 import com.emenu.enums.user.AccountStatus;
 import com.emenu.enums.user.UserType;
 import com.emenu.exception.custom.ValidationException;
-import com.emenu.features.auth.models.Role;
 import com.emenu.features.auth.models.User;
 import com.emenu.features.auth.models.UserProfile;
 import com.emenu.features.auth.repository.RoleRepository;
@@ -173,7 +172,7 @@ public class SocialAuthServiceImpl implements SocialAuthService {
             case CUSTOMER -> "CUSTOMER";
         };
 
-        Role role = roleRepository.findByNameAndIsDeletedFalse(defaultRole)
+        var role = roleRepository.findByNameAndIsDeletedFalse(defaultRole)
                 .orElseThrow(() -> new ValidationException("Default role not found: " + defaultRole));
 
         if (!role.isCompatibleWithUserType(userType)) {
@@ -186,7 +185,6 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
         user.setUserType(userType);
         user.setAccountStatus(AccountStatus.ACTIVE);
-        user.setBusinessId(businessId);
         user.setRoles(List.of(role));
 
         // Create profile with social info

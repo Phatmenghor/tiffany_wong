@@ -11,11 +11,9 @@ import com.emenu.features.auth.dto.response.LoginResponse;
 import com.emenu.features.auth.dto.response.RefreshTokenResponse;
 import com.emenu.features.auth.dto.response.UserResponse;
 import com.emenu.features.auth.mapper.UserMapper;
-import com.emenu.features.auth.models.Business;
 import com.emenu.features.auth.models.RefreshToken;
 import com.emenu.features.auth.models.Role;
 import com.emenu.features.auth.models.User;
-import com.emenu.features.auth.repository.BusinessRepository;
 import com.emenu.features.auth.repository.RoleRepository;
 import com.emenu.features.auth.repository.UserRepository;
 import com.emenu.features.auth.service.AuthService;
@@ -48,7 +46,6 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final BusinessRepository businessRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -64,15 +61,18 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public LoginResponse login(LoginRequest request) {
-        log.info("Login attempt: {} (userType: {}, businessId: {})",
-                request.getUserIdentifier(), request.getUserType(), request.getBusinessId());
+        log.info("Login attempt: {} (userType: {})",
+                request.getUserIdentifier(), request.getUserType());
 
         try {
-            // Find user with context-aware lookup
-            User user = findUserWithContext(request);
+            // Simple lookup by user identifier, validate userType matches
+            User user = userRepository.findByUserIdentifierAndIsDeletedFalse(request.getUserIdentifier())
+                    .orElseThrow(() -> new ValidationException("Invalid credentials"));
 
-            // Validate context matches (if provided)
-            validateLoginContext(request, user);
+            // Validate userType matches
+            if (!request.getUserType().equals(user.getUserType())) {
+                throw new ValidationException("Invalid credentials");
+            }
 
             // Authenticate with Spring Security
             Authentication authentication = authenticationManager.authenticate(
@@ -81,24 +81,6 @@ public class AuthServiceImpl implements AuthService {
 
             // Validate account status
             securityUtils.validateAccountStatus(user);
-
-            // Validate business subscription and status for business users
-            if (user.isBusinessUser() && user.getBusinessId() != null) {
-                Business business = businessRepository.findById(user.getBusinessId())
-                        .orElseThrow(() -> new ValidationException("Business not found"));
-
-                // Check if business is active
-                if (!business.isActive()) {
-                    log.warn("Login denied: Business is not active - {}", business.getStatus());
-                    throw new ValidationException("Your business account is currently " + business.getStatus() + ". Please contact support.");
-                }
-
-                // Check if business has active subscription
-                if (!business.hasActiveSubscription()) {
-                    log.warn("Login denied: Business subscription is not active");
-                    throw new ValidationException("Your business subscription has expired. Please renew your subscription to continue.");
-                }
-            }
 
             // Generate access token
             String accessToken = jwtGenerator.generateAccessToken(authentication);
@@ -118,17 +100,8 @@ public class AuthServiceImpl implements AuthService {
             LoginResponse response = userMapper.toLoginResponse(user, accessToken);
             response.setRefreshToken(refreshToken.getToken());
 
-            // Add business subscription info for business users
-            if (user.isBusinessUser() && user.getBusinessId() != null) {
-                Business business = businessRepository.findById(user.getBusinessId()).orElse(null);
-                if (business != null) {
-                    response.setBusinessStatus(business.getStatus().toString());
-                    response.setIsSubscriptionActive(business.hasActiveSubscription());
-                }
-            }
-
-            log.info("Login successful: {} (type: {}, businessId: {})",
-                    user.getUserIdentifier(), user.getUserType(), user.getBusinessId());
+            log.info("Login successful: {} (type: {})",
+                    user.getUserIdentifier(), user.getUserType());
             return response;
 
         } catch (ValidationException e) {
@@ -140,68 +113,6 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    /**
-     * Find user with context-aware lookup based on userType and businessId.
-     * UserType is REQUIRED to disambiguate which user account to authenticate.
-     */
-    private User findUserWithContext(LoginRequest request) {
-        String userIdentifier = request.getUserIdentifier();
-        UserType userType = request.getUserType();
-        UUID businessId = request.getBusinessId();
-
-        // Validate userType is provided (should be caught by @NotNull, but double-check)
-        if (userType == null) {
-            throw new ValidationException(
-                    "User type is required. Please specify whether you are logging in as CUSTOMER, PLATFORM_USER, or BUSINESS_USER."
-            );
-        }
-
-        // Case 1: BUSINESS_USER - requires businessId
-        if (userType == UserType.BUSINESS_USER) {
-            if (businessId == null) {
-                throw new ValidationException(
-                        "Business ID is required for business user login. Please provide businessId in your login request."
-                );
-            }
-
-            log.debug("Looking up business user: {} in business: {}", userIdentifier, businessId);
-            return userRepository.findByUserIdentifierAndBusinessIdAndIsDeletedFalse(userIdentifier, businessId)
-                    .orElseThrow(() -> new ValidationException(
-                            "User '" + userIdentifier + "' not found in the specified business"
-                    ));
-        }
-
-        // Case 2: CUSTOMER or PLATFORM_USER - global uniqueness per type
-        log.debug("Looking up {} user: {}", userType, userIdentifier);
-        return userRepository.findByUserIdentifierAndUserTypeAndIsDeletedFalse(userIdentifier, userType)
-                .orElseThrow(() -> new ValidationException(
-                        "User '" + userIdentifier + "' not found as " + userType.name().toLowerCase().replace("_", " ")
-                ));
-    }
-
-    /**
-     * Validate that the found user matches the requested context.
-     * This is a safety check - the findUserWithContext method should already ensure correct user.
-     */
-    private void validateLoginContext(LoginRequest request, User user) {
-        // Validate userType matches
-        if (!request.getUserType().equals(user.getUserType())) {
-            throw new ValidationException(
-                    "User type mismatch. Expected: " + request.getUserType() +
-                            ", Found: " + user.getUserType()
-            );
-        }
-
-        // Validate businessId for business users
-        if (request.getUserType() == UserType.BUSINESS_USER) {
-            if (user.getBusinessId() == null) {
-                throw new ValidationException("User is not associated with any business");
-            }
-            if (!request.getBusinessId().equals(user.getBusinessId())) {
-                throw new ValidationException("User does not belong to the specified business");
-            }
-        }
-    }
 
     /**
      * Registers a new customer user
@@ -404,21 +315,6 @@ public class AuthServiceImpl implements AuthService {
         // Validate account status
         securityUtils.validateAccountStatus(user);
 
-        // Validate business subscription and status for business users
-        if (user.isBusinessUser() && user.getBusinessId() != null) {
-            Business business = businessRepository.findById(user.getBusinessId())
-                    .orElseThrow(() -> new ValidationException("Business not found"));
-
-            if (!business.isActive()) {
-                log.warn("Refresh denied: Business is not active - {}", business.getStatus());
-                throw new ValidationException("Your business account is currently " + business.getStatus() + ". Please contact support.");
-            }
-
-            if (!business.hasActiveSubscription()) {
-                log.warn("Refresh denied: Business subscription is not active");
-                throw new ValidationException("Your business subscription has expired. Please renew your subscription to continue.");
-            }
-        }
 
         // Get user roles
         List<String> roles = user.getRoles().stream()
@@ -463,25 +359,8 @@ public class AuthServiceImpl implements AuthService {
             throw new ValidationException("Invalid refresh token: invalid user type");
         }
 
-        // For BUSINESS_USER, businessId is required
-        if (userType == UserType.BUSINESS_USER) {
-            if (businessIdStr == null) {
-                throw new ValidationException("Invalid refresh token: missing business ID for business user");
-            }
-
-            UUID businessId;
-            try {
-                businessId = UUID.fromString(businessIdStr);
-            } catch (IllegalArgumentException e) {
-                throw new ValidationException("Invalid refresh token: invalid business ID format");
-            }
-
-            return userRepository.findByUserIdentifierAndBusinessIdAndIsDeletedFalse(userIdentifier, businessId)
-                    .orElseThrow(() -> new ValidationException("User not found for refresh token context"));
-        }
-
-        // For CUSTOMER and PLATFORM_USER
-        return userRepository.findByUserIdentifierAndUserTypeAndIsDeletedFalse(userIdentifier, userType)
+        // Simple lookup by userIdentifier
+        return userRepository.findByUserIdentifierAndIsDeletedFalse(userIdentifier)
                 .orElseThrow(() -> new ValidationException("User not found for refresh token context"));
     }
 }

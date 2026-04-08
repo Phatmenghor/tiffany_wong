@@ -21,8 +21,6 @@ public class UserResponse extends BaseAuditResponse {
     private AccountStatus accountStatus;
     private Status status;
     private List<String> roles;
-    private UUID businessId;
-    private String businessName;
     private String remark;
 
     // ── Personal (from user_profiles) ─────────────────────────────────────
