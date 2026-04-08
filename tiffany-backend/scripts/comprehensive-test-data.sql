@@ -2,9 +2,9 @@
 -- TIFFANY E-MENU PLATFORM - LARGE SCALE TEST DATA
 -- ============================================================================
 -- Users: 60,001 total
---   - 20,000 ADMIN users
---   - 20,000 STAFF users
---   - 20,001 CUSTOMER users
+--   - 20,000 ADMIN users (UserType: OWNER, UserRole: ADMIN)
+--   - 20,000 STAFF users (UserType: OWNER, UserRole: STAFF)
+--   - 20,001 CUSTOMER users (UserType: CUSTOMER, UserRole: CUSTOMER)
 -- Products: 100,000 with 70% having sizes (70,000 sizes)
 -- Product Images: 1-5 per product
 -- Categories: 200
@@ -13,50 +13,29 @@
 -- Orders: 20,000 for phatmenghor21@gmail.com
 -- ============================================================================
 
--- Clear existing data (optional - uncomment if needed)
--- TRUNCATE TABLE cart_items CASCADE;
--- TRUNCATE TABLE carts CASCADE;
--- TRUNCATE TABLE product_images CASCADE;
--- TRUNCATE TABLE product_sizes CASCADE;
--- TRUNCATE TABLE product_favorites CASCADE;
--- TRUNCATE TABLE products CASCADE;
--- TRUNCATE TABLE categories CASCADE;
--- TRUNCATE TABLE order_items CASCADE;
--- TRUNCATE TABLE order_delivery_addresses CASCADE;
--- TRUNCATE TABLE order_status_history CASCADE;
--- TRUNCATE TABLE orders CASCADE;
--- TRUNCATE TABLE order_counters CASCADE;
--- TRUNCATE TABLE banners CASCADE;
--- TRUNCATE TABLE user_profiles CASCADE;
--- TRUNCATE TABLE users CASCADE;
--- TRUNCATE TABLE refresh_tokens CASCADE;
--- TRUNCATE TABLE blacklisted_tokens CASCADE;
--- TRUNCATE TABLE reference_counters CASCADE;
--- TRUNCATE TABLE system_settings CASCADE;
-
 -- ============================================================================
--- 1. USERS (60,001 total: 20,000 ADMIN + 20,000 STAFF + 20,001 CUSTOMER)
+-- 1. USERS (60,001 total)
 -- ============================================================================
 
--- Insert 20,000 ADMIN users
+-- Insert 20,000 ADMIN users (OWNER type with ADMIN role)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status, user_role)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'admin' || i || '@tiffany.com',
     '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK',
-    'PLATFORM_USER', 'ACTIVE', 'ACTIVE', 'ADMIN'
+    'OWNER', 'ACTIVE', 'ACTIVE', 'ADMIN'
 FROM generate_series(1, 20000) AS t(i);
 
--- Insert 20,000 STAFF users
+-- Insert 20,000 STAFF users (OWNER type with STAFF role)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status, user_role)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'staff' || i || '@tiffany.com',
     '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK',
-    'BUSINESS_USER', 'ACTIVE', 'ACTIVE', 'STAFF'
+    'OWNER', 'ACTIVE', 'ACTIVE', 'STAFF'
 FROM generate_series(1, 20000) AS t(i);
 
--- Insert 20,001 CUSTOMER users (including main customer)
+-- Insert 20,001 CUSTOMER users (CUSTOMER type with CUSTOMER role)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, status, account_status, user_role)
 VALUES
 ('550e8400-e29b-41d4-a716-446655550002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor21@gmail.com', '$2a$12$hgZ6m7pwOA8AYv.r7YbuN.Yi8gHh.5NWqpEd2Jn6sgCRyu29a1DEK', 'CUSTOMER', 'ACTIVE', 'ACTIVE', 'CUSTOMER');
@@ -77,19 +56,19 @@ SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     u.id,
     CASE 
-        WHEN u.user_type = 'PLATFORM_USER' THEN 'Admin'
-        WHEN u.user_type = 'BUSINESS_USER' THEN 'Staff'
+        WHEN u.user_role = 'ADMIN' THEN 'Admin'
+        WHEN u.user_role = 'STAFF' THEN 'Staff'
         ELSE 'Customer'
-    END || ' ' || (row_number() OVER (PARTITION BY u.user_type ORDER BY u.id)),
+    END || ' ' || (row_number() OVER (PARTITION BY u.user_role ORDER BY u.id)),
     CASE 
-        WHEN u.user_type = 'PLATFORM_USER' THEN 'Administrator'
-        WHEN u.user_type = 'BUSINESS_USER' THEN 'Manager'
+        WHEN u.user_role = 'ADMIN' THEN 'Administrator'
+        WHEN u.user_role = 'STAFF' THEN 'Manager'
         ELSE 'User'
     END,
     CASE 
-        WHEN u.user_type = 'PLATFORM_USER' THEN 'Admin' || (row_number() OVER (PARTITION BY u.user_type ORDER BY u.id))
-        WHEN u.user_type = 'BUSINESS_USER' THEN 'Staff' || (row_number() OVER (PARTITION BY u.user_type ORDER BY u.id))
-        ELSE 'Cust' || (row_number() OVER (PARTITION BY u.user_type ORDER BY u.id))
+        WHEN u.user_role = 'ADMIN' THEN 'Admin' || (row_number() OVER (PARTITION BY u.user_role ORDER BY u.id))
+        WHEN u.user_role = 'STAFF' THEN 'Staff' || (row_number() OVER (PARTITION BY u.user_role ORDER BY u.id))
+        ELSE 'Cust' || (row_number() OVER (PARTITION BY u.user_role ORDER BY u.id))
     END,
     CASE WHEN (random() * 100)::int > 50 THEN 'MALE' ELSE 'FEMALE' END,
     NOW()::date - (random() * 15000)::int,
