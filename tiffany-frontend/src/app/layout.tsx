@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
 import { ClientProviders } from "@/context/client-provider";
-import { getMessages } from "next-intl/server";
 import localFont from "next/font/local";
 import "../styles/globals.css";
 import PageProgressBar from "@/components/shared/progress/global-n-progress";
-import { LocaleProvider } from "@/context/locale-provider";
 import { ScrollToTop } from "@/components/shared/common/scroll-to-top";
 import { AuthProvider } from "@/context/auth-provider";
 import { ThemeInitializer } from "@/components/shared/theme/theme-initializer";
-import { defaultLocale, type Locale } from "@/i18n/request";
 
 const geistSans = localFont({
   src: "../../public/fonts/GeistVF.woff",
@@ -29,19 +26,11 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params?: { locale?: Locale };
 }) {
-  const locale = params?.locale ?? defaultLocale;
-  const messages = await getMessages({ locale });
-
   return (
-    <html
-      lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable}`}
-    >
+    <html className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" />
         {/* Apply theme colors synchronously via style tag to prevent color flash */}
@@ -116,15 +105,13 @@ export default async function RootLayout({
       </head>
       <body className="antialiased">
         <ThemeInitializer />
-        <LocaleProvider initialLocale={locale} initialMessages={messages}>
-          <ClientProviders>
-            <AuthProvider>
-              <PageProgressBar />
-              {children}
-              <ScrollToTop />
-            </AuthProvider>
-          </ClientProviders>
-        </LocaleProvider>
+        <ClientProviders>
+          <AuthProvider>
+            <PageProgressBar />
+            {children}
+            <ScrollToTop />
+          </AuthProvider>
+        </ClientProviders>
       </body>
     </html>
   );

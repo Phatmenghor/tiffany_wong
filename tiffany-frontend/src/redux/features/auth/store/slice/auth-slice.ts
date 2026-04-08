@@ -12,14 +12,7 @@ import {
   changePasswordService,
   deleteAccountService,
 } from "../thunks/auth-thunks";
-import {
-  telegramAuthenticateService,
-  socialAuthenticateService,
-  getSocialSyncService,
-  syncTelegramAccountService,
-  unsyncSocialAccountService,
-  logoutService,
-} from "../thunks/social-auth-thunks";
+
 import { AuthState } from "../models/type/auth-types";
 import {
   storeTokens,
@@ -33,7 +26,6 @@ import {
   storeAdminUserInfo,
   clearAdminUserInfo,
 } from "@/utils/local-storage/userInfo";
-import { SocialSyncResponse } from "../models/response/social-auth-response";
 
 const isAdmin = (userType?: string) => userType === "BUSINESS_USER";
 
@@ -41,7 +33,6 @@ const isAdmin = (userType?: string) => userType === "BUSINESS_USER";
  * Extended auth state with social sync info
  */
 interface ExtendedAuthState extends AuthState {
-  socialSync: SocialSyncResponse | null;
   isSocialLoading: boolean;
   isNewUser: boolean;
 }
@@ -57,7 +48,6 @@ const initialState: ExtendedAuthState = {
   isLoading: false,
   isProfileLoading: false,
   error: null,
-  socialSync: null,
   isSocialLoading: false,
   isNewUser: false,
 };
@@ -93,7 +83,6 @@ const authSlice = createSlice({
       state.user = null;
       state.profile = null;
       state.error = null;
-      state.socialSync = null;
       state.isNewUser = false;
       clearAllTokens();
       clearUserInfo();
@@ -106,13 +95,6 @@ const authSlice = createSlice({
      */
     clearError: (state) => {
       state.error = null;
-    },
-
-    /**
-     * Set social sync info
-     */
-    setSocialSync: (state, action: PayloadAction<SocialSyncResponse | null>) => {
-      state.socialSync = action.payload;
     },
 
     /**
@@ -217,131 +199,6 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Telegram authenticate thunk handlers
-    builder
-      .addCase(telegramAuthenticateService.pending, (state) => {
-        state.isSocialLoading = true;
-        state.error = null;
-      })
-      .addCase(telegramAuthenticateService.fulfilled, (state, action) => {
-        state.isSocialLoading = false;
-        state.isAuthenticated = true;
-        state.isNewUser = action.payload.isNewUser;
-
-        // Create user object from social auth response
-        const socialResponse = action.payload;
-        state.user = {
-          accessToken: socialResponse.accessToken,
-          refreshToken: socialResponse.refreshToken,
-          tokenType: "Bearer",
-          userId: socialResponse.userId,
-          userIdentifier: socialResponse.userIdentifier,
-          email: socialResponse.userIdentifier,
-          fullName: socialResponse.socialUsername || socialResponse.userIdentifier,
-          profileImageUrl: null,
-          userType: socialResponse.userType,
-          roles: [socialResponse.userType],
-          businessId: "",
-          businessName: "",
-          businessStatus: "",
-          isSubscriptionActive: "",
-        };
-
-        // Store tokens in admin or customer cookies based on userType
-        if (isAdmin(socialResponse.userType)) {
-          storeAdminTokens(socialResponse.accessToken, socialResponse.refreshToken);
-          storeAdminUserInfo(state.user);
-        } else {
-          storeTokens(socialResponse.accessToken, socialResponse.refreshToken);
-          storeUserInfo(state.user);
-        }
-      })
-      .addCase(telegramAuthenticateService.rejected, (state, action) => {
-        state.isSocialLoading = false;
-        state.error = action.payload as string;
-      });
-
-    // Social authenticate thunk handlers (generic)
-    builder
-      .addCase(socialAuthenticateService.pending, (state) => {
-        state.isSocialLoading = true;
-        state.error = null;
-      })
-      .addCase(socialAuthenticateService.fulfilled, (state, action) => {
-        state.isSocialLoading = false;
-        state.isAuthenticated = true;
-        state.isNewUser = action.payload.isNewUser;
-
-        const socialResponse = action.payload;
-        state.user = {
-          accessToken: socialResponse.accessToken,
-          refreshToken: socialResponse.refreshToken,
-          tokenType: "Bearer",
-          userId: socialResponse.userId,
-          userIdentifier: socialResponse.userIdentifier,
-          email: socialResponse.userIdentifier,
-          fullName: socialResponse.socialUsername || socialResponse.userIdentifier,
-          profileImageUrl: null,
-          userType: socialResponse.userType,
-          roles: [socialResponse.userType],
-          businessId: "",
-          businessName: "",
-          businessStatus: "",
-          isSubscriptionActive: "",
-        };
-
-        if (isAdmin(socialResponse.userType)) {
-          storeAdminTokens(socialResponse.accessToken, socialResponse.refreshToken);
-          storeAdminUserInfo(state.user);
-        } else {
-          storeTokens(socialResponse.accessToken, socialResponse.refreshToken);
-          storeUserInfo(state.user);
-        }
-      })
-      .addCase(socialAuthenticateService.rejected, (state, action) => {
-        state.isSocialLoading = false;
-        state.error = action.payload as string;
-      });
-
-    // Get social sync status thunk handlers (used when backend endpoint is available)
-    builder
-      .addCase(getSocialSyncService.fulfilled, (state, action) => {
-        state.socialSync = action.payload;
-      })
-      .addCase(getSocialSyncService.rejected, () => {
-        // Silently ignore — endpoint may not be available yet
-      });
-
-    // Sync Telegram account thunk handlers
-    builder
-      .addCase(syncTelegramAccountService.pending, (state) => {
-        state.isSocialLoading = true;
-        state.error = null;
-      })
-      .addCase(syncTelegramAccountService.fulfilled, (state, action) => {
-        state.isSocialLoading = false;
-        state.socialSync = action.payload;
-      })
-      .addCase(syncTelegramAccountService.rejected, (state, action) => {
-        state.isSocialLoading = false;
-        state.error = action.payload as string;
-      });
-
-    // Unsync social account thunk handlers
-    builder
-      .addCase(unsyncSocialAccountService.pending, (state) => {
-        state.isSocialLoading = true;
-        state.error = null;
-      })
-      .addCase(unsyncSocialAccountService.fulfilled, (state, action) => {
-        state.isSocialLoading = false;
-        state.socialSync = action.payload;
-      })
-      .addCase(unsyncSocialAccountService.rejected, (state, action) => {
-        state.isSocialLoading = false;
-        state.error = action.payload as string;
-      });
-
     // Logout service thunk handlers
     builder
       .addCase(logoutService.pending, (state) => {
@@ -368,7 +225,6 @@ const authSlice = createSlice({
 
         state.user = null;
         state.profile = null;
-        state.socialSync = null;
         state.isNewUser = false;
       })
       .addCase(logoutService.rejected, (state) => {
@@ -393,7 +249,6 @@ const authSlice = createSlice({
 
         state.user = null;
         state.profile = null;
-        state.socialSync = null;
         state.isNewUser = false;
         clearAdminTokens();
         clearAdminUserInfo();

@@ -13,13 +13,9 @@ import { PasswordField } from "@/components/shared/form-field/password-field";
 import { useRouter } from "next/navigation";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { loginService } from "@/redux/features/auth/store/thunks/auth-thunks";
-import { telegramAuthenticateService } from "@/redux/features/auth/store/thunks/social-auth-thunks";
 import { ROUTES } from "@/constants/app-routes/routes";
 import { showToast } from "@/components/shared/common/show-toast";
 import { appImages } from "@/constants/app-resource/icons/app-images";
-import { AppDefault } from "@/constants/app-resource/default/default";
-import { TelegramLoginModal } from "@/components/shared/telegram/telegram-login-modal";
-import { TelegramAuthData } from "@/redux/features/auth/store/models/request/social-auth-request";
 
 const formSchema = z.object({
   userIdentifier: z.string().min(1, "Email or username is required"),
@@ -30,7 +26,6 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isTelegramLoading, setIsTelegramLoading] = useState(false);
   const router = useRouter();
 
   const { isLoading, error, dispatch } = useAuthState();
@@ -38,76 +33,25 @@ export default function LoginPage() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      userIdentifier: "phatmenghor20@gmail.com",
+      userIdentifier: "phatmenghor19@gmail.com",
       password: "88889999",
     },
   });
 
   async function onSubmit(values: FormData) {
     try {
-      console.log("═══════════════════════════════════════════");
-      console.log("## [LOGIN] Starting admin login...");
-
-      const result = await dispatch(
+      dispatch(
         loginService({
           userIdentifier: values.userIdentifier,
           password: values.password,
-          userType: "BUSINESS_USER",
-          businessId: AppDefault.BUSINESS_ID,
+          userType: "OWNER",
         }),
       ).unwrap();
-
-      console.log("## [LOGIN] ✓ API successful, userType:", result.userType);
-
-      // Verify token storage
-      const { getAdminToken } = await import("@/utils/local-storage/token");
-      const storedToken = getAdminToken();
-      console.log("## [LOGIN] Token stored:", !!storedToken);
-
-      showToast.success("✓ Welcome to admin dashboard!");
-
-      // Use router.replace() — Next routing, no back button loop
-      console.log("## [LOGIN] Hard redirect to /admin");
       router.replace(ROUTES.ADMIN.DASHBOARD);
-      console.log("═══════════════════════════════════════════");
     } catch (err: any) {
-      console.error("## ═══════════════════════════════════════════");
-      console.error("## ❌ [LOGIN ERROR]", err?.message || err);
       showToast.error(err?.message || error || "Login failed");
-      console.error("## ═══════════════════════════════════════════");
     }
   }
-
-  const handleTelegramAuth = async (telegramData: TelegramAuthData) => {
-    setIsTelegramLoading(true);
-    try {
-      console.log("🔐 Attempting Telegram auth...");
-      const result = await dispatch(
-        telegramAuthenticateService({
-          telegramData,
-          userType: "BUSINESS_USER",
-          businessId: AppDefault.BUSINESS_ID,
-        }),
-      ).unwrap();
-
-      console.log("✓ Telegram auth successful, result:", result);
-      showToast.success(
-        result?.isNewUser
-          ? "Welcome! Your account has been created successfully."
-          : "Welcome back!",
-      );
-
-      // Use router.replace() — Next routing, no back button loop
-      router.replace(ROUTES.ADMIN.DASHBOARD);
-    } catch (err: any) {
-      console.error("✗ Telegram auth failed:", err);
-      showToast.error(err?.message || err || "Telegram login failed. Please try again.");
-    } finally {
-      setIsTelegramLoading(false);
-    }
-  };
-
-  const isAnyLoading = isLoading || isTelegramLoading;
 
   return (
     <div className="flex h-screen w-full">
@@ -143,7 +87,7 @@ export default function LoginPage() {
                 placeholder="name@example.com"
                 control={form.control}
                 error={form.formState.errors.userIdentifier}
-                disabled={isAnyLoading}
+                disabled={isLoading}
                 required
               />
 
@@ -153,7 +97,7 @@ export default function LoginPage() {
                 placeholder="Enter your password"
                 control={form.control}
                 error={form.formState.errors.password}
-                disabled={isAnyLoading}
+                disabled={isLoading}
                 required
                 showPassword={showPassword}
                 onTogglePassword={() => setShowPassword((v) => !v)}
@@ -162,7 +106,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 className="w-full h-11 mt-2 font-semibold"
-                disabled={isAnyLoading}
+                disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? "Signing in..." : "Sign in"}
@@ -180,13 +124,6 @@ export default function LoginPage() {
                 </span>
               </div>
             </div>
-
-            <TelegramLoginModal
-              onAuth={handleTelegramAuth}
-              disabled={isAnyLoading}
-              loading={isTelegramLoading}
-              className="w-full h-11"
-            />
 
             <p className="text-center text-xs text-gray-500 mt-5">
               By signing in, you agree to our{" "}

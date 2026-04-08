@@ -11,7 +11,5 @@ export function useBusinessColors() {
 
   return {
     primary: colors.primary,      // #57823D (Green) - Brand color
-    secondary: colors.secondary,  // #F4C430 (Yellow) - Highlights & CTAs
-    accent: colors.accent,        // #F2F3F7 (Grey) - Subtle backgrounds
   };
 }
