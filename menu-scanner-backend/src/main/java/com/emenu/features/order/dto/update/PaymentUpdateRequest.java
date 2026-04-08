@@ -15,7 +15,6 @@ public class PaymentUpdateRequest {
 
     private String imageUrl;
     private UUID subscriptionId;
-    private UUID businessId;
 
     @DecimalMin(value = "0.0", message = "Amount must be non-negative")
     private BigDecimal amount;

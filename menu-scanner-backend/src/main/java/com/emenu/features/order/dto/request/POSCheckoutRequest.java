@@ -27,9 +27,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class POSCheckoutRequest {
 
-    @NotNull(message = "Business ID is required")
-    private UUID businessId;
-
     // Customer info (optional for walkup orders)
     private UUID customerId;
     private String customerName;
@@ -80,9 +77,6 @@ public class POSCheckoutRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CartSummary {
-        private UUID businessId;
-        private String businessName;
-
         @NotEmpty(message = "Order must have at least one item")
         @Valid
         private List<POSCheckoutItemRequest> items;

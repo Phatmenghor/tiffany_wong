@@ -15,7 +15,6 @@ import java.util.UUID;
 public class PaymentFilterRequest extends BaseFilterRequest {
     private List<PaymentMethod> paymentMethods;
     private List<PaymentStatus> statuses;
-    private UUID businessId;
     private UUID planId;
     private LocalDate createdFrom;
     private LocalDate createdTo;
