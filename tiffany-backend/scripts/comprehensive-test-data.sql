@@ -264,7 +264,24 @@ VALUES
     (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, (SELECT id FROM system_settings LIMIT 1), 'TikTok', 'https://tiktok.com/@tiffany', 'https://via.placeholder.com/40?text=TK');
 
 -- ============================================================================
--- 15. REFERENCE COUNTERS
+-- 15. PRODUCT FAVORITES (For phatmenghor21@gmail.com user - 50 favorites)
+-- ============================================================================
+INSERT INTO product_favorites (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, product_id)
+SELECT
+    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    '550e8400-e29b-41d4-a716-446655550002',
+    p.id
+FROM (
+    SELECT id FROM products ORDER BY RANDOM() LIMIT 50
+) p
+WHERE NOT EXISTS (
+    SELECT 1 FROM product_favorites pf
+    WHERE pf.user_id = '550e8400-e29b-41d4-a716-446655550002'
+    AND pf.product_id = p.id
+);
+
+-- ============================================================================
+-- 16. REFERENCE COUNTERS
 -- ============================================================================
 INSERT INTO reference_counters (entity_type, counter_date, counter_value)
 VALUES
@@ -272,7 +289,7 @@ VALUES
 ('INVOICE', NOW()::date, 20000);
 
 -- ============================================================================
--- 16. SYSTEM SETTINGS (Full configuration)
+-- 17. SYSTEM SETTINGS (Full configuration)
 -- ============================================================================
 INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, tax_percentage, system_name, contact_address, contact_phone, contact_email)
 VALUES
@@ -293,11 +310,12 @@ VALUES
 -- Order Items: ~60,000-200,000
 -- Order Delivery Addresses: 20,000
 -- Order Status History: ~30,000-40,000
+-- Product Favorites: 50 (for phatmenghor21@gmail.com)
 -- Business Hours: 7
 -- Social Media: 4
 -- Reference Counters: 2
 -- System Settings: 1
--- TOTAL RECORDS: ~610,000-770,000
+-- TOTAL RECORDS: ~610,000-770,050
 -- ============================================================================
 -- END OF LARGE SCALE TEST DATA
 -- ============================================================================
