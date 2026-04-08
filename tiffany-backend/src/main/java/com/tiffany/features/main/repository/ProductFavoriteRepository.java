@@ -47,11 +47,4 @@ public interface ProductFavoriteRepository extends JpaRepository<ProductFavorite
     @Query("DELETE FROM ProductFavorite pf WHERE pf.userId = :userId")
     int deleteAllByUserId(@Param("userId") UUID userId);
 
-    /**
-     * Delete all favorites for a user within a specific business
-     */
-    @Modifying
-    @Query("DELETE FROM ProductFavorite pf WHERE pf.userId = :userId " +
-            "AND pf.productId IN (SELECT p.id FROM Product p WHERE p.businessId = :businessId)")
-    int deleteAllByUserIdAndBusinessId(@Param("userId") UUID userId, @Param("businessId") UUID businessId);
 }

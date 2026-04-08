@@ -75,16 +75,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     Page<Product> findUserFavorites(@Param("userId") UUID userId, Pageable pageable);
 
     /**
-     * Find all favorited products for a specific user within a business
-     */
-    @Query("SELECT p FROM Product p " +
-           "INNER JOIN ProductFavorite pf ON p.id = pf.productId " +
-           "WHERE pf.userId = :userId AND p.businessId = :businessId " +
-           "AND p.isDeleted = false AND pf.isDeleted = false")
-    Page<Product> findUserFavoritesByBusiness(@Param("userId") UUID userId,
-                                              Pageable pageable);
-
-    /**
      * Find all products with dynamic filtering - OPTIMIZED FOR LIST VIEW
      * Sizes are loaded separately to avoid Hibernate pagination warning
      */

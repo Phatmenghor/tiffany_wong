@@ -122,11 +122,11 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
     @Override
     public FavoriteRemoveAllDto removeAllFavorites(UUID businessId) {
         UUID userId = securityUtils.getCurrentUserId();
-        log.info("Removing all favorites - User: {}, Business: {}", userId, businessId);
+        log.info("Removing all favorites - User: {}", userId);
 
-        int removedCount = favoriteRepository.deleteAllByUserIdAndBusinessId(userId, businessId);
+        int removedCount = favoriteRepository.deleteAllByUserId(userId);
 
-        log.info("Removed {} favorites - User: {}, Business: {}", removedCount, userId, businessId);
+        log.info("Removed {} favorites - User: {}", removedCount, userId);
 
         return FavoriteRemoveAllDto.builder()
                 .userId(userId)
