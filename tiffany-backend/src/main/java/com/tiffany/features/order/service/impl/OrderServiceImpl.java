@@ -157,8 +157,7 @@ public class OrderServiceImpl implements OrderService {
             OrderResponse response = getOrderById(savedOrder.getId());
             log.info("🎉 [CHECKOUT COMPLETE] Order #{} - Total: {}, Items: {}",
                 response.getOrderNumber(),
-                response.getPricing() != null && response.getPricing().getAfter() != null ?
-                    response.getPricing().getAfter().getFinalTotal() : "N/A",
+                response.getPricing() != null ? response.getPricing().getFinalTotal() : "N/A",
                 response.getItems().size());
             return response;
         } catch (Exception e) {

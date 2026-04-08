@@ -57,5 +57,10 @@ public class CartItemResponse {
         private BigDecimal price;
         private BigDecimal total;
         private BigDecimal discount;
+        private BigDecimal finalPrice;
+        private BigDecimal currentPrice;
+        private Boolean hasActivePromotion;
+        private String promotionType;
+        private BigDecimal promotionValue;
     }
 }

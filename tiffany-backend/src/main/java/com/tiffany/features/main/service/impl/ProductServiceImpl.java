@@ -83,7 +83,6 @@ public class ProductServiceImpl implements ProductService {
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection());
 
         Page<Product> productPage = productRepository.findAllWithFilters(
-                null,
                 filter.getCategoryId(),
                 filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
@@ -92,7 +91,6 @@ public class ProductServiceImpl implements ProductService {
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
                 filter.getHasSize(),
-                (null != null && !null.isEmpty()) ? null : null,
                 filter.getSearch(),
                 pageable
         );
@@ -287,7 +285,6 @@ public class ProductServiceImpl implements ProductService {
         );
 
         Page<Product> productPage = productRepository.findAllWithFilters(
-                null,
                 filter.getCategoryId(),
                 filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
@@ -296,7 +293,6 @@ public class ProductServiceImpl implements ProductService {
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
                 filter.getHasSize(),
-                (null != null && !null.isEmpty()) ? null : null,
                 filter.getSearch(),
                 pageable
         );
@@ -337,7 +333,6 @@ public class ProductServiceImpl implements ProductService {
 
         // Fetch products with filters
         Page<Product> productPage = productRepository.findAllWithFilters(
-                null,
                 filter.getCategoryId(),
                 filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
@@ -346,7 +341,6 @@ public class ProductServiceImpl implements ProductService {
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
                 filter.getHasSize(),
-                (null != null && !null.isEmpty()) ? null : null,
                 filter.getSearch(),
                 pageable
         );
@@ -998,7 +992,7 @@ public class ProductServiceImpl implements ProductService {
 
                 // Get stock for each size from repository
                 for (var sizeDto : dto.getSizes()) {
-                    int stock = sizeStock != null ? sizeStock : 0;
+                    int stock = sizeDto.getStock() != null ? sizeDto.getStock() : 0;
                     totalSizesStock += stock;
                 }
 

@@ -72,8 +72,18 @@ public class OrderUpdateRequest {
         private Boolean hadOrderLevelChangeFromPOS;
 
         // Pricing snapshots for tracking changes
-        private BigDecimal before;
-        private BigDecimal after;
+        private PricingSnapshot before;
+        private PricingSnapshot after;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PricingSnapshot {
+        private BigDecimal discountAmount;
+        private BigDecimal taxAmount;
+        private BigDecimal deliveryFee;
     }
 
     @Data
