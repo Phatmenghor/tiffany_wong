@@ -28,7 +28,6 @@ public class ProductListDto extends BaseAuditResponse {
     
     private String barcode;
     private String sku;
-    private Integer totalStock;
 
     private Long viewCount;
     private Long favoriteCount;

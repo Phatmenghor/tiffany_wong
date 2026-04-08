@@ -110,8 +110,6 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductListDto> dtoList = productMapper.toListDtos(productPage.getContent());
 
-        enrichTotalStock(dtoList, productPage.getContent());
-
         if (currentUser.isPresent()) {
             List<UUID> productIds = productPage.getContent().stream()
                     .map(Product::getId)
@@ -180,8 +178,6 @@ public class ProductServiceImpl implements ProductService {
             log.debug("No products found for filters");
             return dtoList;
         }
-
-        enrichTotalStock(dtoList, products);
 
         if (currentUser.isPresent()) {
             List<UUID> productIds = products.stream()
@@ -262,8 +258,6 @@ public class ProductServiceImpl implements ProductService {
         // Use detail DTOs - mapper uses denormalized fields, not relationships
         List<ProductDetailDto> dtoList = productMapper.toDetailDtos(productPage.getContent());
 
-        enrichTotalStockForDetails(dtoList, productPage.getContent());
-
         return paginationMapper.toPaginationResponse(productPage, dtoList);
     }
 
@@ -306,65 +300,9 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductDetailDto> dtoList = productMapper.toDetailDtos(productPage.getContent());
 
-        enrichTotalStockForDetails(dtoList, productPage.getContent());
-
         return paginationMapper.toPaginationResponse(productPage, dtoList);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public PaginationResponse<ProductDetailDto> getAllProductsAdminStock(ProductFilterDto filter) {
-        long startTime = System.currentTimeMillis();
-
-        Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-
-        Pageable pageable = PaginationUtils.createPageable(
-                filter.getPageNo(),
-                filter.getPageSize(),
-                filter.getSortBy(),
-                filter.getSortDirection()
-        );
-
-        // Fetch products with filters
-        Page<Product> productPage = productRepository.findAllWithFilters(
-                filter.getCategoryId(),
-                (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
-                Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
-                Boolean.FALSE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
-                filter.getMinPrice(),
-                filter.getMaxPrice(),
-                filter.getHasSize(),
-                filter.getSearch(),
-                pageable
-        );
-
-        if (productPage.getContent().isEmpty()) {
-            log.debug("No products found for stock query");
-            return paginationMapper.toPaginationResponse(productPage, Collections.emptyList());
-        }
-
-        // Batch initialize sizes to avoid lazy-loading
-        productPage.getContent().forEach(p -> Hibernate.initialize(p.getSizes()));
-
-        // Clear images (not needed for stock listing)
-        productPage.getContent().forEach(p -> p.setImages(new ArrayList<>()));
-
-        // Recalculate display fields from current sizes
-        productPage.getContent().forEach(Product::syncDisplayFieldsFromSizes);
-
-        // All filters (including hasSize and stockStatuses) are now applied at database level
-        List<ProductDetailDto> dtoList = productMapper.toDetailDtos(productPage.getContent());
-
-        // Enrich with stock information
-        enrichTotalStockForDetails(dtoList, productPage.getContent());
-        enrichProductSizesStock(dtoList);
-
-        long duration = System.currentTimeMillis() - startTime;
-        log.info("getAllProductsAdminStock completed in {}ms - Retrieved {} products with stock info",
-                duration, dtoList.size());
-
-        return paginationMapper.toPaginationResponse(productPage, dtoList);
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -391,8 +329,6 @@ public class ProductServiceImpl implements ProductService {
             product.syncDisplayFieldsFromSizes();
 
             ProductDetailDto dto = productMapper.toDetailDto(product);
-            enrichTotalStockForDetail(dto, product.getId());
-            log.debug("Product detail DTO created with enriched stock");
 
             populateUserFieldsForDetail(dto, currentUser, product);
 
@@ -434,8 +370,6 @@ public class ProductServiceImpl implements ProductService {
             product.syncDisplayFieldsFromSizes();
 
             ProductDetailDto dto = productMapper.toDetailDto(product);
-            enrichTotalStockForDetail(dto, product.getId());
-            log.debug("Product detail DTO created with enriched stock");
 
             Optional<User> currentUser = securityUtils.getCurrentUserOptional();
             populateUserFieldsForDetail(dto, currentUser, product);
@@ -970,40 +904,6 @@ public class ProductServiceImpl implements ProductService {
         return changed;
     }
 
-    /**
-     * Enrich product sizes with stock information from ProductStock repository
-     * Sets totalStock for each ProductSizeDto
-     * For products WITH sizes: updates parent totalStock as sum of all sizes
-     * For products WITHOUT sizes: totalStock is already set by enrichTotalStockForDetails
-     */
-    private void enrichProductSizesStock(List<ProductDetailDto> dtoList) {
-        for (ProductDetailDto dto : dtoList) {
-            if (dto.getHasSizes() && dto.getSizes() != null && !dto.getSizes().isEmpty()) {
-                int totalSizesStock = 0;
-
-                // Get stock for each size from repository
-                for (var sizeDto : dto.getSizes()) {
-                    int stock = sizeDto.getTotalStock() != null ? sizeDto.getTotalStock() : 0;
-                    totalSizesStock += stock;
-                }
-
-                // Set parent product totalStock as sum of all sizes
-            }
-            // For products without sizes, totalStock is already set by enrichTotalStockForDetails
-        }
-    }
-
-    private void enrichTotalStock(List<ProductListDto> dtoList, List<Product> products) {
-        // Stock enrichment disabled - no-op method
-    }
-
-    private void enrichTotalStockForDetail(ProductDetailDto dto, UUID productId) {
-        // Stock enrichment disabled - no-op method
-    }
-
-    private void enrichTotalStockForDetails(List<ProductDetailDto> dtoList, List<Product> products) {
-        // Stock enrichment disabled - no-op method
-    }
 
     /**
      * Sync denormalized category name

@@ -48,9 +48,6 @@ public class ProductSize extends BaseUUIDEntity {
     @Column(name = "promotion_to_date")
     private LocalDateTime promotionToDate;
 
-    @Column(name = "minimum_stock_level", nullable = false, columnDefinition = "integer default 0")
-    private Integer minimumStockLevel = 0;
-
     @Column(name = "barcode")
     private String barcode;
 

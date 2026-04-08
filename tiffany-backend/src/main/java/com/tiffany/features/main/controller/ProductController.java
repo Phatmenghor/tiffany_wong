@@ -86,33 +86,6 @@ public class ProductController {
         ));
     }
 
-    @PostMapping("/admin/stock/all")
-    public ResponseEntity<ApiResponse<PaginationResponse<ProductDetailDto>>> getAllProductAdminStock(
-            @Valid @RequestBody ProductFilterDto filter) {
-
-        long startTime = System.currentTimeMillis();
-        log.info("GET /api/v1/products/admin/stock/all - Page: {}, Size: {}, Filters: Search='{}', Status={}, HasSize={}, Statuses={}, HasPromotion={}, CategoryId={}",
-                filter.getPageNo(), filter.getPageSize(), filter.getSearch(), filter.getStatuses(),
-                filter.getHasSize(), filter.getStatuses(), filter.getHasPromotion(), filter.getCategoryId());
-
-        try {
-            PaginationResponse<ProductDetailDto> products = productService.getAllProductsAdminStock(filter);
-            long duration = System.currentTimeMillis() - startTime;
-            log.info("GET /api/v1/products/admin/stock/all succeeded in {}ms - Retrieved {} products (Page {} of {}), Total Elements: {}",
-                    duration, products.getContent().size(), products.getPageNo(), products.getTotalPages(), products.getTotalElements());
-
-            return ResponseEntity.ok(ApiResponse.success(
-                    String.format("Found %d products with stock information (Page %d of %d)",
-                        products.getTotalElements(), products.getPageNo(), products.getTotalPages()),
-                    products
-            ));
-        } catch (Exception e) {
-            long duration = System.currentTimeMillis() - startTime;
-            log.error("GET /api/v1/products/admin/stock/all failed after {}ms - Error: {}", duration, e.getMessage(), e);
-            throw e;
-        }
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ProductDetailDto>> getProductById(@PathVariable UUID id) {
         long startTime = System.currentTimeMillis();

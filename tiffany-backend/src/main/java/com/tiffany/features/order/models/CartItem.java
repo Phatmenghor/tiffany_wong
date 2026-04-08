@@ -97,8 +97,7 @@ public class CartItem extends BaseUUIDEntity {
 
     @Deprecated
     public Boolean isProductInStock() {
-        if (product == null) return false;
-        return product.isAvailable(); // ACTIVE or OUT_OF_STOCK
+        return isAvailable();
     }
 
     public String getUnavailabilityReason() {
