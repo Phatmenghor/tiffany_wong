@@ -324,8 +324,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<ProductDetailDto> getAllProductsAdminStock(ProductFilterDto filter) {
-                filter.getStatuses(), filter.getHasSize(), null, filter.getHasPromotion(), filter.getSearch());
-
         long startTime = System.currentTimeMillis();
 
         Optional<User> currentUser = securityUtils.getCurrentUserOptional();
@@ -1011,27 +1009,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void enrichTotalStock(List<ProductListDto> dtoList, List<Product> products) {
-        List<UUID> productIds = products.stream().map(Product::getId).toList();
-        if (productIds.isEmpty()) return;
-
-        Map<UUID, Integer> stockMap = new HashMap<>();
-                .forEach(row -> stockMap.put((UUID) row[0], ((Number) row[1]).intValue()));
-
+        // Stock enrichment disabled - no-op method
     }
 
     private void enrichTotalStockForDetail(ProductDetailDto dto, UUID productId) {
-        if (!results.isEmpty()) {
-        } else {
-        }
+        // Stock enrichment disabled - no-op method
     }
 
     private void enrichTotalStockForDetails(List<ProductDetailDto> dtoList, List<Product> products) {
-        List<UUID> productIds = products.stream().map(Product::getId).toList();
-        if (productIds.isEmpty()) return;
-
-        Map<UUID, Integer> stockMap = new HashMap<>();
-                .forEach(row -> stockMap.put((UUID) row[0], ((Number) row[1]).intValue()));
-
+        // Stock enrichment disabled - no-op method
     }
 
     /**

@@ -658,30 +658,12 @@ public class OrderServiceImpl implements OrderService {
     // Order number generation is now handled by orderNumberGenerator with per-business counters
     // Format: ORD-YYYYMMDD-XXXXX (where XXXXX can be 00001-99999, 100000 onwards)
 
-    @Override
-
     /**
      * Deduct stock via FIFO for each item in the order.
      * Called when order status changes to CONFIRMED.
      */
     private void deductStockForOrder(Order order) {
-        if (order.getItems() == null || order.getItems().isEmpty()) return;
-
-        for (OrderItem item : order.getItems()) {
-            try {
-                    item.getProductId(),
-                    item.getProductSizeId(),
-                    item.getQuantity(),
-                    order.getId(),
-                    "Order confirmed: " + order.getOrderNumber()
-                );
-            } catch (Exception e) {
-                log.warn("Failed to deduct stock for product {} in order {}: {}",
-                    item.getProductId(), order.getOrderNumber(), e.getMessage());
-            }
-        }
-
-        log.info("Stock deducted via FIFO for confirmed order: {}", order.getOrderNumber());
+        // Stock deduction disabled - no-op method
     }
 
     /**
