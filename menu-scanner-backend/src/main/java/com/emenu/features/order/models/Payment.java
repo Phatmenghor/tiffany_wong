@@ -3,7 +3,6 @@ package com.emenu.features.order.models;
 import com.emenu.enums.payment.PaymentMethod;
 import com.emenu.enums.payment.PaymentStatus;
 import com.emenu.enums.payment.PaymentType;
-import com.emenu.features.auth.models.Business;
 import com.emenu.shared.domain.BaseUUIDEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,14 +23,6 @@ import java.util.UUID;
 public class Payment extends BaseUUIDEntity {
 
     private String imageUrl;
-
-    @Column(name = "business_id")
-    private UUID businessId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "business_id", insertable = false, updatable = false)
-    private Business business;
-
 
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
@@ -82,13 +73,5 @@ public class Payment extends BaseUUIDEntity {
 
     public void markAsPending() {
         this.status = PaymentStatus.PENDING;
-    }
-
-    public String getBusinessName() {
-        return business != null ? business.getName() : "Unknown Business";
-    }
-
-    public boolean hasBusiness() {
-        return businessId != null;
     }
 }

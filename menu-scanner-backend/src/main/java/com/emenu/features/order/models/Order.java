@@ -3,7 +3,6 @@ package com.emenu.features.order.models;
 import com.emenu.enums.order.OrderStatus;
 import com.emenu.enums.payment.PaymentMethod;
 import com.emenu.enums.payment.PaymentStatus;
-import com.emenu.features.auth.models.Business;
 import com.emenu.features.auth.models.User;
 import com.emenu.features.order.enums.OrderFromEnum;
 import com.emenu.shared.domain.BaseUUIDEntity;
@@ -37,13 +36,6 @@ public class Order extends BaseUUIDEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", insertable = false, updatable = false)
     private User customer;
-
-    @Column(name = "business_id", nullable = false)
-    private UUID businessId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "business_id", insertable = false, updatable = false)
-    private Business business;
 
     // ===== Delivery Address Snapshots =====
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
