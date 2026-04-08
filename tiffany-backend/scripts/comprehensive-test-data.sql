@@ -392,22 +392,33 @@ SELECT
 FROM generate_series(1, 2000) AS t(i);
 
 -- ============================================================================
--- 11. ORDER ITEMS (Multiple items per order)
+-- 11. ORDER ITEMS (1-3 items per order - OPTIMIZED for speed)
 -- ============================================================================
 INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_name, quantity, unit_price, total_price, final_price, product_size_id)
+WITH product_offsets AS (
+    SELECT
+        o.id as order_id,
+        p.id as product_id,
+        p.name,
+        p.price,
+        ROW_NUMBER() OVER (PARTITION BY o.id ORDER BY p.id) as item_num
+    FROM orders o
+    CROSS JOIN (
+        SELECT id, name, price FROM products LIMIT 3000
+    ) p
+    WHERE (ABS(hashtext(o.id::text || p.id::text)) % 100) < 20  -- ~20% hit rate = 1-3 items per order
+)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    o.id,
-    p.id,
-    p.name,
+    po.order_id,
+    po.product_id,
+    po.name,
     (1 + (random() * 5)::int),
-    p.price,
-    (p.price * (1 + (random() * 5)::int))::numeric(10,2),
-    (p.price * (1 + (random() * 5)::int))::numeric(10,2),
-    (SELECT id FROM product_sizes WHERE product_id = p.id ORDER BY RANDOM() LIMIT 1)
-FROM orders o
-CROSS JOIN (SELECT * FROM products ORDER BY RANDOM() LIMIT 1) p
-CROSS JOIN generate_series(1, (1 + (random() * 3)::int)) AS item_num;
+    po.price,
+    (po.price * (1 + (random() * 5)::int))::numeric(10,2),
+    (po.price * (1 + (random() * 5)::int))::numeric(10,2),
+    (SELECT id FROM product_sizes WHERE product_id = po.product_id LIMIT 1)
+FROM product_offsets po;
 
 -- ============================================================================
 -- 12. ORDER DELIVERY ADDRESSES
