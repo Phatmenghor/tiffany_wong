@@ -4,7 +4,6 @@ import com.tiffany.enums.order.OrderStatus;
 import com.tiffany.enums.payment.PaymentMethod;
 import com.tiffany.enums.payment.PaymentStatus;
 import com.tiffany.features.order.dto.request.DeliveryAddressRequest;
-import com.tiffany.features.order.dto.request.DeliveryOptionRequest;
 import com.tiffany.features.order.dto.request.OrderItemUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -26,9 +25,6 @@ public class OrderUpdateRequest {
 
     @Valid
     private DeliveryAddressRequest deliveryAddress;
-
-    @Valid
-    private DeliveryOptionRequest deliveryOption;
 
     @Valid
     private List<OrderItemUpdateRequest> items;

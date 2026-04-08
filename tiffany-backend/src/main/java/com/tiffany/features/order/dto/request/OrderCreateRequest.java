@@ -16,7 +16,6 @@ public class OrderCreateRequest {
     @NotNull(message = "Address ID is required")
     private UUID addressId;
 
-    private DeliveryOptionRequest deliveryOption;
     private String customerNote;
     private OrderStatus orderStatus = OrderStatus.PENDING;
 }

@@ -79,10 +79,6 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-            if (request.getDeliveryOption() != null && request.getDeliveryOption().getPrice() != null) {
-                savedOrder.setDeliveryFee(request.getDeliveryOption().getPrice());
-            }
-
             createInitialOrderStatusHistory(savedOrder, currentUser.getId());
 
             Cart cart = cartRepository.findByUserIdWithItems(currentUser.getId())
@@ -206,14 +202,6 @@ public class OrderServiceImpl implements OrderService {
             orderDeliveryAddressRepository.save(deliveryAddress);
         }
 
-        // Update delivery option snapshot if provided
-        if (request.getDeliveryOption() != null) {
-            order.setDeliveryFee(request.getDeliveryOption().getPrice());
-
-            // Recalculate total with new delivery fee
-            order.setTotalAmount(order.getSubtotal().add(request.getDeliveryOption().getPrice()));
-        }
-
         if (request.getCustomerNote() != null) {
             order.setCustomerNote(request.getCustomerNote());
         }
@@ -277,7 +265,7 @@ public class OrderServiceImpl implements OrderService {
             (request.getPricing() != null && request.getPricing().getAfter() != null &&
              (request.getPricing().getAfter().getDiscountAmount() != null ||
               request.getPricing().getAfter().getTaxAmount() != null ||
-              (request.getPricing().getAfter().getDeliveryFee() != null && request.getDeliveryOption() == null)))) {
+              request.getPricing().getAfter().getDeliveryFee() != null))) {
             BigDecimal subtotal = order.getSubtotal() != null ? order.getSubtotal() : BigDecimal.ZERO;
             BigDecimal discount = order.getDiscountAmount() != null ? order.getDiscountAmount() : BigDecimal.ZERO;
             BigDecimal delivery = order.getDeliveryFee() != null ? order.getDeliveryFee() : BigDecimal.ZERO;
