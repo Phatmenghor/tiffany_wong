@@ -13,7 +13,6 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class OrderPaymentFilterRequest extends BaseFilterRequest {
-    private UUID businessId;
     private List<PaymentStatus> statuses;
     private PaymentMethod paymentMethod;
     private String customerPaymentMethod;

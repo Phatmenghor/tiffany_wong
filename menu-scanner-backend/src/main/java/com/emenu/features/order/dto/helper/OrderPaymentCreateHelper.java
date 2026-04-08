@@ -17,7 +17,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderPaymentCreateHelper {
-    private UUID businessId;
     private UUID orderId;
     private String referenceNumber;
 

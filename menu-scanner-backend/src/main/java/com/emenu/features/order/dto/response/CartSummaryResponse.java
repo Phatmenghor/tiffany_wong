@@ -8,8 +8,6 @@ import java.util.UUID;
 
 @Data
 public class CartSummaryResponse {
-    private UUID businessId;
-    private String businessName;
     private List<CartItemResponse> items;
     private Integer totalItems;                  // Total number of unique products
     private Integer totalQuantity;               // Total quantity across all items

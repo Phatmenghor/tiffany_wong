@@ -146,6 +146,5 @@ return paginationMapper.toPaginationResponse(cartPage, this::toResponseList);
      * Create a new cart from helper DTO - pure MapStruct mapping
      */
     @Mapping(source = "userId", target = "userId")
-    @Mapping(source = "businessId", target = "businessId")
     Cart createFromHelper(CartCreateHelper helper);
 }

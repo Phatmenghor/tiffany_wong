@@ -10,8 +10,6 @@ import java.util.UUID;
 @Data
 public class CartResponse {
     private UUID userId;
-    private UUID businessId;
-    private String businessName;
     private List<CartItemResponse> items;
     private Integer totalItems;
     private BigDecimal subtotalBeforeDiscount;  // Sum of all items at original price

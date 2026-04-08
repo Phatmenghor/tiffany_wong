@@ -161,13 +161,8 @@ public class ProductServiceImpl implements ProductService {
         long startTime = System.currentTimeMillis();
         Optional<User> currentUser = securityUtils.getCurrentUserOptional();
 
-        if (currentUser.isPresent() && currentUser.get().isBusinessUser() && filter.getBusinessId() == null) {
-            filter.setBusinessId(currentUser.get().getBusinessId());
-            log.debug("Set BusinessId from current user: {}", currentUser.get().getBusinessId());
-        }
-
         List<Product> products = productRepository.findAllWithFilters(
-                filter.getBusinessId(),
+                null,
                 filter.getCategoryId(),
                 filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
@@ -234,11 +229,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<ProductDetailDto> getAllProductsAdmin(ProductFilterDto filter) {
-        // Auto-set business ID for business users if not provided
         Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-        if (currentUser.isPresent() && currentUser.get().isBusinessUser() && filter.getBusinessId() == null) {
-            filter.setBusinessId(currentUser.get().getBusinessId());
-        }
 
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(),
@@ -249,7 +240,7 @@ public class ProductServiceImpl implements ProductService {
 
         // Use optimized query - no category/brand/business/images JOINs (20-30x faster)
         Page<Product> productPage = productRepository.findAllWithFiltersOptimized(
-                filter.getBusinessId(),
+                null,
                 filter.getCategoryId(),
                 filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
@@ -287,9 +278,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public PaginationResponse<ProductDetailDto> getAllProductsAdminPos(ProductFilterDto filter) {
         Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-        if (currentUser.isPresent() && currentUser.get().isBusinessUser() && filter.getBusinessId() == null) {
-            filter.setBusinessId(currentUser.get().getBusinessId());
-        }
 
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(),
@@ -299,7 +287,7 @@ public class ProductServiceImpl implements ProductService {
         );
 
         Page<Product> productPage = productRepository.findAllWithFilters(
-                filter.getBusinessId(),
+                null,
                 filter.getCategoryId(),
                 filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
@@ -341,11 +329,7 @@ public class ProductServiceImpl implements ProductService {
 
         long startTime = System.currentTimeMillis();
 
-        // Auto-set business ID for business users if not provided
         Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-        if (currentUser.isPresent() && currentUser.get().isBusinessUser() && filter.getBusinessId() == null) {
-            filter.setBusinessId(currentUser.get().getBusinessId());
-        }
 
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(),
@@ -356,7 +340,7 @@ public class ProductServiceImpl implements ProductService {
 
         // Fetch products with filters
         Page<Product> productPage = productRepository.findAllWithFilters(
-                filter.getBusinessId(),
+                null,
                 filter.getCategoryId(),
                 filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
@@ -411,13 +395,9 @@ public class ProductServiceImpl implements ProductService {
                         return new NotFoundException("Product not found: " + id);
                     });
 
-            log.debug("Product found - Name: '{}', BusinessId: {}", product.getName(), product.getBusinessId());
+            log.debug("Product found - Name: '{}'", product.getName());
 
             Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-            if (currentUser.isPresent() && currentUser.get().isBusinessUser()) {
-                validateBusinessAccess(product, currentUser.get());
-                log.debug("Business access validated for user: {}", currentUser.get().getUserIdentifier());
-            }
 
             // Initialize images for detail view (avoids MultipleBagFetchException by loading separately)
             Hibernate.initialize(product.getImages());
@@ -556,22 +536,20 @@ public class ProductServiceImpl implements ProductService {
 
         try {
             User currentUser = securityUtils.getCurrentUser();
-            validateUserBusinessAssociation(currentUser);
-            UUID businessId = currentUser.getBusinessId();
 
             // Use native SQL queries for ultra-fast bulk reset (1000x faster than ORM)
-            log.info("Executing native SQL bulk reset for business: {}", businessId);
+            log.info("Executing native SQL bulk reset for all products");
 
             // Reset product sizes first (faster query)
-            int sizesReset = productSizeRepository.resetAllPromotionsForProductSizes(businessId);
+            int sizesReset = productSizeRepository.resetAllPromotionsForProductSizes(null);
             log.info("Reset promotions for {} product sizes via SQL", sizesReset);
 
             // Reset products without sizes
-            int productsWithoutSizes = productRepository.resetAllPromotionsForProductsWithoutSizes(businessId);
+            int productsWithoutSizes = productRepository.resetAllPromotionsForProductsWithoutSizes(null);
             log.info("Reset promotions for {} products without sizes via SQL", productsWithoutSizes);
 
             // Reset products with sizes (recalculates display fields from min size price)
-            int productsWithSizes = productRepository.resetAllPromotionsForProductsWithSizes(businessId);
+            int productsWithSizes = productRepository.resetAllPromotionsForProductsWithSizes(null);
             log.info("Reset promotions for {} products with sizes via SQL", productsWithSizes);
 
             int totalProductsReset = productsWithoutSizes + productsWithSizes;
@@ -608,21 +586,10 @@ public class ProductServiceImpl implements ProductService {
             }
 
             User currentUser = securityUtils.getCurrentUser();
-            validateUserBusinessAssociation(currentUser);
-            UUID businessId = currentUser.getBusinessId();
 
-            // Validate all products belong to current user's business
+            // Fetch products to reset
             List<Product> products = productRepository.findAllById(request.getProductIds());
             log.debug("Fetched {} products for reset", products.size());
-
-            int productsValidated = 0;
-            for (Product product : products) {
-                if (!product.getBusinessId().equals(businessId)) {
-                    throw new ValidationException("Product does not belong to your business: " + product.getId());
-                }
-                productsValidated++;
-            }
-            log.debug("Validated {} products for business: {}", productsValidated, businessId);
 
             int sizesReset = 0;
             int productsReset = 0;
@@ -1047,12 +1014,6 @@ public class ProductServiceImpl implements ProductService {
     private void validateBusinessOwnership(Product product, User user) {
         if (!product.getBusinessId().equals(user.getBusinessId())) {
             throw new ValidationException("You can only modify products from your own business");
-        }
-    }
-
-    private void validateBusinessAccess(Product product, User user) {
-        if (user.isBusinessUser() && !product.getBusinessId().equals(user.getBusinessId())) {
-            throw new ValidationException("Access denied to product from different business");
         }
     }
 

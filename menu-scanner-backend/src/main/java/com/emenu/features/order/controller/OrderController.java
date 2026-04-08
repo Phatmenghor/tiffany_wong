@@ -35,7 +35,7 @@ public class OrderController {
     @PostMapping("/checkout")
     public ResponseEntity<ApiResponse<OrderResponse>> createOrderFromCart(@Valid @RequestBody OrderCreateRequest request) {
         long startTime = System.currentTimeMillis();
-        log.info("🛒 [API REQUEST] POST /api/v1/orders/checkout | Business: {}", request.getBusinessId());
+        log.info("🛒 [API REQUEST] POST /api/v1/orders/checkout");
         log.debug("📋 [REQUEST DETAILS] Items in cart, OrderStatus: {}", request.getOrderStatus());
 
         OrderResponse order = orderService.createOrderFromCart(request);
@@ -55,8 +55,8 @@ public class OrderController {
     @PostMapping("/checkout-from-pos")
     public ResponseEntity<ApiResponse<POSCheckoutResponse>> createPOSCheckoutOrder(@Valid @RequestBody POSCheckoutRequest request) {
         long startTime = System.currentTimeMillis();
-        log.info("🎯 [API REQUEST] POST /api/v1/orders/checkout-from-pos | Business: {}, Items: {}",
-                request.getBusinessId(), request.getCart().getItems().size());
+        log.info("🎯 [API REQUEST] POST /api/v1/orders/checkout-from-pos | Items: {}",
+                request.getCart().getItems().size());
         log.debug("📋 [REQUEST DETAILS] Customer: {}, PaymentMethod: {}, Items: {}",
                 request.getCustomerId(), request.getPayment().getPaymentMethod(), request.getCart().getItems().size());
 
@@ -78,8 +78,8 @@ public class OrderController {
         long startTime = System.currentTimeMillis();
         log.info("🌐 [API REQUEST] GET /api/v1/orders/all | Page: {}, Size: {}",
                 filter.getPageNo(), filter.getPageSize());
-        log.debug("📋 [FILTER DETAILS] Business: {}, Status: {}, PaymentMethod: {}, PaymentStatus: {}",
-                filter.getBusinessId(), filter.getOrderStatus(), filter.getPaymentMethod(), filter.getPaymentStatus());
+        log.debug("📋 [FILTER DETAILS] Status: {}, PaymentMethod: {}, PaymentStatus: {}",
+                filter.getOrderStatus(), filter.getPaymentMethod(), filter.getPaymentStatus());
 
         PaginationResponse<OrderResponse> orders = orderService.getAllOrders(filter);
 
@@ -98,10 +98,9 @@ public class OrderController {
     public ResponseEntity<ApiResponse<PaginationResponse<OrderResponse>>> getMyBusinessOrders(@Valid @RequestBody OrderFilterRequest filter) {
         long startTime = System.currentTimeMillis();
         User currentUser = securityUtils.getCurrentUser();
-        log.info("🏢 [API REQUEST] GET /api/v1/orders/my-business/all | Business: {}, Page: {}, Size: {}",
-                currentUser.getBusinessId(), filter.getPageNo(), filter.getPageSize());
+        log.info("🏢 [API REQUEST] GET /api/v1/orders/my-business/all | Page: {}, Size: {}",
+                filter.getPageNo(), filter.getPageSize());
 
-        filter.setBusinessId(currentUser.getBusinessId());
         log.debug("📋 [FILTER DETAILS] Status: {}, PaymentMethod: {}, PaymentStatus: {}",
                 filter.getOrderStatus(), filter.getPaymentMethod(), filter.getPaymentStatus());
 

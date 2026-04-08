@@ -12,8 +12,6 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class OrderPaymentResponse extends BaseAuditResponse {
-    private UUID businessId;
-    private String businessName;
     private UUID orderId;
     private String orderNumber;
     private String paymentReference;
