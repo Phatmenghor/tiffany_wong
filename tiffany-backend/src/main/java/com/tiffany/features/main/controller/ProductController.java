@@ -38,8 +38,8 @@ public class ProductController {
             @Valid @RequestBody ProductFilterDto filter) {
 
         long startTime = System.currentTimeMillis();
-        log.info("GET /api/v1/products/all - Page: {}, Size: {}, Filters: CategoryId={}, BrandId={}",
-                filter.getPageNo(), filter.getPageSize(), filter.getCategoryId(), filter.getBrandId());
+        log.info("GET /api/v1/products/all - Page: {}, Size: {}, Filters: CategoryId={}",
+                filter.getPageNo(), filter.getPageSize(), filter.getCategoryId());
 
         try {
             PaginationResponse<ProductListDto> products = productService.getAllProducts(filter);
@@ -91,9 +91,9 @@ public class ProductController {
             @Valid @RequestBody ProductFilterDto filter) {
 
         long startTime = System.currentTimeMillis();
-        log.info("GET /api/v1/products/admin/stock/all - Page: {}, Size: {}, Filters: Search='{}', Status={}, HasSize={}, Statuses={}, HasPromotion={}, BrandId={}, CategoryId={}",
+        log.info("GET /api/v1/products/admin/stock/all - Page: {}, Size: {}, Filters: Search='{}', Status={}, HasSize={}, Statuses={}, HasPromotion={}, CategoryId={}",
                 filter.getPageNo(), filter.getPageSize(), filter.getSearch(), filter.getStatuses(),
-                filter.getHasSize(), filter.getStatuses(), filter.getHasPromotion(), filter.getBrandId(), filter.getCategoryId());
+                filter.getHasSize(), filter.getStatuses(), filter.getHasPromotion(), filter.getCategoryId());
 
         try {
             PaginationResponse<ProductDetailDto> products = productService.getAllProductsAdminStock(filter);

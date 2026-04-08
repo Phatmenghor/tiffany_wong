@@ -13,7 +13,6 @@ import java.util.UUID;
 @Data
 public class ProductFilterDto extends BaseFilterRequest {
     private UUID categoryId;
-    private UUID brandId;
     private List<ProductStatus> statuses;
     private Boolean hasPromotion;
     private Boolean hasSize;

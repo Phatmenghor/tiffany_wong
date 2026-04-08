@@ -67,8 +67,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<ProductListDto> getAllProducts(ProductFilterDto filter) {
-        log.debug("Starting getAllProducts - Filter: CategoryId={}, BrandId={}, Search={}",
-                filter.getCategoryId(), filter.getBrandId(), filter.getSearch());
+        log.debug("Starting getAllProducts - Filter: CategoryId={}, Search={}",
+                filter.getCategoryId(), filter.getSearch());
 
         long startTime = System.currentTimeMillis();
         Optional<User> currentUser = securityUtils.getCurrentUserOptional();
@@ -84,7 +84,6 @@ public class ProductServiceImpl implements ProductService {
 
         Page<Product> productPage = productRepository.findAllWithFilters(
                 filter.getCategoryId(),
-                filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
                 Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
                 Boolean.FALSE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
@@ -153,8 +152,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public List<ProductListDto> getAllDataProducts(ProductFilterDto filter) {
-        log.debug("Starting getAllDataProducts - Filter: CategoryId={}, BrandId={}, Search={}",
-                filter.getCategoryId(), filter.getBrandId(), filter.getSearch());
+        log.debug("Starting getAllDataProducts - Filter: CategoryId={}, Search={}",
+                filter.getCategoryId(), filter.getSearch());
 
         long startTime = System.currentTimeMillis();
         Optional<User> currentUser = securityUtils.getCurrentUserOptional();
@@ -162,7 +161,6 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = productRepository.findAllWithFilters(
                 null,
                 filter.getCategoryId(),
-                filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
                 Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
                 Boolean.FALSE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
@@ -236,11 +234,10 @@ public class ProductServiceImpl implements ProductService {
                 filter.getSortDirection()
         );
 
-        // Use optimized query - no category/brand/business/images JOINs (20-30x faster)
+        // Use optimized query - no category/business/images JOINs (20-30x faster)
         Page<Product> productPage = productRepository.findAllWithFiltersOptimized(
                 null,
                 filter.getCategoryId(),
-                filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
                 Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
                 Boolean.FALSE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
@@ -286,7 +283,6 @@ public class ProductServiceImpl implements ProductService {
 
         Page<Product> productPage = productRepository.findAllWithFilters(
                 filter.getCategoryId(),
-                filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
                 Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
                 Boolean.FALSE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
@@ -334,7 +330,6 @@ public class ProductServiceImpl implements ProductService {
         // Fetch products with filters
         Page<Product> productPage = productRepository.findAllWithFilters(
                 filter.getCategoryId(),
-                filter.getBrandId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
                 Boolean.TRUE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,
                 Boolean.FALSE.equals(filter.getHasPromotion()) ? Boolean.TRUE : null,

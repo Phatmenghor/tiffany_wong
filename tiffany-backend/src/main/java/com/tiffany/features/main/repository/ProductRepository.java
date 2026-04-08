@@ -94,7 +94,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "WHERE p.isDeleted = false " +
            "AND (:businessId IS NULL OR p.businessId = :businessId) " +
            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
-           "AND (:brandId IS NULL OR p.brandId = :brandId) " +
            "AND (:statuses IS NULL OR p.status IN :statuses) " +
            "AND (:needsPromotion IS NULL OR p.hasActivePromotion = true) " +
            "AND (:needsNoPromotion IS NULL OR p.hasActivePromotion = false) " +
@@ -108,7 +107,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "     LOWER(p.brandName) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Product> findAllWithFiltersOptimized(
         @Param("categoryId") UUID categoryId,
-        @Param("brandId") UUID brandId,
         @Param("statuses") List<ProductStatus> statuses,
         @Param("needsPromotion") Boolean needsPromotion,
         @Param("needsNoPromotion") Boolean needsNoPromotion,
@@ -129,7 +127,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "WHERE p.isDeleted = false " +
            "AND (:businessId IS NULL OR p.businessId = :businessId) " +
            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
-           "AND (:brandId IS NULL OR p.brandId = :brandId) " +
            "AND (:statuses IS NULL OR p.status IN :statuses) " +
            "AND (:needsPromotion IS NULL OR p.hasActivePromotion = true) " +
            "AND (:needsNoPromotion IS NULL OR p.hasActivePromotion = false) " +
@@ -143,7 +140,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "     LOWER(p.brandName) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Product> findAllWithFilters(
         @Param("categoryId") UUID categoryId,
-        @Param("brandId") UUID brandId,
         @Param("statuses") List<ProductStatus> statuses,
         @Param("needsPromotion") Boolean needsPromotion,
         @Param("needsNoPromotion") Boolean needsNoPromotion,
@@ -160,13 +156,11 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      */
     @Query("SELECT DISTINCT p FROM Product p " +
            "LEFT JOIN FETCH p.category c " +
-           "LEFT JOIN FETCH p.brand b " +
            "LEFT JOIN FETCH p.business bus " +
            "LEFT JOIN FETCH p.images img " +
            "WHERE p.isDeleted = false " +
            "AND (:businessId IS NULL OR p.businessId = :businessId) " +
            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
-           "AND (:brandId IS NULL OR p.brandId = :brandId) " +
            "AND (:statuses IS NULL OR p.status IN :statuses) " +
            "AND (:needsPromotion IS NULL OR p.hasActivePromotion = true) " +
            "AND (:needsNoPromotion IS NULL OR p.hasActivePromotion = false) " +
@@ -175,11 +169,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "AND (:search IS NULL OR :search = '' OR " +
            "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(b.name) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')))")
     List<Product> findAllWithFilters(
         @Param("categoryId") UUID categoryId,
-        @Param("brandId") UUID brandId,
         @Param("statuses") List<ProductStatus> statuses,
         @Param("needsPromotion") Boolean needsPromotion,
         @Param("needsNoPromotion") Boolean needsNoPromotion,
