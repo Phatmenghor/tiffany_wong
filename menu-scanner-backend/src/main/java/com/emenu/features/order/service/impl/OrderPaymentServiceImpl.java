@@ -37,12 +37,6 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
 
     @Override
     public PaginationResponse<OrderPaymentResponse> getAllPayments(OrderPaymentFilterRequest filter) {
-        User currentUser = securityUtils.getCurrentUser();
-
-        if (currentUser.isBusinessUser() && filter.getBusinessId() == null) {
-            filter.setBusinessId(currentUser.getBusinessId());
-        }
-
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection()
         );
@@ -51,7 +45,6 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
                 ? filter.getStatuses() : null;
 
         Page<OrderPayment> page = paymentRepository.findAllWithFilters(
-                filter.getBusinessId(),
                 statuses,
                 filter.getPaymentMethod(),
                 filter.getCustomerPaymentMethod(),

@@ -57,14 +57,13 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<PaymentResponse> getAllPayments(PaymentFilterRequest filter) {
-        log.info("Fetching payments: businessId={}, status={}", filter.getBusinessId(), filter.getStatuses());
+        log.info("Fetching payments: status={}", filter.getStatuses());
         Pageable pageable = PaginationUtils.createPageable(filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection());
         List<PaymentMethod> paymentMethods = (filter.getPaymentMethods() != null && !filter.getPaymentMethods().isEmpty())
                 ? filter.getPaymentMethods() : null;
         List<PaymentStatus> paymentStatuses = (filter.getStatuses() != null && !filter.getStatuses().isEmpty())
                 ? filter.getStatuses() : null;
         Page<Payment> paymentPage = paymentRepository.findAllWithFilters(
-                filter.getBusinessId(),
                 filter.getPlanId(),
                 paymentMethods,
                 paymentStatuses,

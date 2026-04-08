@@ -67,16 +67,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<ProductListDto> getAllProducts(ProductFilterDto filter) {
-        log.debug("Starting getAllProducts - Filter: BusinessId={}, CategoryId={}, BrandId={}, Search={}",
-                filter.getBusinessId(), filter.getCategoryId(), filter.getBrandId(), filter.getSearch());
+        log.debug("Starting getAllProducts - Filter: CategoryId={}, BrandId={}, Search={}",
+                filter.getCategoryId(), filter.getBrandId(), filter.getSearch());
 
         long startTime = System.currentTimeMillis();
         Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-
-        if (currentUser.isPresent() && currentUser.get().isBusinessUser() && filter.getBusinessId() == null) {
-            filter.setBusinessId(currentUser.get().getBusinessId());
-            log.debug("Set BusinessId from current user: {}", currentUser.get().getBusinessId());
-        }
 
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(),

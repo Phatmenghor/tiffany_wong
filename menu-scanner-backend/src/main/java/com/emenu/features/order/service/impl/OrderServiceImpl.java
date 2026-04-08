@@ -73,8 +73,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse createOrderFromCart(OrderCreateRequest request) {
-        log.info("🛍️  [CHECKOUT START] Creating order from cart - Business: {}, Customer: {}",
-            request.getBusinessId(), securityUtils.getCurrentUser().getId());
+        log.info("🛍️  [CHECKOUT START] Creating order from cart - Customer: {}",
+            securityUtils.getCurrentUser().getId());
 
         User currentUser = securityUtils.getCurrentUser();
 
@@ -138,7 +138,7 @@ public class OrderServiceImpl implements OrderService {
                 createOrderItemsFromCartSummary(savedOrder.getId(), request.getCart(), null);
             } else {
                 log.info("📋 [STEP 4/7] Processing items from database cart");
-                Cart cart = cartRepository.findByUserIdAndBusinessIdWithItems(currentUser.getId(), request.getBusinessId())
+                Cart cart = cartRepository.findByUserIdWithItems(currentUser.getId())
                         .orElseThrow(() -> new ValidationException("Cart is empty or not found"));
 
                 if (cart.getItems() == null || cart.getItems().isEmpty()) {
@@ -152,7 +152,7 @@ public class OrderServiceImpl implements OrderService {
             createPaymentRecord(savedOrder);
 
             log.debug("📋 [STEP 6/7] Clearing cart...");
-            clearCartAfterOrder(currentUser.getId(), request.getBusinessId());
+            clearCartAfterOrder(currentUser.getId());
 
             log.info("✅ [CHECKOUT SUCCESS] Order created successfully: {} - Fetching full response...", savedOrder.getOrderNumber());
             OrderResponse response = getOrderById(savedOrder.getId());
@@ -173,7 +173,6 @@ public class OrderServiceImpl implements OrderService {
     public PaginationResponse<OrderResponse> getCustomerOrderHistory(OrderFilterRequest filter) {
         long startTime = System.currentTimeMillis();
         User currentUser = securityUtils.getCurrentUser();
-        filter.setBusinessId(null);  // Clear any business filter for customer orders
 
         log.info("📋 [CUSTOMER ORDER HISTORY] Fetching orders for customer: {} | Page: {}, Size: {}",
                 currentUser.getId(), filter.getPageNo(), filter.getPageSize());
@@ -228,14 +227,8 @@ public class OrderServiceImpl implements OrderService {
         log.info("📊 [GET ALL ORDERS] Starting retrieval | User: {}",
                 currentUser.getId());
 
-        // If user is a business user and no businessId filter is provided, restrict to their business
-        if (currentUser.isBusinessUser() && filter.getBusinessId() == null) {
-            filter.setBusinessId(currentUser.getBusinessId());
-            log.debug("🔐 [AUTO-FILTER] Business user detected - auto-filtering to business: {}", currentUser.getBusinessId());
-        }
-
-        log.debug("🔍 [FILTER PARAMETERS] BusinessId: {}, OrderStatus: {}, PaymentMethod: {}, PaymentStatus: {}",
-                filter.getBusinessId(), filter.getOrderStatus(), filter.getPaymentMethod(), filter.getPaymentStatus());
+        log.debug("🔍 [FILTER PARAMETERS] OrderStatus: {}, PaymentMethod: {}, PaymentStatus: {}",
+                filter.getOrderStatus(), filter.getPaymentMethod(), filter.getPaymentStatus());
 
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection()
@@ -243,11 +236,10 @@ public class OrderServiceImpl implements OrderService {
         log.debug("📑 [PAGINATION] PageNo: {}, PageSize: {}, SortBy: {}, Direction: {}",
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection());
 
-        // Apply filters: businessId, orderStatus, paymentMethod, paymentStatus
+        // Apply filters: orderStatus, paymentMethod, paymentStatus
         log.debug("🗄️  [DB QUERY START] Executing filtered query with eager loading...");
         long queryStartTime = System.currentTimeMillis();
         Page<Order> page = orderRepository.findAllWithFilters(
-                filter.getBusinessId(),
                 filter.getOrderStatus(),
                 filter.getPaymentMethod(),
                 filter.getPaymentStatus(),
@@ -288,10 +280,6 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderRepository.findByIdWithDetails(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
-
-        if (!currentUser.getBusinessId().equals(order.getBusinessId())) {
-            throw new ValidationException("You can only update orders for your business");
-        }
 
         if (request.getOrderStatus() != null) {
             OrderStatus previousStatus = order.getOrderStatus();
@@ -440,10 +428,6 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findByIdWithDetails(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
 
-        if (!currentUser.getBusinessId().equals(order.getBusinessId())) {
-            throw new ValidationException("You can only delete orders for your business");
-        }
-
         order.setIsDeleted(true);
         order = orderRepository.save(order);
 
@@ -453,8 +437,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private Order createBaseOrder(OrderCreateRequest request, UUID customerId) {
-        // Generate order number with per-business counter (ORD-YYYYMMDD-XXXXX)
-        String orderNumber = orderNumberGenerator.generateOrderNumber(request.getBusinessId());
+        // Generate order number (ORD-YYYYMMDD-XXXXX)
+        String orderNumber = orderNumberGenerator.generateOrderNumber();
         OrderCreateHelper helper = orderMapper.buildOrderHelper(request, customerId, orderNumber);
         Order order = orderMapper.createFromHelper(helper);
         // Set orderFrom to distinguish between CUSTOMER (checkout) and BUSINESS (POS) orders
@@ -627,7 +611,6 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal taxAmount = order.getTaxAmount() != null ? order.getTaxAmount() : BigDecimal.ZERO;
 
         OrderPaymentCreateHelper helper = OrderPaymentCreateHelper.builder()
-                .businessId(order.getBusinessId())
                 .orderId(order.getId())
                 .referenceNumber(paymentReferenceGenerator.generateUniqueReference())
                 .subtotal(subtotal)
@@ -642,13 +625,13 @@ public class OrderServiceImpl implements OrderService {
         paymentRepository.save(payment);
     }
 
-    private void clearCartAfterOrder(UUID customerId, UUID businessId) {
-        cartRepository.findByUserIdAndBusinessIdAndIsDeletedFalse(customerId, businessId)
+    private void clearCartAfterOrder(UUID customerId) {
+        cartRepository.findByUserIdAndIsDeletedFalse(customerId)
                 .ifPresent(cart -> {
                     if (cart.getItems() != null) {
                         cart.getItems().clear();
                     }
-                    log.info("Cart cleared after order for customer: {} and business: {}", customerId, businessId);
+                    log.info("Cart cleared after order for customer: {}", customerId);
                 });
     }
 
@@ -679,8 +662,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public POSCheckoutResponse createPOSCheckoutOrder(POSCheckoutRequest request) {
-        log.info("🎯 [POS CHECKOUT START] Creating POS order - Business: {}, Items: {}",
-            request.getBusinessId(), request.getCart().getItems().size());
+        log.info("🎯 [POS CHECKOUT START] Creating POS order - Items: {}",
+            request.getCart().getItems().size());
 
         User currentUser = securityUtils.getCurrentUser();
         String createdBy = currentUser != null ? currentUser.getFullName() : "System";
@@ -699,10 +682,9 @@ public class OrderServiceImpl implements OrderService {
             // Create order
             log.debug("📝 [STEP 2/6] Creating order entity...");
             Order order = new Order();
-            order.setBusinessId(request.getBusinessId());
             order.setCustomerId(request.getCustomerId());
-            // Generate per-business order number (ORD-YYYYMMDD-XXXXX)
-            order.setOrderNumber(orderNumberGenerator.generateOrderNumber(request.getBusinessId()));
+            // Generate order number (ORD-YYYYMMDD-XXXXX)
+            order.setOrderNumber(orderNumberGenerator.generateOrderNumber());
             order.setOrderStatus(OrderStatus.COMPLETED); // POS orders are always completed
             order.setSource("POS"); // Mark as POS order
             // Set orderFrom for POS orders
@@ -840,7 +822,6 @@ public class OrderServiceImpl implements OrderService {
             log.debug("💳 [STEP 5.5/6] Creating payment record...");
             OrderPayment payment = new OrderPayment();
             payment.setOrderId(updatedOrder.getId());
-            payment.setBusinessId(request.getBusinessId());
             payment.setPaymentMethod(PaymentMethod.valueOf(request.getPayment().getPaymentMethod()));
             payment.setStatus(PaymentStatus.PAID);
             payment.setPaymentReference(paymentReferenceGenerator.generateUniqueReference());
@@ -894,7 +875,6 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItem item : order.getItems()) {
             try {
                 stockService.deductStockFIFO(
-                    order.getBusinessId(),
                     item.getProductId(),
                     item.getProductSizeId(),
                     item.getQuantity(),

@@ -11,9 +11,6 @@ import java.util.UUID;
 @Data
 public class OrderCreateRequest {
 
-    @NotNull(message = "Business ID is required")
-    private UUID businessId;
-
     // Delivery info - use ID to fetch full address from database
     @NotNull(message = "Address ID is required")
     private UUID addressId;
