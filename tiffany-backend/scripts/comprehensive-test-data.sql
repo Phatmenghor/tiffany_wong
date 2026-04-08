@@ -109,11 +109,12 @@ FROM generate_series(1, 100000) AS t(i);
 -- ============================================================================
 -- 5. PRODUCT SIZES (70% of products = 70,000 sizes)
 -- ============================================================================
-INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, size_name, sku, barcode)
+INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, name, price, sku, barcode)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     p.id,
     CASE ((random() * 3)::int) WHEN 0 THEN 'Small' WHEN 1 THEN 'Medium' WHEN 2 THEN 'Large' ELSE 'Extra Large' END,
+    (p.price * (0.9 + random() * 0.2))::numeric(10,2),
     p.sku || '-' || CASE ((random() * 3)::int) WHEN 0 THEN 'S' WHEN 1 THEN 'M' WHEN 2 THEN 'L' ELSE 'XL' END,
     p.barcode || '-' || CASE ((random() * 3)::int) WHEN 0 THEN 'S' WHEN 1 THEN 'M' WHEN 2 THEN 'L' ELSE 'XL' END
 FROM (
