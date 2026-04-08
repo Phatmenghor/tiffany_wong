@@ -150,20 +150,20 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         throw new ValidationException("Unsupported provider: " + provider);
     }
 
-    private User findOrCreateUser(SocialUserInfo userInfo, SocialAuthProvider provider, UserType userType, UUID businessId) {
+    private User findOrCreateUser(SocialUserInfo userInfo, SocialAuthProvider provider, UserType userType) {
         return switch (provider) {
-            case TELEGRAM -> findOrCreateByTelegram(userInfo, userType, businessId);
+            case TELEGRAM -> findOrCreateByTelegram(userInfo, userType);
             default -> throw new ValidationException("Unsupported provider: " + provider);
         };
     }
 
-    private User findOrCreateByTelegram(SocialUserInfo userInfo, UserType userType, UUID businessId) {
+    private User findOrCreateByTelegram(SocialUserInfo userInfo, UserType userType) {
         Long telegramId = Long.parseLong(userInfo.getId());
         return userRepository.findByTelegramIdAndIsDeletedFalse(telegramId)
-                .orElseGet(() -> createNewUser(userInfo, userType, businessId));
+                .orElseGet(() -> createNewUser(userInfo, userType));
     }
 
-    private User createNewUser(SocialUserInfo userInfo, UserType userType, UUID businessId) {
+    private User createNewUser(SocialUserInfo userInfo, UserType userType) {
         String userIdentifier = generateUserIdentifier(userInfo, userType);
 
         String defaultRole = switch (userType) {

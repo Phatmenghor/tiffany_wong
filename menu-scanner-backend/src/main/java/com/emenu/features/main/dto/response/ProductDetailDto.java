@@ -43,13 +43,8 @@ public class ProductDetailDto extends BaseAuditResponse {
 
     private Integer quantity;
 
-    private UUID businessId;
-    private String businessName;
-
     private UUID categoryId;
     private String categoryName;
-
-    private String brandName;
 
     private List<ProductImageDto> images;
     private List<ProductSizeDto> sizes;
