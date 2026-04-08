@@ -1,7 +1,5 @@
 package com.emenu.features.auth.controller;
 
-import com.emenu.features.auth.dto.request.BusinessHoursCreateRequest;
-import com.emenu.features.auth.dto.request.SocialMediaCreateRequest;
 import com.emenu.features.auth.dto.response.SystemSettingResponse;
 import com.emenu.features.auth.dto.update.SystemSettingUpdateRequest;
 import com.emenu.features.auth.service.SystemSettingService;
@@ -11,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/system-settings")
@@ -29,27 +25,18 @@ public class SystemSettingController {
         return ResponseEntity.ok(ApiResponse.success("System setting retrieved successfully", response));
     }
 
+    /**
+     * Single unified update endpoint for system settings.
+     * Handles create/update/delete for all system configuration:
+     * - System setting fields (tax, colors, contact info)
+     * - Social media items (create if no ID, update if ID exists, delete if null)
+     * - Business hours items (create if no ID, update if ID exists, delete if null)
+     */
     @PutMapping
     public ResponseEntity<ApiResponse<SystemSettingResponse>> updateSystemSetting(
             @Valid @RequestBody SystemSettingUpdateRequest request) {
-        log.info("Update system setting");
+        log.info("Update system setting with nested collections");
         SystemSettingResponse response = systemSettingService.updateSystemSetting(request);
         return ResponseEntity.ok(ApiResponse.success("System setting updated successfully", response));
-    }
-
-    @PutMapping("/social-media")
-    public ResponseEntity<ApiResponse<SystemSettingResponse>> updateSocialMediaList(
-            @Valid @RequestBody List<SocialMediaCreateRequest> socialMediaList) {
-        log.info("Update social media list - {} items", socialMediaList.size());
-        SystemSettingResponse response = systemSettingService.updateSocialMediaList(socialMediaList);
-        return ResponseEntity.ok(ApiResponse.success("Social media updated successfully", response));
-    }
-
-    @PutMapping("/business-hours")
-    public ResponseEntity<ApiResponse<SystemSettingResponse>> updateBusinessHoursList(
-            @Valid @RequestBody List<BusinessHoursCreateRequest> businessHoursList) {
-        log.info("Update business hours list - {} items", businessHoursList.size());
-        SystemSettingResponse response = systemSettingService.updateBusinessHoursList(businessHoursList);
-        return ResponseEntity.ok(ApiResponse.success("Business hours updated successfully", response));
     }
 }
