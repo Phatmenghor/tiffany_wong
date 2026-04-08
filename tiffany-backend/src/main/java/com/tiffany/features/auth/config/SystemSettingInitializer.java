@@ -21,22 +21,23 @@ public class SystemSettingInitializer {
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initializeSystemSetting() {
-        log.info("🔄 Checking system settings...");
+        log.info("Initializing system settings...");
 
-        // Check if system setting exists
         if (systemSettingRepository.findAll().isEmpty()) {
-            log.info("📝 Creating default system setting...");
+            log.info("Creating default system settings for Tiffany Cambodia");
 
             SystemSetting systemSetting = new SystemSetting();
-            systemSetting.setSystemName("Emenu Scanner");
+            systemSetting.setSystemName("Tiffany Cambodia");
             systemSetting.setPrimaryColor("#57823D");
             systemSetting.setTaxPercentage(0.0);
-            systemSetting.setContactEmail("contact@emenu.com");
+            systemSetting.setContactEmail("support@tiffanycambodia.com");
+            systemSetting.setContactPhone("+855-0-000-0000");
+            systemSetting.setContactAddress("Cambodia");
 
             systemSettingRepository.save(systemSetting);
-            log.info("✅ Default system setting created successfully");
+            log.info("System settings initialized successfully");
         } else {
-            log.info("✅ System setting already exists");
+            log.info("System settings already configured");
         }
     }
 }
