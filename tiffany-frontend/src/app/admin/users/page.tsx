@@ -65,7 +65,7 @@ export default function UserBusinessPage() {
       search: debouncedSearch,
       pageNo: filters.pageNo,
       pageSize: globalPageSize,
-      roles: filters.role === UserRole.ALL ? [] : [filters.role],
+      userRoles: filters.role === UserRole.ALL ? [] : [filters.role],
       userTypes: [UserGropeType.OWNER],
       accountStatuses: filters.accountStatus === AccountStatus.ALL ? [] : [filters.accountStatus],
     };
