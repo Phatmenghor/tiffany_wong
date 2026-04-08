@@ -48,8 +48,6 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
         User currentUser = securityUtils.getCurrentUser();
         UUID userId = currentUser.getId();
 
-        log.info("Toggling favorite - Product: {}, User: {}", productId, userId);
-
         Product product = productRepository.findByIdAndIsDeletedFalse(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found: " + productId));
 
@@ -58,56 +56,41 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
         }
 
         boolean isFavorited = favoriteRepository.existsByUserIdAndProductIdAndIsDeletedFalse(userId, productId);
-
-        String action;
         boolean finalStatus;
 
         if (!isFavorited) {
-            ProductFavorite favorite = new ProductFavorite(userId, productId);
-            favoriteRepository.save(favorite);
+            favoriteRepository.save(new ProductFavorite(userId, productId));
             productRepository.incrementFavoriteCount(productId);
-            action = "added";
             finalStatus = true;
-            log.info("Favorite added - Product: {}, User: {}", productId, userId);
+            log.info("Favorite added: productId={}", productId);
         } else {
             favoriteRepository.deleteByUserIdAndProductId(userId, productId);
             productRepository.decrementFavoriteCount(productId);
-            action = "removed";
             finalStatus = false;
-            log.info("Favorite removed - Product: {}, User: {}", productId, userId);
+            log.info("Favorite removed: productId={}", productId);
         }
 
-        return favoriteMapper.createToggleResponse(productId, userId, finalStatus, action);
+        return favoriteMapper.createToggleResponse(productId, userId, finalStatus, finalStatus ? "added" : "removed");
     }
 
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<ProductListDto> getUserFavorites(ProductFilterDto filter) {
         UUID userId = securityUtils.getCurrentUserId();
-        log.info("Getting favorites - User: {}", userId);
 
         Pageable pageable = PaginationUtils.createPageable(
-            filter.getPageNo(),
-            filter.getPageSize(),
-            "createdAt",
-            "DESC"
+                filter.getPageNo(),
+                filter.getPageSize(),
+                "createdAt",
+                "DESC"
         );
 
         Page<Product> favoritePage = productRepository.findUserFavorites(userId, pageable);
-
-        PaginationResponse<ProductListDto> response = productMapper.toPaginationResponse(
-            favoritePage,
-            paginationMapper
-        );
+        PaginationResponse<ProductListDto> response = productMapper.toPaginationResponse(favoritePage, paginationMapper);
 
         if (!response.getContent().isEmpty()) {
-            List<UUID> productIds = response.getContent().stream()
-                    .map(ProductListDto::getId)
-                    .toList();
-
-            Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
-                    userId, productIds
-            );
+            List<UUID> productIds = response.getContent().stream().map(ProductListDto::getId).toList();
+            Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(userId, productIds);
 
             response.getContent().forEach(product -> {
                 product.setIsFavorited(true);
@@ -115,18 +98,16 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
             });
         }
 
-        log.info("Retrieved {} favorites - User: {}", response.getContent().size(), userId);
+        log.info("Retrieved favorites: count={}", response.getContent().size());
         return response;
     }
 
     @Override
     public FavoriteRemoveAllDto removeAllFavorites() {
         UUID userId = securityUtils.getCurrentUserId();
-        log.info("Removing all favorites - User: {}", userId);
-
         int removedCount = favoriteRepository.deleteAllByUserId(userId);
 
-        log.info("Removed {} favorites - User: {}", removedCount, userId);
+        log.info("Removed all favorites: count={}", removedCount);
 
         return FavoriteRemoveAllDto.builder()
                 .userId(userId)

@@ -67,8 +67,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public List<ProductListDto> getAllDataProducts(ProductFilterDto filter) {
-        Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-
         List<Product> products = productRepository.findAllWithFilters(
                 filter.getCategoryId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
@@ -78,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
                 PaginationUtils.createSort(filter.getSortBy(), filter.getSortDirection())
         );
 
-        log.info("Products fetched from database - Total count: {}", products.size());
+        log.info("Fetching products: count={}", products.size());
 
         List<ProductListDto> dtoList = productMapper.toListDtos(products);
 
@@ -86,23 +84,12 @@ public class ProductServiceImpl implements ProductService {
             return dtoList;
         }
 
+        Optional<User> currentUser = securityUtils.getCurrentUserOptional();
         if (currentUser.isPresent()) {
-            List<UUID> productIds = products.stream()
-                    .map(Product::getId)
-                    .toList();
-
-            // Get favorite products
-            List<UUID> favoriteIds = favoriteQueryHelper.getFavoriteProductIds(
-                    currentUser.get().getId(),
-                    productIds
-            );
+            List<UUID> productIds = products.stream().map(Product::getId).toList();
+            List<UUID> favoriteIds = favoriteQueryHelper.getFavoriteProductIds(currentUser.get().getId(), productIds);
             Set<UUID> favoriteSet = new HashSet<>(favoriteIds);
-
-            // Get cart quantities for products
-            Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(
-                    currentUser.get().getId(),
-                    productIds
-            );
+            Map<UUID, Integer> cartQuantities = cartQueryHelper.getProductQuantitiesInCart(currentUser.get().getId(), productIds);
 
             dtoList.forEach(dto -> {
                 dto.setIsFavorited(favoriteSet.contains(dto.getId()));
@@ -115,8 +102,6 @@ public class ProductServiceImpl implements ProductService {
             });
         }
 
-        log.info("getAllDataProducts - Returned {} products", dtoList.size());
-
         return dtoList;
     }
 
@@ -124,8 +109,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<ProductDetailDto> getAllProductsAdmin(ProductFilterDto filter) {
-        Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(),
                 filter.getPageSize(),
@@ -133,7 +116,6 @@ public class ProductServiceImpl implements ProductService {
                 filter.getSortDirection()
         );
 
-        // Use optimized query
         Page<Product> productPage = productRepository.findAllWithFiltersOptimized(
                 filter.getCategoryId(),
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
@@ -147,73 +129,41 @@ public class ProductServiceImpl implements ProductService {
             return paginationMapper.toPaginationResponse(productPage, Collections.emptyList());
         }
 
-        // Batch initialize sizes to avoid lazy-loading (prevents Hibernate pagination warning)
         productPage.getContent().forEach(p -> Hibernate.initialize(p.getSizes()));
-
-        // Clear images to prevent lazy-loading (not needed for admin listing)
         productPage.getContent().forEach(p -> p.setImages(new ArrayList<>()));
 
-        // Use detail DTOs - mapper uses denormalized fields, not relationships
         List<ProductDetailDto> dtoList = productMapper.toDetailDtos(productPage.getContent());
-
         return paginationMapper.toPaginationResponse(productPage, dtoList);
     }
 
     @Override
     @Transactional(readOnly = true)
     public ProductDetailDto getProductById(UUID id) {
-        try {
-            Product product = productRepository.findByIdWithAllDetails(id)
-                    .orElseThrow(() -> {
-                        log.error("Product not found - ID: {}", id);
-                        return new NotFoundException("Product not found: " + id);
-                    });
+        Product product = productRepository.findByIdWithAllDetails(id)
+                .orElseThrow(() -> new NotFoundException("Product not found: " + id));
 
-            Optional<User> currentUser = securityUtils.getCurrentUserOptional();
+        Hibernate.initialize(product.getImages());
+        ProductDetailDto dto = productMapper.toDetailDto(product);
+        populateUserFieldsForDetail(dto, securityUtils.getCurrentUserOptional(), product);
 
-            // Initialize images for detail view (avoids MultipleBagFetchException by loading separately)
-            Hibernate.initialize(product.getImages());
-
-            ProductDetailDto dto = productMapper.toDetailDto(product);
-
-            populateUserFieldsForDetail(dto, currentUser, product);
-
-            log.info("getProductById - ID: {}, Name: '{}'", id, product.getName());
-
-            return dto;
-        } catch (Exception e) {
-            log.error("getProductById failed - ID: {}, Error: {}", id, e.getMessage());
-            throw e;
-        }
+        log.info("Fetching product: id={}", id);
+        return dto;
     }
 
     @Override
     @Transactional
     public ProductDetailDto getProductByIdPublic(UUID id) {
-        try {
-            Product product = productRepository.findByIdWithAllDetails(id)
-                    .orElseThrow(() -> {
-                        log.error("Product not found (public access) - ID: {}", id);
-                        return new NotFoundException("Product not found: " + id);
-                    });
+        Product product = productRepository.findByIdWithAllDetails(id)
+                .orElseThrow(() -> new NotFoundException("Product not found: " + id));
 
-            productRepository.incrementViewCount(id);
+        productRepository.incrementViewCount(id);
+        Hibernate.initialize(product.getImages());
 
-            // Initialize images for detail view (avoids MultipleBagFetchException by loading separately)
-            Hibernate.initialize(product.getImages());
+        ProductDetailDto dto = productMapper.toDetailDto(product);
+        populateUserFieldsForDetail(dto, securityUtils.getCurrentUserOptional(), product);
 
-            ProductDetailDto dto = productMapper.toDetailDto(product);
-
-            Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-            populateUserFieldsForDetail(dto, currentUser, product);
-
-            log.info("getProductByIdPublic - ID: {}, Name: '{}'", id, product.getName());
-
-            return dto;
-        } catch (Exception e) {
-            log.error("getProductByIdPublic failed - ID: {}, Error: {}", id, e.getMessage());
-            throw e;
-        }
+        log.info("Fetching product public: id={}", id);
+        return dto;
     }
 
     private void populateUserFieldsForDetail(ProductDetailDto dto, Optional<User> currentUser, Product product) {
@@ -249,192 +199,115 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDetailDto resetProductPromotion(UUID id) {
-        try {
-            // Load product only to validate existence
-            Product product = productRepository.findByIdAndIsDeletedFalse(id)
-                    .orElseThrow(() -> new NotFoundException("Product not found: " + id));
+        Product product = productRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new NotFoundException("Product not found: " + id));
 
-            User currentUser = securityUtils.getCurrentUser();
+        productSizeRepository.resetPromotionsByProductId(id);
+        productRepository.resetProductPromotionById(id);
 
-            // Reset sizes via native SQL (clearAutomatically evicts L1 cache)
-            int sizesReset = productSizeRepository.resetPromotionsByProductId(id);
-
-            // Reset product via native SQL (handles display_price for with/without sizes,
-            // clearAutomatically evicts L1 cache so getProductById reads fresh DB data)
-            productRepository.resetProductPromotionById(id);
-
-            log.info("Product promotion reset successfully: ID={}, Name='{}'", id, product.getName());
-            return getProductById(id);
-        } catch (Exception e) {
-            log.error("Product promotion reset failed - ID: {}, Error: {}", id, e.getMessage(), e);
-            throw e;
-        }
+        log.info("Product promotion reset: id={}", id);
+        return getProductById(id);
     }
 
     @Override
     @Transactional
     public Map<String, Object> resetAllPromotions() {
-        log.info("Starting reset all promotions for business");
+        int sizesReset = productSizeRepository.resetAllPromotionsForProductSizes();
+        int productsWithoutSizes = productRepository.resetAllPromotionsForProductsWithoutSizes();
+        int productsWithSizes = productRepository.resetAllPromotionsForProductsWithSizes();
+        int totalProductsReset = productsWithoutSizes + productsWithSizes;
 
-        try {
-            User currentUser = securityUtils.getCurrentUser();
+        log.info("Reset all promotions: products={}, sizes={}", totalProductsReset, sizesReset);
 
-            // Use native SQL queries for ultra-fast bulk reset (1000x faster than ORM)
-            log.info("Executing native SQL bulk reset for all products");
-
-            // Reset product sizes first (faster query)
-            int sizesReset = productSizeRepository.resetAllPromotionsForProductSizes();
-            log.info("Reset promotions for {} product sizes via SQL", sizesReset);
-
-            // Reset products without sizes
-            int productsWithoutSizes = productRepository.resetAllPromotionsForProductsWithoutSizes();
-            log.info("Reset promotions for {} products without sizes via SQL", productsWithoutSizes);
-
-            // Reset products with sizes (recalculates display fields from min size price)
-            int productsWithSizes = productRepository.resetAllPromotionsForProductsWithSizes();
-            log.info("Reset promotions for {} products with sizes via SQL", productsWithSizes);
-
-            int totalProductsReset = productsWithoutSizes + productsWithSizes;
-
-            log.info("Reset all promotions completed - Products: {}, Sizes: {}, Total: {}",
-                totalProductsReset, sizesReset, totalProductsReset + sizesReset);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", String.format("Successfully reset promotions for %d products and %d sizes",
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", String.format("Successfully reset promotions for %d products and %d sizes",
                 totalProductsReset, sizesReset));
-            response.put("resetCount", totalProductsReset + sizesReset);
-            response.put("productsReset", totalProductsReset);
-            response.put("sizesReset", sizesReset);
-
-            return response;
-        } catch (Exception e) {
-            log.error("Reset all promotions failed - Error: {}", e.getMessage(), e);
-            throw e;
-        }
+        response.put("resetCount", totalProductsReset + sizesReset);
+        response.put("productsReset", totalProductsReset);
+        response.put("sizesReset", sizesReset);
+        return response;
     }
 
     @Override
     @Transactional
     public Map<String, Object> resetSelectedPromotions(ResetSelectedPromotionsDto request) {
-        log.info("Starting reset promotions for {} selected products", request.getProductIds().size());
-
-        try {
-            if (request.getProductIds() == null || request.getProductIds().isEmpty()) {
-                throw new ValidationException("No products selected");
-            }
-
-            User currentUser = securityUtils.getCurrentUser();
-
-            // Fetch products to reset
-            List<Product> products = productRepository.findAllById(request.getProductIds());
-
-            int sizesReset = 0;
-            int productsReset = 0;
-
-            // Check if we have size mapping
-            Map<UUID, List<UUID>> sizeMapping = request.getProductSizeMapping();
-            boolean hasSizeMapping = sizeMapping != null && !sizeMapping.isEmpty();
-
-            if (hasSizeMapping) {
-                // Reset only specific sizes for selected products
-                for (Map.Entry<UUID, List<UUID>> entry : sizeMapping.entrySet()) {
-                    UUID productId = entry.getKey();
-                    List<UUID> sizeIds = entry.getValue();
-                    if (!sizeIds.isEmpty()) {
-                        // For each size, reset by fetching and updating
-                        // Since we don't have a batch query for specific sizes
-                        List<ProductSize> sizes = productSizeRepository.findAllById(sizeIds);
-                        for (ProductSize size : sizes) {
-                            if (size.getProductId().equals(productId)) {
-                                size.removePromotion();
-                                sizesReset++;
-                            }
-                        }
-                        productSizeRepository.saveAll(sizes);
-                    }
-                }
-            } else {
-                // Reset all promotions for selected products
-                sizesReset = productSizeRepository.resetPromotionsBulkForProductSizes(request.getProductIds());
-            }
-
-            // Reset product-level promotions
-            productsReset = productRepository.resetPromotionsBulk(request.getProductIds());
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", String.format("Successfully reset promotions for %d products and %d sizes",
-                productsReset, sizesReset));
-            response.put("resetCount", productsReset + sizesReset);
-            response.put("productsReset", productsReset);
-            response.put("sizesReset", sizesReset);
-
-            log.info("Reset selected promotions completed - Products: {}, Sizes: {}, Total: {}",
-                productsReset, sizesReset, productsReset + sizesReset);
-
-            return response;
-        } catch (Exception e) {
-            log.error("Reset selected promotions failed - Error: {}", e.getMessage(), e);
-            throw e;
+        if (request.getProductIds() == null || request.getProductIds().isEmpty()) {
+            throw new ValidationException("No products selected");
         }
+
+        int sizesReset = 0;
+        int productsReset;
+
+        Map<UUID, List<UUID>> sizeMapping = request.getProductSizeMapping();
+        if (sizeMapping != null && !sizeMapping.isEmpty()) {
+            for (Map.Entry<UUID, List<UUID>> entry : sizeMapping.entrySet()) {
+                List<UUID> sizeIds = entry.getValue();
+                if (!sizeIds.isEmpty()) {
+                    List<ProductSize> sizes = productSizeRepository.findAllById(sizeIds);
+                    for (ProductSize size : sizes) {
+                        if (size.getProductId().equals(entry.getKey())) {
+                            size.removePromotion();
+                            sizesReset++;
+                        }
+                    }
+                    productSizeRepository.saveAll(sizes);
+                }
+            }
+        } else {
+            sizesReset = productSizeRepository.resetPromotionsBulkForProductSizes(request.getProductIds());
+        }
+
+        productsReset = productRepository.resetPromotionsBulk(request.getProductIds());
+
+        log.info("Reset selected promotions: products={}, sizes={}", productsReset, sizesReset);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", String.format("Successfully reset promotions for %d products and %d sizes",
+                productsReset, sizesReset));
+        response.put("resetCount", productsReset + sizesReset);
+        response.put("productsReset", productsReset);
+        response.put("sizesReset", sizesReset);
+        return response;
     }
 
     @Override
     @Transactional
     public BulkPromotionResultDto createBulkPromotions(BulkPromotionCreateDto request) {
-        log.info("Starting bulk promotion creation for {} products, Type: {}, Value: {}",
-            request.getProductIds().size(), request.getPromotionType(), request.getPromotionValue());
-
-        User currentUser = securityUtils.getCurrentUser();
-
         List<UUID> failedProductIds = new ArrayList<>();
         int successCount = 0;
 
-        // Fetch all requested products
         List<Product> products = productRepository.findAllById(request.getProductIds());
 
         for (Product product : products) {
             try {
-
-                // Set promotion fields on product
                 product.setPromotionType(request.getPromotionType());
                 product.setPromotionValue(request.getPromotionValue());
                 product.setPromotionFromDate(request.getPromotionFromDate());
                 product.setPromotionToDate(request.getPromotionToDate());
 
-                // Apply promotion to sizes if product has sizes
                 List<ProductSize> sizes = productSizeRepository.findByProductId(product.getId());
                 if (!sizes.isEmpty()) {
-                    // Product has sizes, apply promotion selectively
-
-                    // Check if there's a specific size mapping for this product
                     List<UUID> specifiedSizeIds = null;
                     if (request.getProductSizeMapping() != null &&
-                        request.getProductSizeMapping().containsKey(product.getId())) {
+                            request.getProductSizeMapping().containsKey(product.getId())) {
                         specifiedSizeIds = request.getProductSizeMapping().get(product.getId());
                     }
 
-                    int appliedSizes = 0;
-                    int clearedSizes = 0;
-
                     for (ProductSize size : sizes) {
                         if (!size.getIsDeleted()) {
-                            // Apply promotion only to specified sizes, or to all if no specification
                             boolean shouldApply = specifiedSizeIds == null ||
-                                                specifiedSizeIds.contains(size.getId());
+                                    specifiedSizeIds.contains(size.getId());
 
                             if (shouldApply) {
                                 size.setPromotionType(request.getPromotionType());
                                 size.setPromotionValue(request.getPromotionValue());
                                 size.setPromotionFromDate(request.getPromotionFromDate());
                                 size.setPromotionToDate(request.getPromotionToDate());
-                                appliedSizes++;
                             } else {
-                                // Clear promotion from sizes not in the mapping
                                 size.setPromotionType(null);
                                 size.setPromotionValue(null);
                                 size.setPromotionFromDate(null);
                                 size.setPromotionToDate(null);
-                                clearedSizes++;
                             }
                         }
                     }
@@ -444,13 +317,12 @@ public class ProductServiceImpl implements ProductService {
                 productRepository.save(product);
                 successCount++;
             } catch (Exception e) {
-                log.error("Failed to apply bulk promotion to product: {}, Error: {}", product.getId(), e.getMessage(), e);
+                log.warn("Failed to apply bulk promotion: productId={}", product.getId());
                 failedProductIds.add(product.getId());
             }
         }
 
-        log.info("Bulk promotion creation completed - Success: {}, Failed: {}, Total: {}",
-            successCount, failedProductIds.size(), request.getProductIds().size());
+        log.info("Bulk promotion created: success={}, failed={}", successCount, failedProductIds.size());
 
         return BulkPromotionResultDto.builder()
                 .successCount(successCount)
@@ -479,88 +351,57 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDetailDto createProduct(ProductCreateDto request) {
-        try {
-            User currentUser = securityUtils.getCurrentUser();
+        log.info("Creating product: name={}", request.getName());
 
-            Product product = productMapper.toEntity(request);
-            syncDenormalizedNames(product);
+        Product product = productMapper.toEntity(request);
+        Product savedProduct = productRepository.save(product);
 
-            Product savedProduct = productRepository.save(product);
-            log.info("Product created successfully: ID={}, Name='{}'", savedProduct.getId(), savedProduct.getName());
+        handleProductImages(savedProduct, request.getImages());
 
-            handleProductImages(savedProduct, request.getImages());
-
-            if (request.getSizes() != null && !request.getSizes().isEmpty()) {
-                handleProductSizes(savedProduct, request.getSizes());
-
-                List<ProductSize> sizes = productSizeRepository.findByProductId(savedProduct.getId());
-                savedProduct.setSizes(sizes);
-                savedProduct = productRepository.save(savedProduct);
-            }
-
-            log.info("Product creation completed successfully: {}", savedProduct.getId());
-            return getProductById(savedProduct.getId());
-        } catch (Exception e) {
-            log.error("Product creation failed - Name: '{}', Error: {}", request.getName(), e.getMessage(), e);
-            throw e;
+        if (request.getSizes() != null && !request.getSizes().isEmpty()) {
+            handleProductSizes(savedProduct, request.getSizes());
+            List<ProductSize> sizes = productSizeRepository.findByProductId(savedProduct.getId());
+            savedProduct.setSizes(sizes);
+            productRepository.save(savedProduct);
         }
+
+        log.info("Product created: id={}", savedProduct.getId());
+        return getProductById(savedProduct.getId());
     }
 
     @Override
     public ProductDetailDto updateProduct(UUID id, ProductUpdateDto request) {
-        try {
-            Product product = productRepository.findByIdAndIsDeletedFalse(id)
-                    .orElseThrow(() -> new NotFoundException("Product not found: " + id));
+        log.info("Updating product: id={}", id);
 
-            User currentUser = securityUtils.getCurrentUser();
+        Product product = productRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new NotFoundException("Product not found: " + id));
 
-            productMapper.updateEntity(request, product);
+        productMapper.updateEntity(request, product);
+        Product updatedProduct = productRepository.save(product);
 
-            // Update stock status if provided
-            // Stock tracking disabled - no-op method
+        updateProductImages(updatedProduct, request.getImages());
+        boolean sizesChanged = updateProductSizes(updatedProduct, request.getSizes());
 
-            // Sync denormalized names in case category/brand changed
-            syncDenormalizedNames(product);
-
-            Product updatedProduct = productRepository.save(product);
-            log.info("Product saved: ID={}, Name='{}'", updatedProduct.getId(), updatedProduct.getName());
-
-            updateProductImages(updatedProduct, request.getImages());
-
-            boolean sizesChanged = updateProductSizes(updatedProduct, request.getSizes());
-
-            if (sizesChanged) {
-                List<ProductSize> sizes = productSizeRepository.findByProductId(updatedProduct.getId());
-                updatedProduct.setSizes(sizes);
-                updatedProduct = productRepository.save(updatedProduct);
-            }
-
-            log.info("Product updated successfully: ID={}", id);
-            return getProductById(updatedProduct.getId());
-        } catch (Exception e) {
-            log.error("Product update failed - ID: {}, Error: {}", id, e.getMessage(), e);
-            throw e;
+        if (sizesChanged) {
+            List<ProductSize> sizes = productSizeRepository.findByProductId(updatedProduct.getId());
+            updatedProduct.setSizes(sizes);
+            productRepository.save(updatedProduct);
         }
+
+        log.info("Product updated: id={}", id);
+        return getProductById(updatedProduct.getId());
     }
 
     @Override
     public ProductDetailDto deleteProduct(UUID id) {
-        try {
-            Product product = productRepository.findByIdAndIsDeletedFalse(id)
-                    .orElseThrow(() -> new NotFoundException("Product not found: " + id));
+        Product product = productRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new NotFoundException("Product not found: " + id));
 
-            User currentUser = securityUtils.getCurrentUser();
+        product.softDelete();
+        Product deletedProduct = productRepository.save(product);
 
-            product.softDelete();
-
-            Product deletedProduct = productRepository.save(product);
-            log.info("Product deleted successfully (soft delete): ID={}, Name='{}'", deletedProduct.getId(), deletedProduct.getName());
-
-            return productMapper.toDetailDto(deletedProduct);
-        } catch (Exception e) {
-            log.error("Product deletion failed - ID: {}, Error: {}", id, e.getMessage(), e);
-            throw e;
-        }
+        log.info("Product deleted: id={}", id);
+        return productMapper.toDetailDto(deletedProduct);
     }
 
     private void handleProductImages(Product product, List<ProductImageCreateDto> imageDtos) {
@@ -669,12 +510,4 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-    /**
-     * Sync denormalized category name
-     * Called when a product is created or updated
-     */
-    private void syncDenormalizedNames(Product product) {
-        // Category name is no longer denormalized in the Product entity
-        // It's derived from the category relationship when needed
-    }
 }

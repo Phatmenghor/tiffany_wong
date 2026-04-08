@@ -39,18 +39,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse createCategory(CategoryCreateRequest request) {
-        log.info("Creating category: {}", request.getName());
-
-        // Check if category name already exists
         if (categoryRepository.existsByNameAndIsDeletedFalse(request.getName())) {
             throw new ValidationException("Category name already exists");
         }
 
         Category category = categoryMapper.toEntity(request);
-
         Category savedCategory = categoryRepository.save(category);
 
-        log.info("Category created successfully: {}", savedCategory.getName());
+        log.info("Category created: name={}", savedCategory.getName());
         return categoryMapper.toResponse(savedCategory);
     }
 
@@ -163,7 +159,6 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponse updateCategory(UUID id, CategoryUpdateRequest request) {
         Category category = findCategoryById(id);
 
-        // Check if new name already exists (if name is being changed)
         if (request.getName() != null && !request.getName().equals(category.getName())) {
             if (categoryRepository.existsByNameAndIsDeletedFalse(request.getName())) {
                 throw new ValidationException("Category name already exists");
@@ -173,7 +168,7 @@ public class CategoryServiceImpl implements CategoryService {
         categoryMapper.updateEntity(request, category);
         Category updatedCategory = categoryRepository.save(category);
 
-        log.info("Category updated successfully: {}", id);
+        log.info("Category updated: id={}", id);
         return categoryMapper.toResponse(updatedCategory);
     }
 
@@ -184,7 +179,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.softDelete();
         category = categoryRepository.save(category);
 
-        log.info("Category deleted successfully: {}", id);
+        log.info("Category deleted: id={}", id);
         return categoryMapper.toResponse(category);
     }
 

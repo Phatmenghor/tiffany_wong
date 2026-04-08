@@ -38,13 +38,10 @@ public class BannerServiceImpl implements BannerService {
 
     @Override
     public BannerResponse createBanner(BannerCreateRequest request) {
-        log.info("Creating banner");
-
         Banner banner = bannerMapper.toEntity(request);
-
         Banner savedBanner = bannerRepository.save(banner);
 
-        log.info("Banner created successfully: {}", savedBanner.getId());
+        log.info("Banner created: id={}", savedBanner.getId());
         return bannerMapper.toResponse(savedBanner);
     }
 
@@ -92,7 +89,7 @@ public class BannerServiceImpl implements BannerService {
         bannerMapper.updateEntity(request, banner);
         Banner updatedBanner = bannerRepository.save(banner);
 
-        log.info("Banner updated successfully: {}", id);
+        log.info("Banner updated: id={}", id);
         return bannerMapper.toResponse(updatedBanner);
     }
 
@@ -104,7 +101,7 @@ public class BannerServiceImpl implements BannerService {
         banner.softDelete();
         banner = bannerRepository.save(banner);
 
-        log.info("Banner deleted successfully: {}", id);
+        log.info("Banner deleted: id={}", id);
         return bannerMapper.toResponse(banner);
     }
 
