@@ -11,6 +11,7 @@ import {
   AllCategoriesResponseModel,
   CategoriesResponseModel,
 } from "../store/models/response/categories-response";
+import { getImageWithFallback } from "@/constants/image-defaults";
 
 interface CategoriesTableHandlers {
   handleEditCategories: (brand: CategoriesResponseModel) => void;
@@ -55,19 +56,14 @@ export const categoriesTableColumns = ({
       render: (categories) => {
         return (
           <div className="h-12 w-12 rounded-md overflow-hidden bg-muted border border-border flex-shrink-0">
-            {categories.imageUrl ? (
-              <img
-                src={categories.imageUrl}
-                alt={categories?.name}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="h-full w-full flex items-center justify-center bg-primary/10 dark:bg-primary/20">
-                <span className="text-xs font-semibold text-primary">
-                  {categories?.name?.charAt(0)?.toUpperCase() || "C"}
-                </span>
-              </div>
-            )}
+            <img
+              src={getImageWithFallback(categories.imageUrl, "category")}
+              alt={categories?.name}
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = getImageWithFallback(undefined, "category");
+              }}
+            />
           </div>
         );
       },

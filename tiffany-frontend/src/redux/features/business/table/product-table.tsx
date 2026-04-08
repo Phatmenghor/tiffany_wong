@@ -14,6 +14,7 @@ import {
   AllProductResponseModel,
   ProductDetailResponseModel,
 } from "../store/models/response/product-response";
+import { getImageWithFallback } from "@/constants/image-defaults";
 
 interface ProductTableHandlers {
   handleEditProduct: (brand: ProductDetailResponseModel) => void;
@@ -41,29 +42,21 @@ function ProductImagePreview({
 
   return (
     <div className="relative w-14 h-14 flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300">
-      {!imageError && product?.mainImageUrl ? (
-        <>
-          {!imageLoaded && (
-            <Skeleton className="absolute inset-0 w-full h-full rounded-lg" />
-          )}
-          <Image
-            src={product.mainImageUrl}
-            alt={product.name}
-            width={56}
-            height={56}
-            className={cn(
-              "w-full h-full object-cover transition-all duration-300 hover:scale-105",
-              imageLoaded ? "opacity-100" : "opacity-0",
-            )}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
-          />
-        </>
-      ) : (
-        <span className="text-lg font-bold text-primary/80 hover:text-primary transition-colors">
-          {product?.name?.charAt(0).toUpperCase() || "P"}
-        </span>
+      {!imageLoaded && (
+        <Skeleton className="absolute inset-0 w-full h-full rounded-lg" />
       )}
+      <Image
+        src={getImageWithFallback(product?.mainImageUrl, "product")}
+        alt={product.name}
+        width={56}
+        height={56}
+        className={cn(
+          "w-full h-full object-cover transition-all duration-300 hover:scale-105",
+          imageLoaded ? "opacity-100" : "opacity-0",
+        )}
+        onLoad={() => setImageLoaded(true)}
+        onError={() => setImageError(true)}
+      />
     </div>
   );
 }

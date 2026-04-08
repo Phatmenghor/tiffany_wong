@@ -3,6 +3,7 @@ import { dateTimeFormat } from "@/utils/date/date-time-format";
 import { Edit, Eye, RotateCw, Trash } from "lucide-react";
 import { CustomAvatar } from "@/components/shared/avator/custom-avator";
 import { TableColumn } from "@/components/shared/common/data-table";
+import { getImageWithFallback } from "@/constants/image-defaults";
 import {
   AllUserResponseModel,
   UserResponseModel,
@@ -56,19 +57,14 @@ export const userBusinessTableColumns = ({
       render: (user) => {
         return (
           <div className="h-12 w-12 rounded-md overflow-hidden bg-muted border border-border flex-shrink-0">
-            {user.profileImageUrl ? (
-              <img
-                src={user.profileImageUrl}
-                alt={user?.firstName}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="h-full w-full flex items-center justify-center bg-primary/10 dark:bg-primary/20">
-                <span className="text-xs font-semibold text-primary">
-                  {user?.firstName?.charAt(0)?.toUpperCase() || "U"}
-                </span>
-              </div>
-            )}
+            <img
+              src={getImageWithFallback(user.profileImageUrl, "profile")}
+              alt={user?.firstName}
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = getImageWithFallback(undefined, "profile");
+              }}
+            />
           </div>
         );
       },
