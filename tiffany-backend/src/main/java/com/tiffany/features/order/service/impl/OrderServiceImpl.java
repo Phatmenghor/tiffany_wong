@@ -10,10 +10,7 @@ import com.tiffany.features.order.dto.helper.OrderPaymentCreateHelper;
 import com.tiffany.features.order.dto.helper.OrderCreateHelper;
 import com.tiffany.features.order.dto.helper.OrderItemCreateHelper;
 import com.tiffany.features.order.dto.request.OrderCreateRequest;
-import com.tiffany.features.order.dto.request.POSCheckoutRequest;
-import com.tiffany.features.order.dto.request.POSCheckoutItemRequest;
 import com.tiffany.features.order.dto.response.OrderResponse;
-import com.tiffany.features.order.dto.response.POSCheckoutResponse;
 import com.tiffany.features.order.dto.update.OrderUpdateRequest;
 import com.tiffany.enums.payment.PaymentMethod;
 import com.tiffany.features.main.models.Product;
@@ -137,7 +134,6 @@ public class OrderServiceImpl implements OrderService {
             // Create order items from cart summary (frontend) or database cart
             if (request.getCart() != null && request.getCart().getItems() != null && !request.getCart().getItems().isEmpty()) {
                 log.info("📋 [STEP 4/7] Processing {} items from frontend cart summary", request.getCart().getItems().size());
-                // Only POSCheckoutRequest has pricing info, OrderCreateRequest doesn't
                 createOrderItemsFromCartSummary(savedOrder.getId(), request.getCart(), null);
             } else {
                 log.info("📋 [STEP 4/7] Processing items from database cart");
@@ -444,7 +440,6 @@ public class OrderServiceImpl implements OrderService {
         String orderNumber = orderNumberGenerator.generateOrderNumber();
         OrderCreateHelper helper = orderMapper.buildOrderHelper(request, customerId, orderNumber);
         Order order = orderMapper.createFromHelper(helper);
-        // Set orderFrom to distinguish between CUSTOMER (checkout) and BUSINESS (POS) orders
         if (request.getOrderFrom() != null) {
             order.setOrderFrom(request.getOrderFrom());
         }
@@ -496,8 +491,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void createOrderItemsFromCartSummary(UUID orderId, Object cartSummary,
-                                                  POSCheckoutRequest.PricingInfo pricingInfo) {
-        // Handle both CartSummaryResponse and POSCheckoutRequest.CartSummary
+                                                  PricingInfo pricingInfo) {
+        // Handle both CartSummaryResponse and CartSummary
         if (!(cartSummary instanceof com.tiffany.features.order.dto.response.CartSummaryResponse)) {
             log.warn("Invalid cart summary type: {}", cartSummary.getClass().getName());
             return;
@@ -664,209 +659,6 @@ public class OrderServiceImpl implements OrderService {
     // Format: ORD-YYYYMMDD-XXXXX (where XXXXX can be 00001-99999, 100000 onwards)
 
     @Override
-    public POSCheckoutResponse createPOSCheckoutOrder(POSCheckoutRequest request) {
-        log.info("🎯 [POS CHECKOUT START] Creating POS order - Items: {}",
-            request.getCart().getItems().size());
-
-        User currentUser = securityUtils.getCurrentUser();
-        String createdBy = currentUser != null ? currentUser.getFullName() : "System";
-
-        try {
-            // Validate input
-            if (request.getCart() == null || request.getCart().getItems() == null || request.getCart().getItems().isEmpty()) {
-                throw new ValidationException("Order must contain at least one item");
-            }
-
-            log.debug("🔍 [STEP 1/6] Validating delivery option...");
-            // Delivery option is passed as full object, not ID
-            BigDecimal deliveryPrice = request.getDeliveryOption() != null ?
-                request.getDeliveryOption().getPrice() : BigDecimal.ZERO;
-
-            // Create order
-            log.debug("📝 [STEP 2/6] Creating order entity...");
-            Order order = new Order();
-            order.setCustomerId(request.getCustomerId());
-            // Generate order number (ORD-YYYYMMDD-XXXXX)
-            order.setOrderNumber(orderNumberGenerator.generateOrderNumber());
-            order.setOrderStatus(OrderStatus.COMPLETED); // POS orders are always completed
-            order.setSource("POS"); // Mark as POS order
-            // Set orderFrom for POS orders
-            order.setOrderFrom(com.tiffany.features.order.enums.OrderFromEnum.BUSINESS);
-            order.setPaymentMethod(PaymentMethod.CASH);
-            order.setPaymentStatus(PaymentStatus.PAID);
-            order.setDeliveryFee(deliveryPrice);
-            order.setCustomerNote(request.getCustomerNote());
-            order.setBusinessNote(request.getBusinessNote());
-
-            // Set customer details
-            if (request.getCustomerName() != null) {
-                order.setCustomerName(request.getCustomerName());
-            }
-            if (request.getCustomerPhone() != null) {
-                order.setCustomerPhone(request.getCustomerPhone());
-            }
-            if (request.getCustomerEmail() != null) {
-                order.setCustomerEmail(request.getCustomerEmail());
-            }
-
-            log.debug("💾 [STEP 3/6] Saving order...");
-            Order savedOrder = orderRepository.save(order);
-
-            // Create delivery address snapshot - fetch address by ID
-            if (request.getAddressId() != null) {
-                OrderDeliveryAddress deliveryAddress = createDeliveryAddressSnapshot(savedOrder.getId(), request.getAddressId());
-                if (deliveryAddress != null) {
-                    orderDeliveryAddressRepository.save(deliveryAddress);
-                    log.debug("✅ [DELIVERY ADDRESS SNAPSHOT] Created for POS order: {}", savedOrder.getId());
-                }
-            }
-
-            // Create delivery option snapshot
-            if (request.getDeliveryOption() != null) {
-                OrderDeliveryOption deliveryOption = new OrderDeliveryOption();
-                deliveryOption.setOrderId(savedOrder.getId());
-                deliveryOption.setName(request.getDeliveryOption().getName());
-                deliveryOption.setDescription(request.getDeliveryOption().getDescription());
-                deliveryOption.setImageUrl(request.getDeliveryOption().getImageUrl());
-                deliveryOption.setPrice(request.getDeliveryOption().getPrice());
-                orderDeliveryOptionRepository.save(deliveryOption);
-                log.debug("✅ [DELIVERY OPTION SNAPSHOT] Created for POS order: {}", savedOrder.getId());
-            }
-
-            // Create order items and calculate totals
-            log.debug("📦 [STEP 4/6] Creating order items ({} items)...", request.getCart().getItems().size());
-            BigDecimal subtotal = BigDecimal.ZERO;
-            BigDecimal totalDiscount = BigDecimal.ZERO;
-            List<OrderItem> createdItems = new java.util.ArrayList<>();
-
-            for (POSCheckoutItemRequest itemRequest : request.getCart().getItems()) {
-                Product product = productRepository.findById(itemRequest.getProductId())
-                        .orElseThrow(() -> new NotFoundException("Product not found: " + itemRequest.getProductId()));
-
-                OrderItem orderItem = new OrderItem();
-                orderItem.setOrderId(savedOrder.getId());
-                orderItem.setProductId(product.getId());
-                orderItem.setProductSizeId(itemRequest.getProductSizeId());
-                orderItem.setProductName(itemRequest.getProductName() != null ? itemRequest.getProductName() : product.getName());
-                orderItem.setProductImageUrl(itemRequest.getProductImageUrl() != null ? itemRequest.getProductImageUrl() : product.getMainImageUrl());
-                orderItem.setSizeName(itemRequest.getSizeName());
-
-                // Set SKU and barcode: prefer product master data, fallback to request data if not available
-                orderItem.setSku(product.getSku() != null ? product.getSku() : itemRequest.getSku());
-                orderItem.setBarcode(product.getBarcode() != null ? product.getBarcode() : itemRequest.getBarcode());
-
-                orderItem.setQuantity(itemRequest.getQuantity());
-                orderItem.setHadChangeFromPOS(false); // No POS changes in regular POS checkout
-
-                // Determine current price
-                BigDecimal currentPrice = itemRequest.getOverridePrice() != null ?
-                    itemRequest.getOverridePrice() : product.getPrice();
-                orderItem.setCurrentPrice(currentPrice);
-                orderItem.setUnitPrice(currentPrice);
-
-                // Apply promotion if specified
-                BigDecimal finalPrice = currentPrice;
-                Boolean hasPromotion = false;
-                String promotionType = null;
-                BigDecimal promotionValue = null;
-                LocalDateTime promotionFromDate = null;
-                LocalDateTime promotionToDate = null;
-
-                if (itemRequest.getPromotionType() != null && itemRequest.getPromotionValue() != null) {
-                    if ("PERCENTAGE".equals(itemRequest.getPromotionType())) {
-                        BigDecimal discountPercent = itemRequest.getPromotionValue().divide(BigDecimal.valueOf(100));
-                        finalPrice = currentPrice.multiply(BigDecimal.ONE.subtract(discountPercent));
-                    } else if ("FIXED_AMOUNT".equals(itemRequest.getPromotionType())) {
-                        finalPrice = currentPrice.subtract(itemRequest.getPromotionValue());
-                    }
-                    hasPromotion = true;
-                    promotionType = itemRequest.getPromotionType();
-                    promotionValue = itemRequest.getPromotionValue();
-                    // Promotion dates not available in POSCheckoutItemRequest
-                    promotionFromDate = null;
-                    promotionToDate = null;
-                }
-
-                orderItem.setHasPromotion(hasPromotion);
-                orderItem.setPromotionType(promotionType);
-                orderItem.setPromotionValue(promotionValue);
-                orderItem.setPromotionFromDate(promotionFromDate);
-                orderItem.setPromotionToDate(promotionToDate);
-                orderItem.setFinalPrice(finalPrice);
-                orderItem.calculateTotalPrice();
-
-                savedOrder.getItems().add(orderItem);
-                createdItems.add(orderItem);
-
-                subtotal = subtotal.add(currentPrice.multiply(BigDecimal.valueOf(itemRequest.getQuantity())));
-                totalDiscount = totalDiscount.add(currentPrice.subtract(finalPrice).multiply(BigDecimal.valueOf(itemRequest.getQuantity())));
-            }
-
-            // Save order with items
-            orderRepository.save(savedOrder);
-
-            // Update order totals
-            log.debug("💰 [STEP 5/6] Calculating totals...");
-            // Get discount from cart or use calculated item-level discount
-            BigDecimal discountAmount = request.getCart().getTotalDiscount() != null ?
-                request.getCart().getTotalDiscount() : totalDiscount;
-            BigDecimal taxAmount = BigDecimal.ZERO; // Tax not used in POS, reserved for future
-            BigDecimal deliveryFee = order.getDeliveryFee() != null ? order.getDeliveryFee() : BigDecimal.ZERO;
-
-            savedOrder.setSubtotal(subtotal);
-            savedOrder.setDiscountAmount(discountAmount);
-            savedOrder.setTaxAmount(taxAmount);
-            savedOrder.setDeliveryFee(deliveryFee);
-            savedOrder.setTotalAmount(subtotal.subtract(discountAmount).add(taxAmount).add(deliveryFee));
-
-            Order updatedOrder = orderRepository.save(savedOrder);
-
-            // Create order payment record
-            log.debug("💳 [STEP 5.5/6] Creating payment record...");
-            OrderPayment payment = new OrderPayment();
-            payment.setOrderId(updatedOrder.getId());
-            payment.setPaymentMethod(PaymentMethod.valueOf(request.getPayment().getPaymentMethod()));
-            payment.setStatus(PaymentStatus.PAID);
-            payment.setPaymentReference(paymentReferenceGenerator.generateUniqueReference());
-            payment.setSubtotal(updatedOrder.getSubtotal());
-            payment.setDiscountAmount(updatedOrder.getDiscountAmount());
-            payment.setDeliveryFee(updatedOrder.getDeliveryFee());
-            payment.setTaxAmount(updatedOrder.getTaxAmount());
-            payment.setTotalAmount(updatedOrder.getTotalAmount());
-            payment.setCustomerPaymentMethod("Cash");
-            paymentRepository.save(payment);
-
-            // Create initial status history
-            log.debug("📋 [STEP 6/6] Creating status history...");
-            createInitialOrderStatusHistory(updatedOrder, currentUser != null ? currentUser.getId() : UUID.randomUUID());
-
-            log.info("✅ [POS ORDER CREATED] Order #{} completed with ID: {} - Total: {}",
-                updatedOrder.getOrderNumber(), updatedOrder.getId(), updatedOrder.getTotalAmount());
-
-            // Build response
-            return POSCheckoutResponse.builder()
-                    .id(updatedOrder.getId())
-                    .orderNumber(updatedOrder.getOrderNumber())
-                    .subtotal(updatedOrder.getSubtotal())
-                    .discountAmount(updatedOrder.getDiscountAmount())
-                    .deliveryFee(updatedOrder.getDeliveryFee())
-                    .taxAmount(updatedOrder.getTaxAmount())
-                    .totalAmount(updatedOrder.getTotalAmount())
-                    .orderStatus("COMPLETED")
-                    .source("POS")
-                    .paymentMethod("CASH")
-                    .paymentStatus("PAID")
-                    .createdBy(createdBy)
-                    .createdAt(updatedOrder.getCreatedAt())
-                    .customerName(request.getCustomerName())
-                    .customerPhone(request.getCustomerPhone())
-                    .build();
-
-        } catch (Exception e) {
-            log.error("❌ [POS CHECKOUT ERROR] Failed to create POS order: {}", e.getMessage(), e);
-            throw new ValidationException("Failed to create POS order: " + e.getMessage());
-        }
-    }
 
     /**
      * Deduct stock via FIFO for each item in the order.

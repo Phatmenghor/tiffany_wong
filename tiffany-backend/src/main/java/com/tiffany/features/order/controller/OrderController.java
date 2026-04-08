@@ -3,9 +3,7 @@ package com.tiffany.features.order.controller;
 import com.tiffany.features.auth.models.User;
 import com.tiffany.features.order.dto.filter.OrderFilterRequest;
 import com.tiffany.features.order.dto.request.OrderCreateRequest;
-import com.tiffany.features.order.dto.request.POSCheckoutRequest;
 import com.tiffany.features.order.dto.response.OrderResponse;
-import com.tiffany.features.order.dto.response.POSCheckoutResponse;
 import com.tiffany.features.order.dto.update.OrderUpdateRequest;
 import com.tiffany.features.order.service.OrderService;
 import com.tiffany.security.SecurityUtils;
@@ -46,28 +44,6 @@ public class OrderController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Order created successfully", order));
-    }
-
-    /**
-     * Create POS order directly (Admin/Staff only) - Order is created with COMPLETED status
-     * Allows admin to create orders with full control over items, prices, and promotions
-     */
-    @PostMapping("/checkout-from-pos")
-    public ResponseEntity<ApiResponse<POSCheckoutResponse>> createPOSCheckoutOrder(@Valid @RequestBody POSCheckoutRequest request) {
-        long startTime = System.currentTimeMillis();
-        log.info("🎯 [API REQUEST] POST /api/v1/orders/checkout-from-pos | Items: {}",
-                request.getCart().getItems().size());
-        log.debug("📋 [REQUEST DETAILS] Customer: {}, PaymentMethod: {}, Items: {}",
-                request.getCustomerId(), request.getPayment().getPaymentMethod(), request.getCart().getItems().size());
-
-        POSCheckoutResponse order = orderService.createPOSCheckoutOrder(request);
-
-        long duration = System.currentTimeMillis() - startTime;
-        log.info("✅ [POS ORDER CREATED] Order #{} in {} ms | Total: {} | Status: {}",
-                order.getOrderNumber(), duration, order.getTotalAmount(), order.getOrderStatus());
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("POS order created successfully", order));
     }
 
     /**
