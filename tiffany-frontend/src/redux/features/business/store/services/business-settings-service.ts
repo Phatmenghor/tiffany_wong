@@ -1,16 +1,27 @@
 /**
- * Business Settings API Service
- * Handles API calls for business settings endpoints
+ * System Settings API Service
+ * Handles API calls for system settings endpoints
  */
 
 import { axiosClient, axiosClientWithAuth } from "@/utils/axios";
 
 export interface SocialMedia {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+  systemSettingId: string;
   name: string;
   linkUrl: string;
 }
 
 export interface BusinessHours {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
   day: string;
   openingTime: string;
   closingTime: string;
@@ -22,64 +33,60 @@ export interface BusinessSettingsResponse {
   updatedAt: string;
   createdBy: string;
   updatedBy: string;
-  businessId: string;
-  businessName: string;
-  taxPercentage: number | null;
-  logoBusinessUrl: string;
-  enableStock: "ENABLED" | "DISABLED";
+  taxPercentage: number;
+  systemName: string;
+  logoSystemUrl: string | null;
+  primaryColor: string | null;
+  contactAddress: string;
+  contactPhone: string;
+  contactEmail: string;
   socialMedia: SocialMedia[];
-  primaryColor?: string;
-  contactAddress?: string;
-  contactPhone?: string;
-  contactEmail?: string;
-  businessHours?: BusinessHours[];
+  businessHours: BusinessHours[];
 }
 
 export interface UpdateBusinessSettingsRequest {
-  businessName?: string;
-  taxPercentage?: number | null;
-  logoBusinessUrl?: string;
-  enableStock?: "ENABLED" | "DISABLED";
-  socialMedia?: SocialMedia[];
-  primaryColor?: string;
+  taxPercentage?: number;
+  systemName?: string;
+  logoSystemUrl?: string | null;
+  primaryColor?: string | null;
   contactAddress?: string;
   contactPhone?: string;
   contactEmail?: string;
+  socialMedia?: SocialMedia[];
   businessHours?: BusinessHours[];
 }
 
-const API_BASE_URL = "/api/v1/business-settings";
+const API_BASE_URL = "/api/v1/system-settings";
 
 /**
- * Fetch business settings by business ID (Public - No Auth Required)
- * Fetches business theme colors, logo, and business name
- * GET /api/v1/public/business-settings/{businessId}
+ * Fetch system settings (Public - No Auth Required)
+ * Fetches system theme colors, logo, and system name
+ * GET /api/v1/system-settings
  *
  * Used for:
- * - Loading business theme on app startup
- * - Displaying business branding (logo, colors, name)
+ * - Loading system theme on app startup
+ * - Displaying system branding (logo, colors, name)
  * - Guest users and public pages
  *
- * @param businessId - The business ID to fetch settings for
- * @returns Business settings response with theme colors and branding info
+ * @returns System settings response with theme colors and branding info
  */
 export const fetchBusinessSettingsByBusinessId = async (
-  businessId: string
+  businessId?: string
 ): Promise<BusinessSettingsResponse> => {
   try {
     const response = await axiosClient.get<{ data: BusinessSettingsResponse }>(
-      `/api/v1/public/business-settings/${businessId}`
+      API_BASE_URL
     );
     return response.data.data;
   } catch (error) {
-    console.error(`Error fetching business settings for ${businessId}:`, error);
+    console.error("Error fetching system settings:", error);
     throw error;
   }
 };
 
 /**
- * Update current business settings
- * PUT /api/v1/business-settings
+ * Update current system settings
+ * PUT /api/v1/system-settings
  */
 export const updateCurrentBusinessSettings = async (
   request: UpdateBusinessSettingsRequest
@@ -91,27 +98,7 @@ export const updateCurrentBusinessSettings = async (
     );
     return response.data.data;
   } catch (error) {
-    console.error("Error updating current business settings:", error);
-    throw error;
-  }
-};
-
-/**
- * Update business settings by business ID
- * PUT /api/v1/business-settings/business/{businessId}
- */
-export const updateBusinessSettingsByBusinessId = async (
-  businessId: string,
-  request: UpdateBusinessSettingsRequest
-): Promise<BusinessSettingsResponse> => {
-  try {
-    const response = await axiosClientWithAuth.put<{ data: BusinessSettingsResponse }>(
-      `${API_BASE_URL}/business/${businessId}`,
-      request
-    );
-    return response.data.data;
-  } catch (error) {
-    console.error(`Error updating business settings for ${businessId}:`, error);
+    console.error("Error updating system settings:", error);
     throw error;
   }
 };
