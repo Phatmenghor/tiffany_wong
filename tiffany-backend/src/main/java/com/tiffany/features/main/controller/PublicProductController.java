@@ -26,23 +26,16 @@ public class PublicProductController {
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<List<ProductListDto>>> getAllPublicProducts(
             @Valid @RequestBody ProductFilterDto filter) {
-
-        log.info("Public get all - Page: {}, Size: {}", filter.getPageNo(), filter.getPageSize());
+        log.info("Getting products");
         List<ProductListDto> products = productService.getAllDataProducts(filter);
-
-        return ResponseEntity.ok(ApiResponse.success(
-            String.format("Found %d products", products.size()),
-            products
-        ));
+        return ResponseEntity.ok(ApiResponse.success("Products retrieved successfully", products));
     }
 
     @PostMapping("/all-data")
     public ResponseEntity<ApiResponse<List<ProductListDto>>> getAllDataPublicProducts(
             @Valid @RequestBody ProductFilterDto filter) {
-
-        log.info("Public get all data is fetching");
+        log.info("Getting all products");
         List<ProductListDto> products = productService.getAllDataProducts(filter);
-
         return ResponseEntity.ok(ApiResponse.success(
                 "All products retrieved successfully",
                 products
@@ -51,10 +44,8 @@ public class PublicProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ProductDetailDto>> getPublicProductById(@PathVariable UUID id) {
-        log.info("Get public product: {}", id);
-        
+        log.info("Getting product: id={}", id);
         ProductDetailDto product = productService.getProductByIdPublic(id);
-        
         return ResponseEntity.ok(ApiResponse.success("Product retrieved successfully", product));
     }
 }
