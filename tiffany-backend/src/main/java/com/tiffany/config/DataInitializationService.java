@@ -95,7 +95,7 @@ public class DataInitializationService {
                 User admin = new User();
                 admin.setUserIdentifier(adminUserIdentifier);
                 admin.setPassword(passwordEncoder.encode(defaultAdminPassword));
-                admin.setUserType(UserType.PLATFORM_USER);
+                admin.setUserType(UserType.OWNER);
                 admin.setAccountStatus(AccountStatus.ACTIVE);
 
                 admin = userRepository.save(admin);

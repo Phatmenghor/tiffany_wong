@@ -31,23 +31,19 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     Optional<Category> findByIdWithBusiness(@Param("id") UUID id);
 
     /**
-     * Checks if a non-deleted category exists with the given name and business ID
+     * Checks if a non-deleted category exists with the given name
      */
-    boolean existsByNameAndBusinessIdAndIsDeletedFalse(String name, UUID businessId);
+    boolean existsByNameAndIsDeletedFalse(String name);
 
     /**
      * Find all categories with dynamic filtering - paginated
      */
     @Query("SELECT DISTINCT c FROM Category c " +
-           "LEFT JOIN c.business b " +
            "WHERE c.isDeleted = false " +
-           "AND (:businessId IS NULL OR c.businessId = :businessId) " +
            "AND (:status IS NULL OR c.status = :status) " +
            "AND (:search IS NULL OR :search = '' OR " +
-           "     LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(b.name) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Category> findAllWithFilters(
-        @Param("businessId") UUID businessId,
         @Param("status") Status status,
         @Param("search") String search,
         Pageable pageable
@@ -57,15 +53,11 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
      * Find all categories with dynamic filtering - non-paginated
      */
     @Query("SELECT DISTINCT c FROM Category c " +
-           "LEFT JOIN c.business b " +
            "WHERE c.isDeleted = false " +
-           "AND (:businessId IS NULL OR c.businessId = :businessId) " +
            "AND (:status IS NULL OR c.status = :status) " +
            "AND (:search IS NULL OR :search = '' OR " +
-           "     LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(b.name) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')))")
     List<Category> findAllWithFilters(
-        @Param("businessId") UUID businessId,
         @Param("status") Status status,
         @Param("search") String search,
         Sort sort

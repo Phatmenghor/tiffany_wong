@@ -35,8 +35,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         // Generate JWT refresh token with userType
         String tokenString = jwtGenerator.generateRefreshToken(
                 user.getUserIdentifier(),
-                user.getUserType().name(),
-                null
+                user.getUserType().name()
         );
 
         // Build helper DTO, then use pure MapStruct mapping

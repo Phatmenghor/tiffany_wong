@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class TiffanyApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(EMenuApplication.class, args);
+		SpringApplication.run(TiffanyApplication.class, args);
 		System.out.println("""
             
             🇰🇭 Cambodia E-Menu Platform Started Successfully! 🇰🇭

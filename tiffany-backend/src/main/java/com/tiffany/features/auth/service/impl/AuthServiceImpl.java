@@ -293,7 +293,7 @@ public class AuthServiceImpl implements AuthService {
         securityUtils.validateAccountStatus(user);
 
         // Generate new access token
-        String newAccessToken = jwtGenerator.generateAccessToken(authentication);
+        String newAccessToken = jwtGenerator.generateAccessTokenFromUsername(user.getUserIdentifier(), java.util.Collections.emptyList());
 
         // Generate a new refresh token (rotate refresh tokens for better security)
         String ipAddress = getClientIpAddress();

@@ -34,14 +34,11 @@ public interface BannerRepository extends JpaRepository<Banner, UUID> {
      * Find all banners with dynamic filtering - paginated
      */
     @Query("SELECT DISTINCT b FROM Banner b " +
-           "LEFT JOIN b.business bus " +
            "WHERE b.isDeleted = false " +
-           "AND (:businessId IS NULL OR b.businessId = :businessId) " +
            "AND (:status IS NULL OR b.status = :status) " +
            "AND (:search IS NULL OR :search = '' OR " +
-           "     LOWER(bus.name) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(b.name) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Banner> findAllWithFilters(
-        @Param("businessId") UUID businessId,
         @Param("status") Status status,
         @Param("search") String search,
         Pageable pageable
@@ -51,14 +48,11 @@ public interface BannerRepository extends JpaRepository<Banner, UUID> {
      * Find all banners with dynamic filtering - non-paginated
      */
     @Query("SELECT DISTINCT b FROM Banner b " +
-           "LEFT JOIN b.business bus " +
            "WHERE b.isDeleted = false " +
-           "AND (:businessId IS NULL OR b.businessId = :businessId) " +
            "AND (:status IS NULL OR b.status = :status) " +
            "AND (:search IS NULL OR :search = '' OR " +
-           "     LOWER(bus.name) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(b.name) LIKE LOWER(CONCAT('%', :search, '%')))")
     List<Banner> findAllWithFilters(
-        @Param("businessId") UUID businessId,
         @Param("status") Status status,
         @Param("search") String search,
         Sort sort

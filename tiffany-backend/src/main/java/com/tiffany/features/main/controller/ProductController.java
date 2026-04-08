@@ -91,9 +91,9 @@ public class ProductController {
             @Valid @RequestBody ProductFilterDto filter) {
 
         long startTime = System.currentTimeMillis();
-        log.info("GET /api/v1/products/admin/stock/all - Page: {}, Size: {}, Filters: Search='{}', Status={}, HasSize={}, StockStatuses={}, HasPromotion={}, BrandId={}, CategoryId={}",
+        log.info("GET /api/v1/products/admin/stock/all - Page: {}, Size: {}, Filters: Search='{}', Status={}, HasSize={}, Statuses={}, HasPromotion={}, BrandId={}, CategoryId={}",
                 filter.getPageNo(), filter.getPageSize(), filter.getSearch(), filter.getStatuses(),
-                filter.getHasSize(), filter.getStockStatuses(), filter.getHasPromotion(), filter.getBrandId(), filter.getCategoryId());
+                filter.getHasSize(), filter.getStatuses(), filter.getHasPromotion(), filter.getBrandId(), filter.getCategoryId());
 
         try {
             PaginationResponse<ProductDetailDto> products = productService.getAllProductsAdminStock(filter);
