@@ -24,7 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -41,14 +40,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse createUser(UserCreateRequest req) {
-        log.debug("Entering createUser: identifier={}, userType={}", req.getUserIdentifier(), req.getUserType());
-        log.info("User creation attempt: identifier={}, userType={}", req.getUserIdentifier(), req.getUserType());
+        log.info("Creating user: identifier={}, userType={}", req.getUserIdentifier(), req.getUserType());
 
-        boolean userExists = userRepository.existsByUserIdentifierAndIsDeletedFalse(req.getUserIdentifier());
-        log.debug("User identifier uniqueness check: identifier={}, exists={}", req.getUserIdentifier(), userExists);
-
-        if (userExists) {
-            log.warn("User creation failed: Identifier already exists - identifier={}", req.getUserIdentifier());
+        if (userRepository.existsByUserIdentifierAndIsDeletedFalse(req.getUserIdentifier())) {
             throw new ValidationException("User identifier already exists");
         }
 
@@ -56,10 +50,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(req.getPassword()));
         User saved = userRepository.save(user);
 
-        log.debug("User entity created and saved: id={}, identifier={}, type={}, status={}",
-                saved.getId(), saved.getUserIdentifier(), saved.getUserType(), saved.getAccountStatus());
-
-        // Profile
         UserProfile profile = new UserProfile();
         profile.setUser(saved);
         profile.setEmail(req.getEmail());
@@ -74,23 +64,13 @@ public class UserServiceImpl implements UserService {
 
         saved = userRepository.save(saved);
 
-        log.debug("User profile created: id={}, email={}, name={} {}",
-                saved.getId(), profile.getEmail(), profile.getFirstName(), profile.getLastName());
-
-        log.info("User created successfully: id={}, identifier={}, userType={}, accountStatus={}",
-                saved.getId(), saved.getUserIdentifier(), saved.getUserType(), saved.getAccountStatus());
+        log.info("User created: userId={}, identifier={}, userType={}", saved.getId(), saved.getUserIdentifier(), saved.getUserType());
         return userMapper.toResponse(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<UserResponse> getAllUsers(UserFilterRequest request) {
-        log.debug("Entering getAllUsers: pageNo={}, pageSize={}, sortBy={}, sortDirection={}",
-                request.getPageNo(), request.getPageSize(), request.getSortBy(), request.getSortDirection());
-
-        log.debug("Filters applied: userTypes={}, accountStatuses={}, roles={}, search={}",
-                request.getUserTypes(), request.getAccountStatuses(), request.getRoles(), request.getSearch());
-
         Pageable pageable = PaginationUtils.createPageable(
                 request.getPageNo(), request.getPageSize(), request.getSortBy(), request.getSortDirection());
 
@@ -101,54 +81,36 @@ public class UserServiceImpl implements UserService {
                 request.getSearch(),
                 pageable);
 
-        log.info("Users fetched: totalElements={}, totalPages={}, currentPage={}, pageSize={}",
-                page.getTotalElements(), page.getTotalPages(), page.getNumber(), page.getSize());
-
+        log.info("Users retrieved: total={}, pages={}, current={}", page.getTotalElements(), page.getTotalPages(), page.getNumber());
         return userMapper.toPaginationResponse(page, paginationMapper);
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserDetailResponse getUserById(UUID userId) {
-        log.debug("Entering getUserById: userId={}", userId);
-
         return userMapper.toDetailResponse(userRepository.findByIdAndIsDeletedFalse(userId)
-                .orElseThrow(() -> {
-                    log.warn("User retrieval failed: User not found - userId={}", userId);
-                    return new RuntimeException("User not found");
-                }));
+                .orElseThrow(() -> new RuntimeException("User not found")));
     }
 
     @Override
     public UserResponse updateUser(UUID userId, UserUpdateRequest req) {
-        log.debug("Entering updateUser: userId={}", userId);
-        log.info("User update initiated: userId={}", userId);
+        log.info("Updating user: userId={}", userId);
 
         User user = userRepository.findByIdAndIsDeletedFalse(userId)
-                .orElseThrow(() -> {
-                    log.warn("User update failed: User not found - userId={}", userId);
-                    return new RuntimeException("User not found");
-                });
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        log.debug("User found for update: id={}, identifier={}, currentStatus={}",
-                user.getId(), user.getUserIdentifier(), user.getAccountStatus());
+        AccountStatus previousStatus = user.getAccountStatus();
 
         userMapper.updateEntity(req, user);
-        log.debug("User entity updated from request: userId={}",userId);
 
-        // Profile
         UserProfile profile = user.getProfile();
         if (profile == null) {
             profile = new UserProfile();
             profile.setUser(user);
             user.setProfile(profile);
-            log.debug("New profile created: userId={}", userId);
         }
 
-        if (req.getEmail() != null) {
-            log.debug("Email updated: userId={}, oldEmail={}, newEmail={}", userId, profile.getEmail(), req.getEmail());
-            profile.setEmail(req.getEmail());
-        }
+        if (req.getEmail() != null) profile.setEmail(req.getEmail());
         if (req.getFirstName() != null) profile.setFirstName(req.getFirstName());
         if (req.getLastName() != null) profile.setLastName(req.getLastName());
         if (req.getNickname() != null) profile.setNickname(req.getNickname());
@@ -159,66 +121,42 @@ public class UserServiceImpl implements UserService {
 
         User updated = userRepository.save(user);
 
-        log.debug("User entity persisted: id={}, identifier={}, status={}",
-                updated.getId(), updated.getUserIdentifier(), updated.getAccountStatus());
+        if (!previousStatus.equals(updated.getAccountStatus())) {
+            log.info("User status changed: userId={}, from={}, to={}", userId, previousStatus, updated.getAccountStatus());
+        }
 
-        log.info("User updated successfully: id={}, identifier={}, accountStatus={}",
-                updated.getId(), updated.getUserIdentifier(), updated.getAccountStatus());
+        log.info("User updated: userId={}, identifier={}", updated.getId(), updated.getUserIdentifier());
         return userMapper.toResponse(updated);
     }
 
     @Override
     public UserResponse deleteUser(UUID userId) {
-        log.debug("Entering deleteUser: userId={}", userId);
+        log.info("Deleting user: userId={}", userId);
 
         User user = userRepository.findByIdAndIsDeletedFalse(userId)
-                .orElseThrow(() -> {
-                    log.warn("User deletion failed: User not found - userId={}", userId);
-                    return new RuntimeException("User not found");
-                });
-
-        log.debug("User found for deletion: id={}, identifier={}, status={}", user.getId(), user.getUserIdentifier(), user.getAccountStatus());
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         User currentUser = securityUtils.getCurrentUser();
         if (user.getId().equals(currentUser.getId())) {
-            log.warn("User deletion failed: Self-deletion attempt - userId={}, currentUserId={}", userId, currentUser.getId());
             throw new ValidationException("You cannot delete your own account");
         }
 
-        log.debug("Authorization check passed: targetUserId={}, requestorUserId={}, requestorIdentifier={}",
-                userId, currentUser.getId(), currentUser.getUserIdentifier());
-
         user.softDelete();
-        User deleted = userRepository.save(user);
-
-        log.info("User deleted successfully: id={}, identifier={}, deletedBy={}, deletedByIdentifier={}",
-                deleted.getId(), deleted.getUserIdentifier(), currentUser.getId(), currentUser.getUserIdentifier());
-        return userMapper.toResponse(deleted);
+        return userMapper.toResponse(userRepository.save(user));
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserResponse getCurrentUser() {
-        log.debug("Entering getCurrentUser");
         User currentUser = securityUtils.getCurrentUser();
-        log.debug("Current user retrieved: id={}, identifier={}, userType={}, status={}",
-                currentUser.getId(), currentUser.getUserIdentifier(), currentUser.getUserType(), currentUser.getAccountStatus());
+        log.info("Current user accessed: userId={}, identifier={}", currentUser.getId(), currentUser.getUserIdentifier());
         return userMapper.toResponse(currentUser);
     }
 
-    /**
-     * Updates the current authenticated user's profile.
-     * Convenience method that extracts the current user ID and calls updateUser.
-     */
     @Override
     @Transactional
     public UserResponse updateCurrentUser(UserUpdateRequest request) {
-        log.debug("Entering updateCurrentUser");
         User currentUser = securityUtils.getCurrentUser();
-        log.debug("Current user extracted for update: id={}, identifier={}, status={}",
-                currentUser.getId(), currentUser.getUserIdentifier(), currentUser.getAccountStatus());
-        log.info("Current user update initiated: id={}, identifier={}",
-                currentUser.getId(), currentUser.getUserIdentifier());
         return updateUser(currentUser.getId(), request);
     }
 }
