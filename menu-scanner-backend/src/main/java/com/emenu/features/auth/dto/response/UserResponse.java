@@ -1,7 +1,9 @@
 package com.emenu.features.auth.dto.response;
 
 import com.emenu.enums.common.Status;
-import com.emenu.enums.user.*;
+import com.emenu.enums.user.AccountStatus;
+import com.emenu.enums.user.Gender;
+import com.emenu.enums.user.UserType;
 import com.emenu.shared.dto.BaseAuditResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,24 +35,6 @@ public class UserResponse extends BaseAuditResponse {
     private LocalDate dateOfBirth;
     private String phoneNumber;
     private String profileImageUrl;
-
-    // ── Employment (from user_employments) ────────────────────────────────
-    private String employeeId;
-    private String position;
-    private String department;
-    private EmploymentType employmentType;
-    private LocalDate joinDate;
-    private LocalDate leaveDate;
-    private String shift;
-
-    // ── Telegram (from user_telegrams) ────────────────────────────────────
-    private Long telegramId;
-    private String telegramUsername;
-    private String telegramFirstName;
-    private String telegramLastName;
-    private String telegramPhotoUrl;
-    private LocalDateTime telegramSyncedAt;
-    private boolean telegramSynced;
 
     // ── Session ────────────────────────────────────────────────────────────
     private LocalDateTime lastLoginAt;
