@@ -21,7 +21,7 @@ public class LocationImage extends BaseUUIDEntity {
     private UUID locationId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id", insertable = false, updatable = false)
+    @JoinColumn(name = "location_id")
     private Location location;
 
     @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
