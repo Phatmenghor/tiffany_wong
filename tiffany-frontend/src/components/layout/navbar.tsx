@@ -63,6 +63,7 @@ export function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const mobileSearchRef = useRef<HTMLInputElement>(null);
   const navigatingRef = useRef(false);
 
@@ -81,6 +82,13 @@ export function Navbar() {
 
   const [favoriteAnimating, setFavoriteAnimating] = useState(false);
   const prevFavoriteCount = useRef(favoriteItemCount);
+
+  /**
+   * Mark as hydrated after first render to avoid hydration mismatch
+   */
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   /**
    * Animate heart icon when favorite count changes
@@ -338,8 +346,8 @@ export function Navbar() {
             /* ── Mobile: compact top bar ── */
             <div className="sm:hidden flex items-center justify-between w-full h-14 gap-2">
               <button onClick={handleNavigateToHome} className="flex items-center gap-2 shrink-0">
-                {businessLogoUrl && (
-                  <div className="relative w-8 h-8 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                <div className="relative w-8 h-8 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                  {isHydrated && businessLogoUrl && (
                     <img
                       src={businessLogoUrl}
                       alt={businessName}
@@ -348,8 +356,8 @@ export function Navbar() {
                         (e.target as HTMLImageElement).style.display = "none";
                       }}
                     />
-                  </div>
-                )}
+                  )}
+                </div>
                 <div className="flex flex-col text-left">
                   <span className="font-bold text-sm text-foreground leading-tight">
                     {businessName}
@@ -423,8 +431,8 @@ export function Navbar() {
           <div className="hidden sm:flex h-full w-full items-center justify-between gap-4">
             <div className="flex items-center gap-8">
               <button onClick={handleNavigateToHome} className="flex items-center gap-2 group">
-                {businessLogoUrl && (
-                  <div className="relative w-10 h-10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                <div className="relative w-10 h-10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                  {isHydrated && businessLogoUrl && (
                     <img
                       src={businessLogoUrl}
                       alt={businessName}
@@ -433,8 +441,8 @@ export function Navbar() {
                         (e.target as HTMLImageElement).style.display = "none";
                       }}
                     />
-                  </div>
-                )}
+                  )}
+                </div>
                 <div className="hidden md:flex flex-col text-left">
                   <span className="text-foreground font-bold text-sm leading-tight">
                     {businessName}
