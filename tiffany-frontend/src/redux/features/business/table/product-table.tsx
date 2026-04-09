@@ -184,7 +184,7 @@ export const productTableColumns = ({
 
     {
       key: "price",
-      label: "Price / Stock",
+      label: "Price",
       minWidth: "180px",
       maxWidth: "250px",
       render: (product) => (
@@ -209,11 +209,8 @@ export const productTableColumns = ({
               <span className="text-amber-700 text-xs font-medium">OFF</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 px-2 py-1">
-              <span className="text-xs text-muted-foreground">No Promotion</span>
-              <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
-                {product?.totalStock || 0} in stock
-              </span>
+            <div className="text-xs text-muted-foreground px-2 py-1">
+              No Promotion
             </div>
           )}
         </div>
