@@ -1,4 +1,5 @@
 import { RootState } from "@/redux/store";
+import { createSelector } from "@reduxjs/toolkit";
 
 export const selectBusinessSettings = (state: RootState) => state.businessSettings.data;
 export const selectBusinessSettingsLoading = (state: RootState) => state.businessSettings.isLoading;
@@ -28,7 +29,9 @@ export const selectSocialMedia = (state: RootState) =>
 export const selectBusinessHours = (state: RootState) =>
   state.businessSettings.data?.businessHours || [];
 
-export const selectBusinessColors = (state: RootState) => ({
-  // Use business primary color or fallback to default
-  primary: state.businessSettings.data?.primaryColor || "#57823D",      // Green
-});
+export const selectBusinessColors = createSelector(
+  (state: RootState) => state.businessSettings.data?.primaryColor || "#57823D",
+  (primaryColor) => ({
+    primary: primaryColor,
+  })
+);
