@@ -54,7 +54,6 @@ import {
   CommuneResponseModel,
   VillageResponseModel,
 } from "../store/models/response/location-response";
-import { LocationSelectTab } from "./location-select-tab";
 
 // ---------------------------------------------------------------------------
 // Google Maps script loader
@@ -88,8 +87,6 @@ export function loadGoogleMapsScript(): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-type SelectionMode = "map" | "select";
-
 interface LocationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -195,8 +192,6 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
 
   const { isCreating, isUpdating } = operations;
   const isSubmitting = isCreate ? isCreating : isUpdating;
-
-  const [selectionMode, setSelectionMode] = useState<SelectionMode>("map");
 
   // Map refs
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -445,9 +440,9 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
     }
   }, [isFullScreen, isMapReady, setupAutocomplete, reverseGeocode]);
 
-  // Handle tab switching - trigger resize when switching to map mode
+  // Handle map resize on mount
   useEffect(() => {
-    if (selectionMode === "map" && googleMapRef.current) {
+    if (googleMapRef.current) {
       const t = setTimeout(() => {
         google.maps.event.trigger(googleMapRef.current, "resize");
         const center = googleMapRef.current.getCenter();
@@ -455,7 +450,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
       }, 50);
       return () => clearTimeout(t);
     }
-  }, [selectionMode]);
+  }, []);
 
   const handleMyLocation = useCallback(() => {
     if (!navigator.geolocation) { showToast.error("Geolocation not supported"); return; }
@@ -562,18 +557,10 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
   };
 
   const handleClose = useCallback(() => {
-    setIsFullScreen(false); setSelectionMode("map"); setSelectedVillage(null);
+    setIsFullScreen(false); setSelectedVillage(null);
     setGeocodedCoords(null); setGeocodeSuccess(false);
     resetPublicLocation(); reset(); clearError(); onClose();
   }, [reset, clearError, onClose, resetPublicLocation]);
-
-  const handleModeChange = (mode: SelectionMode) => {
-    setSelectionMode(mode);
-    if (mode === "select") {
-      setValue("latitude", 0, { shouldDirty: true }); setValue("longitude", 0, { shouldDirty: true });
-      setGeocodeSuccess(false); setGeocodedCoords(null);
-    }
-  };
 
   // ---------------------------------------------------------------------------
   // Fullscreen map overlay
@@ -676,27 +663,8 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
               </div>
             )}
 
-            {/* Mode selector tabs */}
-            <div className="flex border-b -mx-6 px-6">
-              {(["map", "select"] as SelectionMode[]).map((mode) => (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => handleModeChange(mode)}
-                  className={cn(
-                    "flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-all border-b-2 -mb-px rounded-t-lg",
-                    selectionMode === mode
-                      ? "border-primary text-primary bg-primary/5"
-                      : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                  )}
-                >
-                  {mode === "map" ? <><Map className="h-4 w-4" /> Map</> : <><ListFilter className="h-4 w-4" /> Select</>}
-                </button>
-              ))}
-            </div>
-
             {/* Map section */}
-            <div className={cn(selectionMode !== "map" && "hidden")}>
+            <div>
               <div className="space-y-3">
                 <div className="relative h-64 rounded-lg overflow-hidden border bg-muted">
                   <div ref={mapContainerRef} className="w-full h-full" />
@@ -741,25 +709,6 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
               </div>
             </div>
 
-            {/* Location selector tab */}
-            {selectionMode === "select" && (
-              <LocationSelectTab
-                selectedProvince={selectedProvince}
-                selectedDistrict={selectedDistrict}
-                selectedCommune={selectedCommune}
-                selectedVillage={selectedVillage}
-                isGeocodingAddress={isGeocodingAddress}
-                geocodedCoords={geocodedCoords}
-                geocodeSuccess={geocodeSuccess}
-                addressPreview={addressPreview}
-                onProvinceChange={handleProvinceChange}
-                onDistrictChange={handleDistrictChange}
-                onCommuneChange={handleCommuneChange}
-                onVillageChange={handleVillageChange}
-                onGetCoordinates={handleGetCoordinates}
-              />
-            )}
-
             {/* Address details section */}
             <div className="space-y-4 pt-3 border-t">
               <TextField control={control} name="label" label="Label" placeholder="e.g., Home, Office, Shop" required disabled={isSubmitting} error={errors.label} />
@@ -767,14 +716,10 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <TextField control={control} name="houseNumber" label="House Number" placeholder="Enter house number" disabled={isSubmitting} error={errors.houseNumber} />
                 <TextField control={control} name="streetNumber" label="Street" placeholder="Enter street" disabled={isSubmitting} error={errors.streetNumber} />
-                {selectionMode === "map" && (
-                  <>
-                    <TextField control={control} name="village" label="Village / Sangkat" placeholder="Auto-filled" disabled={isSubmitting} error={errors.village} />
-                    <TextField control={control} name="commune" label="Commune / City" placeholder="Auto-filled" required disabled={isSubmitting} error={errors.commune} />
-                    <TextField control={control} name="district" label="District / Khan" placeholder="Auto-filled" disabled={isSubmitting} error={errors.district} />
-                    <TextField control={control} name="province" label="Province" placeholder="Auto-filled" disabled={isSubmitting} error={errors.province} />
-                  </>
-                )}
+                <TextField control={control} name="village" label="Village / Sangkat" placeholder="Auto-filled" disabled={isSubmitting} error={errors.village} />
+                <TextField control={control} name="commune" label="Commune / City" placeholder="Auto-filled" required disabled={isSubmitting} error={errors.commune} />
+                <TextField control={control} name="district" label="District / Khan" placeholder="Auto-filled" disabled={isSubmitting} error={errors.district} />
+                <TextField control={control} name="province" label="Province" placeholder="Auto-filled" disabled={isSubmitting} error={errors.province} />
               </div>
 
               <TextareaField control={control} name="note" label="Notes" placeholder="Delivery instructions…" rows={2} disabled={isSubmitting} error={errors.note} />
