@@ -137,8 +137,6 @@ export default function ProductPromotionPage() {
           filters.status && filters.status !== ProductStatus.ALL ? [filters.status] : undefined,
         categoryId: selectedCategories?.id,
         hasSize,
-        sortBy,
-        sortDirection,
       }),
     );
   }, [
@@ -149,8 +147,6 @@ export default function ProductPromotionPage() {
     globalPageSize,
     selectedCategories,
     sizeFilter,
-    sortBy,
-    sortDirection,
   ]);
 
   // Event handlers
