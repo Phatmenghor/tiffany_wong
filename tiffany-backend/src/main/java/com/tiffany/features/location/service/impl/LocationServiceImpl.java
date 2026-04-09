@@ -64,9 +64,9 @@ public class LocationServiceImpl implements LocationService {
             for (var imageRequest : request.getLocationImages()) {
                 var locationImage = new LocationImage();
                 locationImage.setLocationId(savedAddress.getId()); // Set the foreign key
-                locationImage.setLocation(savedAddress); // Set the relationship for navigation
+                locationImage.setLocation(savedAddress); // Set the relationship - this automatically adds to collection
                 locationImage.setImageUrl(imageRequest.getImageUrl());
-                savedAddress.getLocationImages().add(locationImage);
+                // NOTE: Don't call savedAddress.getLocationImages().add() - setLocation() already adds it!
 
                 log.debug("Created location image: {}", imageRequest.getImageUrl().substring(0, Math.min(50, imageRequest.getImageUrl().length())) + "...");
             }
@@ -166,9 +166,9 @@ public class LocationServiceImpl implements LocationService {
                     // CREATE: New image without ID
                     var locationImage = new LocationImage();
                     locationImage.setLocationId(address.getId());
-                    locationImage.setLocation(address);
+                    locationImage.setLocation(address); // This automatically adds to collection
                     locationImage.setImageUrl(imageRequest.getImageUrl());
-                    address.getLocationImages().add(locationImage);
+                    // NOTE: Don't call address.getLocationImages().add() - setLocation() already adds it!
                     log.debug("Created new location image");
                     createdCount++;
                 }
