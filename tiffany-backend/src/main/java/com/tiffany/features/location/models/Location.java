@@ -61,7 +61,7 @@ public class Location extends BaseUUIDEntity {
     private Boolean isDefault = false;
 
     @OneToMany(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy(clause = "created_at ASC")
+    @OrderBy("created_at ASC")
     private List<LocationImage> locationImages = new ArrayList<>();
 
     // Business Methods
