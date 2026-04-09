@@ -48,9 +48,6 @@ import { productPromotionTableColumns } from "@/redux/features/business/table/pr
 const SORT_BY_OPTIONS = [
   { value: "createdAt", label: "Created Date" },
   { value: "displayPrice", label: "Display Price" },
-  { value: "barcode", label: "Barcode" },
-  { value: "sku", label: "SKU" },
-  { value: "totalStock", label: "Total Stock" },
   { value: "favoriteCount", label: "Favorite Count" },
   { value: "viewCount", label: "View Count" },
 ];
