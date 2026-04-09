@@ -110,7 +110,15 @@ export function ProfilePictureModal({
 
         {/* Body - Image Preview */}
         <div className="p-6 flex flex-col items-center gap-4">
-          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 flex items-center justify-center bg-gray-100">
+          <div
+            className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 flex items-center justify-center bg-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => {
+              const imageUrl = selectedImage || currentImageUrl;
+              if (imageUrl && !imageUrl.startsWith('data:')) {
+                window.open(imageUrl, '_blank');
+              }
+            }}
+          >
             {selectedImage || currentImageUrl ? (
               <img
                 src={selectedImage || currentImageUrl}
@@ -129,6 +137,12 @@ export function ProfilePictureModal({
           {selectedImage && selectedImage !== currentImageUrl && (
             <p className="text-sm text-blue-600 font-medium">
               ✓ New image selected
+            </p>
+          )}
+
+          {(currentImageUrl || selectedImage) && !selectedImage?.startsWith('data:') && (
+            <p className="text-xs text-muted-foreground">
+              Click image to view in new tab
             </p>
           )}
         </div>
