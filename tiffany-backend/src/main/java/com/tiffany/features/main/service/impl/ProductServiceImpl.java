@@ -341,19 +341,15 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new NotFoundException("Product not found"));
 
         productMapper.updateEntity(request, product);
-        Product updatedProduct = productRepository.save(product);
+        productRepository.save(product);
 
-        updateProductImages(updatedProduct, request.getImages());
-        boolean sizesChanged = updateProductSizes(updatedProduct, request.getSizes());
-
-        if (sizesChanged) {
-            List<ProductSize> sizes = productSizeRepository.findByProductId(updatedProduct.getId());
-            updatedProduct.setSizes(sizes);
-            productRepository.save(updatedProduct);
-        }
+        updateProductImages(product, request.getImages());
+        updateProductSizes(product, request.getSizes());
 
         log.info("Product updated: id={}", id);
-        return getProductById(updatedProduct.getId());
+
+        // Fetch fresh product data after all updates to avoid Hibernate orphan removal conflicts
+        return getProductById(id);
     }
 
     @Override
