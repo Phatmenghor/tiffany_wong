@@ -138,10 +138,10 @@ export default function BulkPromotionPage() {
   const [showClearSelectedModal, setShowClearSelectedModal] = useState(false);
   const [isClearingSelected, setIsClearingSelected] = useState(false);
 
-  // Helper to set date to 11:59 PM
+  // Helper to set date to 23:59:59 (last second of the day)
   const getDateAt1159PM = (date: Date): Date => {
     const d = new Date(date);
-    d.setHours(23, 59, 0, 0);
+    d.setHours(23, 59, 59, 0);
     return d;
   };
 
