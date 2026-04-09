@@ -49,7 +49,6 @@ import { CustomDropdownMenu } from "../shared/common/custom-dropdown-menu";
 import { PageContainer } from "../shared/common/page-container";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/constants/app-routes/routes";
-import { getImageWithFallback } from "@/constants/image-defaults";
 
 /** Main navigation links */
 const navigationLinks = [
@@ -339,16 +338,18 @@ export function Navbar() {
             /* ── Mobile: compact top bar ── */
             <div className="sm:hidden flex items-center justify-between w-full h-14 gap-2">
               <button onClick={handleNavigateToHome} className="flex items-center gap-2 shrink-0">
-                <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-sm overflow-hidden">
-                  <img
-                    src={getImageWithFallback(businessLogoUrl, "logo")}
-                    alt={businessName}
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = getImageWithFallback(undefined, "logo");
-                    }}
-                  />
-                </div>
+                {businessLogoUrl && (
+                  <div className="relative w-8 h-8 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <img
+                      src={businessLogoUrl}
+                      alt={businessName}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  </div>
+                )}
                 <span className="font-bold text-sm text-foreground">
                   {businessName}
                 </span>
@@ -417,16 +418,18 @@ export function Navbar() {
           <div className="hidden sm:flex h-full w-full items-center justify-between gap-4">
             <div className="flex items-center gap-8">
               <button onClick={handleNavigateToHome} className="flex items-center gap-2 group">
-                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg overflow-hidden">
-                  <img
-                    src={getImageWithFallback(businessLogoUrl, "logo")}
-                    alt={businessName}
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = getImageWithFallback(undefined, "logo");
-                    }}
-                  />
-                </div>
+                {businessLogoUrl && (
+                  <div className="relative w-10 h-10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <img
+                      src={businessLogoUrl}
+                      alt={businessName}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  </div>
+                )}
                 <span className="hidden md:block text-foreground font-bold text-sm leading-tight">
                   {businessName}
                 </span>
