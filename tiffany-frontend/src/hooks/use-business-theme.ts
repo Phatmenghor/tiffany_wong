@@ -12,6 +12,36 @@ const DEFAULT_COLORS = {
   primary: BUSINESS_SETTINGS_DEFAULTS.PRIMARY_COLOR,
 };
 
+// Cache key for full business settings
+const BUSINESS_SETTINGS_CACHE_KEY = "businessSettings_full_cache";
+
+/**
+ * Load cached business settings from localStorage
+ */
+function getCachedBusinessSettings(): BusinessSettingsResponse | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const cached = localStorage.getItem(BUSINESS_SETTINGS_CACHE_KEY);
+    return cached ? JSON.parse(cached) : null;
+  } catch (error) {
+    console.error("## [THEME] Error loading cached business settings:", error);
+    return null;
+  }
+}
+
+/**
+ * Save business settings to localStorage cache
+ */
+function cacheBusinessSettings(settings: BusinessSettingsResponse) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(BUSINESS_SETTINGS_CACHE_KEY, JSON.stringify(settings));
+    console.log("## [THEME] Cached full business settings to localStorage");
+  } catch (error) {
+    console.error("## [THEME] Error caching business settings:", error);
+  }
+}
+
 /**
  * Convert hex color to HSL format for CSS variables
  */
@@ -65,6 +95,12 @@ export function useBusinessTheme() {
   const SYSTEM_ID = "system-settings"; // Fixed ID for system-level settings
 
   useEffect(() => {
+    // Try to load cached full business settings immediately (instant data)
+    const cachedSettings = getCachedBusinessSettings();
+    if (cachedSettings) {
+      console.log("## [THEME] Loaded cached business settings from localStorage");
+    }
+
     // Try to apply cached colors immediately (instant theme)
     const cachedColors = getCachedThemeColors(SYSTEM_ID);
     if (cachedColors) {
@@ -85,12 +121,15 @@ export function useBusinessTheme() {
         if (action.meta.requestStatus === "fulfilled" && action.payload) {
           const payload = action.payload as BusinessSettingsResponse;
 
+          // Cache the full business settings for instant loading on next visit
+          cacheBusinessSettings(payload);
+
           // Cache the colors for instant loading on next visit
           const colors = {
             primaryColor: payload.primaryColor || "",
           };
           cacheThemeColors(SYSTEM_ID, colors);
-          console.log(`## [THEME] Cached business settings`);
+          console.log(`## [THEME] Cached business settings and colors`);
 
           // Apply colors from API
           applyColors(payload.primaryColor);
@@ -114,6 +153,10 @@ export function useBusinessTheme() {
         cacheThemeColors(SYSTEM_ID, currentColors);
         console.log("## [THEME] Updated cached theme colors");
       }
+
+      // Also cache the full business settings
+      cacheBusinessSettings(businessSettings);
+
       applyColors(businessSettings.primaryColor);
     }
   }, [dispatch, businessSettings]);
