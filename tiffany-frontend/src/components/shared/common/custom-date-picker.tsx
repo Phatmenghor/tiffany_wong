@@ -59,9 +59,9 @@ export function CustomDateTimePicker({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [viewDate, setViewDate] = useState<Date>(new Date());
-  const [selectedHour, setSelectedHour] = useState<string>("12");
-  const [selectedMinute, setSelectedMinute] = useState<string>("00");
-  const [selectedPeriod, setSelectedPeriod] = useState<"AM" | "PM">("PM");
+  const [selectedHour, setSelectedHour] = useState<string>("11");
+  const [selectedMinute, setSelectedMinute] = useState<string>("59");
+  const [selectedPeriod, setSelectedPeriod] = useState<"AM" | "PM">("AM");
 
   // Initialize selected date and time from value prop
   useEffect(() => {
@@ -120,9 +120,13 @@ export function CustomDateTimePicker({
   const handleDateSelect = (day: number) => {
     const newDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), day);
 
-    if (mode === "datetime" && selectedDate) {
-      newDate.setHours(selectedDate.getHours());
-      newDate.setMinutes(selectedDate.getMinutes());
+    if (mode === "datetime") {
+      // Set default time to 11:59:59 AM when a date is selected
+      // This allows users to focus on selecting the date only
+      newDate.setHours(11, 59, 59);
+      setSelectedHour("11");
+      setSelectedMinute("59");
+      setSelectedPeriod("AM");
     }
 
     setSelectedDate(newDate);
@@ -453,11 +457,11 @@ export function CustomDateTimePicker({
               setViewDate(today);
 
               if (mode === "datetime") {
-                const hours = today.getHours();
-                const minutes = today.getMinutes();
-                setSelectedPeriod(hours >= 12 ? "PM" : "AM");
-                setSelectedHour(String(hours % 12 || 12).padStart(2, "0"));
-                setSelectedMinute(String(minutes).padStart(2, "0"));
+                // Use default time 11:59:59 AM for consistency with date selection
+                today.setHours(11, 59, 59);
+                setSelectedPeriod("AM");
+                setSelectedHour("11");
+                setSelectedMinute("59");
               }
 
               onChange(formatDateForForm(today));
