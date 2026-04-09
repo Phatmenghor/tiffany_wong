@@ -88,47 +88,27 @@ export default function BusinessSettingsPage() {
     },
   });
 
-  // Fetch business settings (with cache support)
+  // Fetch business settings on page load
   useEffect(() => {
     // Mark as hydrated after first render
     setIsHydrated(true);
   }, []);
 
+  // Admin page: Always fetch fresh data from API when page loads
   useEffect(() => {
-    if (!reduxBusinessSettings) {
+    if (isHydrated) {
       fetchBusinessSettings();
-      return;
     }
-
-    // Load from cache first for instant color application
-    const SYSTEM_ID = "system-settings";
-    const cachedColors = getCachedThemeColors(SYSTEM_ID);
-    if (cachedColors) {
-      console.log(`[THEME] Applied cached colors`);
-      applyThemeColors(cachedColors.primaryColor);
-    }
-
-    // Then reset form with latest data
-    const formData = convertResponseToFormData(reduxBusinessSettings);
-    form.reset(formData);
-    setIsLoading(false);
-  }, [reduxBusinessSettings]);
+  }, [isHydrated]);
 
   const fetchBusinessSettings = async () => {
     const SYSTEM_ID = "system-settings";
     try {
-      // Try to load from cache first (instant, no loading state)
-      if (reduxBusinessSettings) {
-        const cachedColors = getCachedThemeColors(SYSTEM_ID);
-        if (cachedColors) {
-          console.log(`[THEME] Loading cached colors`);
-          applyThemeColors(cachedColors.primaryColor);
-          const formData = convertResponseToFormData(reduxBusinessSettings);
-          form.reset(formData);
-        }
-      }
-
       setIsLoading(true);
+
+      // Admin page: ALWAYS fetch fresh data from API (bypass cache)
+      // Admin needs to see real current state from server, not cached data
+      console.log("[ADMIN] Fetching fresh business settings from API (bypassing cache)");
       const action = await dispatch(fetchBusinessSettingsThunk());
 
       // Check if the action was fulfilled and has a payload
@@ -137,6 +117,7 @@ export default function BusinessSettingsPage() {
 
         const formData = convertResponseToFormData(data);
         form.reset(formData);
+        console.log("[ADMIN] Form loaded with fresh API data");
 
         // Check if colors changed and update cache if needed
         const cachedColors = getCachedThemeColors(SYSTEM_ID);
@@ -149,7 +130,7 @@ export default function BusinessSettingsPage() {
           cacheThemeColors(SYSTEM_ID, currentColors);
         }
 
-        // Apply theme colors (may have changed from cache)
+        // Apply theme colors
         applyThemeColors(data.primaryColor);
       } else {
         showToast.error("Failed to load business settings");
