@@ -323,13 +323,7 @@ public class ProductServiceImpl implements ProductService {
         Product savedProduct = productRepository.save(product);
 
         handleProductImages(savedProduct, request.getImages());
-
-        if (request.getSizes() != null && !request.getSizes().isEmpty()) {
-            handleProductSizes(savedProduct, request.getSizes());
-            List<ProductSize> sizes = productSizeRepository.findByProductId(savedProduct.getId());
-            savedProduct.setSizes(sizes);
-            productRepository.save(savedProduct);
-        }
+        handleProductSizes(savedProduct, request.getSizes());
 
         log.info("Product created: id={}", savedProduct.getId());
         return getProductById(savedProduct.getId());
