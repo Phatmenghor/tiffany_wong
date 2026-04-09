@@ -44,6 +44,19 @@ import { selectGlobalPageSize } from "@/redux/store/selectors/global-settings-se
 import { useAppSelector } from "@/redux/store";
 import { productPromotionTableColumns } from "@/redux/features/business/table/product-promotion-table";
 
+// Sort field options for promotions page
+const SORT_BY_OPTIONS = [
+  { value: "createdAt", label: "Created Date" },
+  { value: "displayPrice", label: "Display Price" },
+  { value: "favoriteCount", label: "Favorite Count" },
+  { value: "viewCount", label: "View Count" },
+];
+
+const SORT_DIRECTION_OPTIONS = [
+  { value: "DESC", label: "High to Low (DESC)" },
+  { value: "ASC", label: "Low to High (ASC)" },
+];
+
 
 export default function ProductPromotionPage() {
   const router = useRouter();
@@ -78,6 +91,8 @@ export default function ProductPromotionPage() {
   });
 
   const [sizeFilter, setSizeFilter] = useState("ALL");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortDirection, setSortDirection] = useState("DESC");
   const [selectedCategories, setSelectedCategories] =
     useState<CategoriesResponseModel | null>(null);
 
@@ -137,6 +152,8 @@ export default function ProductPromotionPage() {
           filters.status && filters.status !== ProductStatus.ALL ? [filters.status] : undefined,
         categoryId: selectedCategories?.id,
         hasSize,
+        sortBy,
+        sortDirection,
       }),
     );
   }, [
@@ -147,6 +164,8 @@ export default function ProductPromotionPage() {
     globalPageSize,
     selectedCategories,
     sizeFilter,
+    sortBy,
+    sortDirection,
   ]);
 
   // Event handlers
@@ -353,6 +372,14 @@ export default function ProductPromotionPage() {
     setSizeFilter(value);
   };
 
+  const handleSortByChange = (value: string) => {
+    setSortBy(value);
+  };
+
+  const handleSortDirectionChange = (value: string) => {
+    setSortDirection(value);
+  };
+
   // Create filter configuration for CollapsibleFilterPanel
   const filterConfig = useMemo((): FilterPanelConfig => ({
     title: "Product Promotions",
@@ -390,8 +417,26 @@ export default function ProductPromotionPage() {
         onChange: (value) => handleProductStatusChange(value as ProductStatus),
         options: PRODUCT_STATUS_FILTER,
       },
+      {
+        id: "sortBy",
+        type: "select",
+        label: "Sort By",
+        placeholder: "Created Date",
+        value: sortBy,
+        onChange: handleSortByChange,
+        options: SORT_BY_OPTIONS,
+      },
+      {
+        id: "sortDirection",
+        type: "select",
+        label: "Order",
+        placeholder: "DESC",
+        value: sortDirection,
+        onChange: handleSortDirectionChange,
+        options: SORT_DIRECTION_OPTIONS,
+      },
     ],
-  }), [filters.search, filters.status, selectedCategories, sizeFilter]);
+  }), [filters.search, filters.status, selectedCategories, sizeFilter, sortBy, sortDirection]);
 
   return (
     <div className="flex flex-1 flex-col gap-4 px-2">
