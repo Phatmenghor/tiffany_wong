@@ -138,6 +138,13 @@ export default function BulkPromotionPage() {
   const [showClearSelectedModal, setShowClearSelectedModal] = useState(false);
   const [isClearingSelected, setIsClearingSelected] = useState(false);
 
+  // Helper to set date to 11:59 PM
+  const getDateAt1159PM = (date: Date): Date => {
+    const d = new Date(date);
+    d.setHours(23, 59, 0, 0);
+    return d;
+  };
+
   const form = useForm<BulkPromotionFormData>({
     resolver: zodResolver(bulkPromotionSchema),
     mode: "onBlur",
@@ -145,9 +152,9 @@ export default function BulkPromotionPage() {
       productIds: [],
       promotionType: undefined,
       promotionValue: 0,
-      promotionFromDate: new Date().toISOString(),
-      promotionToDate: new Date(
-        Date.now() + PROMOTION_DEFAULT_DURATION_DAYS * 24 * 60 * 60 * 1000,
+      promotionFromDate: getDateAt1159PM(new Date()).toISOString(),
+      promotionToDate: getDateAt1159PM(
+        new Date(Date.now() + PROMOTION_DEFAULT_DURATION_DAYS * 24 * 60 * 60 * 1000),
       ).toISOString(),
     },
   });
