@@ -184,7 +184,7 @@ export const productTableColumns = ({
 
     {
       key: "price",
-      label: "Price",
+      label: "Price / Stock",
       minWidth: "180px",
       maxWidth: "250px",
       render: (product) => (
@@ -206,13 +206,14 @@ export const productTableColumns = ({
                   ? `-${product?.displayPromotionValue}%`
                   : `-$${product?.displayPromotionValue}`}
               </span>
-              <span className="text-amber-700 text-xs font-medium">
-                {product?.displayPromotionType === "PERCENTAGE" ? "OFF" : "OFF"}
-              </span>
+              <span className="text-amber-700 text-xs font-medium">OFF</span>
             </div>
           ) : (
-            <div className="text-xs text-muted-foreground px-2 py-1">
-              No Promotion
+            <div className="flex items-center gap-2 px-2 py-1">
+              <span className="text-xs text-muted-foreground">No Promotion</span>
+              <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
+                {product?.totalStock || 0} in stock
+              </span>
             </div>
           )}
         </div>
