@@ -111,55 +111,46 @@ export function useBusinessTheme() {
       applyColors(DEFAULT_COLORS.primary);
     }
 
-    // Try to fetch business settings from API if not already in Redux
+    // ALWAYS fetch fresh business settings from API on app startup
+    // This ensures cache is always updated with latest data from server
     // Will fail with 401 on login page (before auth) - that's OK, use cache/defaults
-    // System settings are global - needed by all routes
-    if (!businessSettings) {
-      console.log("## [THEME] Fetching business settings from API...");
-      dispatch(fetchBusinessSettingsThunk()).then((action) => {
-        // Check if action was fulfilled and has payload
-        if (action.meta.requestStatus === "fulfilled" && action.payload) {
-          const payload = action.payload as BusinessSettingsResponse;
+    console.log("## [THEME] Fetching fresh business settings from API...");
+    dispatch(fetchBusinessSettingsThunk()).then((action) => {
+      // Check if action was fulfilled and has payload
+      if (action.meta.requestStatus === "fulfilled" && action.payload) {
+        const payload = action.payload as BusinessSettingsResponse;
 
-          // Cache the full business settings for instant loading on next visit
+        // Compare with cached data
+        const cacheOutdated = !cachedSettings ||
+          JSON.stringify(cachedSettings) !== JSON.stringify(payload);
+
+        if (cacheOutdated) {
+          console.log("## [THEME] Cache is outdated, updating with fresh data from API");
           cacheBusinessSettings(payload);
-
-          // Cache the colors for instant loading on next visit
-          const colors = {
-            primaryColor: payload.primaryColor || "",
-          };
-          cacheThemeColors(SYSTEM_ID, colors);
-          console.log(`## [THEME] Cached business settings and colors`);
-
-          // Apply colors from API
-          applyColors(payload.primaryColor);
-          console.log("## [THEME] Business theme loaded and applied from API");
         } else {
-          // Request failed (likely 401 on login page) - use cache or defaults
-          console.log("## [THEME] Failed to fetch business settings (may be on login page), using cache/defaults");
-          if (cachedColors) {
-            applyColors(cachedColors.primaryColor);
-          } else {
-            applyColors(DEFAULT_COLORS.primary);
-          }
+          console.log("## [THEME] Cache is up-to-date with API data");
         }
-      });
-    } else {
-      // If already in Redux, apply and cache
-      const currentColors = {
-        primaryColor: businessSettings.primaryColor || "",
-      };
-      if (hasThemeChanged(cachedColors, currentColors)) {
-        cacheThemeColors(SYSTEM_ID, currentColors);
-        console.log("## [THEME] Updated cached theme colors");
+
+        // Cache the colors for instant loading on next visit
+        const colors = {
+          primaryColor: payload.primaryColor || "",
+        };
+        cacheThemeColors(SYSTEM_ID, colors);
+
+        // Apply colors from API
+        applyColors(payload.primaryColor);
+        console.log("## [THEME] Business theme loaded and applied from API");
+      } else {
+        // Request failed (likely 401 on login page) - use cache or defaults
+        console.log("## [THEME] Failed to fetch business settings from API, using cache/defaults");
+        if (cachedColors) {
+          applyColors(cachedColors.primaryColor);
+        } else {
+          applyColors(DEFAULT_COLORS.primary);
+        }
       }
-
-      // Also cache the full business settings
-      cacheBusinessSettings(businessSettings);
-
-      applyColors(businessSettings.primaryColor);
-    }
-  }, [dispatch, businessSettings]);
+    });
+  }, [dispatch]);
 }
 
 /**
