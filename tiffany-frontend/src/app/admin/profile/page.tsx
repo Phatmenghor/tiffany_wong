@@ -561,8 +561,8 @@ export default function AdminProfilePage() {
               <CardHeader>
                 <CardTitle>Change Password</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
+              <CardContent className="flex flex-col items-end">
+                <p className="text-sm text-muted-foreground mb-4 w-full">
                   Update your password to keep your account secure.
                 </p>
                 <Button
@@ -579,8 +579,8 @@ export default function AdminProfilePage() {
               <CardHeader>
                 <CardTitle className="text-destructive">Delete Account</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
+              <CardContent className="flex flex-col items-end">
+                <p className="text-sm text-muted-foreground mb-4 w-full">
                   Permanently delete your account and all associated data. This action cannot be undone.
                 </p>
                 <Button
