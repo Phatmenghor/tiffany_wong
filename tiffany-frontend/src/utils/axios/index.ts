@@ -13,6 +13,10 @@ import {
   storeAdminTokens,
   clearAllTokens,
   clearAdminTokens,
+  decodeToken,
+  getUserTypeFromToken,
+  isTokenExpired,
+  isAdminTokenExpired,
 } from "../local-storage/token";
 
 /** Get the correct token based on current route */
@@ -37,14 +41,27 @@ const getActiveRefreshToken = (): string | undefined => {
   return getRefreshToken();
 };
 
-/** Check if the active user is admin based on current route and token availability */
+/**
+ * Check if the active user is OWNER based on JWT userType claim
+ * This is more reliable than checking the route path
+ */
 const isAdminUser = (): boolean => {
   if (typeof window === "undefined") return false;
-  // If on admin route, user should have admin token
-  if (isAdminPath()) {
-    return !!getAdminToken();
+
+  // Try admin token first (if on admin route)
+  const adminToken = getAdminToken();
+  if (adminToken) {
+    const userType = getUserTypeFromToken(adminToken);
+    if (userType === "OWNER") return true;
   }
-  // If on public route, user should have customer token
+
+  // Try customer token
+  const customerToken = getToken();
+  if (customerToken) {
+    const userType = getUserTypeFromToken(customerToken);
+    if (userType === "OWNER") return true;
+  }
+
   return false;
 };
 
@@ -583,6 +600,8 @@ const createAxiosInstance = (requiresAuth = false): AxiosInstance => {
         }
 
         try {
+          logger.log("Attempting token refresh with refresh token");
+
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/refresh`,
             { refreshToken },
@@ -592,11 +611,19 @@ const createAxiosInstance = (requiresAuth = false): AxiosInstance => {
           const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
             response.data.data;
 
-          // Store refreshed tokens in the correct cookie set
-          if (admin) {
+          // Determine user type from the new access token to store in correct location
+          const userTypeFromToken = getUserTypeFromToken(newAccessToken);
+          const isOwner = userTypeFromToken === "OWNER";
+
+          logger.success(`Token refresh successful for userType: ${userTypeFromToken}`);
+
+          // Store refreshed tokens in the correct cookie set based on actual userType
+          if (isOwner) {
             storeAdminTokens(newAccessToken, newRefreshToken);
+            logger.log("Stored tokens as OWNER (admin) tokens");
           } else {
             storeTokens(newAccessToken, newRefreshToken);
+            logger.log("Stored tokens as CUSTOMER tokens");
           }
 
           if (originalRequest.headers) {
@@ -604,9 +631,10 @@ const createAxiosInstance = (requiresAuth = false): AxiosInstance => {
           }
 
           processQueue(null, newAccessToken);
-          logger.success("Token refreshed successfully");
+          logger.success("Token refreshed successfully and request retry queued");
           return axiosInstance(originalRequest);
         } catch (refreshError) {
+          logger.error("Token refresh failed", refreshError);
           processQueue(refreshError, null);
           const admin = isAdminUser();
           const hadToken = admin ? !!getAdminToken() : !!getToken();

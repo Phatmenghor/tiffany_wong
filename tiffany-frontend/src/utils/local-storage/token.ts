@@ -209,3 +209,40 @@ export function isTokenExpired(bufferSeconds: number = 300): boolean {
   const currentTime = Math.floor(Date.now() / 1000);
   return decoded.exp < currentTime + bufferSeconds;
 }
+
+/**
+ * Check if admin access token is expired or about to expire
+ * @param bufferSeconds - seconds before actual expiry to consider as expired (default 5 minutes)
+ */
+export function isAdminTokenExpired(bufferSeconds: number = 300): boolean {
+  const token = getAdminToken();
+  if (!token) return true;
+
+  const decoded = decodeToken(token as string);
+  if (!decoded?.exp) return true;
+
+  const currentTime = Math.floor(Date.now() / 1000);
+  return decoded.exp < currentTime + bufferSeconds;
+}
+
+/**
+ * Get the userType from a token (CUSTOMER or OWNER)
+ */
+export function getUserTypeFromToken(token?: string): string | null {
+  if (!token) return null;
+  const decoded = decodeToken(token);
+  return decoded?.userType || null;
+}
+
+/**
+ * Get userType from the currently active token based on route
+ */
+export function getActiveUserType(): "CUSTOMER" | "OWNER" | null {
+  if (typeof window === "undefined") return null;
+
+  const isAdminPath = window.location.pathname.startsWith("/admin");
+  const tokenToCheck = isAdminPath ? getAdminToken() : getToken();
+
+  const userType = getUserTypeFromToken(tokenToCheck);
+  return userType as "CUSTOMER" | "OWNER" | null;
+}
