@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Edit,
@@ -9,9 +9,6 @@ import {
   Trash2,
   Lock,
   User,
-  Monitor,
-  Link2,
-  Plus,
   Camera,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -72,6 +69,9 @@ export default function AdminProfilePage() {
   const [isProfilePictureModalOpen, setIsProfilePictureModalOpen] =
     useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [activeSection, setActiveSection] = useState<"profile" | "security">(
+    "profile"
+  );
 
   const {
     control,
@@ -496,44 +496,126 @@ export default function AdminProfilePage() {
                           }
                         />
                         <DisplayField label="Date of Birth" value={watch("dateOfBirth")} />
-                        <DisplayField
-                          label="Telegram ID"
-                          value={userProfile?.telegramId}
-                        />
-                        <DisplayField
-                          label="Telegram Username"
-                          value={userProfile?.telegramUsername}
-                        />
-                        <DisplayField
-                          label="Telegram First Name"
-                          value={userProfile?.telegramFirstName}
-                        />
-                        <DisplayField
-                          label="Telegram Last Name"
-                          value={userProfile?.telegramLastName}
-                        />
-                        <DisplayField
-                          label="Telegram Synced At"
-                          value={userProfile?.telegramSyncedAt}
-                        />
-                        <DisplayField
-                          label="Telegram Synced"
-                          value={userProfile?.telegramSynced ? "Yes" : "No"}
-                        />
-                        <DisplayField
-                          label="Role"
-                          value={userProfile?.roles && userProfile.roles.length > 0
-                            ? userProfile.roles.join(", ")
-                            : "-"}
-                        />
-                        <DisplayField
-                          label="Account Status"
-                          value={userProfile?.accountStatus || "-"}
-                        />
                       </>
                     )}
                   </div>
                 </CardContent>
               </Card>
 
+              {/* Account Status */}
+              {!isEditing && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Account Status</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <DisplayField
+                        label="Account Status"
+                        value={userProfile?.accountStatus || "-"}
+                      />
+                      <DisplayField
+                        label="User Role"
+                        value={userProfile?.userRole || "-"}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
+              {/* Additional Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Additional Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {isEditing ? (
+                    <TextareaField
+                      control={typedControl}
+                      name="remark"
+                      label="Remark"
+                      placeholder="Add any additional notes"
+                      error={errors.remark}
+                    />
+                  ) : (
+                    <DisplayField label="Remark" value={watch("remark")} />
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </form>
+        )}
+
+        {/* Security Section */}
+        {activeSection === "security" && (
+          <div className="w-full space-y-6">
+            {/* Change Password */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Change Password</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Update your password to keep your account secure.
+                </p>
+                <Button
+                  onClick={() => setIsChangePasswordModalOpen(true)}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  Change Password
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Delete Account */}
+            <Card className="border-destructive/20 bg-destructive/5">
+              <CardHeader>
+                <CardTitle className="text-destructive">Delete Account</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Permanently delete your account and all associated data. This action cannot be undone.
+                </p>
+                <Button
+                  variant="destructive"
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                >
+                  <Trash2 className="h-3 w-3 mr-1" />
+                  Delete Account
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
+
+      {/* Modals */}
+      {isChangePasswordModalOpen && (
+        <ChangePasswordModal
+          open={isChangePasswordModalOpen}
+          onOpenChange={setIsChangePasswordModalOpen}
+        />
+      )}
+
+      {isDeleteDialogOpen && (
+        <DeleteConfirmationModal
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+          onConfirm={handleDeleteAccount}
+          title="Delete Account"
+          description="Are you sure you want to delete your account? This action cannot be undone."
+          isLoading={isProfileLoading}
+        />
+      )}
+
+      {isProfilePictureModalOpen && (
+        <ProfilePictureModal
+          open={isProfilePictureModalOpen}
+          onOpenChange={setIsProfilePictureModalOpen}
+          onImageCapture={handleAutoUploadProfilePicture}
+          isLoading={isUploadingImage}
+        />
+      )}
+    </div>
+  );
+}
