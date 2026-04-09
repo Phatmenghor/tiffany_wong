@@ -139,10 +139,6 @@ export function ProductDetailModal({
                     value={productData.hasSizes ? "Yes" : "No"}
                   />
                   <DisplayField
-                    label="Business"
-                    value={productData.businessName || "---"}
-                  />
-                  <DisplayField
                     label="Items"
                     value={
                       productData.sizes && productData.sizes.length > 0
