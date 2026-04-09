@@ -27,7 +27,6 @@ import {
 import { cn } from "@/lib/utils";
 import { usePublicCategoriesState } from "@/redux/features/main/store/state/public-categories-state";
 import { usePublicBrandsState } from "@/redux/features/main/store/state/public-brands-state";
-import { ComboboxSelectBrandPublic } from "@/components/shared/combobox/combobox_select_brand_public";
 import { ComboboxSelectCategoriesPublic } from "@/components/shared/combobox/combobox_select_categories_public";
 
 const PRODUCT_STATUSES = [
@@ -51,7 +50,6 @@ function ProductFiltersComponent({
 
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [hasPromotion, setHasPromotion] = useState<boolean>(false);
   const [minPrice, setMinPrice] = useState<string>("");
@@ -61,7 +59,6 @@ function ProductFiltersComponent({
   // Sync from URL
   useEffect(() => {
     setSelectedCategory(searchParams.get("categoryId") || "");
-    setSelectedBrand(searchParams.get("brandId") || "");
     setSelectedStatuses(
       searchParams.get("status")?.split(",").filter(Boolean) || [],
     );
@@ -133,7 +130,6 @@ function ProductFiltersComponent({
 
   const activeFiltersCount =
     (selectedCategory ? 1 : 0) +
-    (selectedBrand ? 1 : 0) +
     selectedStatuses.length +
     (!lockedPromotion && hasPromotion ? 1 : 0) +
     (hasPriceFilter ? 1 : 0);
@@ -201,17 +197,6 @@ function ProductFiltersComponent({
         label="Category"
         size="md"
         placeholder="All Categories"
-      />
-
-      <Separator />
-
-      {/* Brand - Combobox */}
-      <ComboboxSelectBrandPublic
-        selectedBrand={selectedBrand}
-        onChangeSelected={(brandId) => updateFilter("brandId", brandId)}
-        label="Brand"
-        size="md"
-        placeholder="All Brands"
       />
 
       <Separator />

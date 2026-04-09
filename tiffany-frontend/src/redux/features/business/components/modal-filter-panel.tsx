@@ -6,10 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, Plus, X, SlidersHorizontal } from "lucide-react";
 import { CustomSelect } from "@/components/shared/common/custom-select";
-import { ComboboxSelectBrand } from "@/components/shared/combobox/combobox_select_brand";
 import { ComboboxSelectCategories } from "@/components/shared/combobox/combobox_select_categories";
 import { FilterConfig, FilterPanelConfig } from "./filter-types";
-import { BrandResponseModel } from "@/redux/features/master-data/store/models/response/brand-response";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
 import { Badge } from "@/components/ui/badge";
 
@@ -50,21 +48,6 @@ export const ModalFilterPanel: React.FC<{ config: FilterPanelConfig }> = ({
               value={filter.value}
               placeholder={filter.placeholder || "Select..."}
               onValueChange={filter.onChange}
-              label={filter.label}
-              disabled={filter.disabled}
-              size="lg"
-            />
-          </div>
-        );
-
-      case "combobox-brand":
-        return (
-          <div key={filter.id} className="mb-4">
-            <ComboboxSelectBrand
-              dataSelect={filter.value as BrandResponseModel | null}
-              onChangeSelected={filter.onChange}
-              placeholder={filter.placeholder || "All Brand"}
-              showAllOption={(filter as any).showAllOption !== false}
               label={filter.label}
               disabled={filter.disabled}
               size="lg"
