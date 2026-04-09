@@ -162,31 +162,23 @@ export function ProductDetailModal({
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <DisplayField
-                    label="Base Price"
-                    value={formatCurrency(parseFloat(productData.price))}
-                  />
-                  <DisplayField
-                    label="Display Price"
+                    label="Price"
                     value={formatCurrency(productData.displayPrice)}
                   />
-                  <DisplayField
-                    label="Display Origin Price"
-                    value={formatCurrency(productData.displayOriginPrice)}
-                  />
+                  {productData.displayOriginPrice && productData.displayOriginPrice !== productData.displayPrice && (
+                    <DisplayField
+                      label="Original Price"
+                      value={formatCurrency(productData.displayOriginPrice)}
+                    />
+                  )}
                   {productData.hasPromotion && (
                     <>
                       <DisplayField
-                        label="Promotion Type"
-                        value={productData.displayPromotionType || "---"}
-                      />
-                      <DisplayField
-                        label="Promotion Value"
+                        label="Discount"
                         value={
                           productData.displayPromotionType === "PERCENTAGE"
-                            ? `${productData.displayPromotionValue}%`
-                            : formatCurrency(
-                                productData.displayPromotionValue || 0,
-                              )
+                            ? `-${productData.displayPromotionValue}%`
+                            : `-${formatCurrency(productData.displayPromotionValue || 0)}`
                         }
                       />
                       <DisplayField
