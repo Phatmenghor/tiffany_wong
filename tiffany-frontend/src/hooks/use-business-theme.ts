@@ -56,8 +56,8 @@ function hexToHsl(hex: string): string {
 
 /**
  * Hook to initialize business theme from settings
- * Fetches business settings on app startup and applies theme colors
- * Skips fetching on login/auth pages since user is not authenticated
+ * Fetches system settings on app startup (BEFORE auth)
+ * System settings are global and used across ALL routes
  */
 export function useBusinessTheme() {
   const dispatch = useAppDispatch();
@@ -65,66 +65,52 @@ export function useBusinessTheme() {
   const SYSTEM_ID = "system-settings"; // Fixed ID for system-level settings
 
   useEffect(() => {
-    // On login pages, use default business theme from AppDefault
-    if (typeof window !== "undefined" && window.location.pathname.includes("/login")) {
-      console.log("## [THEME] On login page, loading default business theme");
-
-      const cachedColors = getCachedThemeColors(SYSTEM_ID);
-
-      if (cachedColors) {
-        console.log(`## [THEME] Applying cached colors on login page`);
-        applyColors(cachedColors.primaryColor);
-      } else {
-        console.log("## [THEME] No cached theme, using defaults");
-        applyColors(DEFAULT_COLORS.primary);
-      }
-      return;
+    // Try to apply cached colors immediately (instant theme)
+    const cachedColors = getCachedThemeColors(SYSTEM_ID);
+    if (cachedColors) {
+      console.log(`## [THEME] Applying cached colors immediately`);
+      applyColors(cachedColors.primaryColor);
+    } else {
+      console.log("## [THEME] No cached theme, using defaults");
+      applyColors(DEFAULT_COLORS.primary);
     }
 
-    // Check if settings already loaded in Redux
-    if (businessSettings) {
-      // Try to load from cache first (instant colors)
-      const cachedColors = getCachedThemeColors(SYSTEM_ID);
-      if (cachedColors) {
-        console.log(`## [THEME] Applying cached colors`);
-        applyColors(cachedColors.primaryColor);
-      } else {
-        // Apply from redux if no cache
-        applyColors(businessSettings.primaryColor);
-      }
+    // Always fetch business settings from API (even on login page)
+    // System settings are public and global - needed by all routes
+    // Don't fetch if already in Redux
+    if (!businessSettings) {
+      console.log("## [THEME] Fetching business settings from API...");
+      dispatch(fetchBusinessSettingsThunk()).then((action) => {
+        // Check if action was fulfilled and has payload
+        if (action.meta.requestStatus === "fulfilled" && action.payload) {
+          const payload = action.payload as BusinessSettingsResponse;
 
-      // Update cache with current settings
+          // Cache the colors for instant loading on next visit
+          const colors = {
+            primaryColor: payload.primaryColor || "",
+          };
+          cacheThemeColors(SYSTEM_ID, colors);
+          console.log(`## [THEME] Cached business settings`);
+
+          // Apply colors from API
+          applyColors(payload.primaryColor);
+          console.log("## [THEME] Business theme loaded and applied from API");
+        } else {
+          console.error("## [THEME] Failed to load business settings, using defaults");
+          applyColors(DEFAULT_COLORS.primary);
+        }
+      });
+    } else {
+      // If already in Redux, apply and cache
       const currentColors = {
         primaryColor: businessSettings.primaryColor || "",
       };
       if (hasThemeChanged(cachedColors, currentColors)) {
         cacheThemeColors(SYSTEM_ID, currentColors);
+        console.log("## [THEME] Updated cached theme colors");
       }
-
-      return;
+      applyColors(businessSettings.primaryColor);
     }
-
-    // If not in Redux, fetch from API using thunk
-    dispatch(fetchBusinessSettingsThunk()).then((action) => {
-      // Check if action was fulfilled and has payload
-      if (action.meta.requestStatus === "fulfilled" && action.payload) {
-        const payload = action.payload as BusinessSettingsResponse;
-
-        // Cache the colors
-        const colors = {
-          primaryColor: payload.primaryColor || "",
-        };
-        cacheThemeColors(SYSTEM_ID, colors);
-        console.log(`## [THEME] Cached colors`);
-
-        // Apply colors
-        applyColors(payload.primaryColor);
-        console.log("## [THEME] Business theme loaded and applied successfully");
-      } else {
-        console.error("## [THEME] Failed to load business theme, using defaults");
-        applyColors(DEFAULT_COLORS.primary);
-      }
-    });
   }, [dispatch, businessSettings]);
 }
 
