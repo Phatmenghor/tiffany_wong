@@ -218,7 +218,13 @@ export default function BusinessSettingsPage() {
           systemName: result.systemName,
           logoSystemUrl: result.logoSystemUrl,
           primaryColor: result.primaryColor,
+          description: result.description,
         });
+
+        // Reset form with updated data from API
+        const updatedFormData = convertResponseToFormData(result);
+        form.reset(updatedFormData);
+        console.log("[FORM] Form reset with updated data");
 
         // Cache the colors for instant load on next page refresh
         const colors = {
