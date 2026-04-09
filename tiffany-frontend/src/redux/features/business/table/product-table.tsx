@@ -170,32 +170,6 @@ export const productTableColumns = ({
     },
 
     {
-      key: "sku",
-      label: "SKU",
-      minWidth: "10px",
-      maxWidth: "120px",
-      truncate: true,
-      render: (product) => (
-        <span className="text-xs text-muted-foreground font-mono">
-          {product?.sku || "---"}
-        </span>
-      ),
-    },
-
-    {
-      key: "barcode",
-      label: "Barcode",
-      minWidth: "10px",
-      maxWidth: "120px",
-      truncate: true,
-      render: (product) => (
-        <span className="text-xs text-muted-foreground font-mono">
-          {product?.barcode || "---"}
-        </span>
-      ),
-    },
-
-    {
       key: "categoryName",
       label: "Category",
       minWidth: "10px",
@@ -209,65 +183,28 @@ export const productTableColumns = ({
     },
 
     {
-      key: "brandName",
-      label: "Brand",
-      minWidth: "10px",
-      maxWidth: "150px",
-      truncate: true,
-      render: (product) => (
-        <span className="text-xs text-muted-foreground">
-          {product?.brandName || "---"}
-        </span>
-      ),
-    },
-
-    {
-      key: "displayPrice",
+      key: "price",
       label: "Price",
-      minWidth: "10px",
-      maxWidth: "100px",
-      truncate: true,
+      minWidth: "150px",
+      maxWidth: "200px",
       render: (product) => (
-        <span className="text-xs font-semibold text-foreground">
-          ${parseFloat(product?.displayPrice?.toString() || "0").toFixed(2)}
-        </span>
-      ),
-    },
-
-    {
-      key: "hasPromotion",
-      label: "Promotion",
-      minWidth: "10px",
-      maxWidth: "100px",
-      truncate: true,
-      render: (product) => (
-        <div className="flex items-center gap-1">
-          {product?.hasPromotion ? (
-            <span className="gap-1 bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs font-semibold inline-block">
-              Active
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-foreground">
+              ${parseFloat(product?.displayPrice?.toString() || "0").toFixed(2)}
             </span>
-          ) : (
-            <span className="gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded text-xs font-semibold inline-block">
-              Regular
+            {product?.hasPromotion && (
+              <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs font-semibold">
+                Sale
+              </span>
+            )}
+          </div>
+          {product?.hasPromotion && product?.displayOriginPrice && (
+            <span className="text-xs text-muted-foreground line-through">
+              ${parseFloat(product.displayOriginPrice.toString()).toFixed(2)}
             </span>
           )}
         </div>
-      ),
-    },
-
-    {
-      key: "displayOriginPrice",
-      label: "Original Price",
-      minWidth: "10px",
-      maxWidth: "120px",
-      truncate: true,
-      render: (product) => (
-        <span className="text-xs text-muted-foreground line-through">
-          $
-          {parseFloat(product?.displayOriginPrice?.toString() || "0").toFixed(
-            2,
-          )}
-        </span>
       ),
     },
 
