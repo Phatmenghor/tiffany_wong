@@ -20,10 +20,6 @@ public class LocationImage extends BaseUUIDEntity {
     @Column(name = "location_id", nullable = false)
     private UUID locationId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id", insertable = false, updatable = false)
-    private Location location;
-
     @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
     private String imageUrl; // Store image URLs (file paths or URLs)
 
