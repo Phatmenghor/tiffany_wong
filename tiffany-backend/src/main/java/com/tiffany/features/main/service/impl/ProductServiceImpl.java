@@ -66,6 +66,7 @@ public class ProductServiceImpl implements ProductService {
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
+                filter.getHasPromotion(),
                 filter.getSearch(),
                 PaginationUtils.createSort(filter.getSortBy(), filter.getSortDirection())
         );
@@ -110,6 +111,7 @@ public class ProductServiceImpl implements ProductService {
                 (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
+                filter.getHasPromotion(),
                 filter.getSearch(),
                 pageable
         );

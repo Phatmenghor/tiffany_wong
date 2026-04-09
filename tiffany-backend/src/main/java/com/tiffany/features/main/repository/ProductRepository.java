@@ -84,6 +84,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "AND (:statuses IS NULL OR p.status IN :statuses) " +
            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
+           "AND (:hasPromotion IS NULL OR (CASE WHEN :hasPromotion = true THEN (p.promotionType IS NOT NULL AND p.promotionValue IS NOT NULL) ELSE (p.promotionType IS NULL OR p.promotionValue IS NULL) END)) " +
            "AND (:search IS NULL OR :search = '' OR " +
            "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')))")
@@ -92,6 +93,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         @Param("statuses") List<ProductStatus> statuses,
         @Param("minPrice") BigDecimal minPrice,
         @Param("maxPrice") BigDecimal maxPrice,
+        @Param("hasPromotion") Boolean hasPromotion,
         @Param("search") String search,
         Pageable pageable
     );
@@ -129,6 +131,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "AND (:statuses IS NULL OR p.status IN :statuses) " +
            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
+           "AND (:hasPromotion IS NULL OR (CASE WHEN :hasPromotion = true THEN (p.promotionType IS NOT NULL AND p.promotionValue IS NOT NULL) ELSE (p.promotionType IS NULL OR p.promotionValue IS NULL) END)) " +
            "AND (:search IS NULL OR :search = '' OR " +
            "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
@@ -138,6 +141,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         @Param("statuses") List<ProductStatus> statuses,
         @Param("minPrice") BigDecimal minPrice,
         @Param("maxPrice") BigDecimal maxPrice,
+        @Param("hasPromotion") Boolean hasPromotion,
         @Param("search") String search,
         Sort sort
     );
