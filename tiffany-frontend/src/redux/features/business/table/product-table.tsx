@@ -185,26 +185,24 @@ export const productTableColumns = ({
     {
       key: "promotion",
       label: "Promotion",
-      minWidth: "180px",
-      maxWidth: "250px",
-      render: (product) => (
-        <div>
-          {product?.hasPromotion ? (
-            <div className="flex items-center gap-1.5 bg-amber-50 px-2 py-1 rounded border border-amber-200">
-              <span className="text-amber-600 font-semibold text-xs">
-                {product?.displayPromotionType === "PERCENTAGE"
-                  ? `-${product?.displayPromotionValue}%`
-                  : `-$${product?.displayPromotionValue}`}
-              </span>
-              <span className="text-amber-700 text-xs font-medium">OFF</span>
-            </div>
-          ) : (
-            <div className="text-xs text-muted-foreground px-2 py-1">
-              No Promotion
-            </div>
-          )}
-        </div>
-      ),
+      minWidth: "10px",
+      maxWidth: "120px",
+      truncate: true,
+      render: (product) => {
+        if (!product?.hasPromotion) {
+          return <span className="text-xs text-muted-foreground">---</span>;
+        }
+
+        const displayValue = product?.displayPromotionType === "PERCENTAGE"
+          ? `-${product?.displayPromotionValue}%`
+          : `-$${product?.displayPromotionValue}`;
+
+        return (
+          <span className="text-xs font-semibold text-red-600">
+            {displayValue}
+          </span>
+        );
+      },
     },
 
     {
