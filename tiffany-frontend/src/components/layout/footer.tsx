@@ -5,7 +5,7 @@ import Image from "next/image";
 import { MapPin, Phone, Clock } from "lucide-react";
 import { PageContainer } from "../shared/common/page-container";
 import { useAppSelector } from "@/redux/store";
-import { selectBusinessSettings } from "@/redux/features/business/store/selectors/business-settings-selector";
+import { selectBusinessSettings, selectPrimaryColor } from "@/redux/features/business/store/selectors/business-settings-selector";
 
 // Default constants for fallback
 const DEFAULT_CONTACT_ADDRESS = "123 Street Name, Phnom Penh, Cambodia";
@@ -26,6 +26,7 @@ const SOCIAL_LINKS = [
 
 export function Footer() {
   const businessSettings = useAppSelector(selectBusinessSettings);
+  const primaryColor = useAppSelector(selectPrimaryColor);
 
   // Use Redux data or fallback to defaults
   const contactAddress = businessSettings?.contactAddress || DEFAULT_CONTACT_ADDRESS;
@@ -33,8 +34,13 @@ export function Footer() {
   const contactEmail = businessSettings?.contactEmail || DEFAULT_CONTACT_EMAIL;
   const businessHours = businessSettings?.businessHours || DEFAULT_BUSINESS_HOURS;
 
+  // Dynamic footer background color
+  const footerStyle = {
+    backgroundColor: primaryColor ? `${primaryColor}E6` : undefined,
+  };
+
   return (
-    <footer className="bg-primary/90 text-white">
+    <footer className="text-white" style={footerStyle}>
       <PageContainer>
         {/* Main Footer Content */}
         <div className="py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -124,26 +130,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Footer Divider */}
-        <div className="border-t border-white/20 my-8"></div>
-
-        {/* Footer Bottom */}
-        <div className="py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-white text-sm">
-            Copyright © 2026 Menu Scanner. All rights reserved.
-          </p>
-          <div className="flex gap-6">
-            <a href="#" className="text-white hover:text-white/80 text-sm transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="text-white hover:text-white/80 text-sm transition-colors">
-              Terms of Service
-            </a>
-            <a href="#" className="text-white hover:text-white/80 text-sm transition-colors">
-              Cookie Policy
-            </a>
-          </div>
-        </div>
       </PageContainer>
     </footer>
   );
