@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,22 +23,11 @@ public class PublicProductController {
     private final ProductService productService;
 
     @PostMapping("/all")
-    public ResponseEntity<ApiResponse<List<ProductListDto>>> getAllPublicProducts(
+    public ResponseEntity<ApiResponse<PaginationResponse<ProductListDto>>> getAllPublicProducts(
             @Valid @RequestBody ProductFilterDto filter) {
-        log.info("Getting products");
-        List<ProductListDto> products = productService.getAllDataProducts(filter);
+        log.info("Getting products with pagination");
+        PaginationResponse<ProductListDto> products = productService.getAllDataProductsWithPagination(filter);
         return ResponseEntity.ok(ApiResponse.success("Products retrieved successfully", products));
-    }
-
-    @PostMapping("/all-data")
-    public ResponseEntity<ApiResponse<List<ProductListDto>>> getAllDataPublicProducts(
-            @Valid @RequestBody ProductFilterDto filter) {
-        log.info("Getting all products");
-        List<ProductListDto> products = productService.getAllDataProducts(filter);
-        return ResponseEntity.ok(ApiResponse.success(
-                "All products retrieved successfully",
-                products
-        ));
     }
 
     @GetMapping("/{id}")

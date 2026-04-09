@@ -96,6 +96,50 @@ public class ProductServiceImpl implements ProductService {
         return dtoList;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public PaginationResponse<ProductListDto> getAllDataProductsWithPagination(ProductFilterDto filter) {
+        Pageable pageable = PaginationUtils.createPageable(
+                filter.getPageNo(),
+                filter.getPageSize(),
+                filter.getSortBy(),
+                filter.getSortDirection()
+        );
+
+        Page<Product> productPage = productRepository.findAllWithFiltersOptimized(
+                filter.getCategoryId(),
+                (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
+                filter.getMinPrice(),
+                filter.getMaxPrice(),
+                filter.getHasPromotion(),
+                filter.getHasSize(),
+                filter.getSearch(),
+                pageable
+        );
+
+        if (productPage.getContent().isEmpty()) {
+            return paginationMapper.toPaginationResponse(productPage, Collections.emptyList());
+        }
+
+        List<ProductListDto> dtoList = productMapper.toListDtos(productPage.getContent());
+
+        Optional<User> currentUser = securityUtils.getCurrentUserOptional();
+        if (currentUser.isPresent()) {
+            List<UUID> productIds = productPage.getContent().stream().map(Product::getId).toList();
+            List<UUID> favoriteIds = favoriteQueryHelper.getFavoriteProductIds(currentUser.get().getId(), productIds);
+            Set<UUID> favoriteSet = new HashSet<>(favoriteIds);
+
+            dtoList.forEach(dto -> {
+                dto.setIsFavorited(favoriteSet.contains(dto.getId()));
+            });
+        } else {
+            dtoList.forEach(dto -> {
+                dto.setIsFavorited(false);
+            });
+        }
+
+        return paginationMapper.toPaginationResponse(productPage, dtoList);
+    }
 
     @Override
     @Transactional(readOnly = true)
