@@ -39,14 +39,14 @@ export const fetchHomePromotionProducts = createApiThunk<
   any,
   AllProductRequest
 >("home/fetchPromotionProducts", async (request) => {
-  const response = await axiosClientWithAuth.post(
+  const response = await axiosClient.post(
     "/api/v1/public/products/all",
     {
       hasPromotion: true,
       statuses: [Status.ACTIVE],
       businessId: AppDefault.BUSINESS_ID,
       pageNo: request?.pageNo || 1,
-      pageSize: request?.pageSize || 20, // Paginate to avoid timeout on large datasets
+      pageSize: request?.pageSize || 20,
       ...request,
     },
   );
@@ -58,7 +58,7 @@ export const fetchHomeFeaturedProducts = createApiThunk<
   any,
   { pageNo: number; pageSize: number }
 >("home/fetchFeaturedProducts", async ({ pageNo, pageSize }) => {
-  const response = await axiosClientWithAuth.post(
+  const response = await axiosClient.post(
     "/api/v1/public/products/all",
     {
       pageNo: pageNo || 1,
