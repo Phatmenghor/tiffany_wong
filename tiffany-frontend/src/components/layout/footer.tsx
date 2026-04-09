@@ -29,6 +29,8 @@ export function Footer() {
   const primaryColor = useAppSelector(selectPrimaryColor);
 
   // Use Redux data or fallback to defaults
+  const businessName = businessSettings?.systemName || "";
+  const businessLogo = businessSettings?.logoSystemUrl || null;
   const contactAddress = businessSettings?.contactAddress || DEFAULT_CONTACT_ADDRESS;
   const contactPhone = businessSettings?.contactPhone || DEFAULT_CONTACT_PHONE;
   const contactEmail = businessSettings?.contactEmail || DEFAULT_CONTACT_EMAIL;
@@ -44,27 +46,30 @@ export function Footer() {
       <PageContainer>
         {/* Main Footer Content */}
         <div className="py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Section 1: Logo & Description */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 w-fit">
-              <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
-                <Image
-                  src="/assets/favicon.ico"
-                  alt="Menu Scanner"
-                  width={24}
-                  height={24}
-                  className="rounded object-contain"
-                />
+          {/* Section 1: Logo & Business Name - From System Settings */}
+          {(businessLogo || businessName) && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 w-fit">
+                {businessLogo && (
+                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <img
+                      src={businessLogo}
+                      alt={businessName}
+                      className="w-full h-full object-cover rounded"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  </div>
+                )}
+                {businessName && (
+                  <span className="font-bold text-lg text-white">
+                    {businessName}
+                  </span>
+                )}
               </div>
-              <span className="font-bold text-lg text-white">
-                Menu Scanner
-              </span>
             </div>
-            <p className="text-white text-sm leading-relaxed">
-              Discover and explore menus from your favorite restaurants. Browse,
-              compare, and order with ease.
-            </p>
-          </div>
+          )}
 
           {/* Section 2: Contact Information */}
           <div className="space-y-4">
