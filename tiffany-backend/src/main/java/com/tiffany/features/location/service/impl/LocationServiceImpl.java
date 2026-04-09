@@ -56,7 +56,7 @@ public class LocationServiceImpl implements LocationService {
         if (request.getLocationImages() != null && !request.getLocationImages().isEmpty()) {
             for (var imageRequest : request.getLocationImages()) {
                 var locationImage = new LocationImage();
-                locationImage.setLocationId(savedAddress.getId());
+                locationImage.setLocation(savedAddress); // Set the relationship, not just the ID
                 locationImage.setImageUrl(imageRequest.getImageUrl());
                 savedAddress.getLocationImages().add(locationImage);
             }
@@ -120,15 +120,15 @@ public class LocationServiceImpl implements LocationService {
         // Update fields from request
         addressMapper.updateEntity(request, address);
 
-        // Handle location images - set the location_id on each image
+        // Handle location images - set the location relationship on each image
         if (request.getLocationImages() != null && !request.getLocationImages().isEmpty()) {
             // Clear existing images (cascade delete via JPA)
             address.getLocationImages().clear();
 
-            // Create new LocationImage entities with proper location_id
+            // Create new LocationImage entities with proper location relationship
             for (var imageRequest : request.getLocationImages()) {
                 var locationImage = new LocationImage();
-                locationImage.setLocationId(address.getId());
+                locationImage.setLocation(address); // Set the relationship, not just the ID
                 locationImage.setImageUrl(imageRequest.getImageUrl());
                 address.getLocationImages().add(locationImage);
             }
