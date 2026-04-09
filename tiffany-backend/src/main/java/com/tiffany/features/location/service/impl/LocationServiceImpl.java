@@ -39,6 +39,7 @@ public class LocationServiceImpl implements LocationService {
     private final LocationMapper addressMapper;
     private final SecurityUtils securityUtils;
     private final PaginationMapper paginationMapper;
+    private final jakarta.persistence.EntityManager entityManager;
 
     @Override
     public LocationResponse createAddress(LocationCreateRequest request) {
@@ -76,27 +77,27 @@ public class LocationServiceImpl implements LocationService {
     }
 
     /**
-     * Handle location images in SEPARATE transaction.
-     * This ensures FK is properly set without transaction cascade issues.
+     * Handle location images using direct entity persistence.
+     * Bypasses complex JPA relationship issues.
      */
-    @Transactional // Separate transaction for images
     private void handleLocationImages(UUID locationId, List<LocationImageRequest> imageDtos) {
         if (imageDtos == null || imageDtos.isEmpty()) return;
 
         log.info("Processing {} images for location {}", imageDtos.size(), locationId);
 
-        List<LocationImage> images = imageDtos.stream()
-                .map(imageDto -> {
-                    LocationImage image = new LocationImage();
-                    image.setLocationId(locationId); // FK MUST be set
-                    image.setImageUrl(imageDto.getImageUrl());
-                    log.debug("Creating image with locationId: {}", locationId);
-                    return image;
-                })
-                .toList();
+        for (LocationImageRequest imageDto : imageDtos) {
+            LocationImage image = new LocationImage();
+            image.setLocationId(locationId); // Set FK
+            image.setImageUrl(imageDto.getImageUrl());
 
-        locationImageRepository.saveAll(images);
-        log.info("Saved {} images for location {}", images.size(), locationId);
+            // Persist directly - bypasses relationship cascade
+            entityManager.persist(image);
+            log.debug("Persisted image for location: {}", locationId);
+        }
+
+        // Flush to ensure all inserts happen immediately
+        entityManager.flush();
+        log.info("Flushed {} images for location {}", imageDtos.size(), locationId);
     }
 
     @Override
@@ -176,10 +177,9 @@ public class LocationServiceImpl implements LocationService {
     }
 
     /**
-     * Handle image CRUD operations in SEPARATE transaction.
+     * Handle image CRUD operations using direct entity persistence.
      * Process in order: Delete → Update → Create
      */
-    @Transactional // Separate transaction for images
     private void updateLocationImages(UUID locationId, List<LocationImageRequest> imageDtos) {
         if (imageDtos == null) return;
 
@@ -193,6 +193,7 @@ public class LocationServiceImpl implements LocationService {
 
         if (!idsToDelete.isEmpty()) {
             locationImageRepository.deleteAllById(idsToDelete);
+            entityManager.flush();
             log.info("Deleted {} images", idsToDelete.size());
         }
 
@@ -208,33 +209,28 @@ public class LocationServiceImpl implements LocationService {
                     .findFirst()
                     .ifPresent(existingImage -> {
                         existingImage.setImageUrl(updateDto.getImageUrl());
-                        locationImageRepository.save(existingImage);
+                        entityManager.merge(existingImage); // Use merge for updates
                         log.debug("Updated image {}", updateDto.getId());
                     });
         }
         if (!updateRequests.isEmpty()) {
+            entityManager.flush();
             log.info("Updated {} images", updateRequests.size());
         }
 
         // STEP 3: Create new images (no ID)
-        List<LocationImage> newImages = imageDtos.stream()
-                .filter(dto -> dto.getId() == null && !Boolean.TRUE.equals(dto.getIsDeleted()))
-                .map(imageDto -> {
-                    LocationImage image = new LocationImage();
-                    image.setLocationId(locationId); // Use parameter, not location object
-                    image.setImageUrl(imageDto.getImageUrl());
-                    log.debug("Creating new image with locationId: {}", locationId);
-                    return image;
-                })
-                .toList();
-
-        if (!newImages.isEmpty()) {
-            locationImageRepository.saveAll(newImages);
-            log.info("Created {} new images", newImages.size());
+        for (LocationImageRequest imageDto : imageDtos) {
+            if (imageDto.getId() == null && !Boolean.TRUE.equals(imageDto.getIsDeleted())) {
+                LocationImage image = new LocationImage();
+                image.setLocationId(locationId); // Direct FK set
+                image.setImageUrl(imageDto.getImageUrl());
+                entityManager.persist(image); // Direct persist
+                log.debug("Creating new image with locationId: {}", locationId);
+            }
         }
 
-        log.info("Image processing complete - created: {}, updated: {}, deleted: {}",
-            newImages.size(), updateRequests.size(), idsToDelete.size());
+        entityManager.flush();
+        log.info("Image processing complete for location {}", locationId);
     }
 
     @Override
