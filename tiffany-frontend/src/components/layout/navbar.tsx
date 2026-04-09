@@ -360,7 +360,7 @@ export function Navbar() {
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="font-bold text-sm text-foreground leading-tight">
-                    {isHydrated ? businessName : "Menu"}
+                    {isHydrated ? businessName : ""}
                   </span>
                   <span className="text-xs text-muted-foreground font-medium">
                     Shop Online

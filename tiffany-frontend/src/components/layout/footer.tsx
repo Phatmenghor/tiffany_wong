@@ -31,13 +31,13 @@ export function Footer() {
   const businessSettings = useAppSelector(selectBusinessSettings);
   const primaryColor = useAppSelector(selectPrimaryColor);
 
-  // Use Redux data or fallback to defaults
+  // Use Redux data or fallback to empty (blank) for hydration consistency
   const businessName = businessSettings?.systemName || "";
   const businessLogo = businessSettings?.logoSystemUrl || null;
-  const contactAddress = businessSettings?.contactAddress || DEFAULT_CONTACT_ADDRESS;
-  const contactPhone = businessSettings?.contactPhone || DEFAULT_CONTACT_PHONE;
-  const contactEmail = businessSettings?.contactEmail || DEFAULT_CONTACT_EMAIL;
-  const businessHours = businessSettings?.businessHours || DEFAULT_BUSINESS_HOURS;
+  const contactAddress = isHydrated ? (businessSettings?.contactAddress || DEFAULT_CONTACT_ADDRESS) : "";
+  const contactPhone = isHydrated ? (businessSettings?.contactPhone || DEFAULT_CONTACT_PHONE) : "";
+  const contactEmail = isHydrated ? (businessSettings?.contactEmail || DEFAULT_CONTACT_EMAIL) : "";
+  const businessHours = isHydrated ? (businessSettings?.businessHours || DEFAULT_BUSINESS_HOURS) : [];
 
   useEffect(() => {
     setIsHydrated(true);
