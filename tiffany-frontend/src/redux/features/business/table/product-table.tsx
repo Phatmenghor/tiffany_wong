@@ -210,20 +210,18 @@ export const productTableColumns = ({
     {
       key: "price",
       label: "Price",
-      minWidth: "180px",
-      maxWidth: "250px",
+      minWidth: "150px",
+      maxWidth: "200px",
       render: (product) => (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-baseline gap-2">
-            <span className="text-sm font-bold text-foreground">
-              ${parseFloat(product?.displayPrice?.toString() || "0").toFixed(2)}
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-semibold text-foreground">
+            ${parseFloat(product?.displayPrice?.toString() || "0").toFixed(2)}
+          </span>
+          {product?.hasPromotion && product?.displayOriginPrice && (
+            <span className="text-xs text-muted-foreground line-through">
+              ${parseFloat(product.displayOriginPrice.toString()).toFixed(2)}
             </span>
-            {product?.hasPromotion && product?.displayOriginPrice && (
-              <span className="text-xs text-muted-foreground line-through">
-                ${parseFloat(product.displayOriginPrice.toString()).toFixed(2)}
-              </span>
-            )}
-          </div>
+          )}
         </div>
       ),
     },
