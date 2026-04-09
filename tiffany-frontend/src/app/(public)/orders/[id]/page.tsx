@@ -128,7 +128,6 @@ export default function OrderDetailPage() {
         // Fetch order statuses (filtered to ACTIVE only, sorted by order on backend)
         const statusResult = await dispatch(
           fetchAllOrderStatusService({
-            businessId: AppDefault.BUSINESS_ID,
             statuses: ["ACTIVE"],
             pageNo: 1,
             pageSize: 100,

@@ -2,7 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosClient } from "@/utils/axios";
 import { PaginationResponseModel } from "@/redux/features/master-data/store/models/response/pagination-response";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
-import { AppDefault } from "@/constants/app-resource/default/default";
 
 export interface FetchPublicCategoriesParams {
   pageNo?: number;
@@ -23,7 +22,6 @@ export const fetchPublicCategories = createAsyncThunk<
       {
         status: params.status || "ACTIVE",
         search: params.search || undefined,
-        businessId: AppDefault.BUSINESS_ID,
       }
     );
     // Wrap array response in pagination format for compatibility

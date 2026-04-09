@@ -209,7 +209,6 @@ export default function CheckoutPage() {
       // Development: Uses AppDefault.BUSINESS_ID
       // Production: Will get businessId from subdomain routing
       const checkoutPayload: CheckoutPayload = {
-        businessId: AppDefault.BUSINESS_ID,
         addressId: selectedAddress?.id,
         deliveryOption: {
           name: selectedDeliveryOption.name || "",
@@ -221,7 +220,6 @@ export default function CheckoutPage() {
         customerPhone: profile?.phoneNumber || "",
         customerEmail: profile?.email || "",
         cart: {
-          businessId: AppDefault.BUSINESS_ID,
           businessName: "Default Business",
           items: items.map((item) => ({
             id: item.id,

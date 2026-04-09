@@ -8,14 +8,12 @@ import {
   AllProductRequest,
   ProductImageRequest,
 } from "@/redux/features/business/store/models/request/product-request";
-import { AppDefault } from "@/constants/app-resource/default/default";
 import { Status } from "@/constants/status/status";
 
 export const fetchPublicProducts = createApiThunk<any, AllProductRequest>(
   "publicProducts/fetchList",
   async (params) => {
     const response = await axiosClient.post("/api/v1/public/products/all", {
-      businessId: AppDefault.BUSINESS_ID,
       status: Status.ACTIVE,
       ...params,
     });

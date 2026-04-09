@@ -3,7 +3,6 @@
  * All API calls specific to home page with pagination support
  */
 
-import { AppDefault } from "@/constants/app-resource/default/default";
 import { Status } from "@/constants/status/status";
 import { AllProductRequest } from "@/redux/features/business/store/models/request/product-request";
 import { AllBannerRequest } from "@/redux/features/master-data/store/models/request/banner-request";
@@ -16,7 +15,6 @@ export const fetchHomeBanners = createApiThunk<any, AllBannerRequest>(
   async (request) => {
     const response = await axiosClient.post("/api/v1/public/banners/all", {
       status: Status.ACTIVE,
-      businessId: AppDefault.BUSINESS_ID,
       ...request,
     });
     return response.data.data;
@@ -28,7 +26,6 @@ export const fetchHomeCategories = createApiThunk<any, AllCategoriesRequest>(
   async (request) => {
     const response = await axiosClient.post("/api/v1/public/categories/all-data", {
       status: Status.ACTIVE,
-      businessId: AppDefault.BUSINESS_ID,
       ...request,
     });
     return response.data.data;
@@ -44,7 +41,6 @@ export const fetchHomePromotionProducts = createApiThunk<
     {
       hasPromotion: true,
       statuses: [Status.ACTIVE],
-      businessId: AppDefault.BUSINESS_ID,
       pageNo: request?.pageNo || 1,
       pageSize: request?.pageSize || 20,
       ...request,
@@ -64,7 +60,6 @@ export const fetchHomeFeaturedProducts = createApiThunk<
       pageNo: pageNo || 1,
       pageSize,
       statuses: [Status.ACTIVE],
-      businessId: AppDefault.BUSINESS_ID,
     },
   );
   return response.data.data;
@@ -78,7 +73,6 @@ export const fetchHomeBrands = createApiThunk<any, void>(
       {
         pageSize: 30,
         status: Status.ACTIVE,
-        businessId: AppDefault.BUSINESS_ID,
       },
     );
     return response.data.data;
