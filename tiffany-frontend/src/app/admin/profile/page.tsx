@@ -1,9 +1,20 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Edit, Loader2, Lock, User } from "lucide-react";
+import {
+  Edit,
+  Loader2,
+  Trash2,
+  Lock,
+  User,
+  Monitor,
+  Link2,
+  Plus,
+  Camera,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +49,8 @@ import Link from "next/link";
 import { Loading } from "@/components/shared/common/loading";
 import { DisplayField } from "@/components/shared/form-field/display-field";
 import { GENDER_OPTIONS } from "@/constants/form-options";
+
+// Profile update schema
 import {
   updateUserSchema,
   UserFormData,
@@ -50,6 +63,7 @@ export default function AdminProfilePage() {
   const userProfile = useAppSelector(selectProfile);
   const isProfileLoading = useAppSelector(selectIsProfileLoading);
   const reduxError = useAppSelector(selectError);
+  const socialSync = useAppSelector((state) => state.auth.socialSync);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
@@ -83,7 +97,10 @@ export default function AdminProfilePage() {
     mode: "onChange",
   });
 
-  // Load profile on mount
+  // Type assertion for control to fix TypeScript compatibility
+  const typedControl = control as any;
+
+  // Load profile on mount (only if not already loaded or loading)
   useEffect(() => {
     if (!userProfile && !isProfileLoading) {
       dispatch(getProfileService());
@@ -108,17 +125,23 @@ export default function AdminProfilePage() {
     }
   }, [userProfile, reset]);
 
-  const profileImageUrl = watch("profileImageUrl");
+  // Clear errors when they appear
+  useEffect(() => {
+    if (reduxError) {
+      showToast.error(reduxError);
+      dispatch(clearError());
+    }
+  }, [reduxError, dispatch]);
 
   const onSubmit = async (data: UserFormData) => {
     try {
       setIsUploadingImage(true);
 
-      // Upload profile image if it's base64
-      let uploadedImageUrl = profileImageUrl;
+      // Process profile image URL
+      let profileImageUrl = data.profileImageUrl;
       if (profileImageUrl && isBase64Image(profileImageUrl)) {
         try {
-          uploadedImageUrl = await uploadImage(profileImageUrl);
+          profileImageUrl = await uploadImage(profileImageUrl);
         } catch (error) {
           console.error("Failed to upload profile image:", error);
           showToast.error("Failed to upload profile image");
@@ -139,7 +162,7 @@ export default function AdminProfilePage() {
       if (data.nickname) payload.nickname = data.nickname;
       if (data.gender) payload.gender = data.gender;
       if (data.dateOfBirth) payload.dateOfBirth = data.dateOfBirth;
-      if (uploadedImageUrl) payload.profileImageUrl = uploadedImageUrl;
+      if (profileImageUrl) payload.profileImageUrl = profileImageUrl;
       if (data.remark) payload.remark = data.remark;
 
       const updatedProfile = await dispatch(updateProfileService(payload)).unwrap();
@@ -160,33 +183,45 @@ export default function AdminProfilePage() {
     try {
       setIsUploadingImage(true);
 
+      // First upload the base64 image to CDN/storage
       let profileImageUrl = imageData;
       if (isBase64Image(profileImageUrl)) {
         try {
+          console.log("📤 [UPLOAD CDN] Uploading image to CDN...");
           profileImageUrl = await uploadImage(profileImageUrl);
+          console.log("✅ [UPLOAD CDN] Image URL from CDN:", profileImageUrl);
         } catch (error) {
-          console.error("Failed to upload image:", error);
+          console.error("Failed to upload image to CDN:", error);
           showToast.error("Failed to upload image");
           setIsUploadingImage(false);
           return;
         }
       }
 
+      // Update form with the CDN URL
       setValue("profileImageUrl", profileImageUrl, {
         shouldDirty: true,
       });
 
+      // Send only the URL to API
       const payload = {
         profileImageUrl,
       };
 
-      await dispatch(updateProfileService(payload)).unwrap();
-      await dispatch(getProfileService()).unwrap();
+      console.log("🔄 [UPDATE API] Updating profile with image URL...");
+      const updatedProfile = await dispatch(updateProfileService(payload)).unwrap();
+      console.log("✅ [UPDATE API] Profile picture updated:", updatedProfile);
+
+      // Reload profile to ensure we have the latest from server
+      console.log("🔄 [FETCH] Reloading profile data...");
+      const freshProfile = await dispatch(getProfileService()).unwrap();
+      console.log("✅ [FETCH] Fresh profile loaded:", freshProfile);
 
       showToast.success("Profile picture updated successfully");
     } catch (error: any) {
       console.error("Error uploading profile picture:", error);
       showToast.error(error || "Failed to update profile picture");
+      // Reset the form value on error
       if (userProfile?.profileImageUrl) {
         setValue("profileImageUrl", userProfile.profileImageUrl);
       }
@@ -217,10 +252,14 @@ export default function AdminProfilePage() {
   const handleDeleteAccount = async () => {
     try {
       await dispatch(deleteAccountService()).unwrap();
+      showToast.success("Account deleted successfully");
+
       clearToken();
       clearUserInfo();
-      showToast.success("Account deleted successfully");
-      router.push(ROUTES.LOGIN);
+
+      setTimeout(() => {
+        router.replace(ROUTES.AUTH.LOGIN);
+      }, 100);
     } catch (error: any) {
       showToast.error(error || "Failed to delete account");
     }
@@ -231,280 +270,270 @@ export default function AdminProfilePage() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="max-w-6xl mx-auto p-4 sm:p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Profile</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Manage your account information
-            </p>
-          </div>
-          <Button
-            variant={isEditing ? "destructive" : "default"}
-            onClick={() => (isEditing ? handleCancel() : setIsEditing(true))}
-            className="gap-2"
-          >
-            {isEditing ? "Cancel" : <Edit className="h-4 w-4" />}
-            {isEditing ? "Cancel" : "Edit Profile"}
-          </Button>
-        </div>
+    <div className="flex flex-1 flex-col gap-4 px-2">
+      <div className="space-y-4">
+        {/* Profile Header */}
+        <Card className="mb-6 border-primary/30 bg-gradient-to-br from-primary/5 via-background to-primary/5 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              {/* Profile Image - Camera Icon */}
+              <div
+                className="relative group cursor-pointer"
+                onClick={() => setIsProfilePictureModalOpen(true)}
+              >
+                <div className="relative ring-2 ring-primary/20 rounded-2xl">
+                  <CustomAvatar
+                    imageUrl={userProfile?.profileImageUrl}
+                    name={userProfile?.fullName}
+                    size="xxl"
+                  />
+                  {/* Camera Icon Overlay - Auto show on hover */}
+                  <div className="absolute bottom-1 right-1 bg-primary rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:shadow-primary/50 hover:bg-primary/80">
+                    <Camera className="h-4 w-4 text-white" />
+                  </div>
+                </div>
+              </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Profile Picture Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile Picture</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-6">
-                <CustomAvatar
-                  src={profileImageUrl || userProfile?.profileImageUrl}
-                  alt={userProfile?.firstName || "Profile"}
-                  initials={
-                    (userProfile?.firstName?.charAt(0) || "") +
-                    (userProfile?.lastName?.charAt(0) || "")
-                  }
-                  className="h-20 w-20"
-                />
-                {isEditing && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsProfilePictureModalOpen(true)}
-                    disabled={isUploadingImage}
-                  >
-                    {isUploadingImage ? (
+              <div className="flex-1">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground">
+                      {userProfile?.fullName}
+                    </h2>
+                    <p className="text-primary/70 text-sm font-medium">
+                      {userProfile?.email}
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-semibold">
+                        {userProfile?.userType}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    {isEditing ? (
                       <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Uploading...
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleCancel}
+                          disabled={isProfileLoading || isUploadingImage}
+                          className="border-primary/30 hover:bg-primary/5 hover:text-primary hover:border-primary/50"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={handleSubmit(onSubmit)}
+                          disabled={
+                            isProfileLoading ||
+                            isUploadingImage ||
+                            !isDirty
+                          }
+                          className="bg-primary hover:bg-primary/90"
+                        >
+                          {isProfileLoading || isUploadingImage ? (
+                            <>
+                              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                              {isUploadingImage ? "Uploading..." : "Saving..."}
+                            </>
+                          ) : (
+                            "Save"
+                          )}
+                        </Button>
                       </>
                     ) : (
-                      "Change Picture"
+                      <Button
+                        size="sm"
+                        onClick={() => setIsEditing(true)}
+                        className="bg-primary hover:bg-primary/90 text-white"
+                      >
+                        <Edit className="h-3 w-3 mr-1" />
+                        Edit
+                      </Button>
                     )}
-                  </Button>
-                )}
+                  </div>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Basic Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isEditing ? (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <TextField
-                      control={control}
-                      name="firstName"
-                      label="First Name"
-                      placeholder="First Name"
-                      error={errors.firstName}
-                    />
-                    <TextField
-                      control={control}
-                      name="lastName"
-                      label="Last Name"
-                      placeholder="Last Name"
-                      error={errors.lastName}
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <TextField
-                      control={control}
-                      name="email"
-                      label="Email"
-                      placeholder="Email"
-                      type="email"
-                      error={errors.email}
-                    />
-                    <TextField
-                      control={control}
-                      name="phoneNumber"
-                      label="Phone Number"
-                      placeholder="Phone Number"
-                      error={errors.phoneNumber}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <DisplayField
-                    label="First Name"
-                    value={userProfile?.firstName}
-                  />
-                  <DisplayField label="Last Name" value={userProfile?.lastName} />
-                  <DisplayField label="Email" value={userProfile?.email} />
-                  <DisplayField
-                    label="Phone Number"
-                    value={userProfile?.phoneNumber}
-                  />
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Personal Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isEditing ? (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <TextField
-                      control={control}
-                      name="nickname"
-                      label="Nickname"
-                      placeholder="Nickname"
-                      error={errors.nickname}
-                    />
-                    <SelectField
-                      control={control}
-                      name="gender"
-                      label="Gender"
-                      placeholder="Select gender"
-                      options={GENDER_OPTIONS}
-                      error={errors.gender}
-                    />
-                  </div>
-                  <DateTimePickerField
-                    control={control}
-                    name="dateOfBirth"
-                    label="Date of Birth"
-                    mode="date"
-                    placeholder="Date of Birth"
-                    error={errors.dateOfBirth}
-                  />
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <DisplayField label="Nickname" value={userProfile?.nickname} />
-                  <DisplayField label="Gender" value={userProfile?.gender} />
-                  <DisplayField
-                    label="Date of Birth"
-                    value={userProfile?.dateOfBirth}
-                  />
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Account Status */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Status</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <DisplayField label="Account Status" value={userProfile?.accountStatus} />
-                <DisplayField label="User Role" value={userProfile?.userRole} />
-                <DisplayField label="User Type" value={userProfile?.userType} />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Remarks */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Additional Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isEditing ? (
-                <TextareaField
-                  control={control}
-                  name="remark"
-                  label="Remarks"
-                  placeholder="Add any additional information..."
-                  error={errors.remark}
-                />
-              ) : (
-                <DisplayField label="Remarks" value={userProfile?.remark} />
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Form Actions */}
-          {isEditing && (
-            <div className="flex gap-3 justify-end">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleCancel}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting || !isDirty}
-                className="gap-2"
-              >
-                {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-                {isSubmitting ? "Saving..." : "Save Changes"}
-              </Button>
             </div>
-          )}
+          </CardContent>
+        </Card>
 
-          {/* Security Section */}
-          {!isEditing && (
-            <Card className="border-red-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Lock className="h-5 w-5 text-red-500" />
-                  Security
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-col gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsChangePasswordModalOpen(true)}
-                    className="w-full justify-start gap-2"
-                  >
-                    <Lock className="h-4 w-4" />
-                    Change Password
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={() => setIsDeleteDialogOpen(true)}
-                    className="w-full justify-start gap-2"
-                  >
-                    Delete Account
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </form>
-      </div>
+        {/* Navigation Tabs - Premium Clean Design */}
+        <div className="flex gap-0 mb-8 w-full relative group border border-primary/30 rounded-xl overflow-hidden">
+          {/* Background indicator */}
+          <div
+            className={cn(
+              "absolute inset-y-0 h-full bg-primary/5 transition-all duration-500 ease-out",
+              activeSection === "profile" ? "left-0 w-1/2" : "left-1/2 w-1/2"
+            )}
+          />
 
-      {/* Modals */}
-      <ProfilePictureModal
-        isOpen={isProfilePictureModalOpen}
-        onClose={() => setIsProfilePictureModalOpen(false)}
-        onImageSelected={handleAutoUploadProfilePicture}
-        isUploading={isUploadingImage}
-      />
+          {/* Center divider line */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-primary/20" />
 
-      <ChangePasswordModal
-        isOpen={isChangePasswordModalOpen}
-        onClose={() => setIsChangePasswordModalOpen(false)}
-      />
+          {/* Profile Tab */}
+          <button
+            onClick={() => setActiveSection("profile")}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-2.5 py-4 px-6 relative z-10",
+              "text-sm font-semibold transition-all duration-300",
+              "border-r border-primary/20",
+              activeSection === "profile"
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground/70"
+            )}
+          >
+            <User className={cn(
+              "h-4 w-4 transition-all duration-300",
+              activeSection === "profile" ? "scale-110" : "scale-100"
+            )} />
+            <span>Profile</span>
+          </button>
 
-      <DeleteConfirmationModal
-        isOpen={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        onDelete={handleDeleteAccount}
-        title="Delete Account"
-        description="Are you sure you want to delete your account? This action cannot be undone."
-        itemName="Account"
-      />
-    </div>
-  );
-}
+          {/* Security Tab */}
+          <button
+            onClick={() => setActiveSection("security")}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-2.5 py-4 px-6 relative z-10",
+              "text-sm font-semibold transition-all duration-300",
+              activeSection === "security"
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground/70"
+            )}
+          >
+            <Lock className={cn(
+              "h-4 w-4 transition-all duration-300",
+              activeSection === "security" ? "scale-110" : "scale-100"
+            )} />
+            <span>Security</span>
+          </button>
+        </div>
+
+        {/* Profile Section */}
+        {activeSection === "profile" && (
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+            <div className="w-full space-y-6">
+              {/* Personal Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Personal Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {isEditing ? (
+                      <>
+                        <TextField
+                          control={typedControl}
+                          name="firstName"
+                          label="First Name"
+                          placeholder="First name"
+                          error={errors.firstName}
+                        />
+
+                        <TextField
+                          control={typedControl}
+                          name="lastName"
+                          label="Last Name"
+                          placeholder="Last name"
+                          error={errors.lastName}
+                        />
+
+                        <TextField
+                          control={typedControl}
+                          name="nickname"
+                          label="Nickname"
+                          placeholder="Nickname"
+                          error={errors.nickname}
+                        />
+
+                        <TextField
+                          control={typedControl}
+                          name="email"
+                          label="Email"
+                          placeholder="Email"
+                          type="email"
+                          error={errors.email}
+                        />
+
+                        <TextField
+                          control={typedControl}
+                          name="phoneNumber"
+                          label="Phone Number"
+                          placeholder="Phone"
+                          error={errors.phoneNumber}
+                        />
+
+                        <SelectField
+                          control={typedControl}
+                          name="gender"
+                          label="Gender"
+                          placeholder="Select gender"
+                          options={GENDER_OPTIONS}
+                          error={errors.gender}
+                        />
+
+                        <DateTimePickerField
+                          control={typedControl}
+                          name="dateOfBirth"
+                          label="Date of Birth"
+                          mode="date"
+                          placeholder="Date of birth"
+                          error={errors.dateOfBirth}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <DisplayField label="First Name" value={watch("firstName")} />
+                        <DisplayField label="Last Name" value={watch("lastName")} />
+                        <DisplayField label="Nickname" value={watch("nickname")} />
+                        <DisplayField label="Email" value={watch("email")} />
+                        <DisplayField label="Phone Number" value={watch("phoneNumber")} />
+                        <DisplayField
+                          label="Gender"
+                          value={
+                            GENDER_OPTIONS.find((o) => o.value === watch("gender"))?.label
+                          }
+                        />
+                        <DisplayField label="Date of Birth" value={watch("dateOfBirth")} />
+                        <DisplayField
+                          label="Telegram ID"
+                          value={userProfile?.telegramId}
+                        />
+                        <DisplayField
+                          label="Telegram Username"
+                          value={userProfile?.telegramUsername}
+                        />
+                        <DisplayField
+                          label="Telegram First Name"
+                          value={userProfile?.telegramFirstName}
+                        />
+                        <DisplayField
+                          label="Telegram Last Name"
+                          value={userProfile?.telegramLastName}
+                        />
+                        <DisplayField
+                          label="Telegram Synced At"
+                          value={userProfile?.telegramSyncedAt}
+                        />
+                        <DisplayField
+                          label="Telegram Synced"
+                          value={userProfile?.telegramSynced ? "Yes" : "No"}
+                        />
+                        <DisplayField
+                          label="Role"
+                          value={userProfile?.roles && userProfile.roles.length > 0
+                            ? userProfile.roles.join(", ")
+                            : "-"}
+                        />
+                        <DisplayField
+                          label="Account Status"
+                          value={userProfile?.accountStatus || "-"}
+                        />
+                      </>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+
