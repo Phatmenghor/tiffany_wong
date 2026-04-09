@@ -67,6 +67,7 @@ public class ProductServiceImpl implements ProductService {
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
                 filter.getHasPromotion(),
+                filter.getHasSize(),
                 filter.getSearch(),
                 PaginationUtils.createSort(filter.getSortBy(), filter.getSortDirection())
         );
@@ -112,6 +113,7 @@ public class ProductServiceImpl implements ProductService {
                 filter.getMinPrice(),
                 filter.getMaxPrice(),
                 filter.getHasPromotion(),
+                filter.getHasSize(),
                 filter.getSearch(),
                 pageable
         );

@@ -89,6 +89,8 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "      AND (p.promotionFromDate IS NULL OR CURRENT_TIMESTAMP >= p.promotionFromDate) " +
            "      AND (p.promotionToDate IS NULL OR CURRENT_TIMESTAMP <= p.promotionToDate)) " +
            "     ELSE (p.promotionType IS NULL OR p.promotionValue IS NULL) END)) " +
+           "AND (:hasSizes IS NULL OR (CASE WHEN :hasSizes = true THEN EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) " +
+           "     ELSE NOT EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) END)) " +
            "AND (:search IS NULL OR :search = '' OR " +
            "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')))")
@@ -98,6 +100,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         @Param("minPrice") BigDecimal minPrice,
         @Param("maxPrice") BigDecimal maxPrice,
         @Param("hasPromotion") Boolean hasPromotion,
+        @Param("hasSizes") Boolean hasSizes,
         @Param("search") String search,
         Pageable pageable
     );
@@ -140,6 +143,8 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "      AND (p.promotionFromDate IS NULL OR CURRENT_TIMESTAMP >= p.promotionFromDate) " +
            "      AND (p.promotionToDate IS NULL OR CURRENT_TIMESTAMP <= p.promotionToDate)) " +
            "     ELSE (p.promotionType IS NULL OR p.promotionValue IS NULL) END)) " +
+           "AND (:hasSizes IS NULL OR (CASE WHEN :hasSizes = true THEN EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) " +
+           "     ELSE NOT EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) END)) " +
            "AND (:search IS NULL OR :search = '' OR " +
            "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
@@ -150,6 +155,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         @Param("minPrice") BigDecimal minPrice,
         @Param("maxPrice") BigDecimal maxPrice,
         @Param("hasPromotion") Boolean hasPromotion,
+        @Param("hasSizes") Boolean hasSizes,
         @Param("search") String search,
         Sort sort
     );

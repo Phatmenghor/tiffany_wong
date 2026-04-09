@@ -52,6 +52,7 @@ function ProductFiltersComponent({
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [hasPromotion, setHasPromotion] = useState<boolean>(false);
+  const [hasSizes, setHasSizes] = useState<boolean | null>(null);
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
 
@@ -63,6 +64,8 @@ function ProductFiltersComponent({
       searchParams.get("status")?.split(",").filter(Boolean) || [],
     );
     setHasPromotion(!!searchParams.get("hasPromotion"));
+    const hasSizesParam = searchParams.get("hasSizes");
+    setHasSizes(hasSizesParam === "true" ? true : hasSizesParam === "false" ? false : null);
     setMinPrice(searchParams.get("minPrice") || "");
     setMaxPrice(searchParams.get("maxPrice") || "");
   }, [searchParams]);
@@ -132,6 +135,7 @@ function ProductFiltersComponent({
     (selectedCategory ? 1 : 0) +
     selectedStatuses.length +
     (!lockedPromotion && hasPromotion ? 1 : 0) +
+    (hasSizes !== null ? 1 : 0) +
     (hasPriceFilter ? 1 : 0);
 
 
@@ -233,6 +237,48 @@ function ProductFiltersComponent({
               </span>
             </label>
           ))}
+        </div>
+      </div>
+
+      <Separator />
+
+      {/* Product Size */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500/10">
+            <ListChecks className="h-3.5 w-3.5 text-blue-600" />
+          </div>
+          <label className="text-sm font-semibold">Product Size</label>
+        </div>
+        <div className="space-y-2.5">
+          <label
+            className="flex items-center gap-3 cursor-pointer group"
+          >
+            <Checkbox
+              id="has-sizes-true"
+              checked={hasSizes === true}
+              onCheckedChange={() =>
+                updateFilter("hasSizes", hasSizes === true ? "" : "true")
+              }
+            />
+            <span className="text-sm group-hover:text-primary transition-colors select-none">
+              Has Sizes
+            </span>
+          </label>
+          <label
+            className="flex items-center gap-3 cursor-pointer group"
+          >
+            <Checkbox
+              id="has-sizes-false"
+              checked={hasSizes === false}
+              onCheckedChange={() =>
+                updateFilter("hasSizes", hasSizes === false ? "" : "false")
+              }
+            />
+            <span className="text-sm group-hover:text-primary transition-colors select-none">
+              No Sizes
+            </span>
+          </label>
         </div>
       </div>
 
