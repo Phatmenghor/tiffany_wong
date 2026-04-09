@@ -26,4 +26,13 @@ public class LocationImage extends BaseUUIDEntity {
 
     @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
     private String imageUrl; // Store image URLs (file paths or URLs)
+
+    /**
+     * Constructor for creating new image with locationId and imageUrl.
+     * Used to ensure FK is set before Hibernate persistence.
+     */
+    public LocationImage(UUID locationId, String imageUrl) {
+        this.locationId = locationId;
+        this.imageUrl = imageUrl;
+    }
 }
