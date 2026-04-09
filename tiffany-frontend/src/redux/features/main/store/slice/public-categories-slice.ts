@@ -65,35 +65,15 @@ const publicCategoriesSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchPublicCategories.fulfilled, (state, action) => {
-        const { content, pageNo, pageSize, totalPages, totalElements } =
-          action.payload;
-        const isLoadMore = action.meta.arg.append;
-
-        if (isLoadMore) {
-          // Memory optimization: Keep only last 3 pages of data (like YouTube)
-          const MAX_PAGES_IN_MEMORY = 3;
-          const maxItems = MAX_PAGES_IN_MEMORY * pageSize;
-
-          // Append new categories
-          const updatedCategories = [...state.categories, ...content];
-
-          // If we exceed the limit, remove oldest items
-          if (updatedCategories.length > maxItems) {
-            const itemsToRemove = updatedCategories.length - maxItems;
-            state.categories = updatedCategories.slice(itemsToRemove);
-          } else {
-            state.categories = updatedCategories;
-          }
-        } else {
-          state.categories = content;
-        }
+        // Response is now a direct array, not paginated
+        state.categories = action.payload;
 
         state.pagination = {
-          currentPage: pageNo,
-          pageSize,
-          totalPages,
-          totalElements,
-          hasMore: pageNo < totalPages,
+          currentPage: 1,
+          pageSize: action.payload.length,
+          totalPages: 1,
+          totalElements: action.payload.length,
+          hasMore: false,
         };
 
         state.loading.initial = false;

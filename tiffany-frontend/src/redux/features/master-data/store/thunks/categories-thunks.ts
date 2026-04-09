@@ -41,14 +41,7 @@ export const fetchAllCategoriesWithProductCountService = createApiThunk<
       search: params?.search,
     }
   );
-  // Return in pagination format for compatibility with existing reducer
-  return {
-    content: response.data.data || [],
-    pageNo: 1,
-    totalPages: 1,
-    totalElements: response.data.data?.length || 0,
-    last: true,
-  };
+  return response.data.data || [];
 });
 
 /**
