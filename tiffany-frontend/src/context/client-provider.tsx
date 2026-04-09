@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import store from "../redux/store";
 import { ToastContainer } from "react-toastify";
 import { useBusinessTheme, initializeBusinessThemeFromCache } from "@/hooks/use-business-theme";
+import { LoadingProvider } from "./loading-context";
 
 interface ClientProvidersProps {
   children: ReactNode;
@@ -29,21 +30,23 @@ export function ClientProviders({ children }: ClientProvidersProps) {
 
   const content = (
     <Provider store={store}>
-      <ThemeInitializer />
-      {children}
-      <Toaster />
-      <ToastContainer
-        position="top-right"
-        autoClose={4000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+      <LoadingProvider>
+        <ThemeInitializer />
+        {children}
+        <Toaster />
+        <ToastContainer
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+      </LoadingProvider>
     </Provider>
   );
 
