@@ -185,24 +185,35 @@ export const productTableColumns = ({
     {
       key: "price",
       label: "Price",
-      minWidth: "150px",
-      maxWidth: "200px",
+      minWidth: "180px",
+      maxWidth: "250px",
       render: (product) => (
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-foreground">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm font-bold text-foreground">
               ${parseFloat(product?.displayPrice?.toString() || "0").toFixed(2)}
             </span>
-            {product?.hasPromotion && (
-              <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs font-semibold">
-                Sale
+            {product?.hasPromotion && product?.displayOriginPrice && (
+              <span className="text-xs text-muted-foreground line-through">
+                ${parseFloat(product.displayOriginPrice.toString()).toFixed(2)}
               </span>
             )}
           </div>
-          {product?.hasPromotion && product?.displayOriginPrice && (
-            <span className="text-xs text-muted-foreground line-through">
-              ${parseFloat(product.displayOriginPrice.toString()).toFixed(2)}
-            </span>
+          {product?.hasPromotion ? (
+            <div className="flex items-center gap-1.5 bg-amber-50 px-2 py-1 rounded border border-amber-200">
+              <span className="text-amber-600 font-semibold text-xs">
+                {product?.displayPromotionType === "PERCENTAGE"
+                  ? `-${product?.displayPromotionValue}%`
+                  : `-$${product?.displayPromotionValue}`}
+              </span>
+              <span className="text-amber-700 text-xs font-medium">
+                {product?.displayPromotionType === "PERCENTAGE" ? "OFF" : "OFF"}
+              </span>
+            </div>
+          ) : (
+            <div className="text-xs text-muted-foreground px-2 py-1">
+              No Promotion
+            </div>
           )}
         </div>
       ),
