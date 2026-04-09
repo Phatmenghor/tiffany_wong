@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Phone, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
 import { PageContainer } from "../shared/common/page-container";
 import { useAppSelector } from "@/redux/store";
 import { selectBusinessSettings, selectPrimaryColor } from "@/redux/features/business/store/selectors/business-settings-selector";
@@ -25,6 +26,8 @@ const SOCIAL_LINKS = [
 ];
 
 export function Footer() {
+  const [isHydrated, setIsHydrated] = useState(false);
+
   const businessSettings = useAppSelector(selectBusinessSettings);
   const primaryColor = useAppSelector(selectPrimaryColor);
 
@@ -35,6 +38,10 @@ export function Footer() {
   const contactPhone = businessSettings?.contactPhone || DEFAULT_CONTACT_PHONE;
   const contactEmail = businessSettings?.contactEmail || DEFAULT_CONTACT_EMAIL;
   const businessHours = businessSettings?.businessHours || DEFAULT_BUSINESS_HOURS;
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   // Dynamic footer background color
   const footerStyle = {
@@ -47,7 +54,7 @@ export function Footer() {
         {/* Main Footer Content */}
         <div className="py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Section 1: Logo & Business Name - From System Settings */}
-          {(businessLogo || businessName) && (
+          {isHydrated && (businessLogo || businessName) && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 w-fit">
                 {businessLogo && (
