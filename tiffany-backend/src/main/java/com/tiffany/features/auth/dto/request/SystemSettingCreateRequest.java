@@ -12,6 +12,8 @@ public class SystemSettingCreateRequest {
     @NotBlank(message = "System name is required")
     private String systemName;
 
+    private String description;
+
     private String logoSystemUrl;
 
     private String primaryColor;

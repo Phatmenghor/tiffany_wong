@@ -13,6 +13,7 @@ public class SystemSettingUpdateRequest {
     // System Setting Fields
     private Double taxPercentage;
     private String systemName;
+    private String description;
     private String logoSystemUrl;
     private String primaryColor;
 

@@ -30,6 +30,9 @@ public class SystemSetting extends BaseUUIDEntity {
     @Column(name = "system_name")
     private String systemName;
 
+    @Column(name = "description", length = 1000)
+    private String description;
+
     @Column(name = "logo_system_url")
     private String logoSystemUrl;
 
