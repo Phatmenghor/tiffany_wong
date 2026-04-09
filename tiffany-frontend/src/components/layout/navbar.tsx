@@ -304,6 +304,10 @@ export function Navbar() {
     </div>
   );
 
+  // Only show search on specific pages
+  const searchAllowedPages = ["/", "/products", "/promotions", "/categories"];
+  const showSearch = searchAllowedPages.includes(pathname);
+
   const searchPlaceholder =
     pathname === "/products"
       ? "Search products..."
@@ -316,7 +320,7 @@ export function Navbar() {
       <nav className="sticky top-0 z-50 w-full h-14 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm flex items-center">
         <PageContainer className="max-w-8xl w-full">
           {/* ── Mobile: expanded search overlay ── */}
-          {mobileSearchOpen ? (
+          {mobileSearchOpen && showSearch ? (
             <form
               onSubmit={handleSearchSubmit}
               className="sm:hidden flex items-center gap-2 w-full h-14"
@@ -369,14 +373,16 @@ export function Navbar() {
               </button>
 
               <div className="flex items-center gap-0.5">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9"
-                  onClick={() => setMobileSearchOpen(true)}
-                >
-                  <Search className="h-5 w-5" />
-                </Button>
+                {showSearch && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9"
+                    onClick={() => setMobileSearchOpen(true)}
+                  >
+                    <Search className="h-5 w-5" />
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -497,21 +503,23 @@ export function Navbar() {
               </div>
             </div>
 
-            <form
-              onSubmit={handleSearchSubmit}
-              className="flex flex-1 max-w-xl"
-            >
-              <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                <Input
-                  type="search"
-                  placeholder={searchPlaceholder}
-                  className="pl-10 w-full bg-muted/50"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </form>
+            {showSearch && (
+              <form
+                onSubmit={handleSearchSubmit}
+                className="flex flex-1 max-w-xl"
+              >
+                <div className="relative w-full">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <Input
+                    type="search"
+                    placeholder={searchPlaceholder}
+                    className="pl-10 w-full bg-muted/50"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              </form>
+            )}
 
             <div className="flex items-center gap-2">
               <CustomButton
