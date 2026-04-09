@@ -28,6 +28,7 @@ export const fetchAllCategoriesService = createApiThunk<
 
 /**
  * Fetch all categories with product count (for admin page)
+ * Defaults to pageSize: 10000 to fetch all categories without pagination
  */
 export const fetchAllCategoriesWithProductCountService = createApiThunk<
   any,
@@ -35,7 +36,10 @@ export const fetchAllCategoriesWithProductCountService = createApiThunk<
 >("categories/fetchAllWithProductCount", async (params) => {
   const response = await axiosClientWithAuth.post(
     "/api/v1/categories/product/all",
-    params
+    {
+      pageSize: 10000, // Fetch all categories
+      ...params,
+    }
   );
   return response.data.data;
 });
