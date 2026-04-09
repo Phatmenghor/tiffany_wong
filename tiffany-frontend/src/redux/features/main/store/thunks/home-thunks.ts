@@ -26,7 +26,7 @@ export const fetchHomeBanners = createApiThunk<any, AllBannerRequest>(
 export const fetchHomeCategories = createApiThunk<any, AllCategoriesRequest>(
   "home/fetchCategories",
   async (request) => {
-    const response = await axiosClient.post("/api/v1/public/categories/all", {
+    const response = await axiosClient.post("/api/v1/public/categories/all-data", {
       status: Status.ACTIVE,
       businessId: AppDefault.BUSINESS_ID,
       ...request,

@@ -38,36 +38,8 @@ const CategoriesSectionComponent = ({
   error,
   title = DEFAULT_TITLE,
 }: CategoriesSectionProps) => {
-  const [limit, setLimit] = useState(12);
-
-  /**
-   * Calculate max categories to display based on screen size
-   * Always shows 2 rows to maintain consistent home page layout
-   */
-  useEffect(() => {
-    const updateLimit = () => {
-      const width = window.innerWidth;
-
-      // Calculate: columns × 2 rows
-      if (width < 640) {
-        setLimit(4); // 2 cols × 2 rows (mobile)
-      } else if (width < 768) {
-        setLimit(6); // 3 cols × 2 rows (small tablet)
-      } else if (width < 1024) {
-        setLimit(8); // 4 cols × 2 rows (tablet)
-      } else if (width < 1280) {
-        setLimit(10); // 5 cols × 2 rows (desktop)
-      } else {
-        setLimit(12); // 6 cols × 2 rows (large desktop)
-      }
-    };
-
-    updateLimit();
-    window.addEventListener("resize", updateLimit);
-    return () => window.removeEventListener("resize", updateLimit);
-  }, []);
-
-  const displayCategories = categories?.slice(0, limit) || [];
+  // Display all categories - no limit
+  const displayCategories = categories || [];
 
   // Loading state - show skeleton placeholders
   if (loading) {
@@ -77,7 +49,7 @@ const CategoriesSectionComponent = ({
           title={title}
           subtitle={DEFAULT_SUBTITLE}
         />
-        <CategoryGridSkeleton count={limit} />
+        <CategoryGridSkeleton count={12} />
       </SectionWrapper>
     );
   }
