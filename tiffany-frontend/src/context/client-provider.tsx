@@ -6,13 +6,19 @@ import { Provider } from "react-redux";
 import { Toaster } from "sonner";
 import store from "../redux/store";
 import { ToastContainer } from "react-toastify";
-import { useBusinessTheme } from "@/hooks/use-business-theme";
+import { useBusinessTheme, initializeBusinessThemeFromCache } from "@/hooks/use-business-theme";
 
 interface ClientProvidersProps {
   children: ReactNode;
 }
 
-// Theme provider component
+// Initialize theme colors from cache SYNCHRONOUSLY before rendering
+// This ensures colors are applied instantly without waiting for API
+if (typeof window !== "undefined") {
+  initializeBusinessThemeFromCache();
+}
+
+// Theme provider component - fetches fresh data in background
 function ThemeInitializer() {
   useBusinessTheme();
   return null;
