@@ -11,16 +11,21 @@ export function dateTimeFormat(timestamp: string | null | undefined): string {
 
   const date = new Date(timestamp); // UTC input
 
-  return date.toLocaleString("en-US", {
-    timeZone: "Asia/Phnom_Penh",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
+  const khDate = new Date(
+    date.toLocaleString("en-US", {
+      timeZone: "Asia/Phnom_Penh",
+    }),
+  );
+
+  const day = String(khDate.getDate()).padStart(2, "0");
+  const month = String(khDate.getMonth() + 1).padStart(2, "0");
+  const year = khDate.getFullYear();
+  const hour = String(khDate.getHours() % 12 || 12).padStart(2, "0");
+  const minute = String(khDate.getMinutes()).padStart(2, "0");
+  const second = String(khDate.getSeconds()).padStart(2, "0");
+  const ampm = khDate.getHours() >= 12 ? "PM" : "AM";
+
+  return `${day}/${month}/${year}, ${hour}:${minute}:${second} ${ampm}`;
 }
 
 export function formatDate(dateStr: string | null | undefined): string {
@@ -39,7 +44,7 @@ export function formatDate(dateStr: string | null | undefined): string {
   const month = String(khDate.getMonth() + 1).padStart(2, "0");
   const year = khDate.getFullYear();
 
-  return `${day}-${month}-${year}`;
+  return `${day}/${month}/${year}`;
 }
 
 export function formatTime(time: string | null | undefined): string {
