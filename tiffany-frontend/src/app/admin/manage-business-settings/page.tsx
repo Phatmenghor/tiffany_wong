@@ -104,11 +104,24 @@ export default function BusinessSettingsPage() {
   const fetchBusinessSettings = async () => {
     const SYSTEM_ID = "system-settings";
     try {
-      setIsLoading(true);
+      // Admin page: Load cached data first for instant display
+      const cachedSettings = localStorage.getItem("businessSettings_full_cache");
+      if (cachedSettings) {
+        try {
+          const cached = JSON.parse(cachedSettings);
+          const formData = convertResponseToFormData(cached);
+          form.reset(formData);
+          console.log("[ADMIN] Form loaded instantly from cache");
+          setIsLoading(false); // Hide loading spinner since we have data
+        } catch (error) {
+          console.error("[ADMIN] Error parsing cached settings:", error);
+        }
+      } else {
+        setIsLoading(true); // Show loading only if no cache
+      }
 
-      // Admin page: ALWAYS fetch fresh data from API (bypass cache)
-      // Admin needs to see real current state from server, not cached data
-      console.log("[ADMIN] Fetching fresh business settings from API (bypassing cache)");
+      // Then fetch fresh data from API in background
+      console.log("[ADMIN] Fetching fresh business settings from API...");
       const action = await dispatch(fetchBusinessSettingsThunk());
 
       // Check if the action was fulfilled and has a payload
@@ -117,7 +130,7 @@ export default function BusinessSettingsPage() {
 
         const formData = convertResponseToFormData(data);
         form.reset(formData);
-        console.log("[ADMIN] Form loaded with fresh API data");
+        console.log("[ADMIN] Form updated with fresh API data");
 
         // Check if colors changed and update cache if needed
         const cachedColors = getCachedThemeColors(SYSTEM_ID);
@@ -133,11 +146,16 @@ export default function BusinessSettingsPage() {
         // Apply theme colors
         applyThemeColors(data.primaryColor);
       } else {
-        showToast.error("Failed to load business settings");
+        if (!cachedSettings) {
+          // Only show error if we don't have cache
+          showToast.error("Failed to load business settings");
+        }
       }
     } catch (error) {
       console.error("Error fetching settings:", error);
-      showToast.error("Failed to load business settings");
+      if (!localStorage.getItem("businessSettings_full_cache")) {
+        showToast.error("Failed to load business settings");
+      }
     } finally {
       setIsLoading(false);
     }
