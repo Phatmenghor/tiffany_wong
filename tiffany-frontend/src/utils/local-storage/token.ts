@@ -52,8 +52,17 @@ export function storeTokenRemember(token: string | undefined): void {
 }
 
 export function getToken(): string | undefined {
-  const token = getCookie(ACCESS_TOKEN_KEY);
-  return token as string | undefined;
+  if (typeof window === "undefined") return undefined;
+
+  // Try cookie first
+  const cookieToken = getCookie(ACCESS_TOKEN_KEY);
+  if (cookieToken) return cookieToken as string;
+
+  // Fallback to localStorage if cookie not found
+  const localToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+  if (localToken) return localToken;
+
+  return undefined;
 }
 
 /**
@@ -65,7 +74,12 @@ export function storeToken(token: string | undefined): void {
   }
 
   const maxAge = getMaxAgeFromToken(token, 7 * 24 * 60 * 60); // fallback: 7 days
+
+  // Store in both cookie and localStorage for reliability
   setCookie(ACCESS_TOKEN_KEY, token, { maxAge, path: "/" });
+  localStorage.setItem(ACCESS_TOKEN_KEY, token);
+
+  console.log("## [TOKEN] Access token stored in cookie and localStorage");
 }
 
 /**
@@ -77,15 +91,29 @@ export function storeRefreshToken(refreshToken: string | undefined): void {
   }
 
   const maxAge = getMaxAgeFromToken(refreshToken, 30 * 24 * 60 * 60); // fallback: 30 days
+
+  // Store in both cookie and localStorage for reliability
   setCookie(REFRESH_TOKEN_KEY, refreshToken, { maxAge, path: "/" });
+  localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+
+  console.log("## [TOKEN] Refresh token stored in cookie and localStorage");
 }
 
 /**
- * Get refresh token from cookie
+ * Get refresh token from cookie or localStorage
  */
 export function getRefreshToken(): string | undefined {
-  const token = getCookie(REFRESH_TOKEN_KEY);
-  return token as string | undefined;
+  if (typeof window === "undefined") return undefined;
+
+  // Try cookie first
+  const cookieToken = getCookie(REFRESH_TOKEN_KEY);
+  if (cookieToken) return cookieToken as string;
+
+  // Fallback to localStorage if cookie not found
+  const localToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+  if (localToken) return localToken;
+
+  return undefined;
 }
 
 /**
@@ -104,6 +132,8 @@ export function storeTokens(
  */
 export function clearToken(): void {
   deleteCookie(ACCESS_TOKEN_KEY);
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
+  console.log("## [TOKEN] Access token cleared from cookie and localStorage");
 }
 
 /**
@@ -111,6 +141,8 @@ export function clearToken(): void {
  */
 export function clearRefreshToken(): void {
   deleteCookie(REFRESH_TOKEN_KEY);
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
+  console.log("## [TOKEN] Refresh token cleared from cookie and localStorage");
 }
 
 /**
@@ -127,12 +159,14 @@ export function storeAdminToken(token: string | undefined): void {
   if (typeof window === "undefined" || !token) return;
   const maxAge = getMaxAgeFromToken(token, 7 * 24 * 60 * 60);
   setNativeCookie(COOKIE_KEYS.ADMIN_ACCESS_TOKEN, token, maxAge);
+  localStorage.setItem(COOKIE_KEYS.ADMIN_ACCESS_TOKEN, token);
 }
 
 export function storeAdminRefreshToken(refreshToken: string | undefined): void {
   if (typeof window === "undefined" || !refreshToken) return;
   const maxAge = getMaxAgeFromToken(refreshToken, 30 * 24 * 60 * 60);
   setNativeCookie(COOKIE_KEYS.ADMIN_REFRESH_TOKEN, refreshToken, maxAge);
+  localStorage.setItem(COOKIE_KEYS.ADMIN_REFRESH_TOKEN, refreshToken);
 }
 
 export function storeAdminTokens(
@@ -144,16 +178,38 @@ export function storeAdminTokens(
 }
 
 export function getAdminToken(): string | undefined {
-  return getCookie(COOKIE_KEYS.ADMIN_ACCESS_TOKEN) as string | undefined;
+  if (typeof window === "undefined") return undefined;
+
+  // Try cookie first
+  const cookieToken = getCookie(COOKIE_KEYS.ADMIN_ACCESS_TOKEN);
+  if (cookieToken) return cookieToken as string;
+
+  // Fallback to localStorage if cookie not found
+  const localToken = localStorage.getItem(COOKIE_KEYS.ADMIN_ACCESS_TOKEN);
+  if (localToken) return localToken;
+
+  return undefined;
 }
 
 export function getAdminRefreshToken(): string | undefined {
-  return getCookie(COOKIE_KEYS.ADMIN_REFRESH_TOKEN) as string | undefined;
+  if (typeof window === "undefined") return undefined;
+
+  // Try cookie first
+  const cookieToken = getCookie(COOKIE_KEYS.ADMIN_REFRESH_TOKEN);
+  if (cookieToken) return cookieToken as string;
+
+  // Fallback to localStorage if cookie not found
+  const localToken = localStorage.getItem(COOKIE_KEYS.ADMIN_REFRESH_TOKEN);
+  if (localToken) return localToken;
+
+  return undefined;
 }
 
 export function clearAdminTokens(): void {
   deleteNativeCookie(COOKIE_KEYS.ADMIN_ACCESS_TOKEN);
   deleteNativeCookie(COOKIE_KEYS.ADMIN_REFRESH_TOKEN);
+  localStorage.removeItem(COOKIE_KEYS.ADMIN_ACCESS_TOKEN);
+  localStorage.removeItem(COOKIE_KEYS.ADMIN_REFRESH_TOKEN);
 }
 
 /**
