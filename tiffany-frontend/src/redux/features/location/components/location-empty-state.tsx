@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Map, Plus } from "lucide-react";
 
 interface LocationEmptyStateProps {
-  onAdd: () => void;
+  onAddNew: () => void;
 }
 
-export function LocationEmptyState({ onAdd }: LocationEmptyStateProps) {
+export function LocationEmptyState({ onAddNew }: LocationEmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-20">
       <div className="relative mb-6">
@@ -26,7 +26,7 @@ export function LocationEmptyState({ onAdd }: LocationEmptyStateProps) {
         Save your favourite delivery spots — use the interactive map or select
         from our location hierarchy.
       </p>
-      <Button onClick={onAdd} size="lg" className="shadow-md">
+      <Button onClick={onAddNew} size="lg" className="shadow-md">
         <Plus className="h-4 w-4 mr-2" />
         Add Your First Location
       </Button>
