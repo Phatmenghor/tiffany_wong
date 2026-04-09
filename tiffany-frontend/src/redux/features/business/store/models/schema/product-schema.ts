@@ -74,14 +74,13 @@ export const sizeSchema = z
 
 /**
  * Base Product Schema (shared fields)
+ * Matches current API model: products without sizes have price/promotion at product level,
+ * products with sizes have pricing at size level
  */
 const baseProductSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   description: z.string().min(1, "Description is required"),
   categoryId: z.string().min(1, "Category is required"),
-  brandId: z.string().optional(),
-  sku: z.string().optional(),
-  barcode: z.string().optional(),
   mainImageUrl: z
     .string()
     .url("Invalid main image URL")
@@ -241,9 +240,6 @@ export type ProductFormData = {
   name: string;
   description: string;
   categoryId: string;
-  brandId?: string;
-  sku?: string;
-  barcode?: string;
   price: number;
   mainImageUrl: string;
   promotionType?: string;

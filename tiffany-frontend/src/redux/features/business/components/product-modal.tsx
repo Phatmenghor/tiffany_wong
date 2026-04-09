@@ -37,6 +37,7 @@ import {
 import { ClickableImageUpload } from "@/components/shared/form-field/clickable-image-upload";
 import { ComboboxSelectCategories } from "@/components/shared/combobox/combobox_select_categories";
 import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
+import { Trash2 } from "lucide-react";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
 import {
   createProductSchema,
@@ -92,9 +93,6 @@ export default function ProductModal({
       name: "",
       description: "",
       categoryId: "",
-      brandId: "",
-      sku: "",
-      barcode: "",
       price: 0,
       mainImageUrl: "",
       promotionType: "NONE",
@@ -236,13 +234,6 @@ export default function ProductModal({
           const data = resultAction.payload;
 
           // Set combobox selections
-          if (data.brandId) {
-            setSelectedBrand({
-              id: data.brandId,
-              name: data.brandName,
-            } as BrandResponseModel);
-          }
-
           if (data.categoryId) {
             setSelectedCategory({
               id: data.categoryId,
@@ -255,9 +246,6 @@ export default function ProductModal({
             name: data.name || "",
             description: data.description || "",
             categoryId: data.categoryId || "",
-            brandId: data.brandId || "",
-            sku: data.sku || "",
-            barcode: data.barcode || "",
             price: data.price || 0,
             mainImageUrl: data.mainImageUrl || "",
             promotionType: data.promotionType || "NONE",
@@ -280,15 +268,11 @@ export default function ProductModal({
   // Reset form for create mode
   useEffect(() => {
     if (isOpen && isCreate) {
-      setSelectedBrand(null);
       setSelectedCategory(null);
       reset({
         name: "",
         description: "",
         categoryId: "",
-        brandId: "",
-        sku: "",
-        barcode: "",
         price: 0,
         mainImageUrl: "",
         promotionType: "NONE",
@@ -396,9 +380,6 @@ export default function ProductModal({
         name: data.name,
         description: data.description,
         categoryId: data.categoryId,
-        brandId: data.brandId || undefined,
-        sku: data.sku || undefined,
-        barcode: data.barcode || undefined,
         mainImageUrl: finalMainImageUrl,
         images: validImages.length > 0 ? validImages : undefined,
         sizes: cleanedSizes.length > 0 ? cleanedSizes : undefined,
@@ -451,7 +432,6 @@ export default function ProductModal({
     reset();
     setIsUploadingImage(false);
     setIsProcessingImages(false);
-    setSelectedBrand(null);
     setSelectedCategory(null);
     dispatch(clearError());
     dispatch(clearSelectedProduct());
@@ -532,28 +512,6 @@ export default function ProductModal({
                           disabled={isProcessing}
                           error={errors.categoryId?.message}
                           showAllOption={false}
-                        />
-                      </div>
-
-                      <div>
-                        <TextField
-                          control={control}
-                          name="sku"
-                          label="SKU"
-                          placeholder="Enter SKU"
-                          disabled={isProcessing}
-                          error={errors.sku}
-                        />
-                      </div>
-
-                      <div>
-                        <TextField
-                          control={control}
-                          name="barcode"
-                          label="Barcode"
-                          placeholder="Enter barcode"
-                          disabled={isProcessing}
-                          error={errors.barcode}
                         />
                       </div>
 

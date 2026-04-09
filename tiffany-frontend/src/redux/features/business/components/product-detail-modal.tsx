@@ -131,17 +131,8 @@ export function ProductDetailModal({
                     value={productData.categoryName || "---"}
                   />
                   <DisplayField
-                    label="Brand"
-                    value={productData.brandName || "---"}
-                  />
-                  <DisplayField
                     label="Status"
                     value={formatEnumValue(productData.status) || "---"}
-                  />
-                  <DisplayField label="SKU" value={productData.sku || "---"} />
-                  <DisplayField
-                    label="Barcode"
-                    value={productData.barcode || "---"}
                   />
                   <DisplayField
                     label="Has Sizes"
@@ -285,10 +276,6 @@ export function ProductDetailModal({
                               label="Barcode"
                               value={size.barcode || "---"}
                             />
-                            <DisplayField
-                              label="Total Stock"
-                              value={size.totalStock ? size.totalStock.toString() : "0"}
-                            />
                             {size.hasPromotion && (
                               <>
                                 <DisplayField
@@ -320,47 +307,6 @@ export function ProductDetailModal({
                   </CardContent>
                 </Card>
               )}
-
-            {/* Stock Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Stock Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <DisplayField
-                    label="Stock Status"
-                    value={
-                      <Badge
-                        variant={
-                          productData.stockStatus === "ENABLED"
-                            ? "default"
-                            : "secondary"
-                        }
-                      >
-                        {productData.stockStatus || "---"}
-                      </Badge>
-                    }
-                  />
-                  <DisplayField
-                    label="Total Stock"
-                    value={productData.totalStock ? productData.totalStock.toString() : "0"}
-                  />
-                  <DisplayField
-                    label="Quantity Available"
-                    value={productData.quantityAvailable ? productData.quantityAvailable.toString() : "0"}
-                  />
-                  <DisplayField
-                    label="Quantity Reserved"
-                    value={productData.quantityReserved ? productData.quantityReserved.toString() : "0"}
-                  />
-                  <DisplayField
-                    label="Quantity On Hand"
-                    value={productData.quantityOnHand ? productData.quantityOnHand.toString() : "0"}
-                  />
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Engagement Statistics */}
             <Card>
