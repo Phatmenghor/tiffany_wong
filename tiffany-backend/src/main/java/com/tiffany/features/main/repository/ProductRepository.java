@@ -149,7 +149,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Transactional
     @Query(nativeQuery = true, value =
         "UPDATE products p SET " +
-        "    has_active_promotion = false, " +
         "    display_promotion_type = NULL, " +
         "    display_promotion_value = NULL, " +
         "    display_promotion_from_date = NULL, " +
@@ -158,7 +157,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    display_origin_price = price " +
         "WHERE p.is_deleted = false " +
         "  AND NOT EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
-        "  AND p.has_active_promotion = true " +
         "  AND ( " +
         "      p.promotion_value IS NULL " +
         "      OR p.promotion_type IS NULL " +
@@ -174,7 +172,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Transactional
     @Query(nativeQuery = true, value =
         "UPDATE products p SET " +
-        "    has_active_promotion = true, " +
         "    display_promotion_type = promotion_type, " +
         "    display_promotion_value = promotion_value, " +
         "    display_promotion_from_date = promotion_from_date, " +
@@ -189,7 +186,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    END " +
         "WHERE p.is_deleted = false " +
         "  AND NOT EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
-        "  AND p.has_active_promotion = false " +
         "  AND p.promotion_value IS NOT NULL " +
         "  AND p.promotion_type  IS NOT NULL " +
         "  AND (p.promotion_from_date IS NULL OR p.promotion_from_date::date <= CURRENT_DATE) " +
@@ -203,7 +199,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Transactional
     @Query(nativeQuery = true, value =
         "UPDATE products p SET " +
-        "    has_active_promotion = true, " +
         "    display_promotion_type = (" +
         "        SELECT ps.promotion_type FROM product_sizes ps " +
         "        WHERE ps.product_id = p.id AND ps.is_deleted = false " +
@@ -254,7 +249,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "        ORDER BY ps.price ASC LIMIT 1) " +
         "WHERE p.is_deleted = false " +
         "  AND EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
-        "  AND p.has_active_promotion = false " +
         "  AND EXISTS ( " +
         "      SELECT 1 FROM product_sizes ps " +
         "      WHERE ps.product_id = p.id " +
@@ -273,7 +267,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Transactional
     @Query(nativeQuery = true, value =
         "UPDATE products p SET " +
-        "    has_active_promotion = false, " +
         "    display_promotion_type = NULL, " +
         "    display_promotion_value = NULL, " +
         "    display_promotion_from_date = NULL, " +
@@ -282,7 +275,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    display_origin_price = (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
         "WHERE p.is_deleted = false " +
         "  AND EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
-        "  AND p.has_active_promotion = true " +
         "  AND NOT EXISTS ( " +
         "      SELECT 1 FROM product_sizes ps " +
         "      WHERE ps.product_id = p.id " +
@@ -306,7 +298,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    promotion_value = NULL, " +
         "    promotion_from_date = NULL, " +
         "    promotion_to_date = NULL, " +
-        "    has_active_promotion = false, " +
         "    display_promotion_type = NULL, " +
         "    display_promotion_value = NULL, " +
         "    display_promotion_from_date = NULL, " +
@@ -332,7 +323,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    promotion_value = NULL, " +
         "    promotion_from_date = NULL, " +
         "    promotion_to_date = NULL, " +
-        "    has_active_promotion = false, " +
         "    display_promotion_type = NULL, " +
         "    display_promotion_value = NULL, " +
         "    display_promotion_from_date = NULL, " +
@@ -358,7 +348,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    promotion_value = NULL, " +
         "    promotion_from_date = NULL, " +
         "    promotion_to_date = NULL, " +
-        "    has_active_promotion = false, " +
         "    display_promotion_type = NULL, " +
         "    display_promotion_value = NULL, " +
         "    display_promotion_from_date = NULL, " +
@@ -379,7 +368,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    promotion_value = NULL, " +
         "    promotion_from_date = NULL, " +
         "    promotion_to_date = NULL, " +
-        "    has_active_promotion = false, " +
         "    display_promotion_type = NULL, " +
         "    display_promotion_value = NULL, " +
         "    display_promotion_from_date = NULL, " +
