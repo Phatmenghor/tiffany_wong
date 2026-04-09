@@ -237,8 +237,14 @@ SELECT
         WHEN pd.promo_rand < 0.8 THEN (1 + random() * 100)::numeric(10,2)   -- FIXED_AMOUNT: 1-100 discount
         ELSE NULL
     END,
-    NOW(),
-    NOW() + INTERVAL '30 days'
+    CASE
+        WHEN pd.promo_rand < 0.8 THEN NOW()
+        ELSE NULL
+    END,
+    CASE
+        WHEN pd.promo_rand < 0.8 THEN NOW() + INTERVAL '30 days'
+        ELSE NULL
+    END
 FROM promo_data pd;
 
 DO $$
@@ -301,8 +307,14 @@ SELECT
         WHEN sp.promo_rand < 0.8 THEN (1 + random() * 50)::numeric(10,2)    -- FIXED_AMOUNT: 1-50 discount
         ELSE NULL
     END,
-    NOW(),
-    NOW() + INTERVAL '30 days'
+    CASE
+        WHEN sp.promo_rand < 0.8 THEN NOW()
+        ELSE NULL
+    END,
+    CASE
+        WHEN sp.promo_rand < 0.8 THEN NOW() + INTERVAL '30 days'
+        ELSE NULL
+    END
 FROM size_with_promo sp;
 
 DO $$
