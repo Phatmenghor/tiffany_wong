@@ -60,10 +60,8 @@ import { bulkPromotionTableColumns } from "@/redux/features/business/table/bulk-
 import {
   PRODUCT_STATUS_FILTER,
 } from "@/constants/status/filter-status";
-import { ComboboxSelectBrand } from "@/components/shared/combobox/combobox_select_brand";
 import { ComboboxSelectCategories } from "@/components/shared/combobox/combobox_select_categories";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
-import { BrandResponseModel } from "@/redux/features/master-data/store/models/response/brand-response";
 import { ProductStatus } from "@/constants/status/status";
 import { selectProductStatus } from "@/redux/features/business/store/slice/product-slice";
 import {
@@ -112,9 +110,6 @@ export default function BulkPromotionPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pageSize, setPageSize] = useState<number>(globalPageSize);
-  const [selectedBrand, setSelectedBrand] = useState<BrandResponseModel | null>(
-    null,
-  );
   const [selectedCategories, setSelectedCategories] =
     useState<CategoriesResponseModel | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -180,7 +175,6 @@ export default function BulkPromotionPage() {
         pageSize: globalPageSize,
         statuses:
           filters.status && filters.status !== ProductStatus.ALL ? [filters.status] : undefined,
-        brandId: selectedBrand?.id,
         categoryId: selectedCategories?.id,
         hasPromotion:
           hasPromotionFilter === "HAS_PROMOTION"
@@ -194,7 +188,6 @@ export default function BulkPromotionPage() {
     dispatch,
     globalPageSize,
     filters.status,
-    selectedBrand,
     selectedCategories,
     debouncedSearchQuery,
     hasPromotionFilter,
@@ -318,11 +311,6 @@ export default function BulkPromotionPage() {
     productContent.some((p) => selectedProductIds.has(p.id)) && !allSelected;
 
   // Filter handlers
-  const handleBrandChange = (brand: BrandResponseModel | null) => {
-    setSelectedBrand(brand);
-    dispatch(setPageNo(1));
-  };
-
   const handleCategoriesChange = (
     categories: CategoriesResponseModel | null,
   ) => {
@@ -508,7 +496,6 @@ export default function BulkPromotionPage() {
         pageSize: pageSize,
         statuses:
           filters.status && filters.status !== ProductStatus.ALL ? [filters.status] : undefined,
-        brandId: selectedBrand?.id,
         categoryId: selectedCategories?.id,
         hasPromotion:
           hasPromotionFilter === "HAS_PROMOTION"
@@ -531,7 +518,6 @@ export default function BulkPromotionPage() {
         pageSize: newPageSize,
         statuses:
           filters.status && filters.status !== ProductStatus.ALL ? [filters.status] : undefined,
-        brandId: selectedBrand?.id,
         categoryId: selectedCategories?.id,
         hasPromotion:
           hasPromotionFilter === "HAS_PROMOTION"
@@ -649,7 +635,6 @@ export default function BulkPromotionPage() {
           pageSize: pageSize,
           statuses:
             filters.status && filters.status !== ProductStatus.ALL ? [filters.status] : undefined,
-          brandId: selectedBrand?.id,
           categoryId: selectedCategories?.id,
           hasPromotion:
             hasPromotionFilter === "HAS_PROMOTION"
@@ -869,16 +854,6 @@ export default function BulkPromotionPage() {
                   dataSelect={selectedCategories}
                   onChangeSelected={handleCategoriesChange}
                   placeholder="All Categories"
-                  showAllOption={true}
-                />
-              </div>
-
-              {/* Brand Filter */}
-              <div className="min-w-0">
-                <ComboboxSelectBrand
-                  dataSelect={selectedBrand}
-                  onChangeSelected={handleBrandChange}
-                  placeholder="All Brand"
                   showAllOption={true}
                 />
               </div>

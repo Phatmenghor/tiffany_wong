@@ -35,10 +35,8 @@ import ProductModal from "@/redux/features/business/components/product-modal";
 import { ProductDetailModal } from "@/redux/features/business/components/product-detail-modal";
 import { CustomSelect } from "@/components/shared/common/custom-select";
 import { PRODUCT_STATUS_FILTER, PRODUCT_SIZE_FILTER } from "@/constants/status/filter-status";
-import { ComboboxSelectBrand } from "@/components/shared/combobox/combobox_select_brand";
 import { ComboboxSelectCategories } from "@/components/shared/combobox/combobox_select_categories";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
-import { BrandResponseModel } from "@/redux/features/master-data/store/models/response/brand-response";
 import { useAdminCleanup } from "@/hooks/use-cleanup-on-unmount";
 import { AppDefault } from "@/constants/app-resource/default/default";
 import { setGlobalPageSize } from "@/redux/store/slices/global-settings-slice";
@@ -94,9 +92,6 @@ export default function ProductPromotionPage() {
     productId: "",
   });
 
-  const [selectedBrand, setSelectedBrand] = useState<BrandResponseModel | null>(
-    null,
-  );
   const [sizeFilter, setSizeFilter] = useState("ALL");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortDirection, setSortDirection] = useState("DESC");
@@ -157,7 +152,6 @@ export default function ProductPromotionPage() {
         hasPromotion: true,
         statuses:
           filters.status && filters.status !== ProductStatus.ALL ? [filters.status] : undefined,
-        brandId: selectedBrand?.id,
         categoryId: selectedCategories?.id,
         hasSize,
         sortBy,
@@ -170,7 +164,6 @@ export default function ProductPromotionPage() {
     filters.pageNo,
     filters.status,
     globalPageSize,
-    selectedBrand,
     selectedCategories,
     sizeFilter,
     sortBy,
@@ -366,10 +359,6 @@ export default function ProductPromotionPage() {
     dispatch(selectProductStatus(status));
   };
 
-  const handleBrandChange = (brand: BrandResponseModel | null) => {
-    setSelectedBrand(brand);
-  };
-
   const handleCategoriesChange = (
     categories: CategoriesResponseModel | null,
   ) => {
@@ -408,15 +397,6 @@ export default function ProductPromotionPage() {
         options: PRODUCT_STATUS_FILTER,
       },
       {
-        id: "brand",
-        type: "combobox-brand",
-        label: "Brand",
-        placeholder: "All Brand",
-        value: selectedBrand,
-        onChange: handleBrandChange,
-        showAllOption: true,
-      },
-      {
         id: "category",
         type: "combobox-categories",
         label: "Category",
@@ -453,7 +433,7 @@ export default function ProductPromotionPage() {
         options: SORT_DIRECTION_OPTIONS,
       },
     ],
-  }), [filters.search, filters.status, selectedBrand, selectedCategories, sizeFilter, sortBy, sortDirection]);
+  }), [filters.search, filters.status, selectedCategories, sizeFilter, sortBy, sortDirection]);
 
   return (
     <div className="flex flex-1 flex-col gap-4 px-2">
