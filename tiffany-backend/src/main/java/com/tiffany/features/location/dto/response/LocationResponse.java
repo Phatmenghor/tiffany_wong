@@ -12,10 +12,12 @@ import java.util.UUID;
 @Data
 public class LocationResponse extends BaseAuditResponse {
     private UUID userId;
+    private String label;
     private String village;
     private String commune;
     private String district;
     private String province;
+    private String country;
     private String streetNumber;
     private String houseNumber;
     private String note;
@@ -24,5 +26,4 @@ public class LocationResponse extends BaseAuditResponse {
     private Boolean isDefault;
     private String fullAddress;
     private Boolean hasCoordinates;
-    private List<LocationImageResponse> locationImages;
 }

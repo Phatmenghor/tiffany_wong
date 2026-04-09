@@ -5,13 +5,10 @@ import com.tiffany.exception.custom.ValidationException;
 import com.tiffany.features.auth.models.User;
 import com.tiffany.features.location.dto.filter.LocationFilterRequest;
 import com.tiffany.features.location.dto.request.LocationCreateRequest;
-import com.tiffany.features.location.dto.request.LocationImageRequest;
 import com.tiffany.features.location.dto.response.LocationResponse;
 import com.tiffany.features.location.dto.update.LocationUpdateRequest;
 import com.tiffany.features.location.mapper.LocationMapper;
 import com.tiffany.features.location.models.Location;
-import com.tiffany.features.location.models.LocationImage;
-import com.tiffany.features.location.repository.LocationImageRepository;
 import com.tiffany.features.location.repository.LocationRepository;
 import com.tiffany.features.location.service.LocationService;
 import com.tiffany.security.SecurityUtils;
@@ -35,7 +32,6 @@ import java.util.UUID;
 public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository addressRepository;
-    private final LocationImageRepository locationImageRepository;
     private final LocationMapper addressMapper;
     private final SecurityUtils securityUtils;
     private final PaginationMapper paginationMapper;
@@ -46,7 +42,6 @@ public class LocationServiceImpl implements LocationService {
 
         log.info("Creating location for user: {}", currentUser.getUserIdentifier());
 
-        // 1. Create and save parent location entity (IGNORE images during mapping)
         Location address = addressMapper.toEntity(request);
         address.setUserId(currentUser.getId());
 
@@ -62,34 +57,9 @@ public class LocationServiceImpl implements LocationService {
 
         Location savedAddress = addressRepository.save(address);
         log.info("Location saved with ID: {}", savedAddress.getId());
-
-        // 2. Handle images in SEPARATE transaction
-        if (request.getLocationImages() != null && !request.getLocationImages().isEmpty()) {
-            handleLocationImages(savedAddress.getId(), request.getLocationImages());
-            log.info("Images processed for location: {}", savedAddress.getId());
-        }
-
         log.info("Address created successfully for user: {}", currentUser.getUserIdentifier());
 
-        // 3. Return mapped response (images loaded from DB via mapper)
         return addressMapper.toResponse(savedAddress);
-    }
-
-    /**
-     * Handle location images by directly saving to repository.
-     * Uses constructor to ensure FK is set before persistence.
-     */
-    private void handleLocationImages(UUID locationId, List<LocationImageRequest> imageDtos) {
-        if (imageDtos == null || imageDtos.isEmpty()) return;
-
-        log.info("Processing {} images for location {}", imageDtos.size(), locationId);
-
-        List<LocationImage> images = imageDtos.stream()
-                .map(imageDto -> new LocationImage(locationId, imageDto.getImageUrl()))
-                .toList();
-
-        locationImageRepository.saveAll(images);
-        log.info("Saved {} images for location {}", images.size(), locationId);
     }
 
     @Override
@@ -142,7 +112,6 @@ public class LocationServiceImpl implements LocationService {
 
         log.info("Updating location {} for user: {}", id, currentUser.getUserIdentifier());
 
-        // 1. Update parent location fields (IGNORE images during mapping)
         addressMapper.updateEntity(request, address);
 
         // Handle default address logic
@@ -155,71 +124,9 @@ public class LocationServiceImpl implements LocationService {
         }
 
         addressRepository.save(address);
-        log.info("Location {} updated", id);
-
-        // 2. Handle images in SEPARATE transaction
-        if (request.getLocationImages() != null) {
-            updateLocationImages(id, request.getLocationImages());
-        }
-
         log.info("Address updated successfully for user: {}", currentUser.getUserIdentifier());
 
-        // 3. Return mapped response (images loaded from DB)
         return addressMapper.toResponse(address);
-    }
-
-    /**
-     * Handle image CRUD operations using repository methods.
-     * Process in order: Delete → Update → Create
-     */
-    private void updateLocationImages(UUID locationId, List<LocationImageRequest> imageDtos) {
-        if (imageDtos == null) return;
-
-        log.info("Processing {} image changes for location {}", imageDtos.size(), locationId);
-
-        // STEP 1: Delete images marked with isDeleted=true
-        List<UUID> idsToDelete = imageDtos.stream()
-                .filter(dto -> Boolean.TRUE.equals(dto.getIsDeleted()) && dto.getId() != null)
-                .map(LocationImageRequest::getId)
-                .toList();
-
-        if (!idsToDelete.isEmpty()) {
-            locationImageRepository.deleteAllById(idsToDelete);
-            log.info("Deleted {} images", idsToDelete.size());
-        }
-
-        // STEP 2: Update existing images (has ID and not marked deleted)
-        List<LocationImage> existingImagesToUpdate = locationImageRepository.findByLocationId(locationId);
-        List<LocationImageRequest> updateRequests = imageDtos.stream()
-                .filter(dto -> dto.getId() != null && !Boolean.TRUE.equals(dto.getIsDeleted()))
-                .toList();
-
-        for (var updateDto : updateRequests) {
-            existingImagesToUpdate.stream()
-                    .filter(img -> img.getId().equals(updateDto.getId()))
-                    .findFirst()
-                    .ifPresent(existingImage -> {
-                        existingImage.setImageUrl(updateDto.getImageUrl());
-                        locationImageRepository.save(existingImage);
-                        log.debug("Updated image {}", updateDto.getId());
-                    });
-        }
-        if (!updateRequests.isEmpty()) {
-            log.info("Updated {} images", updateRequests.size());
-        }
-
-        // STEP 3: Create new images (no ID)
-        List<LocationImage> newImages = imageDtos.stream()
-                .filter(dto -> dto.getId() == null && !Boolean.TRUE.equals(dto.getIsDeleted()))
-                .map(imageDto -> new LocationImage(locationId, imageDto.getImageUrl()))
-                .toList();
-
-        if (!newImages.isEmpty()) {
-            locationImageRepository.saveAll(newImages);
-            log.info("Created {} new images", newImages.size());
-        }
-
-        log.info("Image processing complete for location {}", locationId);
     }
 
     @Override
@@ -233,9 +140,8 @@ public class LocationServiceImpl implements LocationService {
         }
 
         boolean wasDefault = Boolean.TRUE.equals(address.getIsDefault());
-        int imageCount = address.getLocationImages() != null ? address.getLocationImages().size() : 0;
 
-        log.info("Deleting location {} with {} associated images for user: {}", id, imageCount, currentUser.getUserIdentifier());
+        log.info("Deleting location {} for user: {}", id, currentUser.getUserIdentifier());
 
         address.softDelete();
         addressRepository.save(address);

@@ -27,6 +27,9 @@ public class Location extends BaseUUIDEntity {
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
+    @Column(name = "label")
+    private String label; // Label for the location (e.g., "Home", "Office")
+
     @Column(name = "village")
     private String village; // Ex: Phum Svay Dangkum
 
@@ -59,10 +62,6 @@ public class Location extends BaseUUIDEntity {
 
     @Column(name = "is_default", nullable = false)
     private Boolean isDefault = false;
-
-    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("created_at ASC")
-    private List<LocationImage> locationImages = new ArrayList<>();
 
     // Business Methods
     public void setAsDefault() {
