@@ -199,31 +199,21 @@ export const productPromotionTableColumns = ({
     },
 
     {
-      key: "displayPrice",
+      key: "price",
       label: "Price",
-      minWidth: "10px",
-      maxWidth: "100px",
-      truncate: true,
+      minWidth: "150px",
+      maxWidth: "200px",
       render: (product) => (
-        <span className="text-xs font-semibold text-foreground">
-          ${parseFloat(product?.displayPrice?.toString() || "0").toFixed(2)}
-        </span>
-      ),
-    },
-
-    {
-      key: "displayOriginPrice",
-      label: "Original Price",
-      minWidth: "10px",
-      maxWidth: "120px",
-      truncate: true,
-      render: (product) => (
-        <span className="text-xs text-muted-foreground line-through">
-          $
-          {parseFloat(product?.displayOriginPrice?.toString() || "0").toFixed(
-            2,
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-semibold text-foreground">
+            ${parseFloat(product?.displayPrice?.toString() || "0").toFixed(2)}
+          </span>
+          {product?.hasPromotion && product?.displayOriginPrice && (
+            <span className="text-xs text-muted-foreground line-through">
+              ${parseFloat(product.displayOriginPrice.toString()).toFixed(2)}
+            </span>
           )}
-        </span>
+        </div>
       ),
     },
 
