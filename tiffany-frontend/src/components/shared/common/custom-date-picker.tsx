@@ -61,7 +61,7 @@ export function CustomDateTimePicker({
   const [viewDate, setViewDate] = useState<Date>(new Date());
   const [selectedHour, setSelectedHour] = useState<string>("11");
   const [selectedMinute, setSelectedMinute] = useState<string>("59");
-  const [selectedPeriod, setSelectedPeriod] = useState<"AM" | "PM">("AM");
+  const [selectedPeriod, setSelectedPeriod] = useState<"AM" | "PM">("PM");
 
   // Initialize selected date and time from value prop
   useEffect(() => {
@@ -121,12 +121,12 @@ export function CustomDateTimePicker({
     const newDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), day);
 
     if (mode === "datetime") {
-      // Set default time to 11:59:59 AM when a date is selected
+      // Set default time to 23:59:59 (11:59:59 PM) when a date is selected
       // This allows users to focus on selecting the date only
-      newDate.setHours(11, 59, 59);
+      newDate.setHours(23, 59, 59);
       setSelectedHour("11");
       setSelectedMinute("59");
-      setSelectedPeriod("AM");
+      setSelectedPeriod("PM");
     }
 
     setSelectedDate(newDate);
@@ -457,9 +457,9 @@ export function CustomDateTimePicker({
               setViewDate(today);
 
               if (mode === "datetime") {
-                // Use default time 11:59:59 AM for consistency with date selection
-                today.setHours(11, 59, 59);
-                setSelectedPeriod("AM");
+                // Use default time 23:59:59 (11:59:59 PM) for consistency with date selection
+                today.setHours(23, 59, 59);
+                setSelectedPeriod("PM");
                 setSelectedHour("11");
                 setSelectedMinute("59");
               }
