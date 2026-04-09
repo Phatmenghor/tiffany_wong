@@ -350,7 +350,7 @@ export function Navbar() {
                     />
                   </div>
                 )}
-                <div className="flex flex-col">
+                <div className="flex flex-col text-left">
                   <span className="font-bold text-sm text-foreground leading-tight">
                     {businessName}
                   </span>
@@ -435,7 +435,7 @@ export function Navbar() {
                     />
                   </div>
                 )}
-                <div className="hidden md:flex flex-col">
+                <div className="hidden md:flex flex-col text-left">
                   <span className="text-foreground font-bold text-sm leading-tight">
                     {businessName}
                   </span>
