@@ -208,32 +208,38 @@ Built to deliver outstanding results in any situation, this product combines rel
 Experience the difference that premium design and engineering make. This product offers exceptional value, combining cutting-edge features with intuitive usability.
 Crafted with precision and attention to detail, this product represents the pinnacle of quality manufacturing. Ideal for users who demand the best in performance and reliability.
 Transform your daily experience with this innovative product. Combines smart design with powerful functionality, providing reliable performance for all your needs.' as description_text
+),
+promo_data AS (
+    SELECT
+        i,
+        random() as promo_rand
+    FROM generate_series(1, 100000) AS t(i)
 )
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    'Product ' || i,
-    (SELECT description_text FROM descriptions WHERE desc_id = ((i - 1) % 3) + 1),
-    'SKU-' || LPAD(i::text, 7, '0'),
-    'BARCODE-' || LPAD(i::text, 10, '0'),
+    'Product ' || pd.i,
+    (SELECT description_text FROM descriptions WHERE desc_id = ((pd.i - 1) % 3) + 1),
+    'SKU-' || LPAD(pd.i::text, 7, '0'),
+    'BARCODE-' || LPAD(pd.i::text, 10, '0'),
     (10 + random() * 500)::numeric(10,2),
     'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce',
-    (SELECT id FROM category_list WHERE cat_num = ((i - 1) % 200) + 1),
+    (SELECT id FROM category_list WHERE cat_num = ((pd.i - 1) % 200) + 1),
     'ACTIVE',
     (random() * 10000)::int,  -- Random view count 0-10000
     (random() * 1000)::int,   -- Random favorite count 0-1000
     CASE
-        WHEN random() < 0.4 THEN 'PERCENTAGE'       -- 40% PERCENTAGE
-        WHEN random() < 0.8 THEN 'FIXED_AMOUNT'     -- 40% FIXED_AMOUNT
-        ELSE NULL                                    -- 20% no promotion
+        WHEN pd.promo_rand < 0.4 THEN 'PERCENTAGE'       -- 40% PERCENTAGE
+        WHEN pd.promo_rand < 0.8 THEN 'FIXED_AMOUNT'     -- 40% FIXED_AMOUNT
+        ELSE NULL                                         -- 20% no promotion
     END,
     CASE
-        WHEN random() < 0.4 THEN (5 + random() * 45)::numeric(10,2)    -- PERCENTAGE: 5-50%
-        WHEN random() < 0.8 THEN (1 + random() * 100)::numeric(10,2)   -- FIXED_AMOUNT: 1-100 discount
+        WHEN pd.promo_rand < 0.4 THEN (5 + random() * 45)::numeric(10,2)    -- PERCENTAGE: 5-50%
+        WHEN pd.promo_rand < 0.8 THEN (1 + random() * 100)::numeric(10,2)   -- FIXED_AMOUNT: 1-100 discount
         ELSE NULL
     END,
     NOW(),
     NOW() + INTERVAL '30 days'
-FROM generate_series(1, 100000) AS t(i);
+FROM promo_data pd;
 
 DO $$
 BEGIN
@@ -264,33 +270,55 @@ size_names AS (
     SELECT 8, 'Standard' UNION ALL
     SELECT 9, 'Premium' UNION ALL
     SELECT 10, 'Deluxe'
+),
+size_with_promo AS (
+    SELECT
+        p.id as product_id,
+        sn.name as size_name,
+        sn.size_id,
+        p.price,
+        p.sku,
+        p.barcode,
+        random() as promo_rand
+    FROM product_with_sizes p
+    CROSS JOIN size_names sn
+    WHERE sn.size_id <= (5 + ((ABS(hashtext(p.id::text))::numeric % 6))::int)
 )
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    p.id,
-    sn.name,
-    (p.price * (0.8 + random() * 0.4))::numeric(10,2),
-    p.sku || '-' || LPAD(sn.size_id::text, 2, '0'),
-    p.barcode || '-' || LPAD(sn.size_id::text, 2, '0'),
+    sp.product_id,
+    sp.size_name,
+    (sp.price * (0.8 + random() * 0.4))::numeric(10,2),
+    sp.sku || '-' || LPAD(sp.size_id::text, 2, '0'),
+    sp.barcode || '-' || LPAD(sp.size_id::text, 2, '0'),
     CASE
-        WHEN random() < 0.4 THEN 'PERCENTAGE'       -- 40% PERCENTAGE
-        WHEN random() < 0.8 THEN 'FIXED_AMOUNT'     -- 40% FIXED_AMOUNT
-        ELSE NULL                                    -- 20% no promotion
+        WHEN sp.promo_rand < 0.4 THEN 'PERCENTAGE'       -- 40% PERCENTAGE
+        WHEN sp.promo_rand < 0.8 THEN 'FIXED_AMOUNT'     -- 40% FIXED_AMOUNT
+        ELSE NULL                                         -- 20% no promotion
     END,
     CASE
-        WHEN random() < 0.4 THEN (5 + random() * 45)::numeric(10,2)    -- PERCENTAGE: 5-50%
-        WHEN random() < 0.8 THEN (1 + random() * 50)::numeric(10,2)    -- FIXED_AMOUNT: 1-50 discount
+        WHEN sp.promo_rand < 0.4 THEN (5 + random() * 45)::numeric(10,2)    -- PERCENTAGE: 5-50%
+        WHEN sp.promo_rand < 0.8 THEN (1 + random() * 50)::numeric(10,2)    -- FIXED_AMOUNT: 1-50 discount
         ELSE NULL
     END,
     NOW(),
     NOW() + INTERVAL '30 days'
-FROM product_with_sizes p
-CROSS JOIN size_names sn
-WHERE sn.size_id <= (5 + ((ABS(hashtext(p.id::text))::numeric % 6))::int);  -- 5-10 sizes per product
+FROM size_with_promo sp;
 
 DO $$
 BEGIN
     RAISE NOTICE '      [80 percent] Product sizes inserted successfully';
+    RAISE NOTICE '';
+END $$;
+
+-- Update has_sizes flag for products that have sizes
+UPDATE products p
+SET has_sizes = true
+WHERE EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id);
+
+DO $$
+BEGIN
+    RAISE NOTICE '      [80.5 percent] Updated has_sizes flags';
     RAISE NOTICE '';
 END $$;
 
