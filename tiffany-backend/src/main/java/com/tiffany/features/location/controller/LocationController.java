@@ -1,14 +1,14 @@
 package com.tiffany.features.location.controller;
 
-import com.emenu.features.auth.models.User;
-import com.emenu.features.location.dto.filter.LocationFilterRequest;
-import com.emenu.features.location.dto.request.LocationCreateRequest;
-import com.emenu.features.location.dto.response.LocationResponse;
-import com.emenu.features.location.dto.update.LocationUpdateRequest;
-import com.emenu.features.location.service.LocationService;
-import com.emenu.security.SecurityUtils;
-import com.emenu.shared.dto.ApiResponse;
-import com.emenu.shared.dto.PaginationResponse;
+import com.tiffany.features.auth.models.User;
+import com.tiffany.features.location.dto.filter.LocationFilterRequest;
+import com.tiffany.features.location.dto.request.LocationCreateRequest;
+import com.tiffany.features.location.dto.response.LocationResponse;
+import com.tiffany.features.location.dto.update.LocationUpdateRequest;
+import com.tiffany.features.location.service.LocationService;
+import com.tiffany.security.SecurityUtils;
+import com.tiffany.shared.dto.ApiResponse;
+import com.tiffany.shared.dto.PaginationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
