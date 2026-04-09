@@ -367,6 +367,8 @@ export default function ProductModal({
         id: size.id,
         name: size.name,
         price: size.price,
+        sku: size.sku || undefined,
+        barcode: size.barcode || undefined,
         ...cleanPromotionData(
           size.promotionType,
           size.promotionValue,
