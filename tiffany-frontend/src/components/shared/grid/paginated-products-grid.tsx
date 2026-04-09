@@ -173,13 +173,15 @@ const PaginatedProductsGridComponent = ({
           </div>
         )}
 
-        {/* Sentinel element for scroll detection */}
+        {/* Sentinel element for scroll detection with visual indicator */}
         {hasMore && !loading && (
           <div
             ref={sentinelRef}
-            className="h-10"
+            className="col-span-full h-10 bg-blue-400/30 border-2 border-blue-500 rounded-lg flex items-center justify-center text-xs font-medium text-blue-600"
             aria-label="Load more products trigger"
-          />
+          >
+            📍 Load trigger zone (400px before here)
+          </div>
         )}
       </div>
     </div>
