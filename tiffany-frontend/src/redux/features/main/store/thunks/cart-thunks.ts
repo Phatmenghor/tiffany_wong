@@ -93,9 +93,8 @@ export const updateCartItem = createApiThunk<
 export const fetchCart = createApiThunk<CartResponseModel, void>(
   "cart/fetch",
   async (_, signal) => {
-    const response = await axiosClientWithAuth.post(
-      "/api/v1/cart/all",
-      {},
+    const response = await axiosClientWithAuth.get(
+      "/api/v1/cart",
       { signal }
     );
     let responseData = response.data.data;
