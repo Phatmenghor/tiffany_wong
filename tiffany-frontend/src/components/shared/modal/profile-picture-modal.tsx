@@ -5,43 +5,37 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { Button } from "@/components/ui/button";
 import {
   Camera,
-  Trash2,
-  Download,
   Loader2,
 } from "lucide-react";
 import { CustomAvatar } from "@/components/shared/avator/custom-avator";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface ProfilePictureModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onImageCapture: (imageData: string) => void;
+  isLoading?: boolean;
   currentImageUrl?: string;
   userName?: string;
-  onImageSelect: (imageData: string) => void;
-  onImageRemove: () => void;
-  isLoading?: boolean;
 }
 
 export function ProfilePictureModal({
-  isOpen,
-  onClose,
+  open,
+  onOpenChange,
+  onImageCapture,
+  isLoading = false,
   currentImageUrl,
   userName,
-  onImageSelect,
-  onImageRemove,
-  isLoading = false,
 }: ProfilePictureModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<string>(currentImageUrl || "");
-  const [isRemoving, setIsRemoving] = useState(false);
 
   // Reset state when modal opens/closes
   React.useEffect(() => {
-    if (isOpen) {
+    if (open) {
       setSelectedImage(currentImageUrl || "");
-      setIsRemoving(false);
     }
-  }, [isOpen, currentImageUrl]);
+  }, [open, currentImageUrl]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -62,54 +56,26 @@ export function ProfilePictureModal({
     reader.onload = (event) => {
       const imageData = event.target?.result as string;
       setSelectedImage(imageData);
-      setIsRemoving(false);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleDownload = async () => {
-    if (!currentImageUrl) return;
-
-    try {
-      const response = await fetch(currentImageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${userName || "profile"}.jpg`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error("Failed to download image:", error);
-      alert("Failed to download image");
-    }
-  };
-
-  const handleRemoveClick = () => {
-    setSelectedImage("");
-    setIsRemoving(true);
-  };
-
   const handleSave = () => {
-    if (isRemoving) {
-      onImageRemove();
-    } else if (selectedImage !== currentImageUrl) {
-      onImageSelect(selectedImage);
+    if (selectedImage && selectedImage !== currentImageUrl) {
+      onImageCapture(selectedImage);
+      onOpenChange(false);
     }
   };
 
-  const hasChanges = selectedImage !== currentImageUrl || isRemoving;
+  const hasChanges = selectedImage && selectedImage !== currentImageUrl;
 
   const handleCancel = () => {
     setSelectedImage(currentImageUrl || "");
-    setIsRemoving(false);
-    onClose();
+    onOpenChange(false);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md p-0 overflow-hidden">
         <DialogTitle asChild>
           <VisuallyHidden>Profile Picture Manager</VisuallyHidden>
@@ -169,32 +135,6 @@ export function ProfilePictureModal({
             )}
           </Button>
 
-          {/* Download Picture */}
-          {currentImageUrl && (
-            <Button
-              onClick={handleDownload}
-              variant="outline"
-              className="w-full gap-2"
-              disabled={isLoading}
-            >
-              <Download className="h-4 w-4" />
-              Download
-            </Button>
-          )}
-
-          {/* Remove Picture */}
-          {currentImageUrl && !isRemoving && (
-            <Button
-              onClick={handleRemoveClick}
-              variant="outline"
-              className="w-full gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-              disabled={isLoading}
-            >
-              <Trash2 className="h-4 w-4" />
-              Remove
-            </Button>
-          )}
-
           {/* Footer Buttons - Cancel and Save */}
           <div className="flex gap-2 pt-2">
             <Button
@@ -213,7 +153,7 @@ export function ProfilePictureModal({
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Saving...
+                  Uploading...
                 </>
               ) : (
                 "Save"
