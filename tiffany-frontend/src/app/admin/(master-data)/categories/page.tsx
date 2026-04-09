@@ -10,12 +10,10 @@ import { DeleteConfirmationModal } from "@/components/shared/modal/delete-confir
 import { DataTableWithPagination } from "@/components/shared/common/data-table";
 import { showToast } from "@/components/shared/common/show-toast";
 import { ModalMode, Status } from "@/constants/status/status";
-import { usePagination } from "@/redux/store/use-pagination";
 import { STATUS_FILTER } from "@/constants/status/filter-status";
 import { useCategoriesState } from "@/redux/features/master-data/store/state/categories-state";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
 import {
-  setPageNo,
   setSearchFilter,
   setStatusFilter,
   resetState,
@@ -28,15 +26,11 @@ import {
 } from "@/redux/features/master-data/store/thunks/categories-thunks";
 import {
   selectCategoriesWithProductCountContent,
-  selectPaginationWithProductCount,
 } from "@/redux/features/master-data/store/selectors/categories-selector";
 import { categoriesTableColumns } from "@/redux/features/master-data/table/categories-table";
 import CategoriesModal from "@/redux/features/master-data/components/categories-modal";
 import { CategoriesDetailModal } from "@/redux/features/master-data/components/categories-detail-modal";
 import { useAdminCleanup } from "@/hooks/use-cleanup-on-unmount";
-import { AppDefault } from "@/constants/app-resource/default/default";
-import { setGlobalPageSize } from "@/redux/store/slices/global-settings-slice";
-import { selectGlobalPageSize } from "@/redux/store/selectors/global-settings-selectors";
 import { useAppSelector } from "@/redux/store";
 
 export default function CategoriesPage() {
@@ -46,18 +40,14 @@ export default function CategoriesPage() {
   // Redux state
   const {
     categoriesState,
-    categoriesData,
-    categoriesContent,
     isLoading,
     filters,
     operations,
-    pagination,
     dispatch,
   } = useCategoriesState();
 
   // Use categories with product count for admin page display
   const categoriesWithProductCount = useAppSelector(selectCategoriesWithProductCountContent);
-  const paginationWithProductCount = useAppSelector(selectPaginationWithProductCount);
 
   // Local UI state for modals only
   const [modalState, setModalState] = useState({
@@ -76,22 +66,12 @@ export default function CategoriesPage() {
     categories: null as CategoriesResponseModel | null,
   });
 
-  // Global page size from global settings (synced across all admin pages)
-  const globalPageSize = useAppSelector(selectGlobalPageSize);
-
   const debouncedSearch = useDebounce(filters.search, 400);
-
-  const { updateUrlWithPage, handlePageChange } = usePagination({
-    baseRoute: ROUTES.ADMIN.CATEGORIES,
-    syncPageToRedux: (page) => dispatch(setPageNo(page)),
-  });
 
   useEffect(() => {
     dispatch(
       fetchAllCategoriesWithProductCountService({
         search: debouncedSearch,
-        pageNo: filters.pageNo,
-        pageSize: globalPageSize,
         status: filters.status == Status.ALL ? undefined : filters.status,
       }),
     );
@@ -99,8 +79,6 @@ export default function CategoriesPage() {
     dispatch,
     debouncedSearch,
     filters.status,
-    filters.pageNo,
-    globalPageSize,
   ]);
 
   // Event handlers
@@ -179,16 +157,6 @@ export default function CategoriesPage() {
     dispatch(setStatusFilter(status));
   };
 
-  const handlePageChangeWrapper = (page: number) => {
-    dispatch(setPageNo(page));
-    handlePageChange(page);
-  };
-
-  const handlePageSizeChange = (size: number) => {
-    dispatch(setGlobalPageSize(size));
-    dispatch(setPageNo(1));
-  };
-
   const handleDelete = async () => {
     if (!deleteState.categories?.id) return;
 
@@ -202,13 +170,6 @@ export default function CategoriesPage() {
       );
 
       closeDeleteModal();
-
-      // Navigate to previous page if this was the last item
-      if (categoriesWithProductCount.length === 1 && paginationWithProductCount.currentPage > 1) {
-        const newPage = paginationWithProductCount.currentPage - 1;
-        dispatch(setPageNo(newPage));
-        updateUrlWithPage(newPage);
-      }
     } catch (error: any) {
       showToast.error(error || "Failed to delete categories");
     }
@@ -260,20 +221,17 @@ export default function CategoriesPage() {
           </div>
         </CardHeaderSection>
 
-        {/* Data Table with Your Custom Pagination */}
+        {/* Data Table without Pagination */}
         <DataTableWithPagination
           data={categoriesWithProductCount}
           columns={columns}
           loading={isLoading}
           emptyMessage="No Categories found"
           getRowKey={(categories) => categories.id}
-          currentPage={paginationWithProductCount.currentPage}
-          totalElements={paginationWithProductCount.totalElements}
-          totalPages={paginationWithProductCount.totalPages}
-          onPageChange={handlePageChangeWrapper}
-          pageSize={globalPageSize}
-          onPageSizeChange={handlePageSizeChange}
-          pageSizeOptions={AppDefault.PAGE_SIZE_OPTIONS}
+          currentPage={1}
+          totalElements={categoriesWithProductCount.length}
+          totalPages={1}
+          pageSize={categoriesWithProductCount.length || 10}
         />
       </div>
 
