@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { showToast } from "@/components/shared/common/show-toast";
@@ -50,6 +51,7 @@ function convertResponseToFormData(
 ): BusinessSettingsFormData {
   return {
     systemName: response.systemName || BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME,
+    description: response.description || "",
     taxPercentage: response.taxPercentage?.toString() || "",
     logoSystemUrl: response.logoSystemUrl || "",
     socialMedia: response.socialMedia || [],
@@ -74,6 +76,7 @@ export default function BusinessSettingsPage() {
     mode: "onChange",
     defaultValues: {
       systemName: BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME,
+      description: "",
       taxPercentage: "",
       logoSystemUrl: "",
       socialMedia: [],
@@ -191,6 +194,7 @@ export default function BusinessSettingsPage() {
       // Create payload with the uploaded logo URL
       const payload = {
         systemName: data.systemName,
+        description: data.description,
         taxPercentage: data.taxPercentage
           ? parseFloat(data.taxPercentage)
           : null,
@@ -304,6 +308,20 @@ export default function BusinessSettingsPage() {
                   Tax rate applied to all transactions (0-100%)
                 </p>
               </div>
+            </div>
+
+            {/* Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Business description displayed in footer..."
+                {...form.register("description")}
+                rows={3}
+              />
+              <p className="text-xs text-muted-foreground">
+                Brief description of your business (shown in footer under business name)
+              </p>
             </div>
 
             {/* System Logo Upload */}

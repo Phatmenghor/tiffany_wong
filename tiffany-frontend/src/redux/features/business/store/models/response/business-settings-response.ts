@@ -34,6 +34,7 @@ export interface BusinessSettingsResponse {
   updatedBy: string;
   taxPercentage: number;
   systemName: string;
+  description: string | null;
   logoSystemUrl: string | null;
   primaryColor: string | null;
   contactAddress: string;

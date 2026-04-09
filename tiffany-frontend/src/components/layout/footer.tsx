@@ -18,12 +18,6 @@ const DEFAULT_BUSINESS_HOURS = [
   { day: "Sun", openingTime: "10:00", closingTime: "21:00" },
 ];
 
-// Social media links - these are hardcoded but could be moved to Redux
-const SOCIAL_LINKS = [
-  { name: "Facebook", url: "https://facebook.com" },
-  { name: "Instagram", url: "https://instagram.com" },
-  { name: "Telegram", url: "https://telegram.me" },
-];
 
 export function Footer() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -34,6 +28,8 @@ export function Footer() {
   // Use Redux data or fallback to empty (blank) for hydration consistency
   const businessName = businessSettings?.systemName || "";
   const businessLogo = businessSettings?.logoSystemUrl || null;
+  const businessDescription = isHydrated ? (businessSettings?.description || "") : "";
+  const socialMedia = isHydrated ? (businessSettings?.socialMedia || []) : [];
   const contactAddress = isHydrated ? (businessSettings?.contactAddress || DEFAULT_CONTACT_ADDRESS) : "";
   const contactPhone = isHydrated ? (businessSettings?.contactPhone || DEFAULT_CONTACT_PHONE) : "";
   const contactEmail = isHydrated ? (businessSettings?.contactEmail || DEFAULT_CONTACT_EMAIL) : "";
@@ -75,6 +71,11 @@ export function Footer() {
                   </span>
                 )}
               </div>
+              {businessDescription && (
+                <p className="text-white text-sm leading-relaxed">
+                  {businessDescription}
+                </p>
+              )}
             </div>
           )}
 

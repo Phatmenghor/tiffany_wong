@@ -8,6 +8,9 @@ export const selectBusinessSettingsError = (state: RootState) => state.businessS
 export const selectBusinessName = (state: RootState) =>
   state.businessSettings.data?.systemName || "Tiffany Cambodia";
 
+export const selectBusinessDescription = (state: RootState) =>
+  state.businessSettings.data?.description || "";
+
 export const selectBusinessLogo = (state: RootState) =>
   state.businessSettings.data?.logoSystemUrl || null;
 

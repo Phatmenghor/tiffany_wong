@@ -7,6 +7,7 @@ import { z } from "zod";
 
 export const businessSettingsSchema = z.object({
   systemName: z.string().min(1, "System name is required"),
+  description: z.string().optional(),
   taxPercentage: z.string().optional(),
   logoSystemUrl: z.string().optional(),
   socialMedia: z.array(
