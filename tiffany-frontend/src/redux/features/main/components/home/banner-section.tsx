@@ -44,9 +44,10 @@ const BannerSectionComponent = ({
   const autoplayPlugin = React.useRef(
     Autoplay({
       delay: 5000,
-      stopOnInteraction: true,
-      stopOnMouseEnter: true,
+      stopOnInteraction: false,
+      stopOnMouseEnter: false,
       playOnInit: true,
+      jump: false,
     }),
   );
 
