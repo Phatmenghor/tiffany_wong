@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { Button } from "@/components/ui/button";
 import {
   Camera,
+  Trash2,
   Loader2,
 } from "lucide-react";
 import { CustomAvatar } from "@/components/shared/avator/custom-avator";
@@ -14,6 +15,7 @@ interface ProfilePictureModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onImageCapture: (imageData: string) => void;
+  onImageRemove?: () => void;
   isLoading?: boolean;
   currentImageUrl?: string;
   userName?: string;
@@ -23,17 +25,20 @@ export function ProfilePictureModal({
   open,
   onOpenChange,
   onImageCapture,
+  onImageRemove,
   isLoading = false,
   currentImageUrl,
   userName,
 }: ProfilePictureModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<string>(currentImageUrl || "");
+  const [isRemoving, setIsRemoving] = useState(false);
 
   // Reset state when modal opens/closes
   React.useEffect(() => {
     if (open) {
       setSelectedImage(currentImageUrl || "");
+      setIsRemoving(false);
     }
   }, [open, currentImageUrl]);
 
@@ -60,17 +65,31 @@ export function ProfilePictureModal({
     reader.readAsDataURL(file);
   };
 
+  const handleRemoveClick = () => {
+    setIsRemoving(true);
+    setSelectedImage("");
+  };
+
+  const handleRestoreClick = () => {
+    setIsRemoving(false);
+    setSelectedImage(currentImageUrl || "");
+  };
+
   const handleSave = () => {
-    if (selectedImage && selectedImage !== currentImageUrl) {
+    if (isRemoving) {
+      onImageRemove?.();
+      onOpenChange(false);
+    } else if (selectedImage && selectedImage !== currentImageUrl) {
       onImageCapture(selectedImage);
       onOpenChange(false);
     }
   };
 
-  const hasChanges = selectedImage && selectedImage !== currentImageUrl;
+  const hasChanges = isRemoving || (selectedImage && selectedImage !== currentImageUrl);
 
   const handleCancel = () => {
     setSelectedImage(currentImageUrl || "");
+    setIsRemoving(false);
     onOpenChange(false);
   };
 
@@ -120,7 +139,7 @@ export function ProfilePictureModal({
           <Button
             onClick={() => fileInputRef.current?.click()}
             className="w-full gap-2 bg-primary hover:bg-primary/90"
-            disabled={isLoading}
+            disabled={isLoading || isRemoving}
           >
             {isLoading ? (
               <>
@@ -134,6 +153,31 @@ export function ProfilePictureModal({
               </>
             )}
           </Button>
+
+          {/* Remove Picture Button */}
+          {currentImageUrl && !isRemoving && (
+            <Button
+              onClick={handleRemoveClick}
+              variant="outline"
+              className="w-full gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+              disabled={isLoading}
+            >
+              <Trash2 className="h-4 w-4" />
+              Remove Photo
+            </Button>
+          )}
+
+          {/* Restore Button (when removing) */}
+          {isRemoving && (
+            <Button
+              onClick={handleRestoreClick}
+              variant="outline"
+              className="w-full gap-2"
+              disabled={isLoading}
+            >
+              Restore Photo
+            </Button>
+          )}
 
           {/* Footer Buttons - Cancel and Save */}
           <div className="flex gap-2 pt-2">

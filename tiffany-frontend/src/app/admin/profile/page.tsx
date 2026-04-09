@@ -249,6 +249,37 @@ export default function AdminProfilePage() {
     setIsEditing(false);
   };
 
+  const handleRemoveProfilePicture = async () => {
+    try {
+      setIsUploadingImage(true);
+
+      // Send request to remove profile picture
+      const payload = {
+        profileImageUrl: "",
+      };
+
+      console.log("🔄 [UPDATE API] Removing profile picture...");
+      const updatedProfile = await dispatch(updateProfileService(payload)).unwrap();
+      console.log("✅ [UPDATE API] Profile picture removed:", updatedProfile);
+
+      // Reload profile to ensure we have the latest from server
+      console.log("🔄 [FETCH] Reloading profile data...");
+      const freshProfile = await dispatch(getProfileService()).unwrap();
+      console.log("✅ [FETCH] Fresh profile loaded:", freshProfile);
+
+      // Clear form value
+      setValue("profileImageUrl", "");
+
+      showToast.success("Profile picture removed successfully");
+    } catch (error: any) {
+      console.error("Error removing profile picture:", error);
+      showToast.error(error || "Failed to remove profile picture");
+    } finally {
+      setIsUploadingImage(false);
+      setIsProfilePictureModalOpen(false);
+    }
+  };
+
   const handleDeleteAccount = async () => {
     try {
       await dispatch(deleteAccountService()).unwrap();
@@ -589,6 +620,9 @@ export default function AdminProfilePage() {
           open={isProfilePictureModalOpen}
           onOpenChange={setIsProfilePictureModalOpen}
           onImageCapture={handleAutoUploadProfilePicture}
+          onImageRemove={handleRemoveProfilePicture}
+          currentImageUrl={userProfile?.profileImageUrl}
+          userName={userProfile?.fullName}
           isLoading={isUploadingImage}
         />
       )}
