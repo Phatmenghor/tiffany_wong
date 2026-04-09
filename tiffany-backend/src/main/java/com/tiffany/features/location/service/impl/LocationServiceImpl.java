@@ -184,7 +184,7 @@ public class LocationServiceImpl implements LocationService {
         // STEP 1: Delete images marked with isDeleted=true
         List<UUID> idsToDelete = imageDtos.stream()
                 .filter(dto -> Boolean.TRUE.equals(dto.getIsDeleted()) && dto.getId() != null)
-                .map(LocationUpdateRequest.LocationImageRequest::getId)
+                .map(LocationImageRequest::getId)
                 .toList();
 
         if (!idsToDelete.isEmpty()) {
