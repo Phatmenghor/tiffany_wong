@@ -56,7 +56,8 @@ public class LocationServiceImpl implements LocationService {
         if (request.getLocationImages() != null && !request.getLocationImages().isEmpty()) {
             for (var imageRequest : request.getLocationImages()) {
                 var locationImage = new LocationImage();
-                locationImage.setLocation(savedAddress); // Set the relationship, not just the ID
+                locationImage.setLocationId(savedAddress.getId()); // Set the foreign key
+                locationImage.setLocation(savedAddress); // Set the relationship for navigation
                 locationImage.setImageUrl(imageRequest.getImageUrl());
                 savedAddress.getLocationImages().add(locationImage);
             }
@@ -128,7 +129,8 @@ public class LocationServiceImpl implements LocationService {
             // Create new LocationImage entities with proper location relationship
             for (var imageRequest : request.getLocationImages()) {
                 var locationImage = new LocationImage();
-                locationImage.setLocation(address); // Set the relationship, not just the ID
+                locationImage.setLocationId(address.getId()); // Set the foreign key
+                locationImage.setLocation(address); // Set the relationship for navigation
                 locationImage.setImageUrl(imageRequest.getImageUrl());
                 address.getLocationImages().add(locationImage);
             }
