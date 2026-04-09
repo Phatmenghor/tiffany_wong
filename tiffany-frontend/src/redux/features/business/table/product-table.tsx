@@ -183,29 +183,6 @@ export const productTableColumns = ({
     },
 
     {
-      key: "promotion",
-      label: "Promotion",
-      minWidth: "10px",
-      maxWidth: "120px",
-      truncate: true,
-      render: (product) => {
-        if (!product?.hasPromotion) {
-          return <span className="text-xs text-muted-foreground">---</span>;
-        }
-
-        const displayValue = product?.displayPromotionType === "PERCENTAGE"
-          ? `-${product?.displayPromotionValue}%`
-          : `-$${product?.displayPromotionValue}`;
-
-        return (
-          <span className="text-xs font-semibold text-red-600">
-            {displayValue}
-          </span>
-        );
-      },
-    },
-
-    {
       key: "price",
       label: "Price",
       minWidth: "150px",
