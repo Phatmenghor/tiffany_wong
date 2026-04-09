@@ -59,6 +59,7 @@ import { AppDefault } from "@/constants/app-resource/default/default";
 import { bulkPromotionTableColumns } from "@/redux/features/business/table/bulk-promotion-table";
 import {
   PRODUCT_STATUS_FILTER,
+  PRODUCT_SIZE_FILTER,
 } from "@/constants/status/filter-status";
 import { ComboboxSelectCategories } from "@/components/shared/combobox/combobox_select_categories";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
@@ -114,6 +115,7 @@ export default function BulkPromotionPage() {
     useState<CategoriesResponseModel | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [hasPromotionFilter, setHasPromotionFilter] = useState<string>("ALL");
+  const [hasSizeFilter, setHasSizeFilter] = useState<string>("ALL");
   const [showResetModal, setShowResetModal] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
 
@@ -168,6 +170,13 @@ export default function BulkPromotionPage() {
 
   // Fetch products on mount and when filters change
   useEffect(() => {
+    let hasSizeValue: boolean | undefined;
+    if (hasSizeFilter === "true") {
+      hasSizeValue = true;
+    } else if (hasSizeFilter === "false") {
+      hasSizeValue = false;
+    }
+
     dispatch(
       fetchAllProductAdminService({
         search: debouncedSearchQuery,
@@ -182,6 +191,7 @@ export default function BulkPromotionPage() {
             : hasPromotionFilter === "NO_PROMOTION"
               ? false
               : undefined,
+        hasSize: hasSizeValue,
       }),
     );
   }, [
@@ -191,6 +201,7 @@ export default function BulkPromotionPage() {
     selectedCategories,
     debouncedSearchQuery,
     hasPromotionFilter,
+    hasSizeFilter,
   ]);
 
   // Toggle product selection (and auto-select/deselect all sizes)
@@ -490,6 +501,13 @@ export default function BulkPromotionPage() {
 
   // Handle page change
   const handlePageChange = (page: number) => {
+    let hasSizeValue: boolean | undefined;
+    if (hasSizeFilter === "true") {
+      hasSizeValue = true;
+    } else if (hasSizeFilter === "false") {
+      hasSizeValue = false;
+    }
+
     dispatch(setPageNo(page));
     dispatch(
       fetchAllProductAdminService({
@@ -505,12 +523,20 @@ export default function BulkPromotionPage() {
             : hasPromotionFilter === "NO_PROMOTION"
               ? false
               : undefined,
+        hasSize: hasSizeValue,
       }),
     );
   };
 
   // Handle page size change
   const handlePageSizeChange = (newPageSize: number) => {
+    let hasSizeValue: boolean | undefined;
+    if (hasSizeFilter === "true") {
+      hasSizeValue = true;
+    } else if (hasSizeFilter === "false") {
+      hasSizeValue = false;
+    }
+
     setPageSize(newPageSize);
     dispatch(setPageNo(1));
     dispatch(
@@ -527,6 +553,7 @@ export default function BulkPromotionPage() {
             : hasPromotionFilter === "NO_PROMOTION"
               ? false
               : undefined,
+        hasSize: hasSizeValue,
       }),
     );
   };
@@ -624,6 +651,13 @@ export default function BulkPromotionPage() {
   const handleResetAllPromotions = async () => {
     try {
       setIsResetting(true);
+      let hasSizeValue: boolean | undefined;
+      if (hasSizeFilter === "true") {
+        hasSizeValue = true;
+      } else if (hasSizeFilter === "false") {
+        hasSizeValue = false;
+      }
+
       await dispatch(resetAllPromotionsService()).unwrap();
       showToast.success("All promotions have been reset successfully!");
       setShowResetModal(false);
@@ -644,6 +678,7 @@ export default function BulkPromotionPage() {
               : hasPromotionFilter === "NO_PROMOTION"
                 ? false
                 : undefined,
+          hasSize: hasSizeValue,
         }),
       );
     } catch (error) {
@@ -871,6 +906,36 @@ export default function BulkPromotionPage() {
                   }
                   className="w-full"
                   label="Product Status"
+                  size="md"
+                />
+              </div>
+
+              {/* Has Size Filter */}
+              <div className="min-w-0">
+                <CustomSelect
+                  options={PRODUCT_SIZE_FILTER}
+                  value={hasSizeFilter}
+                  placeholder="All Products"
+                  onValueChange={setHasSizeFilter}
+                  className="w-full"
+                  label="Product Size"
+                  size="md"
+                />
+              </div>
+
+              {/* Is Promotion Filter */}
+              <div className="min-w-0">
+                <CustomSelect
+                  options={[
+                    { value: "ALL", label: "All Products" },
+                    { value: "HAS_PROMOTION", label: "Has Promotion" },
+                    { value: "NO_PROMOTION", label: "No Promotion" },
+                  ]}
+                  value={hasPromotionFilter}
+                  placeholder="All Products"
+                  onValueChange={setHasPromotionFilter}
+                  className="w-full"
+                  label="Promotion Status"
                   size="md"
                 />
               </div>
