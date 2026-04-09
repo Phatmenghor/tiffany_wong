@@ -31,8 +31,8 @@ public interface ProductMapper {
 
     @AfterMapping
     default void truncateProductPromotionDates(ProductCreateDto dto, @MappingTarget Product entity) {
-        entity.setPromotionFromDate(truncateToDay(entity.getPromotionFromDate()));
-        entity.setPromotionToDate(truncateToDay(entity.getPromotionToDate()));
+        // Keep full datetime including time for precise promotion scheduling
+        // No truncation - preserve the exact datetime set by user
     }
 
     @AfterMapping
@@ -42,10 +42,8 @@ public interface ProductMapper {
             entity.setPromotionValue(null);
             entity.setPromotionFromDate(null);
             entity.setPromotionToDate(null);
-        } else {
-            entity.setPromotionFromDate(truncateToDay(entity.getPromotionFromDate()));
-            entity.setPromotionToDate(truncateToDay(entity.getPromotionToDate()));
         }
+        // Keep full datetime including time for precise promotion scheduling
     }
 
     @Mapping(target = "viewCount", ignore = true)
@@ -281,19 +279,20 @@ return promotionType != null ? promotionType.name() : null;
 
     /**
      * Check if a size promotion is active
+     * Checks against exact datetime (including time)
      */
     default boolean isSizePromotionActive(com.tiffany.features.main.models.ProductSize size) {
         if (size.getPromotionValue() == null || size.getPromotionType() == null) {
             return false;
         }
 
-        LocalDateTime today = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        LocalDateTime now = LocalDateTime.now();
 
-        if (size.getPromotionFromDate() != null && today.isBefore(size.getPromotionFromDate().truncatedTo(ChronoUnit.DAYS))) {
+        if (size.getPromotionFromDate() != null && now.isBefore(size.getPromotionFromDate())) {
             return false;
         }
 
-        if (size.getPromotionToDate() != null && today.isAfter(size.getPromotionToDate().truncatedTo(ChronoUnit.DAYS))) {
+        if (size.getPromotionToDate() != null && now.isAfter(size.getPromotionToDate())) {
             return false;
         }
 
@@ -328,19 +327,20 @@ return promotionType != null ? promotionType.name() : null;
 
     /**
      * Check if promotion is active
+     * Checks against exact datetime (including time)
      */
     default boolean isPromotionActive(Product product) {
         if (product.getPromotionValue() == null || product.getPromotionType() == null) {
             return false;
         }
 
-        LocalDateTime today = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        LocalDateTime now = LocalDateTime.now();
 
-        if (product.getPromotionFromDate() != null && today.isBefore(product.getPromotionFromDate().truncatedTo(ChronoUnit.DAYS))) {
+        if (product.getPromotionFromDate() != null && now.isBefore(product.getPromotionFromDate())) {
             return false;
         }
 
-        if (product.getPromotionToDate() != null && today.isAfter(product.getPromotionToDate().truncatedTo(ChronoUnit.DAYS))) {
+        if (product.getPromotionToDate() != null && now.isAfter(product.getPromotionToDate())) {
             return false;
         }
 
