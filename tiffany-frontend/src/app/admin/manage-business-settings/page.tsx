@@ -67,6 +67,7 @@ export default function BusinessSettingsPage() {
 
   const [isLoading, setIsLoading] = useState(!reduxBusinessSettings);
   const [isSaving, setIsSaving] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   const form = useForm<BusinessSettingsFormData>({
     resolver: zodResolver(businessSettingsSchema),
@@ -85,6 +86,11 @@ export default function BusinessSettingsPage() {
   });
 
   // Fetch business settings (with cache support)
+  useEffect(() => {
+    // Mark as hydrated after first render
+    setIsHydrated(true);
+  }, []);
+
   useEffect(() => {
     if (!reduxBusinessSettings) {
       fetchBusinessSettings();
@@ -236,7 +242,8 @@ export default function BusinessSettingsPage() {
     }
   };
 
-  if (isLoading) {
+  // Only show loading spinner after hydration to avoid SSR mismatch
+  if (isLoading && isHydrated) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

@@ -233,9 +233,9 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
               <div className="relative">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg group-hover:shadow-primary/20 transition-all duration-300 overflow-hidden">
                   <img
-                    key={logoUrl}
-                    src={getImageWithFallback(logoUrl, "logo")}
-                    alt={businessName}
+                    key={isHydrated ? logoUrl : "default"}
+                    src={isHydrated ? getImageWithFallback(logoUrl, "logo") : getImageWithFallback(undefined, "logo")}
+                    alt={isHydrated ? businessName : "Dashboard"}
                     className="w-full h-full object-cover rounded"
                     onLoad={() => console.log("✅ [SIDEBAR] Logo loaded:", logoUrl)}
                     onError={(e) => {
