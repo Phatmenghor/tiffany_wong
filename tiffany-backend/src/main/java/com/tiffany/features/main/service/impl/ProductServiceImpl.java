@@ -60,44 +60,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProductListDto> getAllDataProducts(ProductFilterDto filter) {
-        List<Product> products = productRepository.findAllWithFilters(
-                filter.getCategoryId(),
-                (filter.getStatuses() != null && !filter.getStatuses().isEmpty()) ? filter.getStatuses() : null,
-                filter.getMinPrice(),
-                filter.getMaxPrice(),
-                filter.getHasPromotion(),
-                filter.getHasSize(),
-                filter.getSearch(),
-                PaginationUtils.createSort(filter.getSortBy(), filter.getSortDirection())
-        );
-
-        List<ProductListDto> dtoList = productMapper.toListDtos(products);
-
-        if (products.isEmpty()) {
-            return dtoList;
-        }
-
-        Optional<User> currentUser = securityUtils.getCurrentUserOptional();
-        if (currentUser.isPresent()) {
-            List<UUID> productIds = products.stream().map(Product::getId).toList();
-            List<UUID> favoriteIds = favoriteQueryHelper.getFavoriteProductIds(currentUser.get().getId(), productIds);
-            Set<UUID> favoriteSet = new HashSet<>(favoriteIds);
-
-            dtoList.forEach(dto -> {
-                dto.setIsFavorited(favoriteSet.contains(dto.getId()));
-            });
-        } else {
-            dtoList.forEach(dto -> {
-                dto.setIsFavorited(false);
-            });
-        }
-
-        return dtoList;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public PaginationResponse<ProductListDto> getAllDataProductsWithPagination(ProductFilterDto filter) {
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(),

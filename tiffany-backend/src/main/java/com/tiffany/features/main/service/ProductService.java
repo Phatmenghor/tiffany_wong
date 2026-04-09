@@ -17,7 +17,6 @@ import java.util.Map;
 public interface ProductService {
     ProductDetailDto createProduct(ProductCreateDto request);
     PaginationResponse<ProductDetailDto> getAllProductsAdmin(ProductFilterDto filter);
-    List<ProductListDto> getAllDataProducts(ProductFilterDto filter);
     PaginationResponse<ProductListDto> getAllDataProductsWithPagination(ProductFilterDto filter);
     ProductDetailDto getProductById(UUID id);
     ProductDetailDto updateProduct(UUID id, ProductUpdateDto request);
