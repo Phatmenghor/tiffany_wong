@@ -69,16 +69,50 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[10 percent] Inserting system settings...';
+    RAISE NOTICE '[10 percent] Inserting system settings with complete information...';
 END $$;
 
-INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, tax_percentage, system_name, logo_system_url, primary_color, contact_address, contact_phone, contact_email)
+INSERT INTO system_settings (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, tax_percentage, system_name, description, logo_system_url, primary_color, contact_address, contact_phone, contact_email)
 VALUES
-('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 10.0, 'Tiffany E-Menu Platform', 'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce', '#57823D', 'Phnom Penh, Cambodia', '+855 23 888 9999', 'contact@tiffany.com');
+('550e8400-e29b-41d4-a716-446655990001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 10.0, 'Tiffany E-Menu Platform', 'Premium E-Commerce and Menu Management Platform for Restaurants & Retail Businesses. Providing comprehensive solutions for inventory management, order processing, customer engagement, and business analytics. We deliver excellence through innovative technology, reliable service, and dedicated customer support to help your business thrive in the digital marketplace.', 'https://plus.unsplash.com/premium_photo-1673002094195-f18084be89ce', '#57823D', 'No. 123, Street 456, Khan Daun Penh, Phnom Penh, Cambodia', '+855 23 888 9999', 'contact@tiffany.com');
 
 DO $$
 BEGIN
-    RAISE NOTICE '[15 percent] System settings inserted';
+    RAISE NOTICE '      [12 percent] System settings inserted';
+END $$;
+
+-- ============================================================================
+-- 1.1 SOCIAL MEDIA (5 social media accounts)
+-- ============================================================================
+INSERT INTO social_media (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, name, link_url)
+VALUES
+('550e8400-e29b-41d4-a716-446655991001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Facebook', 'https://www.facebook.com/TiffanyCambodia'),
+('550e8400-e29b-41d4-a716-446655991002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Instagram', 'https://www.instagram.com/tiffanycambodia'),
+('550e8400-e29b-41d4-a716-446655991003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Telegram', 'https://t.me/tiffanycambodia'),
+('550e8400-e29b-41d4-a716-446655991004', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Twitter', 'https://twitter.com/TiffanyKH'),
+('550e8400-e29b-41d4-a716-446655991005', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'LinkedIn', 'https://www.linkedin.com/company/tiffany-cambodia');
+
+DO $$
+BEGIN
+    RAISE NOTICE '      [13 percent] Social media accounts inserted';
+END $$;
+
+-- ============================================================================
+-- 1.2 BUSINESS HOURS (7 days a week)
+-- ============================================================================
+INSERT INTO business_hours (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, day, opening_time, closing_time)
+VALUES
+('550e8400-e29b-41d4-a716-446655992001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Monday', '09:00', '22:00'),
+('550e8400-e29b-41d4-a716-446655992002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Tuesday', '09:00', '22:00'),
+('550e8400-e29b-41d4-a716-446655992003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Wednesday', '09:00', '22:00'),
+('550e8400-e29b-41d4-a716-446655992004', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Thursday', '09:00', '22:00'),
+('550e8400-e29b-41d4-a716-446655992005', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Friday', '09:00', '23:00'),
+('550e8400-e29b-41d4-a716-446655992006', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Saturday', '10:00', '23:00'),
+('550e8400-e29b-41d4-a716-446655992007', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Sunday', '10:00', '21:00');
+
+DO $$
+BEGIN
+    RAISE NOTICE '      [15 percent] Business hours inserted';
     RAISE NOTICE '';
 END $$;
 
@@ -87,7 +121,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[20 percent] Inserting users (60,003 total)...';
+    RAISE NOTICE '[18 percent] Inserting users (60,003 total)...';
     RAISE NOTICE '      - 20,000 ADMIN users';
     RAISE NOTICE '      - 20,000 STAFF users';
     RAISE NOTICE '      - 20,003 CUSTOMER users';
