@@ -29,6 +29,9 @@ export const selectSocialMedia = (state: RootState) =>
 export const selectBusinessHours = (state: RootState) =>
   state.businessSettings.data?.businessHours || [];
 
+export const selectPrimaryColor = (state: RootState) =>
+  state.businessSettings.data?.primaryColor || "#57823D";
+
 export const selectBusinessColors = createSelector(
   (state: RootState) => state.businessSettings.data?.primaryColor || "#57823D",
   (primaryColor) => ({
