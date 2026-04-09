@@ -5,7 +5,6 @@ import {
   UpdateCartItemRequest,
 } from "../models/request/cart-request";
 import { CartResponseModel } from "../models/response/cart-response";
-import { AppDefault } from "@/constants/app-resource/default/default";
 
 
 export const addToCart = createApiThunk<CartResponseModel, AddToCartRequest>(
@@ -13,20 +12,16 @@ export const addToCart = createApiThunk<CartResponseModel, AddToCartRequest>(
   async (data, signal) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { optimisticTimestamp, ...requestData } = data;
-    const businessId = AppDefault.BUSINESS_ID;
 
     // DEBUG: Log request
     console.log("%c## CART API REQUEST", "background:#007bff;color:white;padding:5px;border-radius:3px;font-weight:bold", {
       endpoint: "POST /api/v1/cart",
-      payload: { ...requestData, businessId },
+      payload: requestData,
       action: requestData.quantity === 0 ? "REMOVE" : "ADD/UPDATE",
       timestamp: new Date().toLocaleTimeString()
     });
 
-    const response = await axiosClientWithAuth.post("/api/v1/cart", {
-      ...requestData,
-      businessId,
-    }, {
+    const response = await axiosClientWithAuth.post("/api/v1/cart", requestData, {
       signal,
     });
 
@@ -77,12 +72,8 @@ export const updateCartItem = createApiThunk<
 >("cart/updateCartItem", async (data, signal) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { optimisticTimestamp, ...requestData } = data;
-  const businessId = AppDefault.BUSINESS_ID;
 
-  const response = await axiosClientWithAuth.post("/api/v1/cart", {
-    ...requestData,
-    businessId,
-  }, {
+  const response = await axiosClientWithAuth.post("/api/v1/cart", requestData, {
     signal,
   });
   let responseData = response.data.data;
@@ -102,12 +93,9 @@ export const updateCartItem = createApiThunk<
 export const fetchCart = createApiThunk<CartResponseModel, void>(
   "cart/fetch",
   async (_, signal) => {
-    const businessId = AppDefault.BUSINESS_ID;
     const response = await axiosClientWithAuth.post(
       "/api/v1/cart/all",
-      {
-        businessId: businessId,
-      },
+      {},
       { signal }
     );
     let responseData = response.data.data;
@@ -128,8 +116,7 @@ export const fetchCart = createApiThunk<CartResponseModel, void>(
 export const clearCart = createApiThunk<void, void>(
   "cart/clearCart",
   async (_, signal) => {
-    const businessId = AppDefault.BUSINESS_ID;
-    await axiosClientWithAuth.delete(`/api/v1/cart/${businessId}/clear`, {
+    await axiosClientWithAuth.delete(`/api/v1/cart/clear`, {
       signal,
     });
   },
