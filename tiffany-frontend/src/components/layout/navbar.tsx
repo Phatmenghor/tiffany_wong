@@ -350,9 +350,14 @@ export function Navbar() {
                     />
                   </div>
                 )}
-                <span className="font-bold text-sm text-foreground">
-                  {businessName}
-                </span>
+                <div className="flex flex-col">
+                  <span className="font-bold text-sm text-foreground leading-tight">
+                    {businessName}
+                  </span>
+                  <span className="text-xs text-muted-foreground font-medium">
+                    Shop Online
+                  </span>
+                </div>
               </button>
 
               <div className="flex items-center gap-0.5">
@@ -430,9 +435,14 @@ export function Navbar() {
                     />
                   </div>
                 )}
-                <span className="hidden md:block text-foreground font-bold text-sm leading-tight">
-                  {businessName}
-                </span>
+                <div className="hidden md:flex flex-col">
+                  <span className="text-foreground font-bold text-sm leading-tight">
+                    {businessName}
+                  </span>
+                  <span className="text-muted-foreground text-xs font-medium">
+                    Shop Online
+                  </span>
+                </div>
               </button>
 
               <div className="hidden lg:flex items-center gap-1">
