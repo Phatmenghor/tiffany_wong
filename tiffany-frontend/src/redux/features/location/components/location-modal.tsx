@@ -122,11 +122,19 @@ function MultiImageUpload({ images, onAdd, onRemove, disabled }: MultiImageUploa
   const inputRef = useRef<HTMLInputElement>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const MAX_IMAGES = 5;
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
   const canAddMore = images.length < MAX_IMAGES;
 
   const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     Array.from(e.target.files ?? []).forEach((file) => {
-      if (!file.type.startsWith("image/")) return;
+      if (!file.type.startsWith("image/")) {
+        showToast.error("Only image files are allowed");
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        showToast.error(`File size must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`);
+        return;
+      }
       if (images.length >= MAX_IMAGES) {
         showToast.warning(`Maximum ${MAX_IMAGES} images allowed`);
         return;
@@ -232,7 +240,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
   const latitude = watch("latitude");
   const longitude = watch("longitude");
   const isPrimaryValue = watch("isPrimary");
-  const hasCoords = latitude !== 0 || longitude !== 0;
+  const hasCoords = latitude !== undefined && latitude !== null && longitude !== undefined && longitude !== null;
 
   const addressPreview = useMemo(() => {
     const parts = [watch("houseNumber"), watch("streetNumber"), watch("village"), watch("commune"), watch("district"), watch("province")].filter(Boolean);

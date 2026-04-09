@@ -1,9 +1,11 @@
 package com.tiffany.features.location.mapper;
 
 import com.tiffany.features.location.dto.request.LocationCreateRequest;
+import com.tiffany.features.location.dto.response.LocationImageResponse;
 import com.tiffany.features.location.dto.response.LocationResponse;
 import com.tiffany.features.location.dto.update.LocationUpdateRequest;
 import com.tiffany.features.location.models.Location;
+import com.tiffany.features.location.models.LocationImage;
 import com.tiffany.shared.dto.PaginationResponse;
 import com.tiffany.shared.mapper.PaginationMapper;
 import org.mapstruct.*;
@@ -19,7 +21,12 @@ public interface LocationMapper {
 
     @Mapping(target = "fullAddress", expression = "java(address.getFullAddress())")
     @Mapping(target = "hasCoordinates", expression = "java(address.hasCoordinates())")
+    @Mapping(target = "locationImages", source = "locationImages")
     LocationResponse toResponse(Location address);
+
+    LocationImageResponse toImageResponse(LocationImage image);
+
+    List<LocationImageResponse> toImageResponseList(List<LocationImage> images);
 
     List<LocationResponse> toResponseList(List<Location> addresses);
 

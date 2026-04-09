@@ -64,7 +64,9 @@ const locationSlice = createSlice({
 
         state.pagination.currentPage = pageNo;
         state.pagination.pageSize = pageSize;
-        state.pagination.hasMore = state.locations.length < (action.payload?.totalElements || 0);
+        // hasMore is true if the number of items loaded is less than total items
+        const totalElements = action.payload?.totalElements || 0;
+        state.pagination.hasMore = state.locations.length < totalElements;
         state.pagination.isInitialLoaded = true;
       })
       .addCase(fetchAllLocationsService.rejected, (state, action) => {

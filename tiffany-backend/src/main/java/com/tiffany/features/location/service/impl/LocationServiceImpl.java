@@ -46,8 +46,13 @@ public class LocationServiceImpl implements LocationService {
 
         // If this is set as default or no default exists, make it default
         if (request.getIsDefault() || !hasDefaultAddress(currentUser.getId())) {
-            clearDefaultForUser(currentUser.getId());
-            address.setAsDefault();
+            // Lock on userId to prevent race condition
+            synchronized (currentUser.getId().toString().intern()) {
+                if (request.getIsDefault() || !hasDefaultAddress(currentUser.getId())) {
+                    clearDefaultForUser(currentUser.getId());
+                    address.setAsDefault();
+                }
+            }
         }
 
         Location savedAddress = addressRepository.save(address);
@@ -160,14 +165,27 @@ public class LocationServiceImpl implements LocationService {
         User currentUser = securityUtils.getCurrentUser();
         Location address = addressRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new NotFoundException("Address not found"));
-        
+
         if (!address.getUserId().equals(currentUser.getId())) {
             throw new ValidationException("You can only delete your own addresses");
         }
-        
+
+        boolean wasDefault = Boolean.TRUE.equals(address.getIsDefault());
         address.softDelete();
         addressRepository.save(address);
-        
+
+        // If deleted address was default, promote the next address to default
+        if (wasDefault) {
+            List<Location> remainingAddresses = addressRepository
+                    .findByUserIdAndIsDeletedFalseOrderByIsDefaultDescCreatedAtDesc(currentUser.getId());
+            if (!remainingAddresses.isEmpty()) {
+                Location nextDefault = remainingAddresses.get(0);
+                nextDefault.setAsDefault();
+                addressRepository.save(nextDefault);
+                log.info("Promoted address {} to default after deletion of default address", nextDefault.getId());
+            }
+        }
+
         log.info("Address deleted for user: {}", currentUser.getUserIdentifier());
         return addressMapper.toResponse(address);
     }

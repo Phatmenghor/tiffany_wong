@@ -184,15 +184,12 @@ export default function LocationPage() {
     }
   };
 
-  const handleSetPrimary = async (locationId: string) => {
+  const handleSetPrimary = async (location: LocationResponseModel) => {
     try {
-      setSettingPrimaryId(locationId);
-      const location = locations.find((l) => l.id === locationId);
-      if (location) {
-        const updatedLocation = { ...location, isPrimary: true };
-        await update({ locationId, locationData: updatedLocation }).unwrap();
-        showToast.success("Location set as primary");
-      }
+      setSettingPrimaryId(location.id);
+      const updatedLocation = { ...location, isPrimary: true };
+      await update({ locationId: location.id, locationData: updatedLocation }).unwrap();
+      showToast.success("Location set as primary");
     } catch (error: any) {
       showToast.error(error?.message || "Failed to set primary location");
     } finally {
@@ -259,13 +256,10 @@ export default function LocationPage() {
           <LocationCard
             key={uniqueKey}
             location={location}
-            isPrimary={primaryLocation?.id === location.id}
-            onEdit={() => handleEditLocation(location)}
-            onDelete={() => setDeleteingLocation(location)}
-            onSetPrimary={() => handleSetPrimary(location.id)}
-            isSettingPrimary={settingPrimaryId === location.id}
-            currentCoords={currentCoords}
-            primaryColor={primaryColor}
+            settingPrimaryId={settingPrimaryId}
+            onEdit={handleEditLocation}
+            onDelete={(location) => setDeleteingLocation(location)}
+            onSetPrimary={handleSetPrimary}
           />
           );
         })}
