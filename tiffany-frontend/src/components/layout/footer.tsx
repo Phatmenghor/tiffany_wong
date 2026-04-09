@@ -128,17 +128,21 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-semibold text-white text-base">Follow Us</h3>
             <div className="space-y-2 text-sm">
-              {SOCIAL_LINKS.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-white hover:text-white/80 transition-colors"
-                >
-                  {social.name}
-                </a>
-              ))}
+              {socialMedia && socialMedia.length > 0 ? (
+                socialMedia.map((social) => (
+                  <a
+                    key={social.id}
+                    href={social.linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-white hover:text-white/80 transition-colors"
+                  >
+                    {social.name}
+                  </a>
+                ))
+              ) : (
+                <p className="text-white/60 text-xs">No social media links available</p>
+              )}
             </div>
           </div>
         </div>
