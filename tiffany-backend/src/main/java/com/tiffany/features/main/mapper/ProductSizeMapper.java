@@ -21,18 +21,16 @@ public interface ProductSizeMapper {
 
     @AfterMapping
     default void truncateSizePromotionDatesOnCreate(ProductSizeCreateDto dto, @MappingTarget ProductSize entity) {
-        entity.setPromotionFromDate(truncateSizeToDay(entity.getPromotionFromDate()));
-        entity.setPromotionToDate(truncateSizeToDay(entity.getPromotionToDate()));
+        // Keep full datetime including time for precise promotion scheduling
+        // No truncation - preserve the exact datetime set by user
     }
 
     @AfterMapping
     default void afterSizeUpdate(ProductSizeUpdateDto dto, @MappingTarget ProductSize entity) {
         if (!dto.hasPromotionData()) {
             entity.removePromotion();
-        } else {
-            entity.setPromotionFromDate(truncateSizeToDay(entity.getPromotionFromDate()));
-            entity.setPromotionToDate(truncateSizeToDay(entity.getPromotionToDate()));
         }
+        // Keep full datetime including time for precise promotion scheduling
     }
 
     @Mapping(target = "productId", ignore = true)
