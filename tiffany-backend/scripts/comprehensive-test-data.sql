@@ -311,17 +311,6 @@ BEGIN
     RAISE NOTICE '';
 END $$;
 
--- Update has_sizes flag for products that have sizes
-UPDATE products p
-SET has_sizes = true
-WHERE EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id);
-
-DO $$
-BEGIN
-    RAISE NOTICE '      [80.5 percent] Updated has_sizes flags';
-    RAISE NOTICE '';
-END $$;
-
 -- ============================================================================
 -- 7. PRODUCT IMAGES (1-5 per product)
 -- ============================================================================
