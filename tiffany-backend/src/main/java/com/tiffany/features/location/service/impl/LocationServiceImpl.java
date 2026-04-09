@@ -63,9 +63,9 @@ public class LocationServiceImpl implements LocationService {
         Location savedAddress = addressRepository.save(address);
         log.info("Location saved with ID: {}", savedAddress.getId());
 
-        // 2. Handle images SEPARATELY after parent is saved
+        // 2. Handle images in SEPARATE transaction
         if (request.getLocationImages() != null && !request.getLocationImages().isEmpty()) {
-            handleLocationImages(savedAddress, request.getLocationImages());
+            handleLocationImages(savedAddress.getId(), request.getLocationImages());
             log.info("Images processed for location: {}", savedAddress.getId());
         }
 
@@ -76,26 +76,27 @@ public class LocationServiceImpl implements LocationService {
     }
 
     /**
-     * Handle location images separately following Product feature pattern.
-     * Save images to repository directly, not through parent entity.
+     * Handle location images in SEPARATE transaction.
+     * This ensures FK is properly set without transaction cascade issues.
      */
-    private void handleLocationImages(Location location, List<LocationImageRequest> imageDtos) {
+    @Transactional // Separate transaction for images
+    private void handleLocationImages(UUID locationId, List<LocationImageRequest> imageDtos) {
         if (imageDtos == null || imageDtos.isEmpty()) return;
 
-        log.info("Processing {} images for location {}", imageDtos.size(), location.getId());
+        log.info("Processing {} images for location {}", imageDtos.size(), locationId);
 
         List<LocationImage> images = imageDtos.stream()
                 .map(imageDto -> {
                     LocationImage image = new LocationImage();
-                    image.setLocationId(location.getId()); // Set FK directly
+                    image.setLocationId(locationId); // FK MUST be set
                     image.setImageUrl(imageDto.getImageUrl());
+                    log.debug("Creating image with locationId: {}", locationId);
                     return image;
                 })
                 .toList();
 
-        // Save images to repository SEPARATELY (not through parent)
         locationImageRepository.saveAll(images);
-        log.info("Saved {} images for location {}", images.size(), location.getId());
+        log.info("Saved {} images for location {}", images.size(), locationId);
     }
 
     @Override
@@ -163,9 +164,9 @@ public class LocationServiceImpl implements LocationService {
         addressRepository.save(address);
         log.info("Location {} updated", id);
 
-        // 2. Handle images SEPARATELY following Product feature pattern
+        // 2. Handle images in SEPARATE transaction
         if (request.getLocationImages() != null) {
-            updateLocationImages(address, request.getLocationImages());
+            updateLocationImages(id, request.getLocationImages());
         }
 
         log.info("Address updated successfully for user: {}", currentUser.getUserIdentifier());
@@ -175,13 +176,14 @@ public class LocationServiceImpl implements LocationService {
     }
 
     /**
-     * Handle image CRUD operations following Product feature pattern.
+     * Handle image CRUD operations in SEPARATE transaction.
      * Process in order: Delete → Update → Create
      */
-    private void updateLocationImages(Location location, List<LocationImageRequest> imageDtos) {
+    @Transactional // Separate transaction for images
+    private void updateLocationImages(UUID locationId, List<LocationImageRequest> imageDtos) {
         if (imageDtos == null) return;
 
-        log.info("Processing {} image changes for location {}", imageDtos.size(), location.getId());
+        log.info("Processing {} image changes for location {}", imageDtos.size(), locationId);
 
         // STEP 1: Delete images marked with isDeleted=true
         List<UUID> idsToDelete = imageDtos.stream()
@@ -195,7 +197,7 @@ public class LocationServiceImpl implements LocationService {
         }
 
         // STEP 2: Update existing images (has ID and not marked deleted)
-        List<LocationImage> existingImagesToUpdate = locationImageRepository.findByLocationId(location.getId());
+        List<LocationImage> existingImagesToUpdate = locationImageRepository.findByLocationId(locationId);
         List<LocationImageRequest> updateRequests = imageDtos.stream()
                 .filter(dto -> dto.getId() != null && !Boolean.TRUE.equals(dto.getIsDeleted()))
                 .toList();
@@ -219,8 +221,9 @@ public class LocationServiceImpl implements LocationService {
                 .filter(dto -> dto.getId() == null && !Boolean.TRUE.equals(dto.getIsDeleted()))
                 .map(imageDto -> {
                     LocationImage image = new LocationImage();
-                    image.setLocationId(location.getId());
+                    image.setLocationId(locationId); // Use parameter, not location object
                     image.setImageUrl(imageDto.getImageUrl());
+                    log.debug("Creating new image with locationId: {}", locationId);
                     return image;
                 })
                 .toList();
