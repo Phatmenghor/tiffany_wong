@@ -237,6 +237,35 @@ export const productTableColumns = ({
     },
 
     {
+      key: "displayPromotionValue",
+      label: "Promo Value",
+      minWidth: "10px",
+      maxWidth: "120px",
+      truncate: true,
+      render: (product) => {
+        const value = product?.displayPromotionValue;
+        const type = product?.displayPromotionType;
+
+        let displayValue = "---";
+        if (value) {
+          if (type === "PERCENTAGE") {
+            displayValue = `${value}%`;
+          } else if (type === "FIXED_AMOUNT") {
+            displayValue = `$${parseFloat(value.toString()).toFixed(2)}`;
+          } else {
+            displayValue = value.toString();
+          }
+        }
+
+        return (
+          <span className="text-xs font-semibold text-red-600">
+            {displayValue}
+          </span>
+        );
+      },
+    },
+
+    {
       key: "status",
       label: "Status",
       minWidth: "150px",
