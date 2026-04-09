@@ -32,168 +32,31 @@ BEGIN
     RAISE NOTICE '[0 percent] Starting cleanup of existing data...';
 END $$;
 
--- Delete from tables only if they exist
-DO $$
-BEGIN
-    DELETE FROM product_favorites WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    RAISE NOTICE '      Table product_favorites does not exist yet (will be created)';
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM order_status_history WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM order_items WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM cart_items WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM order_delivery_addresses WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM orders WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM carts WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM product_images WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM product_sizes WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM products WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM categories WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM banners WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM images WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM social_media WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM business_hours WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM system_settings WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM refresh_tokens WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM blacklisted_tokens WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM user_profiles WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM users WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM reference_counters WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
-
-DO $$
-BEGIN
-    DELETE FROM order_counters WHERE TRUE;
-EXCEPTION WHEN undefined_table THEN
-    NULL;
-END $$;
+DELETE FROM product_favorites;
+DELETE FROM order_status_history;
+DELETE FROM order_items;
+DELETE FROM cart_items;
+DELETE FROM order_delivery_addresses;
+DELETE FROM orders;
+DELETE FROM carts;
+DELETE FROM product_images;
+DELETE FROM product_sizes;
+DELETE FROM products;
+DELETE FROM categories;
+DELETE FROM banners;
+DELETE FROM images;
+DELETE FROM social_media;
+DELETE FROM business_hours;
+DELETE FROM system_settings;
+DELETE FROM refresh_tokens;
+DELETE FROM blacklisted_tokens;
+DELETE FROM user_profiles;
+DELETE FROM users;
+DELETE FROM reference_counters;
+DELETE FROM order_counters;
 
 -- Reset sequences/auto-increment
-DO $$
-BEGIN
-    ALTER SEQUENCE reference_counters_id_seq RESTART WITH 1;
-EXCEPTION WHEN undefined_object THEN
-    NULL;
-END $$;
+ALTER SEQUENCE reference_counters_id_seq RESTART WITH 1;
 
 DO $$
 BEGIN
@@ -215,7 +78,7 @@ VALUES
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [12 percent] System settings inserted';
+    RAISE NOTICE '[12 percent] System settings inserted';
 END $$;
 
 -- ============================================================================
@@ -231,7 +94,7 @@ VALUES
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [13 percent] Social media accounts inserted';
+    RAISE NOTICE '[13 percent] Social media accounts inserted';
 END $$;
 
 -- ============================================================================
@@ -249,7 +112,7 @@ VALUES
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [15 percent] Business hours inserted';
+    RAISE NOTICE '[15 percent] Business hours inserted';
     RAISE NOTICE '';
 END $$;
 
@@ -258,7 +121,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[18 percent] Inserting users (60,003 total)...';
+    RAISE NOTICE '[20 percent] Inserting users (60,003 total)...';
     RAISE NOTICE '      - 20,000 ADMIN users';
     RAISE NOTICE '      - 20,000 STAFF users';
     RAISE NOTICE '      - 20,003 CUSTOMER users';
@@ -276,7 +139,7 @@ VALUES
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [25 percent] Inserted 2 main ADMIN users';
+    RAISE NOTICE '      [30 percent] Inserted 2 main ADMIN users';
 END $$;
 
 -- Insert 19,998 additional ADMIN users (OWNER type with ADMIN role)
@@ -290,7 +153,7 @@ FROM generate_series(1, 19998) AS t(i);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [35 percent] Inserted 19,998 additional ADMIN users';
+    RAISE NOTICE '      [40 percent] Inserted 19,998 additional ADMIN users';
 END $$;
 
 -- Insert 20,000 STAFF users (OWNER type with STAFF role)
@@ -304,7 +167,7 @@ FROM generate_series(1, 20000) AS t(i);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [45 percent] Inserted 20,000 STAFF users';
+    RAISE NOTICE '      [50 percent] Inserted 20,000 STAFF users';
 END $$;
 
 -- Insert 20,001 CUSTOMER users (CUSTOMER type with CUSTOMER role)
@@ -322,7 +185,7 @@ FROM generate_series(1, 20000) AS t(i);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [55 percent] Inserted 20,001 CUSTOMER users';
+    RAISE NOTICE '      [60 percent] Inserted 20,001 CUSTOMER users';
     RAISE NOTICE '';
 END $$;
 
@@ -344,7 +207,7 @@ FROM generate_series(1, 200) AS t(i);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [65 percent] Categories inserted';
+    RAISE NOTICE '      [62 percent] Categories inserted';
     RAISE NOTICE '';
 END $$;
 
@@ -420,7 +283,7 @@ FROM promo_data pd;
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [75 percent] Products inserted successfully';
+    RAISE NOTICE '      [85 percent] Products inserted successfully';
     RAISE NOTICE '';
 END $$;
 
@@ -490,7 +353,7 @@ FROM size_with_promo sp;
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [80 percent] Product sizes inserted successfully';
+    RAISE NOTICE '      [78 percent] Product sizes inserted successfully';
     RAISE NOTICE '';
 END $$;
 
@@ -512,7 +375,7 @@ CROSS JOIN generate_series(1, (1 + (random() * 4)::int)) AS img_num;
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [83 percent] Product images inserted successfully';
+    RAISE NOTICE '      [82 percent] Product images inserted successfully';
     RAISE NOTICE '';
 END $$;
 
@@ -535,7 +398,7 @@ FROM generate_series(1, 20) AS t(i);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [86 percent] Banners inserted successfully';
+    RAISE NOTICE '      [91 percent] Banners inserted successfully';
     RAISE NOTICE '';
 END $$;
 
@@ -557,7 +420,7 @@ AND NOT EXISTS (SELECT 1 FROM carts c WHERE c.user_id = u.id);
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [89 percent] Carts inserted successfully';
+    RAISE NOTICE '      [94 percent] Carts inserted successfully';
     RAISE NOTICE '';
 END $$;
 
@@ -628,7 +491,7 @@ BEGIN
         END IF;
     END LOOP;
 
-    RAISE NOTICE '      [100] All order items inserted!';
+    RAISE NOTICE '      [100 percent] All order items inserted!';
 END $$;
 
 -- ============================================================================
