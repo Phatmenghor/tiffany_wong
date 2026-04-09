@@ -165,7 +165,10 @@ const homeSlice = createSlice({
     // Categories
     addSectionPending(fetchHomeCategories, "categories");
     builder.addCase(fetchHomeCategories.fulfilled, (state, action) => {
-      state.categories = action.payload.content || [];
+      // Handle both pagination response and direct array response
+      state.categories = Array.isArray(action.payload)
+        ? action.payload
+        : (action.payload.content || []);
       state.sections.categories.loading = false;
       state.sections.categories.loaded = true;
     });
