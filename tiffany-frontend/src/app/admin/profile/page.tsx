@@ -481,6 +481,14 @@ export default function AdminProfilePage() {
                           placeholder="Date of birth"
                           error={errors.dateOfBirth}
                         />
+
+                        <TextareaField
+                          control={typedControl}
+                          name="remark"
+                          label="Remark"
+                          placeholder="Add any additional notes"
+                          error={errors.remark}
+                        />
                       </>
                     ) : (
                       <>
@@ -496,50 +504,18 @@ export default function AdminProfilePage() {
                           }
                         />
                         <DisplayField label="Date of Birth" value={watch("dateOfBirth")} />
+                        <DisplayField
+                          label="Account Status"
+                          value={userProfile?.accountStatus || "-"}
+                        />
+                        <DisplayField
+                          label="User Role"
+                          value={userProfile?.userRole || "-"}
+                        />
+                        <DisplayField label="Remark" value={watch("remark")} />
                       </>
                     )}
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Account Status */}
-              {!isEditing && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Account Status</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <DisplayField
-                        label="Account Status"
-                        value={userProfile?.accountStatus || "-"}
-                      />
-                      <DisplayField
-                        label="User Role"
-                        value={userProfile?.userRole || "-"}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Additional Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Additional Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {isEditing ? (
-                    <TextareaField
-                      control={typedControl}
-                      name="remark"
-                      label="Remark"
-                      placeholder="Add any additional notes"
-                      error={errors.remark}
-                    />
-                  ) : (
-                    <DisplayField label="Remark" value={watch("remark")} />
-                  )}
                 </CardContent>
               </Card>
             </div>
