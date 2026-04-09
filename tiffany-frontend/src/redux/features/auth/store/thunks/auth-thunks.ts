@@ -11,13 +11,15 @@ import { axiosClient, axiosClientWithAuth } from "@/utils/axios";
 import { createApiThunk } from "@/utils/axios/api-wrapper";
 import { storeAdminTokens, storeTokens } from "@/utils/local-storage/token";
 import { storeAdminUserInfo, storeUserInfo } from "@/utils/local-storage/userInfo";
+import { fetchBusinessSettingsThunk } from "@/redux/features/business/store/thunks/business-settings-thunks";
 
 /**
  * Login thunk
+ * Logs in user and immediately fetches business settings for theme/images
  */
 export const loginService = createApiThunk<any, LoginCredentialsRequest>(
   "auth/login",
-  async (credentials) => {
+  async (credentials, { dispatch }) => {
     const response = await axiosClient.post("/api/v1/auth/login", credentials);
     const data = response.data.data;
 
@@ -39,6 +41,10 @@ export const loginService = createApiThunk<any, LoginCredentialsRequest>(
       }
 
       console.log("## [THUNK] Tokens stored successfully");
+
+      // Immediately fetch business settings so theme/images load without delay
+      console.log("## [THUNK] Fetching business settings for theme...");
+      dispatch(fetchBusinessSettingsThunk());
     }
 
     return data;

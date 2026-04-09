@@ -9,6 +9,7 @@ import {
 } from "@/redux/features/auth/store/slice/auth-slice";
 import { selectAuthReady } from "@/redux/features/auth/store/selectors/auth-selectors";
 import { COOKIE_KEYS } from "@/constants/cookie-keys";
+import { fetchBusinessSettingsThunk } from "@/redux/features/business/store/thunks/business-settings-thunks";
 
 // Helper to read cookies directly from browser (works on client-side refresh)
 function getCookieValue(name: string): string | null {
@@ -24,6 +25,7 @@ function getCookieValue(name: string): string | null {
  * - Runs on every route change
  * - Properly detects which tokens to read based on current route
  * - Restores auth state from cookies to Redux
+ * - Loads business settings immediately for theme/images
  */
 export function useAuthInit() {
   const dispatch = useAppDispatch();
@@ -47,6 +49,9 @@ export function useAuthInit() {
     if (token && userInfo) {
       dispatch(setUser(userInfo)); // This triggers profile auto-fetch via middleware
       dispatch(setAuthReady());
+
+      // Eagerly fetch business settings so theme/images load immediately
+      dispatch(fetchBusinessSettingsThunk());
     } else {
       // No auth data, mark as ready (not authenticated)
       if (!authReady) {
