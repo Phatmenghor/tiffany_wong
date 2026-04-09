@@ -59,15 +59,20 @@ public class LocationServiceImpl implements LocationService {
 
         // Handle location images - set the location_id on each image after location is saved
         if (request.getLocationImages() != null && !request.getLocationImages().isEmpty()) {
+            log.info("Creating location with {} images for user: {}", request.getLocationImages().size(), currentUser.getUserIdentifier());
+
             for (var imageRequest : request.getLocationImages()) {
                 var locationImage = new LocationImage();
                 locationImage.setLocationId(savedAddress.getId()); // Set the foreign key
                 locationImage.setLocation(savedAddress); // Set the relationship for navigation
                 locationImage.setImageUrl(imageRequest.getImageUrl());
                 savedAddress.getLocationImages().add(locationImage);
+
+                log.debug("Created location image: {}", imageRequest.getImageUrl().substring(0, Math.min(50, imageRequest.getImageUrl().length())) + "...");
             }
             // Save again with images
             savedAddress = addressRepository.save(savedAddress);
+            log.info("Location created with {} images saved successfully", savedAddress.getLocationImages().size());
         }
 
         log.info("Address created for user: {}", currentUser.getUserIdentifier());
@@ -126,19 +131,54 @@ public class LocationServiceImpl implements LocationService {
         // Update fields from request
         addressMapper.updateEntity(request, address);
 
-        // Handle location images - set the location relationship on each image
-        if (request.getLocationImages() != null && !request.getLocationImages().isEmpty()) {
-            // Clear existing images (cascade delete via JPA)
-            address.getLocationImages().clear();
+        // Handle location images with CRUD logic (Create, Update, Delete)
+        if (request.getLocationImages() != null) {
+            log.info("Processing {} image changes for location {} by user: {}",
+                request.getLocationImages().size(), id, currentUser.getUserIdentifier());
 
-            // Create new LocationImage entities with proper location relationship
+            int createdCount = 0;
+            int updatedCount = 0;
+            int deletedCount = 0;
+
+            // Collect IDs of images to keep (for deleting unmarked ones)
+            List<UUID> imagesToKeep = new java.util.ArrayList<>();
+
+            // Process each image in the request
             for (var imageRequest : request.getLocationImages()) {
-                var locationImage = new LocationImage();
-                locationImage.setLocationId(address.getId()); // Set the foreign key
-                locationImage.setLocation(address); // Set the relationship for navigation
-                locationImage.setImageUrl(imageRequest.getImageUrl());
-                address.getLocationImages().add(locationImage);
+                if (Boolean.TRUE.equals(imageRequest.getIsDeleted())) {
+                    // DELETE: Image marked for deletion
+                    if (imageRequest.getId() != null) {
+                        address.getLocationImages().removeIf(img -> img.getId().equals(imageRequest.getId()));
+                        log.debug("Deleted location image with ID: {}", imageRequest.getId());
+                        deletedCount++;
+                    }
+                } else if (imageRequest.getId() != null) {
+                    // UPDATE: Image has ID, so update existing
+                    address.getLocationImages().stream()
+                        .filter(img -> img.getId().equals(imageRequest.getId()))
+                        .forEach(img -> {
+                            img.setImageUrl(imageRequest.getImageUrl());
+                            log.debug("Updated location image {}: new URL length = {}", imageRequest.getId(), imageRequest.getImageUrl().length());
+                        });
+                    imagesToKeep.add(imageRequest.getId());
+                    updatedCount++;
+                } else {
+                    // CREATE: New image without ID
+                    var locationImage = new LocationImage();
+                    locationImage.setLocationId(address.getId());
+                    locationImage.setLocation(address);
+                    locationImage.setImageUrl(imageRequest.getImageUrl());
+                    address.getLocationImages().add(locationImage);
+                    log.debug("Created new location image");
+                    createdCount++;
+                }
             }
+
+            log.info("Image processing complete - created: {}, updated: {}, deleted: {}", createdCount, updatedCount, deletedCount);
+        } else if (request.getLocationImages() != null && request.getLocationImages().isEmpty()) {
+            // If empty list provided, clear all images
+            log.info("Clearing all images for location {}", id);
+            address.getLocationImages().clear();
         }
 
         // Handle default address logic
@@ -171,6 +211,10 @@ public class LocationServiceImpl implements LocationService {
         }
 
         boolean wasDefault = Boolean.TRUE.equals(address.getIsDefault());
+        int imageCount = address.getLocationImages() != null ? address.getLocationImages().size() : 0;
+
+        log.info("Deleting location {} with {} associated images for user: {}", id, imageCount, currentUser.getUserIdentifier());
+
         address.softDelete();
         addressRepository.save(address);
 
@@ -183,8 +227,12 @@ public class LocationServiceImpl implements LocationService {
                 nextDefault.setAsDefault();
                 addressRepository.save(nextDefault);
                 log.info("Promoted address {} to default after deletion of default address", nextDefault.getId());
+            } else {
+                log.info("No remaining addresses to promote to default");
             }
         }
+
+        log.info("Location deletion completed successfully");
 
         log.info("Address deleted for user: {}", currentUser.getUserIdentifier());
         return addressMapper.toResponse(address);

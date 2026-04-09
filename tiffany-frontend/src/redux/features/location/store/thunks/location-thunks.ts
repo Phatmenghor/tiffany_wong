@@ -29,35 +29,91 @@ export const createLocationService = createApiThunk<
   LocationResponseModel,
   LocationCreateRequest
 >("location/create", async (data) => {
-  const response = await axiosClientWithAuth.post("/api/v1/locations", {
-    ...data,
-    isDefault: data.isPrimary,
+  const imageCount = data.locationImages?.length ?? 0;
+  console.log("[Location] Creating location with", {
+    district: data.district,
+    province: data.province,
+    imageCount,
+    payload: data,
   });
-  return response.data.data;
+
+  try {
+    const response = await axiosClientWithAuth.post("/api/v1/locations", {
+      ...data,
+      isDefault: data.isPrimary,
+    });
+    console.log("[Location] Create successful:", {
+      id: response.data.data.id,
+      imagesReturned: response.data.data.locationImages?.length ?? 0,
+      response: response.data.data,
+    });
+    return response.data.data;
+  } catch (error: any) {
+    console.error("[Location] Create failed:", {
+      error: error.message,
+      status: error.response?.status,
+      errorDetails: error.response?.data,
+      sentData: data,
+    });
+    throw error;
+  }
 });
 
 export const updateLocationService = createApiThunk<
   LocationResponseModel,
   LocationUpdateRequest
 >("location/update", async ({ locationId, locationData }) => {
-  const response = await axiosClientWithAuth.put(
-    `/api/v1/locations/${locationId}`,
-    {
-      ...locationData,
-      isDefault: locationData.isPrimary,
-    }
-  );
-  return response.data.data;
+  const imageCount = locationData.locationImages?.length ?? 0;
+  console.log("[Location] Updating location", {
+    locationId,
+    imageCount,
+    payload: locationData,
+  });
+
+  try {
+    const response = await axiosClientWithAuth.put(
+      `/api/v1/locations/${locationId}`,
+      {
+        ...locationData,
+        isDefault: locationData.isPrimary,
+      }
+    );
+    console.log("[Location] Update successful:", {
+      id: response.data.data.id,
+      imagesReturned: response.data.data.locationImages?.length ?? 0,
+    });
+    return response.data.data;
+  } catch (error: any) {
+    console.error("[Location] Update failed:", {
+      locationId,
+      error: error.message,
+      status: error.response?.status,
+      errorDetails: error.response?.data,
+    });
+    throw error;
+  }
 });
 
 export const deleteLocationService = createApiThunk<
   LocationResponseModel,
   string
 >("location/delete", async (locationId) => {
-  const response = await axiosClientWithAuth.delete(
-    `/api/v1/locations/${locationId}`
-  );
-  return response.data.data;
+  console.log("[Location] Deleting location:", { locationId });
+
+  try {
+    const response = await axiosClientWithAuth.delete(
+      `/api/v1/locations/${locationId}`
+    );
+    console.log("[Location] Delete successful:", { locationId });
+    return response.data.data;
+  } catch (error: any) {
+    console.error("[Location] Delete failed:", {
+      locationId,
+      error: error.message,
+      status: error.response?.status,
+    });
+    throw error;
+  }
 });
 
 export const fetchDefaultLocationService = createApiThunk<

@@ -1,7 +1,10 @@
 import { BasePagination } from "@/utils/common/pagination";
 
 export interface LocationImageModel {
+  id: string; // Image ID for tracking updates/deletes
   imageUrl: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface LocationResponseModel {
