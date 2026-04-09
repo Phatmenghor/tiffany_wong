@@ -210,13 +210,14 @@ export default function ProductPromotionPage() {
   };
 
   const handleConfirmResetAllPromotions = async () => {
-    dispatch(resetAllPromotionsOptimistic());
-    closeResetAllModal();
     try {
+      dispatch(resetAllPromotionsOptimistic());
       await dispatch(resetAllPromotionsService()).unwrap();
       showToast.success("All promotions reset successfully");
+      closeResetAllModal();
     } catch (error: any) {
       showToast.error(error?.message || error || "Failed to reset all promotions");
+      // Modal stays open on error so user can retry
     }
   };
 
@@ -238,13 +239,14 @@ export default function ProductPromotionPage() {
 
   const handleConfirmResetTablePromotions = async () => {
     const ids = resetTableState.selectedProductIds;
-    dispatch(resetTablePromotionsOptimistic(ids));
-    closeResetTableModal();
     try {
+      dispatch(resetTablePromotionsOptimistic(ids));
       await dispatch(resetBulkPromotionsService(ids as any)).unwrap();
       showToast.success(`Reset promotions for ${ids.length} products`);
+      closeResetTableModal();
     } catch (error: any) {
       showToast.error(error?.message || error || "Failed to reset promotions");
+      // Modal stays open on error so user can retry
     }
   };
 
@@ -336,19 +338,22 @@ export default function ProductPromotionPage() {
   const handleConfirmResetPromotion = async () => {
     if (!resetPromotionState.product?.id) return;
 
-    // Optimistic update - update state immediately
-    dispatch(resetProductPromotionOptimistic(resetPromotionState.product.id));
-
-    closeResetPromotionModal();
-
-    // Call API in background without blocking UI
     try {
+      // Optimistic update - update state immediately
+      dispatch(resetProductPromotionOptimistic(resetPromotionState.product.id));
+
+      // Call API and wait for response before closing modal
       await dispatch(resetProductPromotionService(resetPromotionState.product.id)).unwrap();
+
       showToast.success(
         `Promotion reset for product "${resetPromotionState.product?.name ?? ""}"`,
       );
+
+      // Close modal only after API succeeds
+      closeResetPromotionModal();
     } catch (error: any) {
       showToast.error(error?.message || error || "Failed to reset promotion");
+      // Modal stays open on error so user can retry
     }
   };
 

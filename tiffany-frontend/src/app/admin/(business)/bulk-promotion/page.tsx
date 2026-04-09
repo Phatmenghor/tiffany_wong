@@ -401,21 +401,23 @@ export default function BulkPromotionPage() {
   const handleConfirmResetPromotion = async () => {
     if (!resetPromotionState.product?.id) return;
 
-    // Optimistic update - update state immediately
-    dispatch(resetProductPromotionOptimistic(resetPromotionState.product.id));
+    try {
+      // Optimistic update - update state immediately
+      dispatch(resetProductPromotionOptimistic(resetPromotionState.product.id));
 
-    closeResetPromotionModal();
+      // Call API and wait for response before closing modal
+      await dispatch(resetProductPromotionService(resetPromotionState.product.id)).unwrap();
 
-    // Call API in background without blocking UI
-    dispatch(resetProductPromotionService(resetPromotionState.product.id))
-      .then(() => {
-        showToast.success(
-          `Promotion reset for product "${resetPromotionState.product?.name ?? ""}"`,
-        );
-      })
-      .catch((error: any) => {
-        showToast.error(error?.message || "Failed to reset promotion");
-      });
+      showToast.success(
+        `Promotion reset for product "${resetPromotionState.product?.name ?? ""}"`,
+      );
+
+      // Close modal only after API succeeds
+      closeResetPromotionModal();
+    } catch (error: any) {
+      showToast.error(error?.message || error || "Failed to reset promotion");
+      // Modal stays open on error so user can retry
+    }
   };
 
   // Sync selected products to form
