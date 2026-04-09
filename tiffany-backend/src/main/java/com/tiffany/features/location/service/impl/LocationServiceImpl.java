@@ -5,6 +5,7 @@ import com.tiffany.exception.custom.ValidationException;
 import com.tiffany.features.auth.models.User;
 import com.tiffany.features.location.dto.filter.LocationFilterRequest;
 import com.tiffany.features.location.dto.request.LocationCreateRequest;
+import com.tiffany.features.location.dto.request.LocationImageRequest;
 import com.tiffany.features.location.dto.response.LocationResponse;
 import com.tiffany.features.location.dto.update.LocationUpdateRequest;
 import com.tiffany.features.location.mapper.LocationMapper;
@@ -77,7 +78,7 @@ public class LocationServiceImpl implements LocationService {
      * Handle location images separately following Product feature pattern.
      * Save images to repository directly, not through parent entity.
      */
-    private void handleLocationImages(Location location, List<LocationCreateRequest.LocationImageRequest> imageDtos) {
+    private void handleLocationImages(Location location, List<LocationImageRequest> imageDtos) {
         if (imageDtos == null || imageDtos.isEmpty()) return;
 
         log.info("Processing {} images for location {}", imageDtos.size(), location.getId());
@@ -175,7 +176,7 @@ public class LocationServiceImpl implements LocationService {
      * Handle image CRUD operations following Product feature pattern.
      * Process in order: Delete → Update → Create
      */
-    private void updateLocationImages(Location location, List<LocationUpdateRequest.LocationImageRequest> imageDtos) {
+    private void updateLocationImages(Location location, List<LocationImageRequest> imageDtos) {
         if (imageDtos == null) return;
 
         log.info("Processing {} image changes for location {}", imageDtos.size(), location.getId());
@@ -193,7 +194,7 @@ public class LocationServiceImpl implements LocationService {
 
         // STEP 2: Update existing images (has ID and not marked deleted)
         List<LocationImage> existingImagesToUpdate = locationImageRepository.findByLocationId(location.getId());
-        List<LocationUpdateRequest.LocationImageRequest> updateRequests = imageDtos.stream()
+        List<LocationImageRequest> updateRequests = imageDtos.stream()
                 .filter(dto -> dto.getId() != null && !Boolean.TRUE.equals(dto.getIsDeleted()))
                 .toList();
 
