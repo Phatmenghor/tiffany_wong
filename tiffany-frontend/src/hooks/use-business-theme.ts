@@ -75,9 +75,9 @@ export function useBusinessTheme() {
       applyColors(DEFAULT_COLORS.primary);
     }
 
-    // Always fetch business settings from API (even on login page)
-    // System settings are public and global - needed by all routes
-    // Don't fetch if already in Redux
+    // Try to fetch business settings from API if not already in Redux
+    // Will fail with 401 on login page (before auth) - that's OK, use cache/defaults
+    // System settings are global - needed by all routes
     if (!businessSettings) {
       console.log("## [THEME] Fetching business settings from API...");
       dispatch(fetchBusinessSettingsThunk()).then((action) => {
@@ -96,8 +96,13 @@ export function useBusinessTheme() {
           applyColors(payload.primaryColor);
           console.log("## [THEME] Business theme loaded and applied from API");
         } else {
-          console.error("## [THEME] Failed to load business settings, using defaults");
-          applyColors(DEFAULT_COLORS.primary);
+          // Request failed (likely 401 on login page) - use cache or defaults
+          console.log("## [THEME] Failed to fetch business settings (may be on login page), using cache/defaults");
+          if (cachedColors) {
+            applyColors(cachedColors.primaryColor);
+          } else {
+            applyColors(DEFAULT_COLORS.primary);
+          }
         }
       });
     } else {

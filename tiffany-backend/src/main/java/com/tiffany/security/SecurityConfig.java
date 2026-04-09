@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/public/**").permitAll()
                         .requestMatchers("/api/images/**").permitAll()
+                        .requestMatchers("/api/v1/system-settings").permitAll()  // System branding (logo, colors, name) - needed by all users
 
                         .requestMatchers("/api/v1/users/owner-token").permitAll()
                         .requestMatchers("/api/v1/users/customer-token").permitAll()
