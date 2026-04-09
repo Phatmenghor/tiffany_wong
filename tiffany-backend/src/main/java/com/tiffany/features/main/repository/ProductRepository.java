@@ -148,7 +148,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Modifying
     @Transactional
     @Query(nativeQuery = true, value =
-        "UPDATE products SET " +
+        "UPDATE products p SET " +
         "    has_active_promotion = false, " +
         "    display_promotion_type = NULL, " +
         "    display_promotion_value = NULL, " +
@@ -156,14 +156,14 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    display_promotion_to_date = NULL, " +
         "    display_price = price, " +
         "    display_origin_price = price " +
-        "WHERE is_deleted = false " +
-        "  AND has_sizes = false " +
-        "  AND has_active_promotion = true " +
+        "WHERE p.is_deleted = false " +
+        "  AND NOT EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
+        "  AND p.has_active_promotion = true " +
         "  AND ( " +
-        "      promotion_value IS NULL " +
-        "      OR promotion_type IS NULL " +
-        "      OR (promotion_from_date IS NOT NULL AND promotion_from_date::date > CURRENT_DATE) " +
-        "      OR (promotion_to_date   IS NOT NULL AND promotion_to_date::date   < CURRENT_DATE) " +
+        "      p.promotion_value IS NULL " +
+        "      OR p.promotion_type IS NULL " +
+        "      OR (p.promotion_from_date IS NOT NULL AND p.promotion_from_date::date > CURRENT_DATE) " +
+        "      OR (p.promotion_to_date   IS NOT NULL AND p.promotion_to_date::date   < CURRENT_DATE) " +
         "  )")
     int clearExpiredPromotionsForProductsWithoutSizes();
 
@@ -173,7 +173,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Modifying
     @Transactional
     @Query(nativeQuery = true, value =
-        "UPDATE products SET " +
+        "UPDATE products p SET " +
         "    has_active_promotion = true, " +
         "    display_promotion_type = promotion_type, " +
         "    display_promotion_value = promotion_value, " +
@@ -187,13 +187,13 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "            THEN GREATEST(0, price - promotion_value) " +
         "        ELSE price " +
         "    END " +
-        "WHERE is_deleted = false " +
-        "  AND has_sizes = false " +
-        "  AND has_active_promotion = false " +
-        "  AND promotion_value IS NOT NULL " +
-        "  AND promotion_type  IS NOT NULL " +
-        "  AND (promotion_from_date IS NULL OR promotion_from_date::date <= CURRENT_DATE) " +
-        "  AND (promotion_to_date   IS NULL OR promotion_to_date::date   >= CURRENT_DATE)")
+        "WHERE p.is_deleted = false " +
+        "  AND NOT EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
+        "  AND p.has_active_promotion = false " +
+        "  AND p.promotion_value IS NOT NULL " +
+        "  AND p.promotion_type  IS NOT NULL " +
+        "  AND (p.promotion_from_date IS NULL OR p.promotion_from_date::date <= CURRENT_DATE) " +
+        "  AND (p.promotion_to_date   IS NULL OR p.promotion_to_date::date   >= CURRENT_DATE)")
     int syncStartedPromotionsForProductsWithoutSizes();
 
     /**
@@ -253,7 +253,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "          AND (ps.promotion_to_date   IS NULL OR ps.promotion_to_date::date   >= CURRENT_DATE) " +
         "        ORDER BY ps.price ASC LIMIT 1) " +
         "WHERE p.is_deleted = false " +
-        "  AND p.has_sizes = true " +
+        "  AND EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
         "  AND p.has_active_promotion = false " +
         "  AND EXISTS ( " +
         "      SELECT 1 FROM product_sizes ps " +
@@ -281,7 +281,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    display_price        = (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false), " +
         "    display_origin_price = (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
         "WHERE p.is_deleted = false " +
-        "  AND p.has_sizes = true " +
+        "  AND EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
         "  AND p.has_active_promotion = true " +
         "  AND NOT EXISTS ( " +
         "      SELECT 1 FROM product_sizes ps " +
@@ -311,10 +311,12 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    display_promotion_value = NULL, " +
         "    display_promotion_from_date = NULL, " +
         "    display_promotion_to_date = NULL, " +
-        "    display_price = CASE WHEN p.has_sizes = false THEN p.price " +
-        "                         ELSE (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) END, " +
-        "    display_origin_price = CASE WHEN p.has_sizes = false THEN p.price " +
-        "                                ELSE (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) END " +
+        "    display_price = CASE WHEN EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
+        "                         THEN (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
+        "                         ELSE p.price END, " +
+        "    display_origin_price = CASE WHEN EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
+        "                                 THEN (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
+        "                                 ELSE p.price END " +
         "WHERE p.id = :productId " +
         "  AND p.is_deleted = false")
     int resetProductPromotionById(@Param("productId") UUID productId);
@@ -335,10 +337,12 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    display_promotion_value = NULL, " +
         "    display_promotion_from_date = NULL, " +
         "    display_promotion_to_date = NULL, " +
-        "    display_price = CASE WHEN p.has_sizes = false THEN p.price " +
-        "                         ELSE (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) END, " +
-        "    display_origin_price = CASE WHEN p.has_sizes = false THEN p.price " +
-        "                                ELSE (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) END " +
+        "    display_price = CASE WHEN EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
+        "                         THEN (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
+        "                         ELSE p.price END, " +
+        "    display_origin_price = CASE WHEN EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
+        "                                 THEN (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
+        "                                 ELSE p.price END " +
         "WHERE p.id IN :productIds " +
         "  AND p.is_deleted = false")
     int resetPromotionsBulk(@Param("productIds") List<UUID> productIds);
@@ -361,7 +365,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    display_promotion_to_date = NULL, " +
         "    display_price = price, " +
         "    display_origin_price = price " +
-        "WHERE is_deleted = false AND has_sizes = false")
+        "WHERE is_deleted = false AND NOT EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = products.id AND ps.is_deleted = false)")
     int resetAllPromotionsForProductsWithoutSizes();
 
     /**
@@ -382,7 +386,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "    display_promotion_to_date = NULL, " +
         "    display_price = (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false), " +
         "    display_origin_price = (SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false) " +
-        "WHERE p.is_deleted = false AND p.has_sizes = true")
+        "WHERE p.is_deleted = false AND EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id AND ps.is_deleted = false)")
     int resetAllPromotionsForProductsWithSizes();
 
     /**
