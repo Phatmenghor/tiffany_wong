@@ -69,9 +69,10 @@ public class LocationServiceImpl implements LocationService {
             log.info("Images processed for location: {}", savedAddress.getId());
         }
 
-        // 3. Fetch fresh entity from DB to include images
         log.info("Address created successfully for user: {}", currentUser.getUserIdentifier());
-        return getAddressById(savedAddress.getId());
+
+        // 3. Return mapped response (images loaded from DB via mapper)
+        return addressMapper.toResponse(savedAddress);
     }
 
     /**
@@ -167,9 +168,10 @@ public class LocationServiceImpl implements LocationService {
             updateLocationImages(address, request.getLocationImages());
         }
 
-        // 3. Fetch fresh entity from DB to return
         log.info("Address updated successfully for user: {}", currentUser.getUserIdentifier());
-        return getAddressById(id);
+
+        // 3. Return mapped response (images loaded from DB)
+        return addressMapper.toResponse(address);
     }
 
     /**
