@@ -17,69 +17,35 @@ export function ThemeInitializer() {
 
 /**
  * Initialize theme colors from cache
- * Gets business ID from various sources and applies cached colors
+ * Reads business settings from localStorage and applies primary color immediately
  */
 function initializeTheme() {
   try {
-    // Try to get business ID from multiple sources
-    let businessId: string | null = null;
+    const BUSINESS_SETTINGS_CACHE_KEY = "businessSettings_cache";
 
-    // 1. Check localStorage first (fastest, set on login)
-    businessId = localStorage.getItem("businessId");
+    // Try to get cached business settings from localStorage
+    const cachedSettingsStr = localStorage.getItem(BUSINESS_SETTINGS_CACHE_KEY);
 
-    // 2. If not found, check from URL or page context
-    if (!businessId && typeof window !== "undefined") {
-      // Try to get from sessionStorage as fallback
-      businessId = sessionStorage.getItem("businessId");
-
-      // Try to get from cookie (BusinessId cookie if it exists)
-      const cookies = document.cookie.split(";");
-      for (let cookie of cookies) {
-        cookie = cookie.trim();
-        if (cookie.startsWith("businessId=")) {
-          businessId = decodeURIComponent(cookie.substring("businessId=".length));
-          break;
-        }
-      }
-    }
-
-    if (!businessId) {
-      console.log("[THEME] No business ID found, using defaults");
-      return;
-    }
-
-    // Get cached colors from cookie
-    const cookieName = `theme_colors_${businessId}`;
-    const cookies = document.cookie.split(";");
-    let cachedColorsStr: string | null = null;
-
-    for (let cookie of cookies) {
-      cookie = cookie.trim();
-      if (cookie.startsWith(cookieName + "=")) {
-        cachedColorsStr = decodeURIComponent(
-          cookie.substring((cookieName + "=").length)
-        );
-        break;
-      }
-    }
-
-    if (!cachedColorsStr) {
-      console.log(
-        `[THEME] No cached colors for business ${businessId}, using defaults`
-      );
+    if (!cachedSettingsStr) {
+      console.log("[THEME] No cached business settings found, using defaults");
       return;
     }
 
     try {
-      const cachedColors = JSON.parse(cachedColorsStr);
-      console.log(
-        `[THEME INIT] Applying cached colors for business ${businessId}`
-      );
+      const cachedSettings = JSON.parse(cachedSettingsStr);
+      const primaryColor = cachedSettings?.primaryColor;
+
+      if (!primaryColor) {
+        console.log("[THEME] No primary color in cached settings");
+        return;
+      }
+
+      console.log("[THEME INIT] Applying cached primary color:", primaryColor);
 
       // Apply colors immediately
-      applyThemeColorsSync(cachedColors.primaryColor);
+      applyThemeColorsSync(primaryColor);
     } catch (e) {
-      console.error("[THEME] Failed to parse cached colors:", e);
+      console.error("[THEME] Failed to parse cached settings:", e);
     }
   } catch (error) {
     console.error("[THEME INIT] Error initializing theme:", error);

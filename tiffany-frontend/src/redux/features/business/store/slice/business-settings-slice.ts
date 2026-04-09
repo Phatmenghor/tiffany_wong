@@ -5,9 +5,40 @@ import {
   updateBusinessSettingsThunk,
 } from "../thunks/business-settings-thunks";
 
+// Cache key for localStorage
+const BUSINESS_SETTINGS_CACHE_KEY = "businessSettings_cache";
+
+// Load cached business settings from localStorage
+const loadCachedSettings = () => {
+  if (typeof window === "undefined") return null;
+  try {
+    const cached = localStorage.getItem(BUSINESS_SETTINGS_CACHE_KEY);
+    return cached ? JSON.parse(cached) : null;
+  } catch (error) {
+    console.error("Error loading cached business settings:", error);
+    return null;
+  }
+};
+
+// Save business settings to localStorage cache
+const cacheSetting = (data: any) => {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(BUSINESS_SETTINGS_CACHE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.error("Error caching business settings:", error);
+  }
+};
+
+// Initialize with cached data if available
+const initialState: BusinessSettingsState = {
+  ...initialBusinessSettingsState,
+  data: loadCachedSettings() || initialBusinessSettingsState.data,
+};
+
 const businessSettingsSlice = createSlice({
   name: "businessSettings",
-  initialState: initialBusinessSettingsState,
+  initialState,
   reducers: {
     /**
      * Clear business settings
@@ -29,6 +60,8 @@ const businessSettingsSlice = createSlice({
         state.isLoading = false;
         state.data = action.payload;
         state.error = null;
+        // Cache the settings for instant loading on next page refresh
+        cacheSetting(action.payload);
       })
       .addCase(fetchBusinessSettingsThunk.rejected, (state, action) => {
         state.isLoading = false;
@@ -46,6 +79,8 @@ const businessSettingsSlice = createSlice({
         state.isLoading = false;
         state.data = action.payload;
         state.error = null;
+        // Cache the updated settings
+        cacheSetting(action.payload);
       })
       .addCase(updateBusinessSettingsThunk.rejected, (state, action) => {
         state.isLoading = false;
