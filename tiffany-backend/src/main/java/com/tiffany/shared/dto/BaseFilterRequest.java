@@ -13,7 +13,7 @@ public abstract class BaseFilterRequest {
     private Integer pageNo = 1;
 
     @Min(value = 1, message = "Page size must be at least 1")
-    @Max(value = 10000, message = "Page size cannot exceed 10000")
+    @Max(value = 101, message = "Page size cannot exceed 101")
     private Integer pageSize = 15;
 
     private String sortBy = "createdAt";

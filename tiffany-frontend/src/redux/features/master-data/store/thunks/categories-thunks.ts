@@ -27,21 +27,28 @@ export const fetchAllCategoriesService = createApiThunk<
 });
 
 /**
- * Fetch all categories with product count (for admin page)
- * Defaults to pageSize: 10000 to fetch all categories without pagination
+ * Fetch all categories (for admin page)
+ * Uses public endpoint to get all categories without pagination
  */
 export const fetchAllCategoriesWithProductCountService = createApiThunk<
   any,
   AllCategoriesRequest
 >("categories/fetchAllWithProductCount", async (params) => {
   const response = await axiosClientWithAuth.post(
-    "/api/v1/categories/product/all",
+    "/api/v1/public/categories/all-data",
     {
-      pageSize: 10000, // Fetch all categories
-      ...params,
+      status: params?.status,
+      search: params?.search,
     }
   );
-  return response.data.data;
+  // Return in pagination format for compatibility with existing reducer
+  return {
+    content: response.data.data || [],
+    pageNo: 1,
+    totalPages: 1,
+    totalElements: response.data.data?.length || 0,
+    last: true,
+  };
 });
 
 /**
