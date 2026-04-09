@@ -38,6 +38,9 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
   const businessName = useAppSelector(selectBusinessName);
   const logoUrl = useAppSelector(selectBusinessLogo);
 
+  // Track if component is hydrated to avoid hydration mismatch
+  const [isHydrated, setIsHydrated] = useState(false);
+
   // Debug logging to verify Redux state
   useEffect(() => {
     console.log("## [SIDEBAR] Redux businessSettings state:", {
@@ -58,6 +61,11 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
     Settings: true,
   });
   const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    // Mark as hydrated to avoid hydration mismatch
+    setIsHydrated(true);
+  }, []);
 
   useEffect(() => {
     if (!profile && !isProfileLoading) {
@@ -240,7 +248,7 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
               </div>
               <div className="flex flex-col">
                 <span className="text-foreground font-bold text-sm leading-tight tracking-tight">
-                  {businessName}
+                  {isHydrated ? businessName : "Dashboard"}
                 </span>
                 <span className="text-muted-foreground text-xs font-medium tracking-wide">
                   Dashboard
