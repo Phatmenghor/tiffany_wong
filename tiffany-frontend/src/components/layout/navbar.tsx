@@ -57,7 +57,6 @@ const navigationLinks = [
   { name: "Products", href: "/products" },
   { name: "Promotions", href: "/promotions" },
   { name: "Categories", href: "/categories" },
-  { name: "Brands", href: "/brands" },
 ];
 
 export function Navbar() {
@@ -303,9 +302,7 @@ export function Navbar() {
       ? "Search products..."
       : pathname === "/categories"
         ? "Search categories..."
-        : pathname === "/brands"
-          ? "Search brands..."
-          : "Search...";
+        : "Search...";
 
   return (
     <>
@@ -430,14 +427,9 @@ export function Navbar() {
                     }}
                   />
                 </div>
-                <div className="hidden md:flex flex-col">
-                  <span className="text-foreground font-bold text-sm leading-tight">
-                    {businessName}
-                  </span>
-                  <span className="text-muted-foreground text-xs font-medium">
-                    Shop Online
-                  </span>
-                </div>
+                <span className="hidden md:block text-foreground font-bold text-sm leading-tight">
+                  {businessName}
+                </span>
               </button>
 
               <div className="hidden lg:flex items-center gap-1">
