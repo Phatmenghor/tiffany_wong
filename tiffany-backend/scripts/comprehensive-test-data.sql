@@ -32,31 +32,168 @@ BEGIN
     RAISE NOTICE '[0 percent] Starting cleanup of existing data...';
 END $$;
 
-DELETE FROM product_favorites;
-DELETE FROM order_status_history;
-DELETE FROM order_items;
-DELETE FROM cart_items;
-DELETE FROM order_delivery_addresses;
-DELETE FROM orders;
-DELETE FROM carts;
-DELETE FROM product_images;
-DELETE FROM product_sizes;
-DELETE FROM products;
-DELETE FROM categories;
-DELETE FROM banners;
-DELETE FROM images;
-DELETE FROM social_media;
-DELETE FROM business_hours;
-DELETE FROM system_settings;
-DELETE FROM refresh_tokens;
-DELETE FROM blacklisted_tokens;
-DELETE FROM user_profiles;
-DELETE FROM users;
-DELETE FROM reference_counters;
-DELETE FROM order_counters;
+-- Delete from tables only if they exist
+DO $$
+BEGIN
+    DELETE FROM product_favorites WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    RAISE NOTICE '      Table product_favorites does not exist yet (will be created)';
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM order_status_history WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM order_items WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM cart_items WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM order_delivery_addresses WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM orders WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM carts WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM product_images WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM product_sizes WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM products WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM categories WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM banners WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM images WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM social_media WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM business_hours WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM system_settings WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM refresh_tokens WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM blacklisted_tokens WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM user_profiles WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM users WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM reference_counters WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
+
+DO $$
+BEGIN
+    DELETE FROM order_counters WHERE TRUE;
+EXCEPTION WHEN undefined_table THEN
+    NULL;
+END $$;
 
 -- Reset sequences/auto-increment
-ALTER SEQUENCE reference_counters_id_seq RESTART WITH 1;
+DO $$
+BEGIN
+    ALTER SEQUENCE reference_counters_id_seq RESTART WITH 1;
+EXCEPTION WHEN undefined_object THEN
+    NULL;
+END $$;
 
 DO $$
 BEGIN
