@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Plus, Minus, X, Edit2 } from "lucide-react";
+import { Plus, Minus, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CustomButton } from "@/components/shared/button/custom-button";
 import { formatCurrency } from "@/utils/common/currency-format";
@@ -127,17 +127,8 @@ export function CartItemCard({
                 )}
               </div>
 
-              {/* Edit Icon + Quantity Controls - Right Side */}
-              <div className="flex items-center gap-2">
-                <CustomButton
-                  size="icon"
-                  variant="outline"
-                  className="h-8 w-8 shrink-0 text-slate-600 hover:bg-slate-100"
-                  title="Edit item"
-                >
-                  <Edit2 className="h-3.5 w-3.5" />
-                </CustomButton>
-                <div className="flex items-center gap-1">
+              {/* Quantity Controls - Right Side */}
+              <div className="flex items-center gap-1">
                   <CustomButton
                     size="icon"
                     variant="outline"

@@ -61,7 +61,7 @@ public interface CartMapper {
                 BigDecimal subtotalDiscountAmount = subtotalBeforeDiscount.subtract(response.getSubtotalAfterDiscount());
                 response.setSubtotalDiscountAmount(subtotalDiscountAmount);
 
-                if (response.getCurrentPriceBeforeDiscount().compareTo(BigDecimal.ZERO) > 0) {
+                if (response.getCurrentPriceBeforeDiscount().compareTo(BigDecimal.ZERO) > 0 && response.getCurrentPriceAfterDiscount() != null) {
                     BigDecimal itemDiscountAmount = response.getCurrentPriceBeforeDiscount()
                             .subtract(response.getCurrentPriceAfterDiscount());
                     response.setDiscountAmountPerItem(itemDiscountAmount);
@@ -74,13 +74,17 @@ public interface CartMapper {
         if (response.getCurrentPriceBeforeDiscount() != null && response.getCurrentPriceAfterDiscount() != null) {
             BigDecimal discountAmount = response.getCurrentPriceBeforeDiscount()
                     .subtract(response.getCurrentPriceAfterDiscount());
-            response.setDiscountAmountPerItem(discountAmount);
 
-            if ("PERCENTAGE".equals(response.getDiscountType()) && response.getCurrentPriceBeforeDiscount().compareTo(BigDecimal.ZERO) > 0) {
-                BigDecimal discountPercent = discountAmount
-                        .divide(response.getCurrentPriceBeforeDiscount(), 2, java.math.RoundingMode.HALF_UP)
-                        .multiply(new BigDecimal(100));
-                response.setDiscountPercentage(discountPercent);
+            // Only set discount if positive (meaning there's actual discount)
+            if (discountAmount.compareTo(BigDecimal.ZERO) > 0) {
+                response.setDiscountAmountPerItem(discountAmount);
+
+                if ("PERCENTAGE".equals(response.getDiscountType()) && response.getCurrentPriceBeforeDiscount().compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal discountPercent = discountAmount
+                            .divide(response.getCurrentPriceBeforeDiscount(), 2, java.math.RoundingMode.HALF_UP)
+                            .multiply(new BigDecimal(100));
+                    response.setDiscountPercentage(discountPercent);
+                }
             }
         }
     }
