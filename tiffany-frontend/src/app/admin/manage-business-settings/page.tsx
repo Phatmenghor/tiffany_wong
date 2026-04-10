@@ -198,7 +198,7 @@ export default function BusinessSettingsPage() {
         contactAddress: data.contactAddress || undefined,
         contactPhone: data.contactPhone || undefined,
         contactEmail: data.contactEmail || undefined,
-        businessHours: data.businessHours,
+        businessHours: data.businessHours as any,
       };
 
       const action = await dispatch(updateBusinessSettingsThunk(payload));
@@ -213,13 +213,13 @@ export default function BusinessSettingsPage() {
 
         // Cache the colors for instant load on next page refresh
         const colors = {
-          primaryColor: result.primaryColor || "",
+          primaryColor: result.primaryColor ?? "",
         };
         cacheThemeColors(SYSTEM_ID, colors);
 
         // Apply colors in real-time without refresh
         if (result.primaryColor) {
-          applyThemeColors(result.primaryColor);
+          applyThemeColors(result.primaryColor ?? "");
         }
 
         showToast.success("Business settings updated successfully");
