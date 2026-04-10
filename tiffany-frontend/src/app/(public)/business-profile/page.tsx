@@ -103,8 +103,6 @@ export default function BusinessProfilePage() {
         createdAt: businessSettings.createdAt,
         updatedAt: businessSettings.updatedAt,
         slug: "",
-        createdBy: businessSettings.createdBy,
-        updatedBy: businessSettings.updatedBy,
       };
       setProfile(mappedProfile);
     }
