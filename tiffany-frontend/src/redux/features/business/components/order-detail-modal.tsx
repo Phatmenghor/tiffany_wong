@@ -16,7 +16,32 @@ import { formatCurrency } from "@/utils/common/currency-format";
 import { getOrderStatusLabel } from "@/enums/order-status.enum";
 import { Loading } from "@/components/shared/common/loading";
 import { DisplayField } from "@/components/shared/form-field/display-field";
+import { Clock, Package, AlertCircle, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { showToast } from "@/components/shared/common/show-toast";
+
+
+// Order status steps configuration
+const ORDER_STATUS_STEPS = [
+  { status: "PENDING", label: "Pending", description: "Order placed, awaiting confirmation" },
+  { status: "CONFIRMED", label: "Confirmed", description: "Order confirmed" },
+  { status: "COMPLETED", label: "Completed", description: "Order delivered/completed" },
+];
+
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case "COMPLETED":
+      return <Check className="h-5 w-5" />;
+    case "CONFIRMED":
+      return <Package className="h-5 w-5" />;
+    case "PENDING":
+      return <Clock className="h-5 w-5" />;
+    case "CANCELLED":
+      return <AlertCircle className="h-5 w-5" />;
+    default:
+      return <Clock className="h-5 w-5" />;
+  }
+};
 
 interface OrderDetailModalProps {
   orderId?: string;
@@ -102,6 +127,86 @@ export function OrderDetailModal({
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-6 space-y-6">
+
+            {/* Order Status Timeline - Modern Progress Bar */}
+            {orderData.orderStatus !== "CANCELLED" ? (
+              <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-8 shadow-sm">
+                <h3 className="text-base font-bold text-slate-900 mb-10">Order Progress</h3>
+
+                {/* Progress Steps with Full Width Connection Lines */}
+                <div className="relative">
+                  {/* Full Width Background Line */}
+                  <div className="absolute top-7 left-0 right-0 h-1 bg-slate-300 rounded-full">
+                    {/* Filled Progress Line */}
+                    <div
+                      className={cn(
+                        "h-full bg-gradient-to-r from-primary via-primary to-primary rounded-full transition-all duration-500 shadow-sm shadow-primary/30",
+                        ORDER_STATUS_STEPS.findIndex(s => s.status === orderData.orderStatus) > 0 && "shadow-md shadow-primary/30"
+                      )}
+                      style={{
+                        width: `${((ORDER_STATUS_STEPS.findIndex(s => s.status === orderData.orderStatus)) / (ORDER_STATUS_STEPS.length - 1)) * 100}%`,
+                      }}
+                    />
+                  </div>
+
+                  {/* Steps Container */}
+                  <div className="flex items-start justify-between">
+                    {ORDER_STATUS_STEPS.map((step) => {
+                      const stepIndex = ORDER_STATUS_STEPS.indexOf(step);
+                      const currentIndex = ORDER_STATUS_STEPS.findIndex(s => s.status === orderData.orderStatus);
+                      const isCompleted = stepIndex < currentIndex;
+                      const isActive = step.status === orderData.orderStatus;
+
+                      return (
+                        <div
+                          key={step.status}
+                          className="flex flex-col items-center relative z-10"
+                        >
+                          {/* Step Circle with Icon */}
+                          <div
+                            className={cn(
+                              "w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 transition-all ring-2 ring-offset-2 ring-offset-white",
+                              isCompleted || isActive
+                                ? "bg-primary text-white ring-primary/30 shadow-md shadow-primary/20"
+                                : "bg-slate-200 text-slate-400 ring-slate-300"
+                            )}
+                          >
+                            {getStatusIcon(step.status)}
+                          </div>
+
+                          {/* Label */}
+                          <span className={cn(
+                            "text-sm font-bold mt-3 whitespace-nowrap",
+                            isCompleted || isActive
+                              ? "text-primary"
+                              : "text-slate-500"
+                          )}>
+                            {step.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Cancelled State */
+              <div className="bg-red-50 border border-red-200 rounded-xl p-5 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                    <AlertCircle className="h-6 w-6 text-red-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-red-700">Order Cancelled</h3>
+                    <p className="text-sm text-red-600 mt-1">
+                      This order has been cancelled
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+
             {/* Order & Pricing Information */}
             <Card className="border-0 shadow-sm bg-gradient-to-br from-background to-muted/30">
               <CardHeader className="pb-4 border-b">
