@@ -193,7 +193,7 @@ export default function BusinessSettingsPage() {
           ? parseFloat(data.taxPercentage)
           : undefined,
         logoSystemUrl: logoSystemUrl || undefined,
-        socialMedia: data.socialMedia,
+        socialMedia: data.socialMedia as any,
         primaryColor: data.primaryColor || undefined,
         contactAddress: data.contactAddress || undefined,
         contactPhone: data.contactPhone || undefined,
@@ -431,11 +431,12 @@ export default function BusinessSettingsPage() {
             <div>
               <h3 className="text-lg font-semibold">Business Hours</h3>
               <p className="text-sm text-muted-foreground">
-                {form.watch("businessHours")?.length > 0
-                  ? `${form.watch("businessHours").length} day${
-                      form.watch("businessHours").length > 1 ? "s" : ""
-                    } configured`
-                  : "No business hours configured"}
+                {(() => {
+                    const hours = form.watch("businessHours") || [];
+                    return hours.length > 0
+                      ? `${hours.length} day${hours.length > 1 ? "s" : ""} configured`
+                      : "No business hours configured";
+                  })()}
               </p>
             </div>
             <Button
