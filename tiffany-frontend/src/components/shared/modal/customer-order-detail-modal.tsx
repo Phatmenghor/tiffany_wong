@@ -139,13 +139,13 @@ export function CustomerOrderDetailModal({
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-6 space-y-6">
-            {/* Order Status Timeline - Modern Progress Bar - TOP POSITION */}
+            {/* Order Status Timeline - Modern Progress Bar */}
             {!isCancelled ? (
               <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-8 shadow-sm">
-                <h3 className="text-base font-bold text-slate-900 mb-8">Order Progress</h3>
+                <h3 className="text-base font-bold text-slate-900 mb-10">Order Progress</h3>
 
-                {/* Linear Progress Bar */}
-                <div className="flex items-center gap-0 mb-12">
+                {/* Progress Steps with Icons and Labels */}
+                <div className="flex items-center gap-0">
                   {ORDER_STATUS_STEPS.map((step, index) => {
                     const isCompleted = index < currentStepIndex;
                     const isActive = step.status === orderData.orderStatus;
@@ -153,23 +153,33 @@ export function CustomerOrderDetailModal({
                     return (
                       <div
                         key={step.status}
-                        className="flex items-center flex-1 gap-0"
+                        className="flex flex-col items-center flex-1 gap-0"
                       >
-                        {/* Step Circle */}
-                        <div
-                          className={cn(
-                            "w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 transition-all ring-2 ring-offset-2 dark:ring-offset-slate-950",
+                        {/* Step Circle with Icon and Label */}
+                        <div className="flex flex-col items-center gap-2 mb-2">
+                          <div
+                            className={cn(
+                              "w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 transition-all ring-2 ring-offset-2 dark:ring-offset-slate-950",
+                              isCompleted || isActive
+                                ? "bg-primary text-white ring-primary/30 shadow-md shadow-primary/20"
+                                : "bg-slate-200 text-slate-400 ring-slate-300"
+                            )}
+                          >
+                            {getStatusIcon(step.status)}
+                          </div>
+                          <span className={cn(
+                            "text-sm font-bold whitespace-nowrap px-2 text-center",
                             isCompleted || isActive
-                              ? "bg-primary text-white ring-primary/30 shadow-md shadow-primary/20"
-                              : "bg-slate-200 text-slate-400 ring-slate-300"
-                          )}
-                        >
-                          {getStatusIcon(step.status)}
+                              ? "text-primary"
+                              : "text-slate-500"
+                          )}>
+                            {step.label}
+                          </span>
                         </div>
 
                         {/* Connector Line */}
                         {index < ORDER_STATUS_STEPS.length - 1 && (
-                          <div className="flex-1 flex items-center px-2">
+                          <div className="flex-1 flex items-center px-2 h-8">
                             <div
                               className={cn(
                                 "w-full h-2.5 rounded-full transition-colors",
@@ -180,30 +190,6 @@ export function CustomerOrderDetailModal({
                             />
                           </div>
                         )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Status Labels */}
-                <div className="flex items-flex-start gap-0 px-1">
-                  {ORDER_STATUS_STEPS.map((step) => {
-                    const isCompleted = ORDER_STATUS_STEPS.indexOf(step) < currentStepIndex;
-                    const isActive = step.status === orderData.orderStatus;
-
-                    return (
-                      <div
-                        key={step.status}
-                        className="flex flex-col items-center flex-1"
-                      >
-                        <span className={cn(
-                          "text-sm font-bold whitespace-nowrap px-2 block text-center",
-                          isCompleted || isActive
-                            ? "text-primary"
-                            : "text-slate-500"
-                        )}>
-                          {step.label}
-                        </span>
                       </div>
                     );
                   })}
