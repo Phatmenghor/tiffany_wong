@@ -4,14 +4,6 @@ import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
-import { TextField } from "@/components/shared/form-field/text-field";
-import { TextareaField } from "@/components/shared/form-field/text-area-field";
-import { SelectField } from "@/components/shared/form-field/select-field";
-import { CancelButton } from "@/components/shared/form-field/cancel-button";
-import { SubmitButton } from "@/components/shared/form-field/submid-button";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   fetchProductByIdService,
   createProductService,
@@ -30,22 +22,23 @@ import { FormHeader } from "@/components/shared/form-field/form-header";
 import { FormBody } from "@/components/shared/form-field/form-body";
 import { FormFooter } from "@/components/shared/form-field/form-footer";
 import { ModalMode, ProductStatus } from "@/constants/status/status";
-import {
-  PRODUCT_STATUS_CREATE_UPDATE,
-  PROMOTION_TYPE_CREATE_UPDATE,
-} from "@/constants/status/create-update-status";
-import { ClickableImageUpload } from "@/components/shared/form-field/clickable-image-upload";
-import { ComboboxSelectCategories } from "@/components/shared/combobox/combobox_select_categories";
-import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
-import { Trash2 } from "lucide-react";
+import { CancelButton } from "@/components/shared/form-field/cancel-button";
+import { SubmitButton } from "@/components/shared/form-field/submid-button";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
 import {
   createProductSchema,
   ProductFormData,
   updateProductSchema,
 } from "../store/models/schema/product-schema";
-import { DateTimePickerField } from "@/components/shared/form-field/date-picker-field";
 import { Loading } from "@/components/shared/common/loading";
+import {
+  ProductBasicInfo,
+  ProductMainImage,
+  ProductPricing,
+  ProductSizes,
+  ProductImagesGallery,
+} from "./product-modal/index";
+import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
 
 type Props = {
   mode: ModalMode;
@@ -54,7 +47,7 @@ type Props = {
   isOpen: boolean;
 };
 
-const MAX_PRODUCT_IMAGES = 5; // Maximum number of product images allowed
+const MAX_PRODUCT_IMAGES = 5;
 
 export default function ProductModal({
   isOpen,
@@ -106,7 +99,6 @@ export default function ProductModal({
     mode: "onChange",
   });
 
-  // Field arrays for images and sizes
   const {
     fields: imageFields,
     append: appendImage,
@@ -125,31 +117,111 @@ export default function ProductModal({
     name: "sizes",
   });
 
-  const productName = watch("name");
-  const mainImageUrl = watch("mainImageUrl");
-  const promotionType = watch("promotionType");
   const hasSizes = sizeFields.length > 0;
-  const showPromotionFields = promotionType && promotionType !== "NONE";
 
-  // Calculate remaining slots
-  const remainingSlots = MAX_PRODUCT_IMAGES - imageFields.length;
-  const canAddMore = imageFields.length < MAX_PRODUCT_IMAGES;
+  // Fetch product data for edit mode
+  useEffect(() => {
+    const fetchProductData = async () => {
+      if (!productId || !isOpen || isCreate) return;
 
-  // Handle multiple image uploads with max limit
+      try {
+        const resultAction = await dispatch(fetchProductByIdService(productId));
+
+        if (fetchProductByIdService.fulfilled.match(resultAction)) {
+          const data = resultAction.payload;
+
+          if (data.categoryId) {
+            setSelectedCategory({
+              id: data.categoryId,
+              name: data.categoryName,
+            } as CategoriesResponseModel);
+          }
+
+          reset({
+            id: data.id,
+            name: data.name || "",
+            description: data.description || "",
+            categoryId: data.categoryId || "",
+            price: data.price || 0,
+            mainImageUrl: data.mainImageUrl || "",
+            promotionType: data.promotionType || "NONE",
+            promotionValue: data.promotionValue || undefined,
+            promotionFromDate: data.promotionFromDate || "",
+            promotionToDate: data.promotionToDate || "",
+            images: data.images || [],
+            sizes: data.sizes || [],
+            status: data.status || ProductStatus.ACTIVE,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching product data:", error);
+      }
+    };
+
+    fetchProductData();
+  }, [productId, isOpen, isCreate, reset, dispatch]);
+
+  useEffect(() => {
+    if (isOpen && isCreate) {
+      setSelectedCategory(null);
+      reset({
+        name: "",
+        description: "",
+        categoryId: "",
+        price: 0,
+        mainImageUrl: "",
+        promotionType: "NONE",
+        promotionValue: undefined,
+        promotionFromDate: "",
+        promotionToDate: "",
+        images: [],
+        sizes: [],
+        status: ProductStatus.ACTIVE,
+      });
+    }
+  }, [isOpen, isCreate, reset]);
+
+  useEffect(() => {
+    if (isOpen) {
+      dispatch(clearError());
+    }
+  }, [isOpen, dispatch]);
+
+  const cleanPromotionData = (
+    promotionType?: string,
+    promotionValue?: number,
+    promotionFromDate?: string,
+    promotionToDate?: string,
+  ) => {
+    if (!promotionType || promotionType === "NONE") {
+      return {
+        promotionType: null,
+        promotionValue: null,
+        promotionFromDate: null,
+        promotionToDate: null,
+      };
+    }
+
+    return {
+      promotionType: promotionType || undefined,
+      promotionValue: promotionValue || undefined,
+      promotionFromDate: promotionFromDate || undefined,
+      promotionToDate: promotionToDate || undefined,
+    };
+  };
+
   const handleMultipleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    // Check if adding these files would exceed the limit
     if (imageFields.length >= MAX_PRODUCT_IMAGES) {
       showToast.error(`Maximum ${MAX_PRODUCT_IMAGES} images allowed`);
       event.target.value = "";
       return;
     }
 
-    // Calculate how many files we can actually accept
     const availableSlots = MAX_PRODUCT_IMAGES - imageFields.length;
     const filesToProcess = Array.from(files).slice(0, availableSlots);
 
@@ -166,7 +238,7 @@ export default function ProductModal({
     setIsProcessingImages(true);
 
     try {
-      const maxSize = 5 * 1024 * 1024; // 5MB
+      const maxSize = 5 * 1024 * 1024;
       const fileToBase64 = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
@@ -222,106 +294,10 @@ export default function ProductModal({
     }
   };
 
-  // Fetch product data for edit mode
-  useEffect(() => {
-    const fetchProductData = async () => {
-      if (!productId || !isOpen || isCreate) return;
-
-      try {
-        const resultAction = await dispatch(fetchProductByIdService(productId));
-
-        if (fetchProductByIdService.fulfilled.match(resultAction)) {
-          const data = resultAction.payload;
-
-          // Set combobox selections
-          if (data.categoryId) {
-            setSelectedCategory({
-              id: data.categoryId,
-              name: data.categoryName,
-            } as CategoriesResponseModel);
-          }
-
-          reset({
-            id: data.id,
-            name: data.name || "",
-            description: data.description || "",
-            categoryId: data.categoryId || "",
-            price: data.price || 0,
-            mainImageUrl: data.mainImageUrl || "",
-            promotionType: data.promotionType || "NONE",
-            promotionValue: data.promotionValue || undefined,
-            promotionFromDate: data.promotionFromDate || "",
-            promotionToDate: data.promotionToDate || "",
-            images: data.images || [],
-            sizes: data.sizes || [],
-            status: data.status || ProductStatus.ACTIVE,
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching product data:", error);
-      }
-    };
-
-    fetchProductData();
-  }, [productId, isOpen, isCreate, reset, dispatch]);
-
-  // Reset form for create mode
-  useEffect(() => {
-    if (isOpen && isCreate) {
-      setSelectedCategory(null);
-      reset({
-        name: "",
-        description: "",
-        categoryId: "",
-        price: 0,
-        mainImageUrl: "",
-        promotionType: "NONE",
-        promotionValue: undefined,
-        promotionFromDate: "",
-        promotionToDate: "",
-        images: [],
-        sizes: [],
-        status: ProductStatus.ACTIVE,
-      });
-    }
-  }, [isOpen, isCreate, reset]);
-
-  // Clear errors when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      dispatch(clearError());
-    }
-  }, [isOpen, dispatch]);
-
-  // Helper function to clean promotion data
-  const cleanPromotionData = (
-    promotionType?: string,
-    promotionValue?: number,
-    promotionFromDate?: string,
-    promotionToDate?: string,
-  ) => {
-    if (!promotionType || promotionType === "NONE") {
-      return {
-        promotionType: null,
-        promotionValue: null,
-        promotionFromDate: null,
-        promotionToDate: null,
-      };
-    }
-
-    return {
-      promotionType: promotionType || undefined,
-      promotionValue: promotionValue || undefined,
-      promotionFromDate: promotionFromDate || undefined,
-      promotionToDate: promotionToDate || undefined,
-    };
-  };
-
   const onSubmit = async (data: ProductFormData) => {
     try {
       setIsUploadingImage(true);
 
-      // Upload main image if it's base64
       let finalMainImageUrl = data.mainImageUrl;
       if (finalMainImageUrl && isBase64Image(finalMainImageUrl)) {
         try {
@@ -333,7 +309,6 @@ export default function ProductModal({
         }
       }
 
-      // Upload product images
       const processedImages = await Promise.all(
         (data.images || []).map(async (img: any) => {
           if (!img.imageUrl) return null;
@@ -362,7 +337,6 @@ export default function ProductModal({
 
       setIsUploadingImage(false);
 
-      // Clean sizes data
       const cleanedSizes = (data.sizes || []).map((size) => ({
         id: size.id,
         name: size.name,
@@ -377,7 +351,6 @@ export default function ProductModal({
         ),
       }));
 
-      // Prepare base payload
       const basePayload = {
         name: data.name,
         description: data.description,
@@ -388,7 +361,6 @@ export default function ProductModal({
         status: data.status,
       };
 
-      // If product has sizes, pricing comes from sizes
       const payload = hasSizes
         ? {
             ...basePayload,
@@ -442,6 +414,7 @@ export default function ProductModal({
 
   const isSubmitting = isCreate ? isCreating : isUpdating;
   const isProcessing = isSubmitting || isUploadingImage || isProcessingImages;
+  const productName = watch("name");
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -480,559 +453,115 @@ export default function ProductModal({
                   </div>
                 )}
 
-                {/* Basic Information */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Basic Information</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-max">
-                      <div>
-                        <TextField
-                          control={control}
-                          name="name"
-                          label="Product Name"
-                          placeholder="Enter product name"
-                          required
-                          disabled={isProcessing}
-                          error={errors.name}
-                        />
-                      </div>
+                <ProductBasicInfo
+                  control={control}
+                  errors={errors}
+                  isProcessing={isProcessing}
+                  selectedCategory={selectedCategory}
+                  onCategoryChange={setSelectedCategory}
+                  onCategoryIdChange={(categoryId) =>
+                    setValue("categoryId", categoryId, { shouldDirty: true })
+                  }
+                />
 
-                      <div>
-                        <ComboboxSelectCategories
-                          dataSelect={selectedCategory}
-                          onChangeSelected={(category) => {
-                            setSelectedCategory(category);
-                            setValue("categoryId", category?.id || "", {
-                              shouldDirty: true,
-                            });
-                          }}
-                          label="Category"
-                          placeholder="Select category"
-                          required
-                          disabled={isProcessing}
-                          error={errors.categoryId?.message}
-                          showAllOption={false}
-                        />
-                      </div>
+                <ProductMainImage
+                  control={control}
+                  errors={errors}
+                  isProcessing={isProcessing}
+                  onImageChange={(base64) =>
+                    setValue("mainImageUrl", base64, { shouldDirty: true })
+                  }
+                />
 
-                      <div>
-                        <SelectField
-                          control={control}
-                          name="status"
-                          label="Status"
-                          placeholder="Select status"
-                          options={PRODUCT_STATUS_CREATE_UPDATE}
-                          required
-                          disabled={isProcessing}
-                          error={errors.status}
-                        />
-                      </div>
+                <ProductPricing
+                  control={control}
+                  errors={errors}
+                  isProcessing={isProcessing}
+                  hasSizes={hasSizes}
+                  setValue={setValue}
+                  onResetPromotion={() => {
+                    setValue("promotionType", "NONE", {
+                      shouldDirty: true,
+                    });
+                    setValue("promotionValue", undefined, {
+                      shouldDirty: true,
+                    });
+                    setValue("promotionFromDate", "", {
+                      shouldDirty: true,
+                    });
+                    setValue("promotionToDate", "", {
+                      shouldDirty: true,
+                    });
+                  }}
+                />
 
-                      <div className="col-span-1 md:col-span-2">
-                        <TextareaField
-                          control={control}
-                          name="description"
-                          label="Description"
-                          placeholder="Enter product description"
-                          rows={1}
-                          required
-                          disabled={isProcessing}
-                          error={errors.description}
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <ProductSizes
+                  control={control}
+                  errors={errors}
+                  isProcessing={isProcessing}
+                  sizeFields={sizeFields}
+                  watch={watch}
+                  setValue={setValue}
+                  onAddSize={() =>
+                    appendSize({
+                      name: "",
+                      barcode: "",
+                      sku: "",
+                      price: 0,
+                      promotionType: "NONE",
+                      promotionValue: undefined,
+                      promotionFromDate: "",
+                      promotionToDate: "",
+                    })
+                  }
+                  onRemoveSize={removeSize}
+                  onResetPromotion={(index) => {
+                    setValue(`sizes.${index}.promotionType`, "NONE", {
+                      shouldDirty: true,
+                    });
+                    setValue(`sizes.${index}.promotionValue`, undefined, {
+                      shouldDirty: true,
+                    });
+                    setValue(`sizes.${index}.promotionFromDate`, "", {
+                      shouldDirty: true,
+                    });
+                    setValue(`sizes.${index}.promotionToDate`, "", {
+                      shouldDirty: true,
+                    });
+                  }}
+                  onResetAllPromotions={() => {
+                    sizeFields.forEach((_, idx) => {
+                      setValue(`sizes.${idx}.promotionType`, "NONE", {
+                        shouldDirty: true,
+                      });
+                      setValue(`sizes.${idx}.promotionValue`, undefined, {
+                        shouldDirty: true,
+                      });
+                      setValue(`sizes.${idx}.promotionFromDate`, "", {
+                        shouldDirty: true,
+                      });
+                      setValue(`sizes.${idx}.promotionToDate`, "", {
+                        shouldDirty: true,
+                      });
+                    });
+                  }}
+                />
 
-                {/* Main Product Image */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Product Image</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ClickableImageUpload
-                      label="Main Product Image"
-                      value={mainImageUrl}
-                      onChange={(base64) =>
-                        setValue("mainImageUrl", base64, { shouldDirty: true })
-                      }
-                      aspectRatio="square"
-                      height="h-48"
-                      maxSize={5}
-                      required
-                      error={errors.mainImageUrl}
-                      placeholder="Click to upload main product image"
-                      helperText="PNG, JPG up to 5MB"
-                    />
-                  </CardContent>
-                </Card>
-
-                {/* Pricing Section - Only show if no sizes */}
-                {!hasSizes && (
-                  <Card>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle>Pricing Information</CardTitle>
-                        {showPromotionFields && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setValue("promotionType", "NONE", {
-                                shouldDirty: true,
-                              });
-                              setValue("promotionValue", undefined, {
-                                shouldDirty: true,
-                              });
-                              setValue("promotionFromDate", "", {
-                                shouldDirty: true,
-                              });
-                              setValue("promotionToDate", "", {
-                                shouldDirty: true,
-                              });
-                            }}
-                            disabled={isProcessing}
-                          >
-                            Reset Promotion
-                          </Button>
-                        )}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-max">
-                        <div>
-                          <TextField
-                            control={control}
-                            name="price"
-                            label="Base Price"
-                            type="number"
-                            placeholder="Enter price"
-                            required
-                            disabled={isProcessing}
-                            error={errors.price}
-                            valueAsNumber={true}
-                            min={0}
-                            step="0.01"
-                            allowZero={true}
-                          />
-                        </div>
-
-                        <div>
-                          <SelectField
-                            control={control}
-                            name="promotionType"
-                            label="Promotion Type"
-                            placeholder="Select promotion type"
-                            options={PROMOTION_TYPE_CREATE_UPDATE}
-                            disabled={isProcessing}
-                            error={errors.promotionType}
-                          />
-                        </div>
-
-                        {/* Only show promotion fields when type is not NONE */}
-                        {showPromotionFields && (
-                          <>
-                            <div>
-                              <TextField
-                                control={control}
-                                name="promotionValue"
-                                label="Promotion Value"
-                                type="number"
-                                placeholder="Enter promotion value"
-                                disabled={isProcessing}
-                                error={errors.promotionValue as any}
-                                valueAsNumber={true}
-                                min={0}
-                                step="0.01"
-                                allowZero={false}
-                              />
-                            </div>
-
-                            <div>
-                              <DateTimePickerField
-                                control={control}
-                                name="promotionFromDate"
-                                label="Promotion From"
-                                mode="datetime"
-                                placeholder="Select start date & time"
-                                disabled={isProcessing}
-                                error={errors.promotionFromDate}
-                              />
-                            </div>
-
-                            <div>
-                              <DateTimePickerField
-                                control={control}
-                                name="promotionToDate"
-                                label="Promotion To"
-                                mode="datetime"
-                                placeholder="Select end date & time"
-                                disabled={isProcessing}
-                                error={errors.promotionToDate}
-                              />
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Product Sizes */}
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle>Product Sizes</CardTitle>
-                      <div className="flex items-center gap-2">
-                        {hasSizes && sizeFields.some((_, idx) => {
-                          const sizePromotionType = watch(`sizes.${idx}.promotionType`);
-                          return sizePromotionType && sizePromotionType !== "NONE";
-                        }) && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              sizeFields.forEach((_, idx) => {
-                                setValue(`sizes.${idx}.promotionType`, "NONE", {
-                                  shouldDirty: true,
-                                });
-                                setValue(`sizes.${idx}.promotionValue`, undefined, {
-                                  shouldDirty: true,
-                                });
-                                setValue(`sizes.${idx}.promotionFromDate`, "", {
-                                  shouldDirty: true,
-                                });
-                                setValue(`sizes.${idx}.promotionToDate`, "", {
-                                  shouldDirty: true,
-                                });
-                              });
-                            }}
-                            disabled={isProcessing}
-                          >
-                            Reset All Promotions
-                          </Button>
-                        )}
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            appendSize({
-                              name: "",
-                              barcode: "",
-                              sku: "",
-                              price: 0,
-                              promotionType: "NONE",
-                              promotionValue: undefined,
-                              promotionFromDate: "",
-                              promotionToDate: "",
-                            })
-                          }
-                          disabled={isProcessing}
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Add Size
-                        </Button>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    {sizeFields.length === 0 ? (
-                      <div className="text-center py-8">
-                        <p className="text-sm text-muted-foreground">
-                          {hasSizes
-                            ? "No sizes defined."
-                            : "No sizes defined. Product will use main pricing."}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {sizeFields.map((field, index) => {
-                          const sizePromotionType = watch(
-                            `sizes.${index}.promotionType`,
-                          );
-                          const showSizePromotionFields =
-                            sizePromotionType &&
-                            sizePromotionType !== "NONE";
-
-                          return (
-                            <div
-                              key={field.id}
-                              className="border rounded-lg p-4 space-y-4"
-                            >
-                              <div className="flex items-center justify-between gap-2">
-                                <h4 className="font-semibold text-foreground">
-                                  Size {index + 1}
-                                </h4>
-                                <div className="flex items-center gap-2">
-                                  {showSizePromotionFields && (
-                                    <Button
-                                      type="button"
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => {
-                                        setValue(
-                                          `sizes.${index}.promotionType`,
-                                          "NONE",
-                                          { shouldDirty: true }
-                                        );
-                                        setValue(
-                                          `sizes.${index}.promotionValue`,
-                                          undefined,
-                                          { shouldDirty: true }
-                                        );
-                                        setValue(
-                                          `sizes.${index}.promotionFromDate`,
-                                          "",
-                                          { shouldDirty: true }
-                                        );
-                                        setValue(
-                                          `sizes.${index}.promotionToDate`,
-                                          "",
-                                          { shouldDirty: true }
-                                        );
-                                      }}
-                                      disabled={isProcessing}
-                                    >
-                                      Reset
-                                    </Button>
-                                  )}
-                                  <Button
-                                    type="button"
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={() => removeSize(index)}
-                                    disabled={isProcessing}
-                                  >
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    Remove
-                                  </Button>
-                                </div>
-                              </div>
-
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-max">
-                                <div>
-                                  <TextField
-                                    control={control}
-                                    name={`sizes.${index}.name`}
-                                    label="Size Name"
-                                    placeholder="e.g., Small, Medium, Large"
-                                    disabled={isProcessing}
-                                    error={errors.sizes?.[index]?.name as any}
-                                  />
-                                </div>
-
-                                <div>
-                                  <TextField
-                                    control={control}
-                                    name={`sizes.${index}.price`}
-                                    label="Price"
-                                    type="number"
-                                    placeholder="Enter price"
-                                    disabled={isProcessing}
-                                    error={errors.sizes?.[index]?.price as any}
-                                    valueAsNumber={true}
-                                    min={0}
-                                    step="0.01"
-                                    allowZero={true}
-                                  />
-                                </div>
-
-                                <div>
-                                  <TextField
-                                    control={control}
-                                    name={`sizes.${index}.sku`}
-                                    label="SKU"
-                                    placeholder="Enter SKU"
-                                    disabled={isProcessing}
-                                    error={errors.sizes?.[index]?.sku as any}
-                                  />
-                                </div>
-
-                                <div>
-                                  <TextField
-                                    control={control}
-                                    name={`sizes.${index}.barcode`}
-                                    label="Barcode"
-                                    placeholder="Enter barcode"
-                                    disabled={isProcessing}
-                                    error={errors.sizes?.[index]?.barcode as any}
-                                  />
-                                </div>
-
-                                <div>
-                                  <SelectField
-                                    control={control}
-                                    name={`sizes.${index}.promotionType`}
-                                    label="Promotion Type"
-                                    placeholder="Select promotion type"
-                                    options={PROMOTION_TYPE_CREATE_UPDATE}
-                                    disabled={isProcessing}
-                                    error={
-                                      errors.sizes?.[index]?.promotionType as any
-                                    }
-                                  />
-                                </div>
-
-                                {showSizePromotionFields && (
-                                  <>
-                                    <div>
-                                      <TextField
-                                        control={control}
-                                        name={`sizes.${index}.promotionValue`}
-                                        label="Promotion Value"
-                                        type="number"
-                                        placeholder="Enter promotion value"
-                                        disabled={isProcessing}
-                                        error={
-                                          errors.sizes?.[index]
-                                            ?.promotionValue as any
-                                        }
-                                        valueAsNumber={true}
-                                        min={0}
-                                        step="0.01"
-                                        allowZero={false}
-                                      />
-                                    </div>
-
-                                    <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-max">
-                                      <div>
-                                        <DateTimePickerField
-                                          control={control}
-                                          name={`sizes.${index}.promotionFromDate`}
-                                          label="Promotion From"
-                                          mode="datetime"
-                                          placeholder="Select start date & time"
-                                          disabled={isProcessing}
-                                          error={
-                                            errors.sizes?.[index]
-                                              ?.promotionFromDate as any
-                                          }
-                                        />
-                                      </div>
-
-                                      <div>
-                                        <DateTimePickerField
-                                          control={control}
-                                          name={`sizes.${index}.promotionToDate`}
-                                          label="Promotion To"
-                                          mode="datetime"
-                                          placeholder="Select end date & time"
-                                          disabled={isProcessing}
-                                          error={
-                                            errors.sizes?.[index]
-                                              ?.promotionToDate as any
-                                          }
-                                        />
-                                      </div>
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Product Images */}
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <CardTitle>Product Images</CardTitle>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {imageFields.length > 0
-                            ? `${imageFields.length}/${MAX_PRODUCT_IMAGES} images uploaded`
-                            : `Upload up to ${MAX_PRODUCT_IMAGES} product images`}
-                        </p>
-                      </div>
-                      {canAddMore && (
-                        <div>
-                          <input
-                            type="file"
-                            id="multiple-image-upload"
-                            multiple
-                            accept="image/*"
-                            onChange={handleMultipleImageUpload}
-                            className="hidden"
-                            disabled={isProcessing}
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              document
-                                .getElementById("multiple-image-upload")
-                                ?.click()
-                            }
-                            disabled={isProcessing}
-                          >
-                            <Plus className="h-4 w-4 mr-2" />
-                            {isProcessingImages ? "Processing..." : "Upload"}
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    {imageFields.length === 0 ? (
-                      <div className="text-center py-8 border-2 border-dashed rounded-lg">
-                        <p className="text-sm text-muted-foreground">
-                          No images uploaded yet
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-2">
-                        {imageFields.map((field, index) => (
-                          <div
-                            key={field.id}
-                            className="relative aspect-square rounded-md overflow-hidden border bg-muted"
-                          >
-                            <div className="w-full h-full">
-                              <ClickableImageUpload
-                                label=""
-                                value={
-                                  watch(`images.${index}.imageUrl`) || ""
-                                }
-                                onChange={(base64) => {
-                                  if (base64 === "") {
-                                    // Image removed - delete from array
-                                    removeImage(index);
-                                  } else {
-                                    // Image uploaded/changed
-                                    setValue(
-                                      `images.${index}.imageUrl`,
-                                      base64,
-                                      {
-                                        shouldDirty: true,
-                                      },
-                                    );
-                                  }
-                                }}
-                                aspectRatio="square"
-                                height="h-full"
-                                maxSize={5}
-                                disabled={isProcessing}
-                                error={
-                                  errors.images?.[index]?.imageUrl as any
-                                }
-                                showPreviewText={false}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                <ProductImagesGallery
+                  control={control}
+                  errors={errors}
+                  isProcessing={isProcessing}
+                  isProcessingImages={isProcessingImages}
+                  imageFields={imageFields}
+                  watch={watch}
+                  onUploadImages={handleMultipleImageUpload}
+                  onRemoveImage={removeImage}
+                  onImageChange={(index, base64) =>
+                    setValue(`images.${index}.imageUrl`, base64, {
+                      shouldDirty: true,
+                    })
+                  }
+                />
               </div>
             </FormBody>
 
