@@ -185,18 +185,19 @@ export default function BusinessSettingsPage() {
       }
 
       // Create payload with the uploaded logo URL
+      // Convert null values to undefined for API compatibility
       const payload = {
         systemName: data.systemName,
-        description: data.description,
+        description: data.description || undefined,
         taxPercentage: data.taxPercentage
           ? parseFloat(data.taxPercentage)
-          : null,
-        logoSystemUrl: logoSystemUrl,
+          : undefined,
+        logoSystemUrl: logoSystemUrl || undefined,
         socialMedia: data.socialMedia,
-        primaryColor: data.primaryColor,
-        contactAddress: data.contactAddress,
-        contactPhone: data.contactPhone,
-        contactEmail: data.contactEmail,
+        primaryColor: data.primaryColor || undefined,
+        contactAddress: data.contactAddress || undefined,
+        contactPhone: data.contactPhone || undefined,
+        contactEmail: data.contactEmail || undefined,
         businessHours: data.businessHours,
       };
 
