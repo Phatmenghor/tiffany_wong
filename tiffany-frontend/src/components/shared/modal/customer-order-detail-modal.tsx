@@ -141,67 +141,52 @@ export function CustomerOrderDetailModal({
           <div className="p-6 space-y-6">
             {/* Order Status Timeline */}
             {!isCancelled ? (
-              <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-6 shadow-sm">
-                <h3 className="text-sm font-bold text-slate-900 mb-5">📍 Order Status Progress</h3>
-                <div className="space-y-4">
+              <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-5 shadow-sm">
+                <div className="flex items-center justify-between gap-3">
                   {ORDER_STATUS_STEPS.map((step, index) => {
                     const isCompleted = index < currentStepIndex;
                     const isActive = step.status === orderData.orderStatus;
 
                     return (
-                      <div key={step.status} className="flex items-start gap-4">
-                        {/* Step Circle with Badge */}
-                        <div className="flex flex-col items-center">
-                          <div
-                            className={cn(
-                              "w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all flex-shrink-0",
-                              isCompleted || isActive
-                                ? "bg-primary text-white shadow-lg"
-                                : "bg-slate-200 text-slate-400"
-                            )}
-                          >
-                            {isCompleted ? (
-                              <Check className="h-6 w-6" />
-                            ) : (
-                              getStatusIcon(step.status)
-                            )}
-                          </div>
-                          {/* Connecting Line */}
-                          {index < ORDER_STATUS_STEPS.length - 1 && (
-                            <div
-                              className={cn(
-                                "w-1 h-12 mt-2 transition-colors",
-                                isCompleted || isActive ? "bg-primary" : "bg-slate-300"
-                              )}
-                            />
+                      <div key={step.status} className="flex-1 flex flex-col items-center gap-2">
+                        {/* Step Circle */}
+                        <div
+                          className={cn(
+                            "w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all flex-shrink-0",
+                            isCompleted || isActive
+                              ? "bg-primary text-white shadow-lg"
+                              : "bg-slate-200 text-slate-400"
+                          )}
+                        >
+                          {isCompleted ? (
+                            <Check className="h-6 w-6" />
+                          ) : (
+                            getStatusIcon(step.status)
                           )}
                         </div>
 
-                        {/* Step Info */}
-                        <div className="flex-1 pt-1">
-                          <p
+                        {/* Step Label */}
+                        <p className={cn(
+                          "text-xs font-bold text-center transition-colors",
+                          isCompleted || isActive ? "text-slate-900" : "text-slate-500"
+                        )}>
+                          {step.label}
+                        </p>
+
+                        {/* Connecting Line */}
+                        {index < ORDER_STATUS_STEPS.length - 1 && (
+                          <div
                             className={cn(
-                              "font-bold transition-colors",
-                              isCompleted || isActive ? "text-slate-900" : "text-slate-500"
+                              "absolute h-1 transition-colors",
+                              isCompleted || isActive ? "bg-primary" : "bg-slate-300"
                             )}
-                          >
-                            {step.label}
-                            {isActive && (
-                              <span className="ml-2 text-xs font-semibold text-primary bg-primary/10 px-2.5 py-0.5 rounded-full">
-                                Current
-                              </span>
-                            )}
-                            {isCompleted && (
-                              <span className="ml-2 text-xs font-semibold text-primary">✓</span>
-                            )}
-                          </p>
-                          <p className={cn(
-                            "text-sm transition-colors mt-1",
-                            isCompleted || isActive ? "text-slate-700" : "text-slate-400"
-                          )}>
-                            {step.description}
-                          </p>
-                        </div>
+                            style={{
+                              width: "calc(100% / 3 - 24px)",
+                              marginLeft: "calc(50% + 32px)",
+                              marginTop: "-44px",
+                            }}
+                          />
+                        )}
                       </div>
                     );
                   })}
@@ -210,14 +195,14 @@ export function CustomerOrderDetailModal({
             ) : (
               /* Cancelled State */
               <div className="bg-red-50 border border-red-200 rounded-xl p-5 shadow-sm">
-                <div className="flex items-start gap-4">
+                <div className="flex items-center gap-4">
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
                     <AlertCircle className="h-6 w-6 text-red-600" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-red-700">Order Cancelled</h3>
                     <p className="text-sm text-red-600 mt-1">
-                      This order has been cancelled and cannot be processed
+                      This order has been cancelled
                     </p>
                   </div>
                 </div>
