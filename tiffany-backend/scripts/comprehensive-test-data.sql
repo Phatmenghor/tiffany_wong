@@ -433,25 +433,57 @@ BEGIN
     RAISE NOTICE '      [1] [2] [3] [4] [5] [6] items per order...';
 END $$;
 
-INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_number, customer_id, order_status, source, order_from, payment_method, payment_status, subtotal, tax_amount, discount_amount, delivery_fee, total_amount, customer_name, customer_phone, customer_email, customer_note)
+-- Simplified Orders (100 orders) - Matches current backend structure
+-- No source, order_from, tax_amount, delivery_fee fields
+-- New payment_status values: PAID, UNPAID, REFUNDED
+INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_number, customer_id, order_status, payment_method, payment_status, subtotal, discount_amount, total_amount, customer_name, customer_phone, customer_email, customer_note)
 SELECT
-    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-    'ORD-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || LPAD(i::text, 6, '0'),
+    gen_random_uuid(), 0, NOW() - ((i - 1)::text || ' days')::interval, NOW() - ((i - 1)::text || ' days')::interval, 'system', 'system', false, NULL, NULL,
+    'ORD-' || TO_CHAR(NOW() - ((i - 1)::text || ' days')::interval, 'YYYYMMDD') || '-' || LPAD(i::text, 6, '0'),
     '550e8400-e29b-41d4-a716-446655550002',
-    CASE ((i - 1) % 4) WHEN 0 THEN 'PENDING' WHEN 1 THEN 'CONFIRMED' WHEN 2 THEN 'COMPLETED' ELSE 'CANCELLED' END,
-    'PUBLIC',
-    'CUSTOMER',
-    CASE ((i - 1) % 2) WHEN 0 THEN 'CASH' ELSE 'BANK' END,
-    CASE ((i - 1) % 3) WHEN 0 THEN 'COMPLETED' WHEN 1 THEN 'PENDING' ELSE 'FAILED' END,
-    (50 + random() * 500)::numeric(10,2),
-    ((50 + random() * 500) * 0.1)::numeric(10,2),
+    -- Order Status: Varied distribution (25% each)
+    CASE ((i - 1) % 4)
+        WHEN 0 THEN 'PENDING'
+        WHEN 1 THEN 'CONFIRMED'
+        WHEN 2 THEN 'COMPLETED'
+        ELSE 'CANCELLED'
+    END,
+    -- Payment Method: Split between CASH and BANK
+    CASE ((i - 1) % 2)
+        WHEN 0 THEN 'CASH'
+        ELSE 'BANK'
+    END,
+    -- Payment Status: PAID for completed orders, UNPAID for pending, REFUNDED for some
+    CASE
+        WHEN ((i - 1) % 4) = 2 THEN 'PAID'           -- COMPLETED orders are PAID
+        WHEN ((i - 1) % 4) = 3 THEN 'REFUNDED'       -- CANCELLED orders are REFUNDED
+        WHEN ((i - 1) % 3) = 0 THEN 'PAID'           -- Some unpaid ones become paid
+        ELSE 'UNPAID'
+    END,
+    -- Subtotal: Random price between 50-500
+    (50 + random() * 450)::numeric(10,2),
+    -- Discount Amount: 0-10% of subtotal (5-50)
     (random() * 50)::numeric(10,2),
-    5.00,
-    ((50 + random() * 500) * 1.1 + 5)::numeric(10,2),
-    'Customer ' || i,
-    '+855 98 123 456' || i,
-    'customer' || i || '@test.com',
-    'Please deliver quickly'
+    -- Total Amount: subtotal - discount (no tax, no delivery fee)
+    ((50 + random() * 450) - (random() * 50))::numeric(10,2),
+    -- Customer Name
+    CASE
+        WHEN (i % 10) = 0 THEN 'Premium Customer ' || i
+        WHEN (i % 7) = 0 THEN 'VIP Customer ' || i
+        ELSE 'Customer ' || i
+    END,
+    -- Customer Phone: Varied Cambodian phone numbers
+    '+855 ' || LPAD(((i % 98) + 1)::text, 2, '0') || ' ' || LPAD((((i * 17) % 900) + 100)::text, 3, '0') || ' ' || LPAD((((i * 23) % 9000) + 1000)::text, 4, '0'),
+    -- Customer Email
+    'customer' || i || '@example.com',
+    -- Customer Note: Varied messages
+    CASE
+        WHEN (i % 5) = 0 THEN 'Please deliver ASAP'
+        WHEN (i % 5) = 1 THEN 'Leave at door please'
+        WHEN (i % 5) = 2 THEN 'Call upon arrival'
+        WHEN (i % 5) = 3 THEN 'Special order - handle with care'
+        ELSE 'Standard delivery'
+    END
 FROM generate_series(1, 100) AS t(i);
 
 -- ============================================================================
@@ -470,20 +502,51 @@ BEGIN
         v_order_num := v_order_num + 1;
 
         -- Insert 6 items for this order
-        INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_name, quantity, unit_price, total_price, final_price, product_size_id)
+        -- New structure: current_price, final_price, unit_price, has_promotion, promotion_type, promotion_value, etc.
+        INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_name, product_image_url, product_size_id, size_name, sku, barcode, quantity, current_price, final_price, unit_price, has_promotion, promotion_type, promotion_value, promotion_from_date, promotion_to_date, total_price)
         SELECT
             gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
             v_order_id,
             p.id,
             p.name,
-            2,
+            p.image_url,
+            ps.id,
+            ps.size_name,
+            p.sku,
+            'BC-' || LPAD(p.id::text, 8, '0'),
+            CASE WHEN (ROW_NUMBER() OVER (PARTITION BY v_order_id ORDER BY random()))::int % 3 = 0 THEN 1 ELSE 2 END,
             p.price,
-            (p.price * 2)::numeric(10,2),
-            (p.price * 2)::numeric(10,2),
-            (SELECT id FROM product_sizes WHERE product_id = p.id LIMIT 1)
+            -- Final price: 10-30% discount on some items
+            CASE
+                WHEN (ROW_NUMBER() OVER (PARTITION BY v_order_id ORDER BY random()))::int % 4 = 0
+                    THEN (p.price * 0.7)::numeric(10,2)  -- 30% discount
+                WHEN (ROW_NUMBER() OVER (PARTITION BY v_order_id ORDER BY random()))::int % 4 = 1
+                    THEN (p.price * 0.8)::numeric(10,2)  -- 20% discount
+                WHEN (ROW_NUMBER() OVER (PARTITION BY v_order_id ORDER BY random()))::int % 4 = 2
+                    THEN (p.price * 0.9)::numeric(10,2)  -- 10% discount
+                ELSE p.price
+            END,
+            p.price,
+            -- Has promotion: 70% of items have promotions
+            (ROW_NUMBER() OVER (PARTITION BY v_order_id ORDER BY random()))::int % 10 < 7,
+            -- Promotion Type
+            CASE
+                WHEN (ROW_NUMBER() OVER (PARTITION BY v_order_id ORDER BY random()))::int % 2 = 0 THEN 'PERCENTAGE'
+                ELSE 'FIXED_AMOUNT'
+            END,
+            -- Promotion Value
+            CASE
+                WHEN (ROW_NUMBER() OVER (PARTITION BY v_order_id ORDER BY random()))::int % 2 = 0 THEN 15.00  -- 15% discount
+                ELSE 5.00  -- $5 fixed discount
+            END,
+            NOW() - INTERVAL '30 days',
+            NOW() + INTERVAL '30 days',
+            -- Total Price: unit_price * quantity
+            (p.price * CASE WHEN (ROW_NUMBER() OVER (PARTITION BY v_order_id ORDER BY random()))::int % 3 = 0 THEN 1 ELSE 2 END)::numeric(10,2)
         FROM (
-            SELECT id, name, price FROM products ORDER BY id LIMIT 6 OFFSET ((ABS(hashtext(v_order_id::text)) % 99994))
-        ) p;
+            SELECT id, name, price, image_url, sku FROM products ORDER BY id LIMIT 6 OFFSET ((ABS(hashtext(v_order_id::text)) % 99994))
+        ) p
+        CROSS JOIN (SELECT id, size_name FROM product_sizes LIMIT 1) ps;
 
         -- Show progress every 10 orders
         IF v_order_num % 10 = 0 THEN
