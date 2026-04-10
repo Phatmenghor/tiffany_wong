@@ -19,10 +19,6 @@ export const addToCart = createApiThunk<CartResponseModel, AddToCartRequest>(
 
     let responseData = response.data.data;
 
-    if (!isCorrect) {
-      console.error("%c## ❌ RESPONSE IS WRONG STRUCTURE", "background:#dc3545;color:white;padding:5px", responseData);
-    }
-
     // Transform response to ensure frontend compatibility
     // Map backend hasActivePromotion → hasPromotion for consistent naming
     if (responseData?.items) {
