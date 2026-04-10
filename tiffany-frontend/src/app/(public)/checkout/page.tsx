@@ -14,6 +14,7 @@ import { PageContainer } from "@/components/shared/common/page-container";
 import { PageHeader } from "@/components/shared/common/page-header";
 import { formatCurrency } from "@/utils/common/currency-format";
 import { CartItemCard } from "@/components/shared/cart-item-card/cart-item-card";
+import { ComboboxSelectLocation } from "@/components/shared/combobox/combobox-select-location";
 
 interface LocationResponse {
   id: string;
@@ -28,11 +29,9 @@ export default function CheckoutPage() {
   const { items, totalItems, totalQuantity, subtotal, discountAmount, finalTotal } = useCartState();
 
   const [mounted, setMounted] = useState(false);
-  const [addresses, setAddresses] = useState<LocationResponse[]>([]);
-  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [selectedAddress, setSelectedAddress] = useState<LocationResponse | null>(null);
   const [customerNote, setCustomerNote] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [loadingAddresses, setLoadingAddresses] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -43,58 +42,6 @@ export default function CheckoutPage() {
     if (!mounted || !authReady || !isAuthenticated) return;
     dispatch(fetchCart());
   }, [mounted, authReady, isAuthenticated, dispatch]);
-
-  // Fetch addresses on mount
-  useEffect(() => {
-    if (!mounted || !authReady || !isAuthenticated) return;
-
-    const fetchAddresses = async () => {
-      setLoadingAddresses(true);
-      try {
-        console.log("🔄 Fetching addresses...");
-        const response = await fetch("/api/v1/locations/my-addresses/all", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            pageNo: 1,
-            pageSize: 100,
-          }),
-        });
-        console.log("📡 API Response status:", response.status);
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log("📦 Full response data:", data);
-          console.log("🎯 Extracted content:", data.data?.content);
-
-          const locationList = data.data?.content || [];
-          console.log("✅ Final locationList:", locationList);
-
-          setAddresses(locationList);
-
-          // Auto-select default address
-          const defaultAddr = locationList.find((addr: LocationResponse) => addr.isDefault);
-          if (defaultAddr) {
-            console.log("📍 Auto-selected default:", defaultAddr);
-            setSelectedAddressId(defaultAddr.id);
-          } else if (locationList.length > 0) {
-            console.log("📍 Auto-selected first:", locationList[0]);
-            setSelectedAddressId(locationList[0].id);
-          }
-        } else {
-          console.error("❌ API error:", response.status, response.statusText);
-        }
-      } catch (error) {
-        console.error("❌ Failed to fetch addresses:", error);
-      } finally {
-        setLoadingAddresses(false);
-      }
-    };
-
-    fetchAddresses();
-  }, [mounted, authReady, isAuthenticated]);
 
   // Redirect if not authenticated or cart empty
   useEffect(() => {
@@ -110,7 +57,7 @@ export default function CheckoutPage() {
   }, [mounted, authReady, isAuthenticated, items.length, router]);
 
   const handleCheckout = async () => {
-    if (!selectedAddressId) {
+    if (!selectedAddress?.id) {
       showToast.error("Please select a delivery address");
       return;
     }
@@ -118,7 +65,7 @@ export default function CheckoutPage() {
     setIsProcessing(true);
     try {
       const payload = {
-        addressId: selectedAddressId,
+        addressId: selectedAddress.id,
         customerNote: customerNote || "",
         orderStatus: "PENDING",
       };
@@ -137,8 +84,6 @@ export default function CheckoutPage() {
     return null;
   }
 
-  const selectedAddress = addresses.find((addr) => addr.id === selectedAddressId);
-
   return (
     <>
       <PageContainer className="py-4 sm:py-8 pb-40 sm:pb-8">
@@ -153,72 +98,21 @@ export default function CheckoutPage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-3">
             {/* Delivery Address - Top */}
-            {loadingAddresses ? (
-              <div className="bg-card border rounded-2xl p-4 sm:p-5">
-                <div className="h-20 bg-muted rounded animate-pulse" />
-              </div>
-            ) : addresses.length === 0 ? (
-              <div className="bg-card border rounded-2xl p-4 sm:p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
-                      <MapPin className="h-5 w-5" />
-                      Delivery Address
-                    </h2>
-                    <p className="text-sm text-muted-foreground">
-                      No addresses yet. Create one to continue.
-                    </p>
-                  </div>
-                  <CustomButton
-                    onClick={() => router.push("/location")}
-                    className="gap-2 h-10 rounded-lg"
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span className="hidden sm:inline">Create Address</span>
-                  </CustomButton>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-card border rounded-2xl p-4 sm:p-5">
-                <h2 className="text-lg font-bold mb-4 flex items-center justify-between">
-                  <span className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5" />
-                    Delivery Address
-                  </span>
-                  <CustomButton
-                    variant="outline"
-                    size="sm"
-                    onClick={() => router.push("/location")}
-                    className="gap-1.5 h-8 rounded-lg"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline text-xs">Add</span>
-                  </CustomButton>
+            <div className="bg-card border rounded-2xl p-4 sm:p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Delivery Address
                 </h2>
-
-                <select
-                  value={selectedAddressId || ""}
-                  onChange={(e) => setSelectedAddressId(e.target.value)}
-                  className="w-full border rounded-xl p-3 bg-background text-foreground mb-3 text-sm"
-                >
-                  <option value="">Select an address</option>
-                  {addresses.map((addr) => (
-                    <option key={addr.id} value={addr.id}>
-                      {addr.fullAddress} {addr.isDefault ? "(Default)" : ""}
-                    </option>
-                  ))}
-                </select>
-
-                {selectedAddress && (
-                  <div className="text-sm text-muted-foreground space-y-1 bg-muted/50 rounded-lg p-3">
-                    <p className="font-medium text-foreground">{selectedAddress.fullAddress}</p>
-                    {selectedAddress.isDefault && (
-                      <p className="text-xs">✓ Default Address</p>
-                    )}
-                  </div>
-                )}
               </div>
-            )}
+              <ComboboxSelectLocation
+                dataSelect={selectedAddress}
+                onChangeSelected={setSelectedAddress}
+                label=""
+                placeholder="Select delivery address..."
+                hasDefault={selectedAddress?.isDefault || false}
+              />
+            </div>
 
             {/* Cart Items */}
             {items.length > 0 && (
@@ -331,7 +225,7 @@ export default function CheckoutPage() {
               <CustomButton
                 className="w-full mb-2.5 gap-2 h-11 rounded-xl"
                 onClick={handleCheckout}
-                disabled={isProcessing || !selectedAddressId || addresses.length === 0}
+                disabled={isProcessing || !selectedAddress?.id}
               >
                 {isProcessing ? (
                   <>
@@ -371,7 +265,7 @@ export default function CheckoutPage() {
         <CustomButton
           className="w-full gap-2 h-11 rounded-xl"
           onClick={handleCheckout}
-          disabled={isProcessing || !selectedAddressId || addresses.length === 0}
+          disabled={isProcessing || !selectedAddress?.id}
         >
           {isProcessing ? (
             <>
