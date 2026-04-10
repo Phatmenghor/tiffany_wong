@@ -119,10 +119,19 @@ export function CartItemCard({
           {showControls && (
             <div className="flex items-center justify-between gap-3">
               {/* Price Display - Left Side */}
-              <div className="flex items-baseline gap-2">
-                <span className="font-bold text-base text-slate-900">{formatCurrency(displayPrice)}</span>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-bold text-base text-slate-900">{formatCurrency(displayPrice)}</span>
+                  {hasActivePromotion && displayOriginPrice > displayPrice && (
+                    <span className="text-xs text-slate-500 line-through font-medium">{formatCurrency(displayOriginPrice)}</span>
+                  )}
+                </div>
                 {hasActivePromotion && displayOriginPrice > displayPrice && (
-                  <span className="text-xs text-slate-500 line-through font-medium">{formatCurrency(displayOriginPrice)}</span>
+                  <span className="text-xs text-red-600 font-semibold">
+                    Save {displayPromotionType === "PERCENTAGE"
+                      ? `${displayPromotionValue}%`
+                      : formatCurrency((displayOriginPrice - displayPrice) * quantity)}
+                  </span>
                 )}
               </div>
 
