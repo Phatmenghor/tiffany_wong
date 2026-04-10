@@ -68,10 +68,10 @@ public interface CartMapper {
                 // If PERCENTAGE type, calculate the percentage discount
                 if ("PERCENTAGE".equals(response.getDisplayPromotionType()) &&
                     response.getDisplayOriginPrice().compareTo(BigDecimal.ZERO) > 0) {
+                    // Calculate percentage: (discount / origin) × 100, rounded to 2 decimals
                     BigDecimal percentage = discountPerItem
-                            .divide(response.getDisplayOriginPrice(), 4, java.math.RoundingMode.HALF_UP)
                             .multiply(new BigDecimal(100))
-                            .setScale(2, java.math.RoundingMode.HALF_UP);
+                            .divide(response.getDisplayOriginPrice(), 2, java.math.RoundingMode.HALF_UP);
                     response.setDisplayPromotionValue(percentage);
                 } else {
                     // For FIXED_AMOUNT, use the discount amount directly
