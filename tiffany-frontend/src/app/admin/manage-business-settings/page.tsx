@@ -140,7 +140,9 @@ export default function BusinessSettingsPage() {
         }
 
         // Apply theme colors
-        applyThemeColors(data.primaryColor);
+        if (data.primaryColor) {
+          applyThemeColors(data.primaryColor ?? "");
+        }
       } else {
         if (!cachedSettings) {
           // Only show error if we don't have cache
