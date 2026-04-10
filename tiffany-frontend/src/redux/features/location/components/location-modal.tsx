@@ -8,7 +8,7 @@ import React, {
   useMemo,
 } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField } from "@/components/shared/form-field/text-field";
 import { TextareaField } from "@/components/shared/form-field/text-area-field";
@@ -18,19 +18,14 @@ import { FormHeader } from "@/components/shared/form-field/form-header";
 import { FormBody } from "@/components/shared/form-field/form-body";
 import { FormFooter } from "@/components/shared/form-field/form-footer";
 import { showToast } from "@/components/shared/common/show-toast";
-import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
   Map,
   ListFilter,
   Star,
-  Upload,
-  X,
-  ImageIcon,
   Search,
   LocateFixed,
   Maximize2,
@@ -109,84 +104,6 @@ function CenterPin({ size = "h-9 w-9", isDragging }: { size?: string; isDragging
 }
 
 // ---------------------------------------------------------------------------
-// Multi-image upload
-// ---------------------------------------------------------------------------
-interface MultiImageUploadProps {
-  images: { imageUrl: string }[];
-  onAdd: (url: string) => void;
-  onRemove: (idx: number) => void;
-  disabled?: boolean;
-}
-
-function MultiImageUpload({ images, onAdd, onRemove, disabled }: MultiImageUploadProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [lightbox, setLightbox] = useState<string | null>(null);
-  const MAX_IMAGES = 5;
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-  const canAddMore = images.length < MAX_IMAGES;
-
-  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    Array.from(e.target.files ?? []).forEach((file) => {
-      if (!file.type.startsWith("image/")) {
-        showToast.error("Only image files are allowed");
-        return;
-      }
-      if (file.size > MAX_FILE_SIZE) {
-        showToast.error(`File size must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`);
-        return;
-      }
-      if (images.length >= MAX_IMAGES) {
-        showToast.warning(`Maximum ${MAX_IMAGES} images allowed`);
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => { if (typeof reader.result === "string") onAdd(reader.result); };
-      reader.readAsDataURL(file);
-    });
-    if (inputRef.current) inputRef.current.value = "";
-  };
-
-  return (
-    <div className="space-y-2.5">
-      {lightbox && (
-        <div className="fixed inset-0 z-[300] bg-black/80 flex items-center justify-center" onClick={() => setLightbox(null)}>
-          <img src={lightbox} alt="Preview" className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl" />
-          <button type="button" onClick={() => setLightbox(null)} className="absolute top-4 right-4 rounded-full bg-white/20 text-white p-2 hover:bg-white/40 transition-colors">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-      )}
-
-      <Label className="text-sm font-medium flex items-center gap-2">
-        <ImageIcon className="h-4 w-4 text-muted-foreground" />
-        Location Images
-        <span className="text-muted-foreground text-xs font-normal">({images.length}/{MAX_IMAGES})</span>
-      </Label>
-
-      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
-        {images.map((img, idx) => (
-          <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border bg-muted cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setLightbox(img.imageUrl)}>
-            <img src={img.imageUrl} alt={`Location ${idx + 1}`} className="w-full h-full object-cover" />
-            {!disabled && (
-              <button type="button" onClick={(e) => { e.stopPropagation(); onRemove(idx); }} className="absolute top-0.5 right-0.5 rounded-full bg-destructive/90 text-white p-0.5 hover:bg-destructive transition-colors">
-                <X className="h-3 w-3" />
-              </button>
-            )}
-          </div>
-        ))}
-        {!disabled && canAddMore && (
-          <button type="button" onClick={() => inputRef.current?.click()} className="aspect-square rounded-lg border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 flex flex-col items-center justify-center gap-1 transition-colors text-muted-foreground hover:text-primary">
-            <Upload className="h-3.5 w-3.5" />
-            <span className="text-[10px] font-medium">Add</span>
-          </button>
-        )}
-      </div>
-      <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleFiles} />
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 export default function LocationModal({ isOpen, onClose, editData, initialCoords }: LocationModalProps) {
@@ -230,16 +147,15 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
       label: "", latitude: 0, longitude: 0,
       houseNumber: "", streetNumber: "", village: "", commune: "",
       district: "", province: "", country: "", note: "",
-      isPrimary: false, locationImages: [],
+      isDefault: false,
     },
     mode: "onChange",
   });
 
-  const { fields: imageFields, append: appendImage, remove: removeImage } = useFieldArray({ control, name: "locationImages" });
   setValueRef.current = setValue;
   const latitude = watch("latitude");
   const longitude = watch("longitude");
-  const isPrimaryValue = watch("isPrimary");
+  const isDefaultValue = watch("isDefault");
   const hasCoords = latitude !== undefined && latitude !== null && longitude !== undefined && longitude !== null;
 
   const addressPreview = useMemo(() => {
@@ -257,11 +173,10 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
         village: editData.village ?? "", commune: editData.commune ?? "",
         district: editData.district ?? "", province: editData.province ?? "",
         country: editData.country ?? "", note: editData.note ?? "",
-        isPrimary: editData.isPrimary || editData.isDefault || false,
-        locationImages: editData.locationImages ?? [],
+        isDefault: editData.isDefault || false,
       });
     } else {
-      reset({ label: "", latitude: 0, longitude: 0, houseNumber: "", streetNumber: "", village: "", commune: "", district: "", province: "", country: "", note: "", isPrimary: false, locationImages: [] });
+      reset({ label: "", latitude: 0, longitude: 0, houseNumber: "", streetNumber: "", village: "", commune: "", district: "", province: "", country: "", note: "", isDefault: false });
     }
     clearError();
   }, [isOpen, editData, reset, clearError]);
@@ -532,31 +447,13 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
 
   const onSubmit = async (data: LocationFormData) => {
     try {
-      // Upload location images if they're base64
-      const processedImages = await Promise.all(
-        (data.locationImages ?? []).map(async (img) => {
-          let imageUrl = img.imageUrl;
-          if (imageUrl && isBase64Image(imageUrl)) {
-            try {
-              imageUrl = await uploadImage(imageUrl);
-            } catch (error) {
-              console.error("Failed to upload image:", error);
-              return null;
-            }
-          }
-          return { imageUrl };
-        })
-      );
-
-      const validImages = processedImages.filter((img) => img !== null);
-
       const payload = {
         label: data.label, latitude: data.latitude, longitude: data.longitude,
         houseNumber: data.houseNumber || "", streetNumber: data.streetNumber || "",
         village: data.village || "", commune: data.commune || "",
         district: data.district || "", province: data.province || "",
         country: data.country || "", note: data.note || "",
-        isPrimary: data.isPrimary, locationImages: validImages,
+        isDefault: data.isDefault,
       };
       if (isCreate) { await create(payload).unwrap(); showToast.success("Location created"); }
       else { await update({ locationId: editData!.id, locationData: payload }).unwrap(); showToast.success("Location updated"); }
@@ -735,34 +632,26 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
               {/* Primary location toggle */}
               <button
                 type="button"
-                onClick={() => setValue("isPrimary", !isPrimaryValue, { shouldDirty: true })}
+                onClick={() => setValue("isDefault", !isDefaultValue, { shouldDirty: true })}
                 disabled={isSubmitting}
                 className={cn(
                   "w-full flex items-center gap-3 rounded-lg border-2 p-3 text-left transition-all focus:outline-none",
-                  isPrimaryValue
+                  isDefaultValue
                     ? "border-amber-300 bg-amber-50/50 dark:bg-amber-950/20"
                     : "border-border hover:border-primary/30 hover:bg-muted/30"
                 )}
               >
-                <div className={cn("p-2 rounded-lg shrink-0", isPrimaryValue ? "bg-amber-100 dark:bg-amber-900/40" : "bg-muted")}>
-                  <Star className={cn("h-4 w-4", isPrimaryValue ? "text-amber-500 fill-amber-500" : "text-muted-foreground")} />
+                <div className={cn("p-2 rounded-lg shrink-0", isDefaultValue ? "bg-amber-100 dark:bg-amber-900/40" : "bg-muted")}>
+                  <Star className={cn("h-4 w-4", isDefaultValue ? "text-amber-500 fill-amber-500" : "text-muted-foreground")} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={cn("text-sm font-semibold", isPrimaryValue ? "text-amber-700 dark:text-amber-400" : "text-foreground")}>
-                    {isPrimaryValue ? "Primary Location" : "Set as Primary"}
+                  <p className={cn("text-sm font-semibold", isDefaultValue ? "text-amber-700 dark:text-amber-400" : "text-foreground")}>
+                    {isDefaultValue ? "Default Location" : "Set as Default"}
                   </p>
                   <p className="text-xs text-muted-foreground">Default address for deliveries</p>
                 </div>
-                {isPrimaryValue && <CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" />}
+                {isDefaultValue && <CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" />}
               </button>
-
-              {/* Location images */}
-              <MultiImageUpload
-                images={imageFields.map((f) => ({ imageUrl: (f as any).imageUrl }))}
-                onAdd={(url) => appendImage({ imageUrl: url })}
-                onRemove={(idx) => removeImage(idx)}
-                disabled={isSubmitting}
-              />
             </div>
           </FormBody>
 

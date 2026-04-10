@@ -12,12 +12,7 @@ export const createLocationSchema = z.object({
   province: z.string().min(1, "Province is required"),
   country: z.string().optional().default(""),
   note: z.string().optional().default(""),
-  isPrimary: z.boolean().default(false),
-  locationImages: z.array(
-    z.object({
-      imageUrl: z.string().min(1, "Image URL cannot be empty")
-    })
-  ).optional().default([]),
+  isDefault: z.boolean().default(false),
 });
 
 export type LocationFormData = z.infer<typeof createLocationSchema>;

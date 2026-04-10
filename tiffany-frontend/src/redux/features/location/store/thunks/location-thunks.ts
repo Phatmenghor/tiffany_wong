@@ -29,22 +29,16 @@ export const createLocationService = createApiThunk<
   LocationResponseModel,
   LocationCreateRequest
 >("location/create", async (data) => {
-  const imageCount = data.locationImages?.length ?? 0;
   console.log("[Location] Creating location with", {
     district: data.district,
     province: data.province,
-    imageCount,
     payload: data,
   });
 
   try {
-    const response = await axiosClientWithAuth.post("/api/v1/locations", {
-      ...data,
-      isDefault: data.isPrimary,
-    });
+    const response = await axiosClientWithAuth.post("/api/v1/locations", data);
     console.log("[Location] Create successful:", {
       id: response.data.data.id,
-      imagesReturned: response.data.data.locationImages?.length ?? 0,
       response: response.data.data,
     });
     return response.data.data;
@@ -63,24 +57,18 @@ export const updateLocationService = createApiThunk<
   LocationResponseModel,
   LocationUpdateRequest
 >("location/update", async ({ locationId, locationData }) => {
-  const imageCount = locationData.locationImages?.length ?? 0;
   console.log("[Location] Updating location", {
     locationId,
-    imageCount,
     payload: locationData,
   });
 
   try {
     const response = await axiosClientWithAuth.put(
       `/api/v1/locations/${locationId}`,
-      {
-        ...locationData,
-        isDefault: locationData.isPrimary,
-      }
+      locationData
     );
     console.log("[Location] Update successful:", {
       id: response.data.data.id,
-      imagesReturned: response.data.data.locationImages?.length ?? 0,
     });
     return response.data.data;
   } catch (error: any) {

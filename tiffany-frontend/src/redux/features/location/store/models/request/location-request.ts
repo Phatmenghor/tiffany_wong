@@ -10,8 +10,7 @@ export interface LocationCreateRequest {
   province: string;
   country: string;
   note: string;
-  isPrimary: boolean;
-  locationImages: { imageUrl: string }[];
+  isDefault: boolean;
 }
 
 export interface LocationUpdateRequest {

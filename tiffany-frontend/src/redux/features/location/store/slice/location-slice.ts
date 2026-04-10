@@ -96,15 +96,13 @@ const locationSlice = createSlice({
 
         console.log("[Redux Location] Location created", {
           id: newLocation.id,
-          imageCount: newLocation.locationImages?.length ?? 0,
-          isPrimary: newLocation.isPrimary,
+          isDefault: newLocation.isDefault,
         });
 
-        // If new location is primary, remove primary from others
-        if (newLocation.isPrimary || newLocation.isDefault) {
+        // If new location is default, remove default from others
+        if (newLocation.isDefault) {
           state.locations = state.locations.map((loc) => ({
             ...loc,
-            isPrimary: false,
             isDefault: false,
           }));
         }
@@ -127,10 +125,9 @@ const locationSlice = createSlice({
         state.isLoading.update = false;
         state.operations.isUpdating = false;
         const updated = action.payload;
-        if (updated.isPrimary || updated.isDefault) {
+        if (updated.isDefault) {
           state.locations = state.locations.map((loc) => ({
             ...loc,
-            isPrimary: loc.id === updated.id,
             isDefault: loc.id === updated.id,
           }));
         }
