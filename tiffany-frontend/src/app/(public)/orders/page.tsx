@@ -559,6 +559,17 @@ function createOrderTableColumns(
       ),
     },
     {
+      key: "createdAt",
+      label: "Created Date",
+      minWidth: "140px",
+      maxWidth: "170px",
+      render: (order) => (
+        <span className="text-xs text-muted-foreground">
+          {dateTimeFormat(order?.createdAt)}
+        </span>
+      ),
+    },
+    {
       key: "orderNumber",
       label: "Order #",
       minWidth: "100px",
@@ -568,70 +579,6 @@ function createOrderTableColumns(
           {order?.orderNumber || "---"}
         </span>
       ),
-    },
-    {
-      key: "orderFrom",
-      label: "Type",
-      minWidth: "80px",
-      maxWidth: "110px",
-      render: (order) => {
-        const getTypeColor = (orderFrom: string | undefined) => {
-          return orderFrom === "CUSTOMER"
-            ? "bg-blue-100 text-blue-800 border border-blue-300"
-            : "bg-purple-100 text-purple-800 border border-purple-300";
-        };
-        return (
-          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getTypeColor(order?.orderFrom)}`}>
-            {order?.orderFrom === "CUSTOMER" ? "Public" : "POS"}
-          </span>
-        );
-      },
-    },
-    {
-      key: "customerName",
-      label: "Customer",
-      minWidth: "130px",
-      maxWidth: "170px",
-      truncate: true,
-      render: (order) => (
-        <div className="flex flex-col">
-          <span className="text-xs font-medium">{order?.customerName || "Walk-in"}</span>
-          <span className="text-xs text-muted-foreground">
-            {order?.customerPhone || "No phone"}
-          </span>
-        </div>
-      ),
-    },
-    {
-      key: "items",
-      label: "Items",
-      minWidth: "80px",
-      maxWidth: "110px",
-      render: (order) => (
-        <span className="text-xs font-medium">
-          {order?.items?.length || 0}
-        </span>
-      ),
-    },
-    {
-      key: "totalAmount",
-      label: "Total",
-      minWidth: "110px",
-      maxWidth: "140px",
-      render: (order) => {
-        return (
-          <div className="flex flex-col">
-            <span className="text-xs font-bold text-green-600">
-              {formatCurrency(order?.totalAmount || 0)}
-            </span>
-            {order?.discountAmount && order.discountAmount > 0 && (
-              <span className="text-xs text-red-600 font-medium">
-                Save {formatCurrency(order.discountAmount)}
-              </span>
-            )}
-          </div>
-        );
-      },
     },
     {
       key: "orderStatus",
@@ -669,8 +616,19 @@ function createOrderTableColumns(
       },
     },
     {
+      key: "paymentMethod",
+      label: "Payment Method",
+      minWidth: "120px",
+      maxWidth: "150px",
+      render: (order) => (
+        <span className="text-xs font-medium">
+          {order?.paymentMethod || "---"}
+        </span>
+      ),
+    },
+    {
       key: "paymentStatus",
-      label: "Payment",
+      label: "Payment Status",
       minWidth: "130px",
       maxWidth: "160px",
       render: (order) => {
@@ -696,15 +654,35 @@ function createOrderTableColumns(
       },
     },
     {
-      key: "createdAt",
-      label: "Created",
-      minWidth: "140px",
-      maxWidth: "170px",
+      key: "items",
+      label: "Items",
+      minWidth: "80px",
+      maxWidth: "110px",
       render: (order) => (
-        <span className="text-xs text-muted-foreground">
-          {dateTimeFormat(order?.createdAt)}
+        <span className="text-xs font-medium">
+          {order?.items?.length || 0}
         </span>
       ),
+    },
+    {
+      key: "totalAmount",
+      label: "Total",
+      minWidth: "110px",
+      maxWidth: "140px",
+      render: (order) => {
+        return (
+          <div className="flex flex-col">
+            <span className="text-xs font-bold text-green-600">
+              {formatCurrency(order?.totalAmount || 0)}
+            </span>
+            {order?.discountAmount && order.discountAmount > 0 && (
+              <span className="text-xs text-red-600 font-medium">
+                Save {formatCurrency(order.discountAmount)}
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: "actions",

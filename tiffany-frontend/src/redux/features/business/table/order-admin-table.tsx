@@ -50,16 +50,6 @@ const getPaymentVariant = (status: string) => {
   }
 };
 
-const getOrderFromVariant = (orderFrom: string) => {
-  switch (orderFrom) {
-    case "CUSTOMER":
-      return "outline";
-    case "BUSINESS":
-      return "secondary";
-    default:
-      return "outline";
-  }
-};
 
 export const orderAdminTableColumns = ({
   data,
@@ -71,19 +61,30 @@ export const orderAdminTableColumns = ({
     {
       key: "index",
       label: "#",
-      minWidth: "10px",
-      maxWidth: "400px",
+      minWidth: "40px",
+      maxWidth: "60px",
       render: (_, index) => (
-        <span className="font-medium">
+        <span className="font-medium text-xs">
           {indexDisplay(data?.pageNo || 1, data?.pageSize || 15, index + 1)}
+        </span>
+      ),
+    },
+    {
+      key: "createdAt",
+      label: "Created Date",
+      minWidth: "140px",
+      maxWidth: "170px",
+      render: (order) => (
+        <span className="text-xs text-muted-foreground">
+          {dateTimeFormat(order?.createdAt)}
         </span>
       ),
     },
     {
       key: "orderNumber",
       label: "Order #",
-      minWidth: "10px",
-      maxWidth: "400px",
+      minWidth: "100px",
+      maxWidth: "130px",
       render: (order) => (
         <span className="text-xs font-mono font-medium">
           {order?.orderNumber || "---"}
@@ -91,74 +92,10 @@ export const orderAdminTableColumns = ({
       ),
     },
     {
-      key: "orderFrom",
-      label: "Type",
-      minWidth: "10px",
-      maxWidth: "400px",
-      render: (order) => {
-        const getTypeColor = (orderFrom: string) => {
-          return orderFrom === "CUSTOMER"
-            ? "bg-blue-100 text-blue-800 border border-blue-300"
-            : "bg-purple-100 text-purple-800 border border-purple-300";
-        };
-        return (
-          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getTypeColor(order?.orderFrom)}`}>
-            {order?.orderFrom === "CUSTOMER" ? "Public" : "POS"}
-          </span>
-        );
-      },
-    },
-    {
-      key: "customerName",
-      label: "Customer",
-      minWidth: "10px",
-      maxWidth: "400px",
-      truncate: true,
-      render: (order) => (
-        <div className="flex flex-col">
-          <span className="text-xs font-medium">{order?.customerName || "Walk-in"}</span>
-          <span className="text-xs text-muted-foreground">
-            {order?.customerPhone || "No phone"}
-          </span>
-        </div>
-      ),
-    },
-    {
-      key: "items",
-      label: "Items",
-      minWidth: "10px",
-      maxWidth: "400px",
-      render: (order) => (
-        <span className="text-xs font-medium">
-          {order?.items?.length || 0}
-        </span>
-      ),
-    },
-    {
-      key: "finalTotal",
-      label: "Total",
-      minWidth: "10px",
-      maxWidth: "400px",
-      render: (order) => (
-        <div className="flex flex-col">
-          <span className="text-xs font-bold text-green-600">
-            {formatCurrency(
-              order?.pricing?.after?.finalTotal ?? order?.pricing?.before?.finalTotal ?? 0
-            )}
-          </span>
-          {order?.pricing?.hadOrderLevelChangeFromPOS && (
-            <span className="text-xs text-muted-foreground line-through">
-              {formatCurrency(order?.pricing?.before?.finalTotal ?? 0)}
-            </span>
-          )}
-        </div>
-      ),
-    },
-    {
       key: "orderStatus",
       label: "Status",
-      minWidth: "10px",
-      maxWidth: "400px",
+      minWidth: "120px",
+      maxWidth: "150px",
       render: (order) => {
         const getStatusColor = (status: string) => {
           switch (status) {
@@ -189,12 +126,38 @@ export const orderAdminTableColumns = ({
       },
     },
     {
+      key: "customerName",
+      label: "Customer",
+      minWidth: "130px",
+      maxWidth: "170px",
+      truncate: true,
+      render: (order) => (
+        <div className="flex flex-col">
+          <span className="text-xs font-medium">{order?.customerName || "Walk-in"}</span>
+          <span className="text-xs text-muted-foreground">
+            {order?.customerPhone || "No phone"}
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: "paymentMethod",
+      label: "Payment Method",
+      minWidth: "120px",
+      maxWidth: "150px",
+      render: (order) => (
+        <span className="text-xs font-medium">
+          {order?.paymentMethod || "---"}
+        </span>
+      ),
+    },
+    {
       key: "paymentStatus",
-      label: "Payment",
-      minWidth: "10px",
-      maxWidth: "400px",
+      label: "Payment Status",
+      minWidth: "130px",
+      maxWidth: "160px",
       render: (order) => {
-        const getPaymentColor = (status: string) => {
+        const getPaymentStatusColor = (status: string) => {
           switch (status) {
             case "PAID":
               return "bg-green-100 text-green-800 border border-green-300";
@@ -209,39 +172,46 @@ export const orderAdminTableColumns = ({
           }
         };
         return (
-          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getPaymentColor(order?.payment?.paymentStatus)}`}>
-            {order?.payment?.paymentStatus || "---"}
+          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getPaymentStatusColor(order?.paymentStatus)}`}>
+            {order?.paymentStatus || "---"}
           </span>
         );
       },
     },
     {
-      key: "deliveryOption",
-      label: "Delivery",
-      minWidth: "10px",
-      maxWidth: "400px",
+      key: "items",
+      label: "Items",
+      minWidth: "80px",
+      maxWidth: "110px",
       render: (order) => (
-        <span className="text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit bg-indigo-100 text-indigo-800 border border-indigo-300">
-          {order?.deliveryOption?.name || "---"}
+        <span className="text-xs font-medium">
+          {order?.items?.length || 0}
         </span>
       ),
     },
     {
-      key: "createdAt",
-      label: "Created",
-      minWidth: "10px",
-      maxWidth: "400px",
+      key: "totalAmount",
+      label: "Total",
+      minWidth: "110px",
+      maxWidth: "140px",
       render: (order) => (
-        <span className="text-xs text-muted-foreground">
-          {dateTimeFormat(order?.createdAt)}
-        </span>
+        <div className="flex flex-col">
+          <span className="text-xs font-bold text-green-600">
+            {formatCurrency(order?.totalAmount || 0)}
+          </span>
+          {order?.discountAmount && order.discountAmount > 0 && (
+            <span className="text-xs text-red-600 font-medium">
+              Save {formatCurrency(order.discountAmount)}
+            </span>
+          )}
+        </div>
       ),
     },
     {
       key: "actions",
       label: "Actions",
-      minWidth: "10px",
-      maxWidth: "400px",
+      minWidth: "100px",
+      maxWidth: "130px",
       render: (order) => (
         <div className="flex items-center gap-2">
           <ActionButton
