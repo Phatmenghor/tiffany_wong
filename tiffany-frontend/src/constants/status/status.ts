@@ -17,15 +17,6 @@ export const StatusConfig = {
   },
 };
 
-// Helper functions for Status enum
-export const getStatusLabel = (status: Status): string => {
-  return StatusConfig[status]?.label || status;
-};
-
-export const getStatusDescription = (status: Status): string => {
-  return StatusConfig[status]?.description || status;
-};
-
 export const isActive = (status: Status): boolean => {
   return status === Status.ACTIVE;
 };
@@ -151,11 +142,6 @@ export const ProductStatusConfig = {
   [ProductStatus.OUT_OF_STOCK]: {
     label: "Out of Stock",
   },
-};
-
-// Helper function for ProductStatus enum
-export const getProductStatusLabel = (status: string): string => {
-  return ProductStatusConfig[status as ProductStatus]?.label || status;
 };
 
 export enum StockStatus {
