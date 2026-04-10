@@ -159,7 +159,7 @@ export function ComboboxSelectLocation({
           </Label>
         )}
         <Button
-          onClick={() => router.push("/account/addresses")}
+          onClick={() => router.push("/location")}
           variant="outline"
           className="w-full h-10 text-xs gap-2"
         >
@@ -223,7 +223,7 @@ export function ComboboxSelectLocation({
                   <Button
                     onClick={() => {
                       setOpen(false);
-                      router.push("/account/addresses");
+                      router.push("/location");
                     }}
                     variant="outline"
                     size="sm"
