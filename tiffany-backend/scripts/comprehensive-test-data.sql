@@ -511,7 +511,7 @@ BEGIN
             p.name,
             p.main_image_url,
             ps.id,
-            ps.size_name,
+            ps.name,
             p.sku,
             'BC-' || LPAD(p.id::text, 8, '0'),
             CASE WHEN (ROW_NUMBER() OVER (PARTITION BY v_order_id ORDER BY random()))::int % 3 = 0 THEN 1 ELSE 2 END,
@@ -546,7 +546,7 @@ BEGIN
         FROM (
             SELECT id, name, price, main_image_url, sku FROM products ORDER BY id LIMIT 6 OFFSET ((ABS(hashtext(v_order_id::text)) % 99994))
         ) p
-        CROSS JOIN (SELECT id, size_name FROM product_sizes LIMIT 1) ps;
+        CROSS JOIN (SELECT id, name FROM product_sizes LIMIT 1) ps;
 
         -- Show progress every 10 orders
         IF v_order_num % 10 = 0 THEN
