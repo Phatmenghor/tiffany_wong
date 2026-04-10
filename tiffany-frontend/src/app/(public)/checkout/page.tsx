@@ -27,7 +27,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isAuthenticated, authReady } = useAuthState();
-  const { items, totalItems, totalQuantity, subtotal, discountAmount, finalTotal } = useCartState();
+  const { items, totalItems, totalQuantity, subtotal, discountAmount, finalTotal, loaded: cartLoaded } = useCartState();
 
   const [mounted, setMounted] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<LocationResponse | null>(null);
@@ -77,18 +77,19 @@ export default function CheckoutPage() {
     autoSelectDefaultAddress();
   }, [mounted, authReady, isAuthenticated, dispatch]);
 
-  // Redirect if not authenticated or cart empty
+  // Redirect if not authenticated or cart empty (but wait for cart to load)
   useEffect(() => {
     if (!mounted || !authReady) return;
     if (!isAuthenticated) {
       router.push("/");
       return;
     }
-    if (items.length === 0) {
+    // Only redirect if cart has been loaded from API and is empty
+    if (cartLoaded && items.length === 0) {
       router.push("/cart");
       return;
     }
-  }, [mounted, authReady, isAuthenticated, items.length, router]);
+  }, [mounted, authReady, isAuthenticated, items.length, cartLoaded, router]);
 
   const handleCheckout = async () => {
     if (!selectedAddress?.id) {
