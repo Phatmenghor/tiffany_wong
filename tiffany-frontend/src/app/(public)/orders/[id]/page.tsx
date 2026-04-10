@@ -450,14 +450,16 @@ export default function OrderDetailPage() {
 
                         {/* Connector Line */}
                         {index < state.statusTimeline.length - 1 && (
-                          <div
-                            className={cn(
-                              "flex-1 h-1.5 mx-1 transition-colors",
-                              isCompleted || isCurrent
-                                ? "bg-gradient-to-r from-primary to-primary"
-                                : "bg-muted"
-                            )}
-                          />
+                          <div className="flex-1 flex items-center px-1">
+                            <div
+                              className={cn(
+                                "w-full h-2 rounded transition-colors",
+                                isCompleted || isCurrent
+                                  ? "bg-gradient-to-r from-primary via-primary to-primary shadow-md shadow-primary/30"
+                                  : "bg-muted"
+                              )}
+                            />
+                          </div>
                         )}
                       </div>
                     );
