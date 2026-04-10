@@ -7,19 +7,15 @@
 export * from "./form-field/text-field";
 export * from "./form-field/text-area-field";
 export * from "./form-field/select-field";
-export * from "./form-field/cancel-button";
-export * from "./form-field/submid-button";
 export * from "./form-field/form-header";
 export * from "./form-field/form-body";
 export * from "./form-field/form-footer";
 export * from "./form-field/clickable-image-upload";
 export * from "./form-field/date-picker-field";
 
-// Button components
+// Button components (canonical location)
 export * from "./button/action-button";
 export * from "./button/custom-button";
-export * from "./button/cancel-button";
-export * from "./button/submit-button";
 
 // Card components
 export * from "./card/product-card";
