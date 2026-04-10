@@ -585,9 +585,9 @@ export default function PublicProfilePage() {
 
           {/* Profile Picture Modal */}
           <ProfilePictureModal
-            isOpen={isProfilePictureModalOpen}
-            onClose={() => setIsProfilePictureModalOpen(false)}
-            onImageSelect={handleAutoUploadProfilePicture}
+            open={isProfilePictureModalOpen}
+            onOpenChange={setIsProfilePictureModalOpen}
+            onImageCapture={handleAutoUploadProfilePicture}
             onImageRemove={() => setValue("profileImageUrl", "")}
             isLoading={isUploadingImage}
             currentImageUrl={(watch("profileImageUrl") || userProfile?.profileImageUrl) || undefined}
