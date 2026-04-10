@@ -419,68 +419,87 @@ export default function OrderDetailPage() {
             </h2>
 
             {state.statusTimeline.length > 0 ? (
-              <div className="overflow-x-auto pb-4">
-                <div className="flex items-flex-start gap-1 min-w-max px-2">
+              <div>
+                {/* Linear Progress Bar */}
+                <div className="flex items-center gap-0 mb-8">
                   {state.statusTimeline.map((status, index) => {
                     const statusOrder = status.order || 0;
                     const isCompleted = currentStatusPosition >= statusOrder;
                     const isCurrent = currentStatusPosition === statusOrder;
+
+                    return (
+                      <div
+                        key={status.id}
+                        className="flex items-center flex-1 gap-0"
+                      >
+                        {/* Step Circle */}
+                        <div
+                          className={cn(
+                            "w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all ring-2 ring-offset-2 dark:ring-offset-slate-950",
+                            isCompleted
+                              ? "bg-primary text-primary-foreground ring-primary/30 shadow-md shadow-primary/20"
+                              : isCurrent
+                                ? "bg-primary/20 text-primary ring-primary/50 shadow-lg shadow-primary/20 animate-pulse"
+                                : "bg-muted text-muted-foreground ring-muted"
+                          )}
+                        >
+                          {isCompleted ? (
+                            <Check className="h-6 w-6" />
+                          ) : isCurrent ? (
+                            <span className="text-lg">●</span>
+                          ) : (
+                            status.order
+                          )}
+                        </div>
+
+                        {/* Connector Line */}
+                        {index < state.statusTimeline.length - 1 && (
+                          <div
+                            className={cn(
+                              "flex-1 h-1.5 mx-1 transition-colors",
+                              isCompleted
+                                ? "bg-gradient-to-r from-primary to-primary"
+                                : "bg-muted"
+                            )}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Status Labels and Dates */}
+                <div className="flex items-flex-start gap-0">
+                  {state.statusTimeline.map((status, index) => {
+                    const statusOrder = status.order || 0;
+                    const isCompleted = currentStatusPosition >= statusOrder;
                     const statusHistory = order.statusHistory?.find(
                       (h) => h.statusName === status.name
                     );
 
                     return (
-                      <div key={status.id} className="flex flex-col items-center flex-shrink-0">
-                        {/* Status Step Circle */}
-                        <div className="flex gap-1 items-center">
-                          <div
-                            className={cn(
-                              "w-14 h-14 rounded-full flex items-center justify-center font-semibold text-sm transition-all ring-2 ring-offset-2 dark:ring-offset-slate-950 flex-shrink-0",
-                              isCompleted
-                                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 ring-green-200"
-                                : isCurrent
-                                  ? "bg-primary text-primary-foreground ring-primary/50 shadow-lg shadow-primary/20 animate-pulse"
-                                  : "bg-muted text-muted-foreground ring-muted"
-                            )}
-                          >
-                            {isCompleted ? (
-                              <Check className="h-5 w-5" />
-                            ) : isCurrent ? (
-                              <Zap className="h-5 w-5" />
-                            ) : (
-                              status.order
-                            )}
-                          </div>
-
-                          {/* Connector Line */}
-                          {index < state.statusTimeline.length - 1 && (
-                            <div
-                              className={cn(
-                                "w-6 h-1 transition-colors flex-shrink-0",
-                                isCompleted
-                                  ? "bg-gradient-to-r from-green-200 to-green-200 dark:from-green-900/50 dark:to-green-900/50"
-                                  : "bg-muted"
-                              )}
-                            />
-                          )}
-                        </div>
-
-                        {/* Status Label and Date */}
-                        <div className="mt-3 text-center min-w-[70px]">
-                          <span className="text-xs font-semibold text-foreground block break-words">
-                            {status.name}
+                      <div
+                        key={status.id}
+                        className="flex flex-col items-center flex-1"
+                      >
+                        <span className={cn(
+                          "text-xs font-bold whitespace-nowrap px-2 block text-center",
+                          isCompleted
+                            ? "text-primary"
+                            : "text-muted-foreground"
+                        )}>
+                          {status.name}
+                        </span>
+                        {statusHistory && (
+                          <span className="text-xs text-muted-foreground block mt-1 text-center whitespace-nowrap px-2">
+                            {new Date(statusHistory.changedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                           </span>
-                          {statusHistory && (
-                            <span className="text-xs text-muted-foreground block mt-0.5">
-                              {new Date(statusHistory.changedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
-                            </span>
-                          )}
-                          {!statusHistory && (
-                            <span className="text-xs text-muted-foreground block mt-0.5">
-                              Pending
-                            </span>
-                          )}
-                        </div>
+                        )}
+                        {!statusHistory && (
+                          <span className="text-xs text-muted-foreground/50 block mt-1 text-center italic">
+                            Pending
+                          </span>
+                        )}
                       </div>
                     );
                   })}
