@@ -51,8 +51,8 @@ export function formatLocationAddress(location: LocationResponseModel): string {
 }
 
 /**
- * Returns true if the location is set as primary/default.
+ * Returns true if the location is set as default.
  */
 export function isLocationPrimary(location: LocationResponseModel): boolean {
-  return location.isPrimary || location.isDefault;
+  return location.isDefault;
 }

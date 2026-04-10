@@ -52,8 +52,7 @@ export default function LocationPage() {
   const calculateSkeletonCount = useCallback(() => {
     const width = window.innerWidth;
     if (width < 768) setSkeletonCount(1);
-    else if (width < 1024) setSkeletonCount(2);
-    else setSkeletonCount(3);
+    else setSkeletonCount(2);
   }, []);
 
   // Handle window resize for skeleton count
@@ -66,11 +65,10 @@ export default function LocationPage() {
   // Calculate responsive page size
   const getPageSize = useMemo(() => {
     return () => {
-      if (typeof window === "undefined") return 6;
+      if (typeof window === "undefined") return 4;
       const width = window.innerWidth;
-      if (width >= 1024) return 12;
-      if (width >= 640) return 9;
-      return 6;
+      if (width >= 768) return 8;
+      return 4;
     };
   }, []);
 
@@ -184,14 +182,14 @@ export default function LocationPage() {
     }
   };
 
-  const handleSetPrimary = async (location: LocationResponseModel) => {
+  const handleSetDefault = async (location: LocationResponseModel) => {
     try {
       setSettingPrimaryId(location.id);
-      const updatedLocation = { ...location, isPrimary: true };
+      const updatedLocation = { ...location, isDefault: true };
       await update({ locationId: location.id, locationData: updatedLocation }).unwrap();
-      showToast.success("Location set as primary");
+      showToast.success("Location set as default");
     } catch (error: any) {
-      showToast.error(error?.message || "Failed to set primary location");
+      showToast.error(error?.message || "Failed to set default location");
     } finally {
       setSettingPrimaryId(null);
     }
@@ -202,8 +200,8 @@ export default function LocationPage() {
     return (
       <PageContainer className="py-4 sm:py-8">
         <div className="h-8 w-48 bg-muted rounded mb-6 animate-pulse" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-48 rounded-2xl" />
           ))}
         </div>
@@ -249,7 +247,7 @@ export default function LocationPage() {
       />
 
       {/* Locations Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {locations.map((location, index) => {
           const uniqueKey = `location-${location.id}-${index}`;
           return (
@@ -259,7 +257,7 @@ export default function LocationPage() {
             settingPrimaryId={settingPrimaryId}
             onEdit={handleEditLocation}
             onDelete={(location) => setDeleteingLocation(location)}
-            onSetPrimary={handleSetPrimary}
+            onSetPrimary={handleSetDefault}
           />
           );
         })}
@@ -268,7 +266,7 @@ export default function LocationPage() {
       {/* Skeleton loaders ALWAYS show while hasMore: true */}
       {locationPagination.hasMore && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             {Array.from({ length: skeletonCount }).map((i) => (
               <Skeleton key={i} className="h-48 rounded-2xl" />
             ))}
