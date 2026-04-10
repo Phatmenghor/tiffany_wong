@@ -622,23 +622,11 @@ function createOrderTableColumns(
       label: "Payment Method",
       minWidth: "120px",
       maxWidth: "150px",
-      render: (order) => {
-        const getPaymentMethodColor = (method: string) => {
-          switch (method) {
-            case "CASH":
-              return "bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-800";
-            case "BANK":
-              return "bg-blue-100 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800";
-            default:
-              return "bg-gray-100 dark:bg-gray-950/30 text-gray-800 dark:text-gray-300 border border-gray-300 dark:border-gray-800";
-          }
-        };
-        return (
-          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getPaymentMethodColor(order?.paymentMethod)}`}>
-            {order?.paymentMethod || "---"}
-          </span>
-        );
-      },
+      render: (order) => (
+        <span className="text-xs font-medium">
+          {order?.paymentMethod || "---"}
+        </span>
+      ),
     },
     {
       key: "paymentStatus",
