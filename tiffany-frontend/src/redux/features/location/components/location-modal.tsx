@@ -1,4 +1,4 @@
-/// <reference path="@/types/google-maps.d.ts" />
+/// <reference path="../../../types/google-maps.d.ts" />
 "use client";
 
 import React, {
