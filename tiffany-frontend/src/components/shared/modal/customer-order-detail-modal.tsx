@@ -1,18 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { dateTimeFormat } from "@/utils/date/date-time-format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch } from "@/redux/store";
 import { fetchOrderDetailsService } from "@/redux/features/main/store/thunks/my-orders-thunks";
 import { formatCurrency } from "@/utils/common/currency-format";
-import { getOrderStatusLabel } from "@/enums/order-status.enum";
 import { Loading } from "@/components/shared/common/loading";
-import { DisplayField } from "@/components/shared/form-field/display-field";
-import { showToast } from "@/components/shared/common/show-toast";
 import { OrderResponse } from "@/redux/features/main/store/models/response/order-response";
-import { useState } from "react";
+import { Check, Clock, AlertCircle, Package } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface CustomerOrderDetailModalProps {
   orderId?: string;
@@ -25,6 +23,44 @@ interface OrderDetailState {
   loading: boolean;
   error: string | null;
 }
+
+// Order status steps configuration
+const ORDER_STATUS_STEPS = [
+  { status: "PENDING", label: "Pending", description: "Order placed, awaiting confirmation" },
+  { status: "CONFIRMED", label: "Confirmed", description: "Order confirmed" },
+  { status: "COMPLETED", label: "Completed", description: "Order delivered/completed" },
+];
+
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case "COMPLETED":
+      return <Check className="h-5 w-5" />;
+    case "CONFIRMED":
+      return <Package className="h-5 w-5" />;
+    case "PENDING":
+      return <Clock className="h-5 w-5" />;
+    case "CANCELLED":
+      return <AlertCircle className="h-5 w-5" />;
+    default:
+      return <Clock className="h-5 w-5" />;
+  }
+};
+
+const getStatusColor = (status: string, isActive: boolean) => {
+  if (!isActive) {
+    return "bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-600";
+  }
+  switch (status) {
+    case "COMPLETED":
+      return "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300";
+    case "CONFIRMED":
+      return "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300";
+    case "PENDING":
+      return "bg-yellow-100 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300";
+    default:
+      return "bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300";
+  }
+};
 
 export function CustomerOrderDetailModal({
   orderId,
@@ -67,7 +103,7 @@ export function CustomerOrderDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">Order Details Loading</DialogTitle>
-        <DialogContent className="w-full sm:max-w-7xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
           <div className="flex items-center justify-center h-full">
             <Loading />
           </div>
@@ -80,13 +116,11 @@ export function CustomerOrderDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">Order Details</DialogTitle>
-        <DialogContent className="w-full sm:max-w-7xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <p className="text-muted-foreground">
-                {state.error
-                  ? `Error: ${state.error}`
-                  : "No order data available"}
+                {state.error ? `Error: ${state.error}` : "No order data available"}
               </p>
               {state.error && (
                 <p className="text-xs text-muted-foreground mt-2">
@@ -101,144 +135,219 @@ export function CustomerOrderDetailModal({
   }
 
   const orderData = state.order;
+  const isCancelled = orderData.orderStatus === "CANCELLED";
+  const currentStepIndex = ORDER_STATUS_STEPS.findIndex(
+    (step) => step.status === orderData.orderStatus
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogTitle className="sr-only">
-        Order Details - {orderData.orderNumber}
-      </DialogTitle>
-      <DialogContent className="w-full sm:max-w-7xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
-        {/* Header */}
-        <div className="px-6 py-4 border-b bg-muted/30 flex-shrink-0">
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">
-              Order Details
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              {orderData.orderNumber}
-            </p>
+      <DialogTitle className="sr-only">Order Details - {orderData.orderNumber}</DialogTitle>
+      <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+        {/* Header with Order Number */}
+        <div className="px-6 py-4 border-b bg-gradient-to-r from-primary/5 to-primary/10 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-foreground">Order Details</h2>
+              <p className="text-sm text-muted-foreground mt-1 font-mono font-semibold">
+                {orderData.orderNumber}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-muted-foreground">Order Date</p>
+              <p className="text-sm font-semibold">{dateTimeFormat(orderData.createdAt)}</p>
+            </div>
           </div>
         </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-6 space-y-6">
-            {/* Order & Pricing Information */}
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-background to-muted/30">
-              <CardHeader className="pb-4 border-b">
-                <CardTitle className="text-lg font-bold text-foreground">📋 Order & Pricing</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-4">
-                {/* Order Details */}
-                <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
-                  <h4 className="text-xs font-bold text-primary uppercase tracking-wider mb-3">Order Details</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <DisplayField
-                      label="Order Number"
-                      value={orderData.orderNumber}
-                    />
-                    <DisplayField
-                      label="Order Status"
-                      value={getOrderStatusLabel(orderData.orderStatus)}
-                    />
-                    <DisplayField
-                      label="Created At"
-                      value={dateTimeFormat(orderData.createdAt)}
-                    />
-                    <DisplayField
-                      label="Payment Method"
-                      value={orderData.paymentMethod || "---"}
-                    />
-                    <DisplayField
-                      label="Payment Status"
-                      value={
-                        <span
-                          className={
-                            orderData.paymentStatus === "PAID"
-                              ? "text-green-600 dark:text-green-400 font-medium"
-                              : "text-orange-600 dark:text-orange-400 font-medium"
-                          }
-                        >
-                          {orderData.paymentStatus || "---"}
-                        </span>
-                      }
-                    />
-                    <DisplayField
-                      label="Customer Name"
-                      value={
-                        <span className="font-semibold text-foreground">
-                          {orderData.customerName || "Customer"}
-                        </span>
-                      }
-                    />
-                    <DisplayField
-                      label="Phone Number"
-                      value={
-                        <a
-                          href={`tel:${orderData.customerPhone}`}
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium"
-                        >
-                          {orderData.customerPhone || "---"}
-                        </a>
-                      }
-                    />
-                    {orderData.customerEmail && (
-                      <DisplayField
-                        label="Email"
-                        value={
-                          <a
-                            href={`mailto:${orderData.customerEmail}`}
-                            className="text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium break-all"
-                          >
-                            {orderData.customerEmail}
-                          </a>
-                        }
-                      />
-                    )}
-                    {orderData.customerNote && (
-                      <DisplayField
-                        label="Customer Note"
-                        value={orderData.customerNote}
-                      />
-                    )}
+            {/* Order Status Timeline */}
+            {!isCancelled ? (
+              <Card className="border-0 shadow-sm bg-gradient-to-br from-background to-muted/20">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-bold">📍 Order Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between items-start gap-4">
+                    {ORDER_STATUS_STEPS.map((step, index) => {
+                      const isCompleted = index < currentStepIndex;
+                      const isActive = step.status === orderData.orderStatus;
+
+                      return (
+                        <div key={step.status} className="flex-1">
+                          <div className="flex flex-col items-center">
+                            <div className="relative w-full flex justify-center mb-3">
+                              <div
+                                className={cn(
+                                  "w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg border-2 transition-all",
+                                  isCompleted
+                                    ? "bg-green-100 dark:bg-green-950 border-green-400 text-green-700 dark:text-green-300"
+                                    : isActive
+                                    ? `${getStatusColor(step.status, true)} border-current`
+                                    : "bg-gray-100 dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-400"
+                                )}
+                              >
+                                {isCompleted ? (
+                                  <Check className="h-6 w-6" />
+                                ) : (
+                                  getStatusIcon(step.status)
+                                )}
+                              </div>
+
+                              {/* Connecting Line */}
+                              {index < ORDER_STATUS_STEPS.length - 1 && (
+                                <div
+                                  className={cn(
+                                    "absolute top-7 left-1/2 h-1",
+                                    isCompleted || isActive
+                                      ? "bg-green-400 dark:bg-green-600"
+                                      : "bg-gray-200 dark:bg-gray-700"
+                                  )}
+                                  style={{
+                                    width: "100%",
+                                    marginLeft: "50%",
+                                  }}
+                                />
+                              )}
+                            </div>
+
+                            {/* Step Label */}
+                            <div className="text-center">
+                              <p
+                                className={cn(
+                                  "text-sm font-bold transition-colors",
+                                  isCompleted || isActive
+                                    ? "text-foreground"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {step.label}
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-1 max-w-[120px]">
+                                {step.description}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              /* Cancelled State */
+              <div className="bg-red-50 dark:bg-red-950/30 border-2 border-red-300 dark:border-red-800 rounded-lg p-4">
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-bold text-red-700 dark:text-red-300">Order Cancelled</h3>
+                    <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                      This order has been cancelled
+                    </p>
                   </div>
                 </div>
+              </div>
+            )}
 
-                {/* Pricing Details */}
-                <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded-lg p-3">
-                  <h4 className="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase tracking-wider mb-3">💰 Pricing Details</h4>
-                  <div className="space-y-3">
-                    <div className="bg-gray-50 dark:bg-gray-950/20 border border-gray-200 dark:border-gray-900 rounded p-3 space-y-2">
-                      <h5 className="text-xs font-medium text-gray-700 dark:text-gray-300 font-bold mb-2">📌 Order Total</h5>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                        <DisplayField
-                          label="Items"
-                          value={String(orderData.items?.length || 0)}
-                        />
-                        <DisplayField
-                          label="Subtotal"
-                          value={formatCurrency(orderData.subtotal || 0)}
-                        />
-                        {(orderData.discountAmount ?? 0) > 0 && (
-                          <DisplayField
-                            label="Discount"
-                            value={
-                              <span className="text-red-600 dark:text-red-400 font-semibold">
-                                -{formatCurrency(orderData.discountAmount)}
-                              </span>
-                            }
-                          />
-                        )}
-                        <DisplayField
-                          label="Total Amount"
-                          value={
-                            <span className="text-lg font-bold text-green-600 dark:text-green-400">
-                              {formatCurrency(orderData.totalAmount || 0)}
-                            </span>
-                          }
-                        />
-                      </div>
+            {/* Order Information Cards */}
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Customer Information */}
+              <Card className="border-0 shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-bold">👤 Customer Info</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm">
+                  <div className="flex justify-between items-start">
+                    <span className="text-muted-foreground">Name</span>
+                    <span className="font-semibold text-right">{orderData.customerName || "---"}</span>
+                  </div>
+                  {orderData.customerPhone && (
+                    <div className="flex justify-between items-start">
+                      <span className="text-muted-foreground">Phone</span>
+                      <a
+                        href={`tel:${orderData.customerPhone}`}
+                        className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                      >
+                        {orderData.customerPhone}
+                      </a>
                     </div>
+                  )}
+                  {orderData.customerEmail && (
+                    <div className="flex justify-between items-start">
+                      <span className="text-muted-foreground">Email</span>
+                      <a
+                        href={`mailto:${orderData.customerEmail}`}
+                        className="text-blue-600 dark:text-blue-400 hover:underline font-medium break-all text-right max-w-xs"
+                      >
+                        {orderData.customerEmail}
+                      </a>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Payment Information */}
+              <Card className="border-0 shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-bold">💳 Payment</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Method</span>
+                    <span
+                      className={cn(
+                        "px-3 py-1 rounded-full font-semibold text-xs",
+                        orderData.paymentMethod === "CASH"
+                          ? "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300"
+                          : "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
+                      )}
+                    >
+                      {orderData.paymentMethod || "---"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Status</span>
+                    <span
+                      className={cn(
+                        "px-3 py-1 rounded-full font-semibold text-xs",
+                        orderData.paymentStatus === "PAID"
+                          ? "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300"
+                          : orderData.paymentStatus === "PENDING"
+                          ? "bg-yellow-100 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300"
+                          : "bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300"
+                      )}
+                    >
+                      {orderData.paymentStatus || "---"}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Price Summary */}
+            <Card className="border-0 shadow-sm bg-gradient-to-br from-primary/5 to-primary/10">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base font-bold">💰 Order Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">{orderData.items?.length || 0} Items</span>
+                    <span className="font-semibold">{formatCurrency(orderData.subtotal || 0)}</span>
+                  </div>
+                  {(orderData.discountAmount ?? 0) > 0 && (
+                    <div className="flex justify-between items-center text-red-600 dark:text-red-400">
+                      <span>Discount</span>
+                      <span className="font-semibold">-{formatCurrency(orderData.discountAmount)}</span>
+                    </div>
+                  )}
+                  <div className="border-t pt-3 flex justify-between items-center">
+                    <span className="font-bold">Total Amount</span>
+                    <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+                      {formatCurrency(orderData.totalAmount || 0)}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -246,17 +355,17 @@ export function CustomerOrderDetailModal({
 
             {/* Order Items */}
             {orderData.items && orderData.items.length > 0 && (
-              <Card className="border-0 shadow-sm bg-gradient-to-br from-background to-muted/30">
-                <CardHeader className="pb-4 border-b">
-                  <CardTitle className="text-lg font-bold text-foreground">
+              <Card className="border-0 shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-bold">
                     🛒 Order Items ({orderData.items.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {orderData.items.map((item, idx) => (
+                  {orderData.items.map((item) => (
                     <div
                       key={item.id}
-                      className="border border-border/50 rounded-xl p-4 hover:shadow-md transition-all bg-card"
+                      className="border border-border/50 rounded-xl p-4 hover:shadow-md transition-all bg-card/50"
                     >
                       <div className="flex gap-4">
                         {/* Product Image */}
@@ -319,6 +428,17 @@ export function CustomerOrderDetailModal({
               </Card>
             )}
 
+            {/* Customer Note */}
+            {orderData.customerNote && (
+              <Card className="border-0 shadow-sm bg-blue-50 dark:bg-blue-950/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-bold">📝 Customer Note</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-foreground">{orderData.customerNote}</p>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </DialogContent>
