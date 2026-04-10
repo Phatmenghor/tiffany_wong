@@ -20,11 +20,13 @@ export const fetchPublicCategories = createAsyncThunk<
     const response = await axiosClient.post(
       "/api/v1/public/categories/all-data",
       {
+        pageNo: params.pageNo || 1,
+        pageSize: params.pageSize || 15,
         status: params.status || "ACTIVE",
         search: params.search || undefined,
       }
     );
-    return response.data;
+    return response.data.data;
   } catch (error: any) {
     return rejectWithValue(
       error.response?.data?.message || "Failed to fetch categories"
