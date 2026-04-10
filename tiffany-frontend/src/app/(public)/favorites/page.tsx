@@ -133,15 +133,13 @@ export default function FavoritesPage() {
       });
   };
 
-  const handleClearAll = () => {
-    dispatch(clearAllFavorites())
-      .unwrap()
-      .then(() => {
-        showToast.success("All favorites cleared");
-      })
-      .catch((error: any) => {
-        showToast.error(error?.message || "Failed to clear favorites");
-      });
+  const handleClearAll = async () => {
+    try {
+      await dispatch(clearAllFavorites()).unwrap();
+      showToast.success("All favorites cleared");
+    } catch (error: any) {
+      showToast.error(error?.message || "Failed to clear favorites");
+    }
   };
 
   const handleMoveToCart = (productId: string) => {
