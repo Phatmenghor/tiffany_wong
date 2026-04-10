@@ -154,7 +154,7 @@ export default function CheckoutPage() {
                   className="gap-1.5 h-8"
                 >
                   <Plus className="h-4 w-4" />
-                  Add Location
+                  Add Address
                 </Button>
               </div>
               <ComboboxSelectLocation
