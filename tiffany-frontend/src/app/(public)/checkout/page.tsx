@@ -19,10 +19,19 @@ import { ComboboxSelectLocation } from "@/components/shared/combobox/combobox-se
 import { OrderSuccessModal } from "@/components/shared/modal/order-success-modal";
 import { Button } from "@/components/ui/button";
 
-interface LocationResponse {
+interface Location {
   id: string;
   fullAddress: string;
-  isDefault: boolean;
+  village: string;
+  commune: string;
+  district: string;
+  province: string;
+  streetNumber: string;
+  houseNumber: string;
+  note: string;
+  latitude: number;
+  longitude: number;
+  isDefault?: boolean;
 }
 
 export default function CheckoutPage() {
@@ -32,7 +41,7 @@ export default function CheckoutPage() {
   const { items, totalItems, totalQuantity, subtotal, discountAmount, finalTotal, loaded: cartLoaded } = useCartState();
 
   const [mounted, setMounted] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState<LocationResponse | null>(null);
+  const [selectedAddress, setSelectedAddress] = useState<Location | null>(null);
   const [customerNote, setCustomerNote] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"CASH" | "BANK">("CASH");
   const [isProcessing, setIsProcessing] = useState(false);
