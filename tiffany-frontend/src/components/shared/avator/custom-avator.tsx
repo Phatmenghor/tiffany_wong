@@ -4,8 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getImageWithFallback } from "@/constants/image-defaults";
 
 interface CustomerAvatarProps {
-  imageUrl?: string;
-  name?: string;
+  imageUrl?: string | null;
+  name?: string | null;
   size?: "sm" | "md" | "lg" | "xl" | "xxl";
   className?: string;
   variant?: "avatar" | "banner";
