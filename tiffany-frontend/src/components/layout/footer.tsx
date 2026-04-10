@@ -5,19 +5,11 @@ import Image from "next/image";
 import { MapPin, Phone, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PageContainer } from "../shared/common/page-container";
-import { useAppSelector } from '@/redux/store/hooks';
-import { selectBusinessSettings, selectPrimaryColor } from "@/redux/features/business/store/selectors/business-settings-selector";
-
-// Default constants for fallback
-const DEFAULT_CONTACT_ADDRESS = "123 Street Name, Phnom Penh, Cambodia";
-const DEFAULT_CONTACT_PHONE = "+855 12 345 678";
-const DEFAULT_CONTACT_EMAIL = "support@menuscanner.com";
-const DEFAULT_BUSINESS_HOURS = [
-  { day: "Mon - Fri", openingTime: "09:00", closingTime: "22:00" },
-  { day: "Sat", openingTime: "10:00", closingTime: "23:00" },
-  { day: "Sun", openingTime: "10:00", closingTime: "21:00" },
-];
-
+import { useAppSelector } from "@/redux/store/hooks";
+import {
+  selectBusinessSettings,
+  selectPrimaryColor,
+} from "@/redux/features/business/store/selectors/business-settings-selector";
 
 export function Footer() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -28,12 +20,16 @@ export function Footer() {
   // Use Redux data or fallback to empty (blank) for hydration consistency
   const businessName = businessSettings?.systemName || "";
   const businessLogo = businessSettings?.logoSystemUrl || null;
-  const businessDescription = isHydrated ? (businessSettings?.description || "") : "";
-  const socialMedia = isHydrated ? (businessSettings?.socialMedia || []) : [];
-  const contactAddress = isHydrated ? (businessSettings?.contactAddress || DEFAULT_CONTACT_ADDRESS) : "";
-  const contactPhone = isHydrated ? (businessSettings?.contactPhone || DEFAULT_CONTACT_PHONE) : "";
-  const contactEmail = isHydrated ? (businessSettings?.contactEmail || DEFAULT_CONTACT_EMAIL) : "";
-  const businessHours = isHydrated ? (businessSettings?.businessHours || DEFAULT_BUSINESS_HOURS) : [];
+  const businessDescription = isHydrated
+    ? businessSettings?.description || ""
+    : "";
+  const socialMedia = isHydrated ? businessSettings?.socialMedia || [] : [];
+  const contactAddress = isHydrated
+    ? businessSettings?.contactAddress || ""
+    : "";
+  const contactPhone = isHydrated ? businessSettings?.contactPhone || "" : "";
+  const contactEmail = isHydrated ? businessSettings?.contactEmail || "" : "";
+  const businessHours = isHydrated ? businessSettings?.businessHours || [] : [];
 
   useEffect(() => {
     setIsHydrated(true);
@@ -85,15 +81,11 @@ export function Footer() {
             <div className="space-y-3 text-sm">
               <div className="flex gap-3">
                 <MapPin className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                <p className="text-white">
-                  {contactAddress}
-                </p>
+                <p className="text-white">{contactAddress}</p>
               </div>
               <div className="flex gap-3">
                 <Phone className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                <p className="text-white">
-                  {contactPhone}
-                </p>
+                <p className="text-white">{contactPhone}</p>
               </div>
               <div className="flex gap-3">
                 <a
@@ -109,7 +101,9 @@ export function Footer() {
 
           {/* Section 3: Business Hours */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-white text-base">Business Hours</h3>
+            <h3 className="font-semibold text-white text-base">
+              Business Hours
+            </h3>
             <div className="space-y-2 text-sm">
               <div className="flex gap-3">
                 <Clock className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
@@ -141,12 +135,13 @@ export function Footer() {
                   </a>
                 ))
               ) : (
-                <p className="text-white/60 text-xs">No social media links available</p>
+                <p className="text-white/60 text-xs">
+                  No social media links available
+                </p>
               )}
             </div>
           </div>
         </div>
-
       </PageContainer>
     </footer>
   );
