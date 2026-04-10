@@ -136,11 +136,6 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
   const [isDragging, setIsDragging] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
 
-  const [selectedVillage, setSelectedVillage] = useState<VillageResponseModel | null>(null);
-  const [isGeocodingAddress, setIsGeocodingAddress] = useState(false);
-  const [geocodedCoords, setGeocodedCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [geocodeSuccess, setGeocodeSuccess] = useState(false);
-
   const { control, handleSubmit, reset, setValue, watch, getValues, formState: { errors, isDirty } } = useForm<LocationFormData>({
     resolver: zodResolver(createLocationSchema) as any,
     defaultValues: {
@@ -413,8 +408,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
   };
 
   const handleClose = useCallback(() => {
-    setIsFullScreen(false); setSelectedVillage(null);
-    setGeocodedCoords(null); setGeocodeSuccess(false);
+    setIsFullScreen(false);
     resetPublicLocation(); reset(); clearError(); onClose();
   }, [reset, clearError, onClose, resetPublicLocation]);
 
