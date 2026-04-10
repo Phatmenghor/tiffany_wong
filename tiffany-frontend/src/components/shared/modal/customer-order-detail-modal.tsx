@@ -130,18 +130,10 @@ export function CustomerOrderDetailModal({
       <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden bg-white">
         {/* Header with Order Number */}
         <div className="px-6 py-4 border-b bg-gradient-to-r from-primary/5 to-primary/10 flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900">Order Details</h2>
-              <p className="text-sm text-slate-600 mt-1 font-mono font-semibold">
-                {orderData.orderNumber}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-slate-600">Order Date</p>
-              <p className="text-sm font-semibold text-slate-900">{dateTimeFormat(orderData.createdAt)}</p>
-            </div>
-          </div>
+          <h2 className="text-xl font-bold text-slate-900">Order Details</h2>
+          <p className="text-sm text-slate-600 mt-1 font-mono font-semibold">
+            {orderData.orderNumber}
+          </p>
         </div>
 
         {/* Content */}
@@ -149,85 +141,72 @@ export function CustomerOrderDetailModal({
           <div className="p-6 space-y-6">
             {/* Order Status Timeline */}
             {!isCancelled ? (
-              <Card className="border border-slate-200 shadow-sm bg-gradient-to-br from-slate-50 to-white">
-                <CardHeader className="pb-4 border-b border-slate-200">
-                  <CardTitle className="text-lg font-bold text-slate-900">📍 Order Status</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-6">
-                  <div className="flex justify-between items-start gap-4">
-                    {ORDER_STATUS_STEPS.map((step, index) => {
-                      const isCompleted = index < currentStepIndex;
-                      const isActive = step.status === orderData.orderStatus;
+              <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-900 mb-4">📍 Order Status</h3>
+                <div className="flex items-center justify-between gap-2">
+                  {ORDER_STATUS_STEPS.map((step, index) => {
+                    const isCompleted = index < currentStepIndex;
+                    const isActive = step.status === orderData.orderStatus;
 
-                      return (
-                        <div key={step.status} className="flex-1">
-                          <div className="flex flex-col items-center">
-                            <div className="relative w-full flex justify-center mb-3">
-                              <div
-                                className={cn(
-                                  "w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg border-2 transition-all",
-                                  isCompleted
-                                    ? "bg-green-100 border-green-400 text-green-700"
-                                    : isActive
-                                    ? step.status === "COMPLETED"
-                                      ? "bg-green-100 border-green-400 text-green-700"
-                                      : step.status === "CONFIRMED"
-                                      ? "bg-blue-100 border-blue-400 text-blue-700"
-                                      : "bg-yellow-100 border-yellow-400 text-yellow-700"
-                                    : "bg-gray-100 border-gray-300 text-gray-400"
-                                )}
-                              >
-                                {isCompleted ? (
-                                  <Check className="h-6 w-6" />
-                                ) : (
-                                  getStatusIcon(step.status)
-                                )}
-                              </div>
-
-                              {/* Connecting Line */}
-                              {index < ORDER_STATUS_STEPS.length - 1 && (
-                                <div
-                                  className={cn(
-                                    "absolute top-7 left-1/2 h-1 transition-colors",
-                                    isCompleted || isActive
-                                      ? "bg-green-400"
-                                      : "bg-gray-200"
-                                  )}
-                                  style={{
-                                    width: "100%",
-                                    marginLeft: "50%",
-                                  }}
-                                />
-                              )}
-                            </div>
-
-                            {/* Step Label */}
-                            <div className="text-center">
-                              <p className={cn(
-                                "text-sm font-bold transition-colors",
-                                isCompleted || isActive ? "text-slate-900" : "text-slate-500"
-                              )}>
-                                {step.label}
-                              </p>
-                              <p className="text-xs text-slate-600 mt-1 max-w-[120px]">
-                                {step.description}
-                              </p>
-                            </div>
-                          </div>
+                    return (
+                      <div key={step.status} className="flex-1 flex items-center gap-2">
+                        {/* Step Circle */}
+                        <div
+                          className={cn(
+                            "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all",
+                            isCompleted
+                              ? "bg-green-100 text-green-700"
+                              : isActive
+                              ? step.status === "COMPLETED"
+                                ? "bg-green-100 text-green-700"
+                                : step.status === "CONFIRMED"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-yellow-100 text-yellow-700"
+                              : "bg-gray-100 text-gray-400"
+                          )}
+                        >
+                          {isCompleted ? (
+                            <Check className="h-5 w-5" />
+                          ) : (
+                            getStatusIcon(step.status)
+                          )}
                         </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
+
+                        {/* Step Info */}
+                        <div className="flex-1">
+                          <p className={cn(
+                            "text-xs font-bold transition-colors",
+                            isCompleted || isActive ? "text-slate-900" : "text-slate-500"
+                          )}>
+                            {step.label}
+                          </p>
+                          <p className="text-xs text-slate-600 line-clamp-1">
+                            {step.description}
+                          </p>
+                        </div>
+
+                        {/* Arrow */}
+                        {index < ORDER_STATUS_STEPS.length - 1 && (
+                          <div className={cn(
+                            "flex-shrink-0 text-lg transition-colors",
+                            isCompleted || isActive ? "text-green-400" : "text-gray-300"
+                          )}>
+                            →
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             ) : (
               /* Cancelled State */
-              <div className="bg-red-50 border-2 border-red-300 rounded-lg p-4">
+              <div className="bg-red-50 border border-red-300 rounded-xl p-4">
                 <div className="flex items-center gap-3">
-                  <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0" />
+                  <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
                   <div>
-                    <h3 className="font-bold text-red-700">Order Cancelled</h3>
-                    <p className="text-sm text-red-600 mt-1">
+                    <h3 className="font-bold text-red-700 text-sm">Order Cancelled</h3>
+                    <p className="text-xs text-red-600 mt-0.5">
                       This order has been cancelled
                     </p>
                   </div>
@@ -269,6 +248,10 @@ export function CustomerOrderDetailModal({
                       </a>
                     </div>
                   )}
+                  <div className="flex justify-between items-start border-t border-slate-200 pt-3">
+                    <span className="text-slate-600">Order Date</span>
+                    <span className="font-semibold text-slate-900 text-right">{dateTimeFormat(orderData.createdAt)}</span>
+                  </div>
                 </CardContent>
               </Card>
 
