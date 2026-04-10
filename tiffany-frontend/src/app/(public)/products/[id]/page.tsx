@@ -170,7 +170,7 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (!product?.id || fetchedSimilarRef.current === product.id) return;
     fetchedSimilarRef.current = product.id;
-    dispatch(fetchPublicProducts({ pageNo: 1, pageSize: 6, categoryId: product.categoryId || undefined, status: "ACTIVE" }))
+    dispatch(fetchPublicProducts({ pageNo: 1, pageSize: 6, categoryId: product.categoryId || undefined, statuses: ["ACTIVE"] }))
       .unwrap()
       .then((res) => {
         setSimilarProducts((res.content || []).filter((p: any) => p.id !== productId).slice(0, 4));
