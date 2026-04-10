@@ -3,9 +3,10 @@
  * Simplified type definitions matching backend OrderResponse
  */
 
+import { OrderStatus } from "@/enums/order-status.enum";
+
 export type PaymentMethod = "CASH" | "BANK";
 export type PaymentStatus = "PAID" | "UNPAID" | "REFUNDED";
-export type OrderStatus = "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 
 // Order Item Response - matches CartItemResponse structure for consistency
 export interface OrderItemResponse {

@@ -44,9 +44,9 @@ export const getOrderStatusDescription = (status: OrderStatus): string => {
 };
 
 export const isOrderActive = (status: OrderStatus): boolean => {
-  return status !== OrderStatus.CANCELLED && status !== OrderStatus.COMPLETED && status !== OrderStatus.FAILED;
+  return status !== OrderStatus.CANCELLED && status !== OrderStatus.COMPLETED;
 };
 
 export const isOrderTerminal = (status: OrderStatus): boolean => {
-  return status === OrderStatus.COMPLETED || status === OrderStatus.CANCELLED || status === OrderStatus.FAILED;
+  return status === OrderStatus.COMPLETED || status === OrderStatus.CANCELLED;
 };
