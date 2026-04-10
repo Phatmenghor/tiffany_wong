@@ -157,19 +157,25 @@ export const orderAdminTableColumns = ({
           switch (status) {
             case "COMPLETED":
             case "READY":
-              return "text-green-600 font-medium";
+              return "bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-800";
             case "CANCELLED":
             case "FAILED":
-              return "text-red-600 font-medium";
+              return "bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-800";
             case "PENDING":
+              return "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-800";
             case "PREPARING":
-              return "text-blue-600 font-medium";
+            case "CONFIRMED":
+            case "PROCESSING":
+              return "bg-blue-100 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800";
+            case "SHIPPED":
+            case "IN_TRANSIT":
+              return "bg-cyan-100 dark:bg-cyan-950/30 text-cyan-800 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800";
             default:
-              return "text-gray-600 font-medium";
+              return "bg-gray-100 dark:bg-gray-950/30 text-gray-800 dark:text-gray-300 border border-gray-300 dark:border-gray-800";
           }
         };
         return (
-          <span className={`text-xs ${getStatusColor(order?.orderStatus)}`}>
+          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getStatusColor(order?.orderStatus)}`}>
             {getOrderStatusLabel(order?.orderStatus)}
           </span>
         );
@@ -184,18 +190,19 @@ export const orderAdminTableColumns = ({
         const getPaymentColor = (status: string) => {
           switch (status) {
             case "PAID":
-              return "text-green-600 font-medium";
-            case "UNPAID":
+              return "bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-800";
             case "PENDING":
-              return "text-orange-600 font-medium";
+              return "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-800";
             case "REFUNDED":
-              return "text-red-600 font-medium";
+              return "bg-purple-100 dark:bg-purple-950/30 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800";
+            case "UNPAID":
+              return "bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-800";
             default:
-              return "text-gray-600 font-medium";
+              return "bg-gray-100 dark:bg-gray-950/30 text-gray-800 dark:text-gray-300 border border-gray-300 dark:border-gray-800";
           }
         };
         return (
-          <span className={`text-xs ${getPaymentColor(order?.payment?.paymentStatus)}`}>
+          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getPaymentColor(order?.payment?.paymentStatus)}`}>
             {order?.payment?.paymentStatus || "---"}
           </span>
         );
