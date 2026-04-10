@@ -453,12 +453,12 @@ export default function OrdersPage() {
 
       {/* Data Table */}
       {!isAuthenticated ? (
-        <div className="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20 p-6">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
           <div className="flex items-start gap-4">
-            <AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-red-900 dark:text-red-200">Sign In Required</h3>
-              <p className="text-red-800 dark:text-red-300 text-sm mt-1">
+              <h3 className="font-semibold text-red-900">Sign In Required</h3>
+              <p className="text-red-800 text-sm mt-1">
                 Please sign in to view your orders.
               </p>
               <CustomButton
@@ -471,12 +471,12 @@ export default function OrdersPage() {
           </div>
         </div>
       ) : error.list ? (
-        <div className="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20 p-6">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
           <div className="flex items-start gap-4">
-            <AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-red-900 dark:text-red-200">Error Loading Orders</h3>
-              <p className="text-red-800 dark:text-red-300 text-sm mt-1">{error.list}</p>
+              <h3 className="font-semibold text-red-900">Error Loading Orders</h3>
+              <p className="text-red-800 text-sm mt-1">{error.list}</p>
             </div>
           </div>
         </div>
@@ -559,17 +559,6 @@ function createOrderTableColumns(
       ),
     },
     {
-      key: "createdAt",
-      label: "Created Date",
-      minWidth: "140px",
-      maxWidth: "170px",
-      render: (order) => (
-        <span className="text-xs text-muted-foreground">
-          {dateTimeFormat(order?.createdAt)}
-        </span>
-      ),
-    },
-    {
       key: "orderNumber",
       label: "Order #",
       minWidth: "100px",
@@ -581,77 +570,37 @@ function createOrderTableColumns(
       ),
     },
     {
-      key: "orderStatus",
-      label: "Status",
-      minWidth: "120px",
-      maxWidth: "150px",
+      key: "orderFrom",
+      label: "Type",
+      minWidth: "80px",
+      maxWidth: "110px",
       render: (order) => {
-        const getStatusColor = (status: string) => {
-          switch (status) {
-            case "COMPLETED":
-            case "READY":
-            case "DELIVERED":
-              return "bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-800";
-            case "CANCELLED":
-            case "FAILED":
-              return "bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-800";
-            case "PENDING":
-              return "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-800";
-            case "PREPARING":
-            case "CONFIRMED":
-            case "PROCESSING":
-              return "bg-blue-100 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800";
-            case "SHIPPED":
-            case "IN_TRANSIT":
-              return "bg-cyan-100 dark:bg-cyan-950/30 text-cyan-800 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800";
-            default:
-              return "bg-gray-100 dark:bg-gray-950/30 text-gray-800 dark:text-gray-300 border border-gray-300 dark:border-gray-800";
-          }
+        const getTypeColor = (orderFrom: string | undefined) => {
+          return orderFrom === "CUSTOMER"
+            ? "bg-blue-100 text-blue-800 border border-blue-300"
+            : "bg-purple-100 text-purple-800 border border-purple-300";
         };
         return (
-          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getStatusColor(order?.orderStatus)}`}>
-            {getOrderStatusLabel(order?.orderStatus)}
+          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getTypeColor(order?.orderFrom)}`}>
+            {order?.orderFrom === "CUSTOMER" ? "Public" : "POS"}
           </span>
         );
       },
     },
     {
-      key: "paymentMethod",
-      label: "Payment Method",
-      minWidth: "120px",
-      maxWidth: "150px",
-      render: (order) => (
-        <span className="text-xs font-medium">
-          {order?.paymentMethod || "---"}
-        </span>
-      ),
-    },
-    {
-      key: "paymentStatus",
-      label: "Payment Status",
+      key: "customerName",
+      label: "Customer",
       minWidth: "130px",
-      maxWidth: "160px",
-      render: (order) => {
-        const getPaymentStatusColor = (status: string) => {
-          switch (status) {
-            case "PAID":
-              return "bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-800";
-            case "PENDING":
-              return "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-800";
-            case "REFUNDED":
-              return "bg-purple-100 dark:bg-purple-950/30 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800";
-            case "UNPAID":
-              return "bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-800";
-            default:
-              return "bg-gray-100 dark:bg-gray-950/30 text-gray-800 dark:text-gray-300 border border-gray-300 dark:border-gray-800";
-          }
-        };
-        return (
-          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getPaymentStatusColor(order?.paymentStatus)}`}>
-            {order?.paymentStatus || "---"}
+      maxWidth: "170px",
+      truncate: true,
+      render: (order) => (
+        <div className="flex flex-col">
+          <span className="text-xs font-medium">{order?.customerName || "Walk-in"}</span>
+          <span className="text-xs text-muted-foreground">
+            {order?.customerPhone || "No phone"}
           </span>
-        );
-      },
+        </div>
+      ),
     },
     {
       key: "items",
@@ -672,17 +621,90 @@ function createOrderTableColumns(
       render: (order) => {
         return (
           <div className="flex flex-col">
-            <span className="text-xs font-bold text-green-600 dark:text-green-400">
+            <span className="text-xs font-bold text-green-600">
               {formatCurrency(order?.totalAmount || 0)}
             </span>
             {order?.discountAmount && order.discountAmount > 0 && (
-              <span className="text-xs text-red-600 dark:text-red-400 font-medium">
+              <span className="text-xs text-red-600 font-medium">
                 Save {formatCurrency(order.discountAmount)}
               </span>
             )}
           </div>
         );
       },
+    },
+    {
+      key: "orderStatus",
+      label: "Status",
+      minWidth: "120px",
+      maxWidth: "150px",
+      render: (order) => {
+        const getStatusColor = (status: string) => {
+          switch (status) {
+            case "COMPLETED":
+            case "READY":
+            case "DELIVERED":
+              return "bg-green-100 text-green-800 border border-green-300";
+            case "CANCELLED":
+            case "FAILED":
+              return "bg-red-100 text-red-800 border border-red-300";
+            case "PENDING":
+              return "bg-yellow-100 text-yellow-800 border border-yellow-300";
+            case "PREPARING":
+            case "CONFIRMED":
+            case "PROCESSING":
+              return "bg-blue-100 text-blue-800 border border-blue-300";
+            case "SHIPPED":
+            case "IN_TRANSIT":
+              return "bg-cyan-100 text-cyan-800 border border-cyan-300";
+            default:
+              return "bg-gray-100 text-gray-800 border border-gray-300";
+          }
+        };
+        return (
+          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getStatusColor(order?.orderStatus)}`}>
+            {getOrderStatusLabel(order?.orderStatus)}
+          </span>
+        );
+      },
+    },
+    {
+      key: "paymentStatus",
+      label: "Payment",
+      minWidth: "130px",
+      maxWidth: "160px",
+      render: (order) => {
+        const getPaymentStatusColor = (status: string) => {
+          switch (status) {
+            case "PAID":
+              return "bg-green-100 text-green-800 border border-green-300";
+            case "PENDING":
+              return "bg-yellow-100 text-yellow-800 border border-yellow-300";
+            case "REFUNDED":
+              return "bg-purple-100 text-purple-800 border border-purple-300";
+            case "UNPAID":
+              return "bg-red-100 text-red-800 border border-red-300";
+            default:
+              return "bg-gray-100 text-gray-800 border border-gray-300";
+          }
+        };
+        return (
+          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getPaymentStatusColor(order?.paymentStatus)}`}>
+            {order?.paymentStatus || "---"}
+          </span>
+        );
+      },
+    },
+    {
+      key: "createdAt",
+      label: "Created",
+      minWidth: "140px",
+      maxWidth: "170px",
+      render: (order) => (
+        <span className="text-xs text-muted-foreground">
+          {dateTimeFormat(order?.createdAt)}
+        </span>
+      ),
     },
     {
       key: "actions",

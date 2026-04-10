@@ -52,4 +52,5 @@ export interface OrderResponse {
   discountAmount: number;
   totalAmount: number;
   items: OrderItemResponse[];
+  orderFrom?: "CUSTOMER" | "BUSINESS"; // POS or Public order source
 }
