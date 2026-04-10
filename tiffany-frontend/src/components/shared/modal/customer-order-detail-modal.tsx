@@ -172,21 +172,6 @@ export function CustomerOrderDetailModal({
                         )}>
                           {step.label}
                         </p>
-
-                        {/* Connecting Line */}
-                        {index < ORDER_STATUS_STEPS.length - 1 && (
-                          <div
-                            className={cn(
-                              "absolute h-1 transition-colors",
-                              isCompleted || isActive ? "bg-primary" : "bg-slate-300"
-                            )}
-                            style={{
-                              width: "calc(100% / 3 - 24px)",
-                              marginLeft: "calc(50% + 32px)",
-                              marginTop: "-44px",
-                            }}
-                          />
-                        )}
                       </div>
                     );
                   })}
