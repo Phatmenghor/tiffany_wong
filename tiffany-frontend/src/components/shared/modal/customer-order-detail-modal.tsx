@@ -284,35 +284,122 @@ export function CustomerOrderDetailModal({
                               )}
                             </div>
                             {/* Size and SKU */}
-                            {item.sizeName && (
-                              <div className="text-xs text-muted-foreground">
-                                Size: <span className="font-medium">{item.sizeName}</span>
-                              </div>
-                            )}
+                            <div className="text-xs text-muted-foreground space-y-0.5">
+                              {item.sizeName && (
+                                <div>
+                                  Size: <span className="font-medium">{item.sizeName}</span>
+                                </div>
+                              )}
+                              {item.sku && (
+                                <div>
+                                  SKU: <span className="font-mono font-medium">{item.sku}</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Item Pricing */}
-                      <div className="space-y-2">
-                        <div className="grid grid-cols-3 gap-3 text-xs">
+                      <div className="space-y-3">
+                        {/* Quantity and Pricing */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                           <div>
-                            <span className="text-muted-foreground">Quantity:</span>
+                            <span className="text-muted-foreground block text-xs">Quantity</span>
                             <p className="font-medium">{item.quantity}</p>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">Unit Price:</span>
+                            <span className="text-muted-foreground block text-xs">Unit Price</span>
                             <p className="font-medium">
                               {formatCurrency(item.displayPrice)}
                             </p>
                           </div>
+                          {item.displayOriginPrice && item.displayOriginPrice !== item.displayPrice && (
+                            <div>
+                              <span className="text-muted-foreground block text-xs">Original Price</span>
+                              <p className="font-medium line-through text-muted-foreground">
+                                {formatCurrency(item.displayOriginPrice)}
+                              </p>
+                            </div>
+                          )}
                           <div>
-                            <span className="text-muted-foreground">Subtotal:</span>
+                            <span className="text-muted-foreground block text-xs">Subtotal</span>
                             <p className="font-bold text-green-600 dark:text-green-400">
                               {formatCurrency(item.subtotalAfterDiscount || 0)}
                             </p>
                           </div>
                         </div>
+
+                        {/* Promotion Details */}
+                        {item.hasActivePromotion && item.displayPromotionType && (
+                          <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded p-2.5">
+                            <h5 className="text-xs font-bold text-red-700 dark:text-red-300 mb-2">🎯 Promotion Details</h5>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+                              <div>
+                                <span className="text-muted-foreground text-xs">Type</span>
+                                <p className="font-medium">
+                                  {item.displayPromotionType === "FIXED_AMOUNT" ? "Fixed Amount" : "Percentage"}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Value</span>
+                                <p className="font-medium">
+                                  {item.displayPromotionType === "FIXED_AMOUNT"
+                                    ? `-${formatCurrency(item.displayPromotionValue || 0)}`
+                                    : `-${item.displayPromotionValue}%`}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Discount Amount</span>
+                                <p className="font-bold text-red-600 dark:text-red-400">
+                                  -{formatCurrency(item.subtotalDiscountAmount || 0)}
+                                </p>
+                              </div>
+                              {item.displayPromotionFromDate && (
+                                <div>
+                                  <span className="text-muted-foreground text-xs">From</span>
+                                  <p className="font-medium text-xs">
+                                    {dateTimeFormat(item.displayPromotionFromDate)}
+                                  </p>
+                                </div>
+                              )}
+                              {item.displayPromotionToDate && (
+                                <div>
+                                  <span className="text-muted-foreground text-xs">To</span>
+                                  <p className="font-medium text-xs">
+                                    {dateTimeFormat(item.displayPromotionToDate)}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Subtotal Breakdown */}
+                        {item.subtotalBeforeDiscount !== item.subtotalAfterDiscount && (
+                          <div className="border-t pt-2">
+                            <div className="grid grid-cols-3 gap-2 text-xs">
+                              <div>
+                                <span className="text-muted-foreground text-xs">Before Discount</span>
+                                <p className="font-medium line-through">
+                                  {formatCurrency(item.subtotalBeforeDiscount || 0)}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Discount</span>
+                                <p className="font-medium text-red-600 dark:text-red-400">
+                                  -{formatCurrency(item.subtotalDiscountAmount || 0)}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">After Discount</span>
+                                <p className="font-bold text-green-600 dark:text-green-400">
+                                  {formatCurrency(item.subtotalAfterDiscount || 0)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
