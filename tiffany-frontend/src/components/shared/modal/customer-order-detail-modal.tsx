@@ -139,7 +139,7 @@ export function CustomerOrderDetailModal({
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-6 space-y-6">
-            {/* Order Status Timeline - Modern Progress Bar */}
+            {/* Order Status Timeline - Modern Progress Bar - TOP POSITION */}
             {!isCancelled ? (
               <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-8 shadow-sm">
                 <h3 className="text-base font-bold text-slate-900 mb-8">Order Progress</h3>
