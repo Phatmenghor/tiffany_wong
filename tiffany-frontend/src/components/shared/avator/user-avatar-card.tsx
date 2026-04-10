@@ -6,12 +6,12 @@ import { getImageWithFallback } from "@/constants/image-defaults";
 
 interface UserAvatarCardProps {
   user: {
-    profileImageUrl?: string;
-    fullName?: string;
-    firstName?: string;
-    lastName?: string;
-    displayName?: string;
-    email?: string;
+    profileImageUrl?: string | null;
+    fullName?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    displayName?: string | null;
+    email?: string | null;
   };
   collapsed?: boolean;
   isOnline?: boolean;
