@@ -232,6 +232,8 @@ export default function CategoriesPage() {
           totalElements={categoriesWithProductCount.length}
           totalPages={1}
           pageSize={categoriesWithProductCount.length || 10}
+          onPageChange={() => {}}
+          showPagination={false}
         />
       </div>
 
