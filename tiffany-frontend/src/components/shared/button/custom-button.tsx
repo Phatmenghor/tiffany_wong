@@ -40,17 +40,17 @@ export const CustomButton = React.forwardRef<
     },
     ref
   ) => {
-    // Determine if this is a submit button based on props
-    const isSubmitButton = isSubmitting !== undefined;
-    const isDisabled = isSubmitButton
+    // Determine if this is a form submit button (only if no onClick and children provided as text only)
+    const isFormSubmitButton = !onClick && !children && isSubmitting !== undefined;
+    const isDisabled = isFormSubmitButton
       ? isSubmitting || props.disabled || (!isDirty && !isCreate)
       : props.disabled;
 
     const getButtonText = () => {
-      if (isSubmitButton && isSubmitting) {
+      if (isFormSubmitButton && isSubmitting) {
         return isCreate ? submittingCreateText : submittingUpdateText;
       }
-      if (isSubmitButton) {
+      if (isFormSubmitButton) {
         return isCreate ? createText : updateText;
       }
       return children;
@@ -62,7 +62,7 @@ export const CustomButton = React.forwardRef<
       }
     };
 
-    const buttonContent = isSubmitButton && isSubmitting ? (
+    const buttonContent = isFormSubmitButton && isSubmitting ? (
       <>
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         {getButtonText()}
@@ -77,10 +77,10 @@ export const CustomButton = React.forwardRef<
     return (
       <Button
         ref={ref}
-        type={isSubmitButton && !onClick ? "submit" : type}
+        type={isFormSubmitButton ? "submit" : type}
         onClick={handleClick}
         disabled={isDisabled}
-        className={cn(isSubmitButton && "min-w-[120px] transition-all", className)}
+        className={cn(isFormSubmitButton && "min-w-[120px] transition-all", className)}
         {...props}
       >
         {buttonContent}
