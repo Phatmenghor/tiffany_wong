@@ -9,13 +9,8 @@ export interface AllOrderAdminRequest extends BaseGetAllRequest {
 
 export interface UpdateOrderRequest {
   orderStatus?: string;
-  paymentMethod?: string;
   paymentStatus?: string;
   customerNote?: string;
-  businessNote?: string;
-  discountAmount?: number;
-  taxAmount?: number;
-  deliveryFee?: number;
 }
 
 export interface UpdateOrderParams {

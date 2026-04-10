@@ -1,127 +1,49 @@
 /**
- * Order API Response Models - Matches Backend DTOs exactly
- * Includes before/after audit trail for complete history
+ * Order API Response Models - Simplified structure matching backend
  */
-
-// Item-level pricing snapshot (before or after POS modification)
-export interface OrderItemPricingSnapshotApi {
-  currentPrice: number;
-  finalPrice: number;
-  quantity: number;
-  discountAmount: number;
-  totalPrice: number;
-  hasActivePromotion: boolean;
-  promotionType: string | null;
-  promotionValue: number | null;
-}
 
 export interface OrderItemApiResponse {
   id: string;
-  product: {
-    id: string;
-    name: string;
-    imageUrl: string;
-    sizeId: string | null;
-    sizeName: string | null;
-    status: string;
-  };
+  productId: string;
+  productName: string;
+  productImageUrl: string;
+  productSizeId: string | null;
+  sizeName: string;
+  sku: string;
+  quantity: number;
 
-  // Snapshot BEFORE any POS modifications
-  before: OrderItemPricingSnapshotApi;
-
-  // Was item modified from POS?
-  hadChangeFromPOS: boolean;
-
-  // Snapshot AFTER POS modifications (null if no change)
-  after: OrderItemPricingSnapshotApi | null;
-
-  // Reason for the change (if any)
-  reason: string | null;
-}
-
-// Order-level pricing snapshot (before or after order-level discount)
-export interface OrderPricingSnapshotApi {
-  totalItems: number;
-  subtotalBeforeDiscount: number;
-  subtotal: number;
-  discountAmount: number;
+  // Display fields for UI rendering
+  displayPrice: number;
+  displayOriginPrice: number;
+  displayPromotionType: string | null;
+  displayPromotionValue: number | null;
+  displayPromotionFromDate: string | null;
+  displayPromotionToDate: string | null;
   hasActivePromotion: boolean;
-  promotionType: string | null;
-  promotionValue: number | null;
-  deliveryFee: number;
-  taxAmount: number;
-  finalTotal: number;
-}
 
-// Pricing with before/after audit trail — matches backend OrderPricingInfo
-export interface OrderPricingApiResponse {
-  before: OrderPricingSnapshotApi;
-  hadOrderLevelChangeFromPOS: boolean;
-  after: OrderPricingSnapshotApi | null;
-  reason: string;
+  // Subtotal calculations
+  subtotalBeforeDiscount: number;
+  subtotalDiscountAmount: number;
+  subtotalAfterDiscount: number;
 }
 
 export interface OrderApiResponse {
   id: string;
-  orderNumber: string;
-  orderStatus: string;
-
-  // Customer info
-  customerId: string | null;
-  customerName: string | null;
-  customerPhone: string | null;
-
-  // Business info
-  businessId: string;
-  businessName: string;
-
-  // Delivery info
-  deliveryAddress: {
-    village: string;
-    commune: string;
-    district: string;
-    province: string;
-    streetNumber?: string;
-    houseNumber?: string;
-    note?: string;
-    latitude?: number;
-    longitude?: number;
-  };
-  deliveryOption: {
-    name: string;
-    description?: string;
-    imageUrl?: string;
-    price?: number;
-  };
-
-  // Notes
-  customerNote: string;
-  businessNote: string;
-
-  pricing: OrderPricingApiResponse;
-  items: OrderItemApiResponse[];
-
-  payment: {
-    paymentMethod: string;
-    paymentStatus: string;
-  };
-
-  statusHistory: {
-    id: string;
-    statusName: string;
-    statusDescription: string | null;
-    note: string | null;
-    changedBy: {
-      userId: string;
-      firstName: string;
-      lastName: string;
-      phoneNumber?: string;
-      businessId?: string;
-      fullName?: string;
-    } | null;
-    changedAt: string;
-  }[];
-
   createdAt: string;
   updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+  orderNumber: string;
+  customerId: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  customerNote: string | null;
+  orderStatus: string;
+  paymentMethod: string;
+  paymentStatus: string;
+  subtotal: number;
+  discountAmount: number;
+  totalAmount: number;
+  items: OrderItemApiResponse[];
 }
