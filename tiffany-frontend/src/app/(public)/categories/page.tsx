@@ -6,7 +6,7 @@ import { LayoutGrid } from "lucide-react";
 import { CategoryCard } from "@/components/shared/card/category-card";
 import { CategoryCardSkeleton } from "@/components/shared/skeletons/category-card-skeleton";
 import { useSkeletonCount, SkeletonPresets } from "@/hooks/use-skeleton-count";
-import { EmptyState } from "@/components/shared/empty-state";
+import { EmptyState } from "@/components/shared/empty-state/empty-state";
 import { PageContainer } from "@/components/shared/common/page-container";
 import { PageHeader } from "@/components/shared/common/page-header";
 

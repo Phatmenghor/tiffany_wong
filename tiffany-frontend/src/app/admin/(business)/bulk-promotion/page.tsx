@@ -17,8 +17,8 @@ import {
 } from "lucide-react";
 import { CustomCheckbox } from "@/components/shared/common/custom-checkbox";
 import { CustomButton } from "@/components/shared/button/custom-button";
-import { SubmitButton } from "@/components/shared/button/submit-button";
-import { CancelButton } from "@/components/shared/button/cancel-button";
+import { SubmitButton } from "@/components/shared/form-field/submid-button";
+import { CancelButton } from "@/components/shared/form-field/cancel-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { DateTimePickerField } from "@/components/shared/form-field/date-picker-field";
