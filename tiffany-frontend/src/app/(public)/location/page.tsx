@@ -267,8 +267,8 @@ export default function LocationPage() {
       {locationPagination.hasMore && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            {Array.from({ length: skeletonCount }).map((i) => (
-              <Skeleton key={i} className="h-48 rounded-2xl" />
+            {Array.from({ length: skeletonCount }).map((_, i) => (
+              <Skeleton key={`skeleton-${i}`} className="h-48 rounded-2xl" />
             ))}
           </div>
 
