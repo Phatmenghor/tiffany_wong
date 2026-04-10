@@ -13,40 +13,11 @@ export const addToCart = createApiThunk<CartResponseModel, AddToCartRequest>(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { optimisticTimestamp, ...requestData } = data;
 
-    // DEBUG: Log request
-    console.log("%c## CART API REQUEST", "background:#007bff;color:white;padding:5px;border-radius:3px;font-weight:bold", {
-      endpoint: "POST /api/v1/cart",
-      payload: requestData,
-      action: requestData.quantity === 0 ? "REMOVE" : "ADD/UPDATE",
-      timestamp: new Date().toLocaleTimeString()
-    });
-
     const response = await axiosClientWithAuth.post("/api/v1/cart", requestData, {
       signal,
     });
 
-    // DEBUG: Log response
     let responseData = response.data.data;
-    const isCorrect = responseData?.items && Array.isArray(responseData.items);
-    const bgColor = isCorrect ? "#28a745" : "#dc3545";
-    const status = isCorrect ? "✅ CORRECT" : "❌ WRONG";
-
-    console.log(`%c## CART API RESPONSE ${status}`, `background:${bgColor};color:white;padding:5px;border-radius:3px;font-weight:bold`, {
-      hasItems: !!responseData?.items,
-      itemsCount: responseData?.items?.length || 0,
-      totalItems: responseData?.totalItems,
-      finalTotal: responseData?.finalTotal,
-      timestamp: new Date().toLocaleTimeString()
-    });
-
-    // DEBUG: Log the actual items structure
-    if (responseData?.items?.length > 0) {
-      console.log("%c## ACTUAL ITEMS FROM BACKEND", "background:#ff9800;color:white;padding:5px;border-radius:3px;font-weight:bold", {
-        firstItem: responseData.items[0],
-        fields: Object.keys(responseData.items[0]),
-        itemCount: responseData.items.length
-      });
-    }
 
     if (!isCorrect) {
       console.error("%c## ❌ RESPONSE IS WRONG STRUCTURE", "background:#dc3545;color:white;padding:5px", responseData);

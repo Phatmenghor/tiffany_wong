@@ -143,43 +143,11 @@ const generateRequestId = (): string => {
 // Simple logger with request ID and improved timestamp
 const logger = {
   log: (message: string, data?: unknown, requestId?: string): void => {
-    // Only use development check for normal logs
-    if (isDevelopment) {
-      const timestamp = formatTimestamp();
-      const logId = requestId ? `[${requestId}] ` : "";
-      if (isBrowser) {
-        console.log(
-          `%c${timestamp} ${logId}${message}`,
-          colors.blue,
-          data || ""
-        );
-      } else {
-        console.log(
-          `${colors.blue}${timestamp} ${logId}${message}${colors.reset}`,
-          data || ""
-        );
-      }
-    }
+    // Debug logs removed - use error() or warn() for important messages
   },
 
   success: (message: string, data?: unknown, requestId?: string): void => {
-    // Only use development check for success logs
-    if (isDevelopment) {
-      const timestamp = formatTimestamp();
-      const logId = requestId ? `[${requestId}] ` : "";
-      if (isBrowser) {
-        console.log(
-          `%c${timestamp} ${logId}${message}`,
-          colors.green,
-          data || ""
-        );
-      } else {
-        console.log(
-          `${colors.green}${timestamp} ${logId}${message}${colors.reset}`,
-          data || ""
-        );
-      }
-    }
+    // Success logs removed - use error() or warn() for important messages
   },
 
   error: (message: string, data?: unknown, requestId?: string): void => {
@@ -221,37 +189,7 @@ const logger = {
     data: unknown,
     requestId?: string
   ): void => {
-    // Always log request body logs regardless of environment
-    const timestamp = formatTimestamp();
-    const logId = requestId ? `[${requestId}] ` : "";
-    const messagePrefix = `REQUEST BODY [${method.toUpperCase()}] ${url}:`;
-
-    if (isBrowser) {
-      console.group(`%c${timestamp} ${logId}${messagePrefix}`, colors.purple);
-
-      // Log the raw body only
-      console.log("%cRequest payload:", colors.cyan, formatRequestData(data));
-
-      console.groupEnd();
-    } else {
-      // For server-side, use a simpler approach
-      console.log(
-        `${colors.purple}${timestamp} ${logId}${messagePrefix}${colors.reset}`
-      );
-      console.log(
-        `${colors.cyan}Request payload:${colors.reset}`,
-        formatRequestData(data)
-      );
-    }
-
-    // Add to memory logs with detailed structure
-    addLogEntry({
-      timestamp: timestamp,
-      requestId: requestId || "unknown",
-      level: "request-body",
-      message: `Request Body for ${method.toUpperCase()} ${url}`,
-      data: formatRequestData(data),
-    });
+    // Request body logs removed
   },
 };
 
@@ -805,18 +743,12 @@ export function viewLogs(filter?: string): void {
           : "N/A",
     }))
   );
-
-  console.log(
-    `Showing ${logsToDisplay.length} of ${memoryLogs.length} total logs.`
-  );
 }
 
 // Helper function to view full log details including data
 export function viewLogDetails(index: number): void {
   if (index >= 0 && index < memoryLogs.length) {
-    console.log(`Log Details for entry #${index}:`, memoryLogs[index]);
-  } else {
-    console.log(`Invalid log index: ${index}`);
+    // Log details for entry
   }
 }
 
@@ -833,14 +765,7 @@ export function findRequestBodyLogs(): LogEntry[] {
 // Helper to view all request body logs
 export function viewRequestBodyLogs(): void {
   const requestBodyLogs = findRequestBodyLogs();
-  console.log(`Found ${requestBodyLogs.length} request body logs:`);
-
-  requestBodyLogs.forEach((log, index) => {
-    console.group(`${index + 1}. ${log.message} [${log.requestId}]`);
-    console.log("Timestamp:", log.timestamp);
-    console.log("Body data:", log.data);
-    console.groupEnd();
-  });
+  // Request body logs viewer
 }
 
 // Export axios instances

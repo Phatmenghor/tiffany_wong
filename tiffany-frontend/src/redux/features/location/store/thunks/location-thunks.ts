@@ -29,18 +29,8 @@ export const createLocationService = createApiThunk<
   LocationResponseModel,
   LocationCreateRequest
 >("location/create", async (data) => {
-  console.log("[Location] Creating location with", {
-    district: data.district,
-    province: data.province,
-    payload: data,
-  });
-
   try {
     const response = await axiosClientWithAuth.post("/api/v1/locations", data);
-    console.log("[Location] Create successful:", {
-      id: response.data.data.id,
-      response: response.data.data,
-    });
     return response.data.data;
   } catch (error: any) {
     console.error("[Location] Create failed:", {
@@ -57,19 +47,11 @@ export const updateLocationService = createApiThunk<
   LocationResponseModel,
   LocationUpdateRequest
 >("location/update", async ({ locationId, locationData }) => {
-  console.log("[Location] Updating location", {
-    locationId,
-    payload: locationData,
-  });
-
   try {
     const response = await axiosClientWithAuth.put(
       `/api/v1/locations/${locationId}`,
       locationData
     );
-    console.log("[Location] Update successful:", {
-      id: response.data.data.id,
-    });
     return response.data.data;
   } catch (error: any) {
     console.error("[Location] Update failed:", {
@@ -86,13 +68,10 @@ export const deleteLocationService = createApiThunk<
   LocationResponseModel,
   string
 >("location/delete", async (locationId) => {
-  console.log("[Location] Deleting location:", { locationId });
-
   try {
     const response = await axiosClientWithAuth.delete(
       `/api/v1/locations/${locationId}`
     );
-    console.log("[Location] Delete successful:", { locationId });
     return response.data.data;
   } catch (error: any) {
     console.error("[Location] Delete failed:", {

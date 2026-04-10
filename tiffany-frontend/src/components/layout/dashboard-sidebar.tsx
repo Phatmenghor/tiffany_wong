@@ -41,16 +41,6 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
   // Track if component is hydrated to avoid hydration mismatch
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Debug logging to verify Redux state
-  useEffect(() => {
-    console.log("## [SIDEBAR] Redux businessSettings state:", {
-      hasData: !!businessSettings,
-      businessName: businessSettings?.businessName || "MISSING",
-      logoUrl: businessSettings?.logoBusinessUrl || "MISSING",
-      logoFromSelector: logoUrl || "NULL",
-      allData: businessSettings,
-    });
-  }, [businessSettings, businessName, logoUrl]);
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     "Master Data": true,

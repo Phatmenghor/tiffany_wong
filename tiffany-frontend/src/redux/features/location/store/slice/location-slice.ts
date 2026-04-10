@@ -68,14 +68,6 @@ const locationSlice = createSlice({
         const totalElements = action.payload?.totalElements || 0;
         state.pagination.hasMore = state.locations.length < totalElements;
         state.pagination.isInitialLoaded = true;
-
-        console.log("[Redux Location] Fetched locations", {
-          pageNo,
-          newLocationsCount: newLocations.length,
-          totalLocations: state.locations.length,
-          totalElements,
-          hasMore: state.pagination.hasMore,
-        });
       })
       .addCase(fetchAllLocationsService.rejected, (state, action) => {
         state.isLoading.fetch = false;
@@ -93,11 +85,6 @@ const locationSlice = createSlice({
         state.isLoading.create = false;
         state.operations.isCreating = false;
         const newLocation = action.payload;
-
-        console.log("[Redux Location] Location created", {
-          id: newLocation.id,
-          isDefault: newLocation.isDefault,
-        });
 
         // If new location is default, remove default from others
         if (newLocation.isDefault) {

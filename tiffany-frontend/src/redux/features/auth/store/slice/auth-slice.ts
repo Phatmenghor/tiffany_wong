@@ -216,12 +216,10 @@ const authSlice = createSlice({
           // Owner logout - only clear owner tokens
           clearAdminTokens();
           clearAdminUserInfo();
-          console.log("## [LOGOUT] Cleared admin tokens only");
         } else {
           // Customer logout - only clear customer tokens
           clearAllTokens();
           clearUserInfo();
-          console.log("## [LOGOUT] Cleared customer tokens only");
         }
 
         state.user = null;
@@ -240,12 +238,10 @@ const authSlice = createSlice({
           // Owner logout - only clear owner tokens
           clearAdminTokens();
           clearAdminUserInfo();
-          console.log("## [LOGOUT] Cleared admin tokens only (on error)");
         } else {
           // Customer logout - only clear customer tokens
           clearAllTokens();
           clearUserInfo();
-          console.log("## [LOGOUT] Cleared customer tokens only (on error)");
         }
 
         state.user = null;
