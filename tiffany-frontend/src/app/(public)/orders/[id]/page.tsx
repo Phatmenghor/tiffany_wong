@@ -442,7 +442,7 @@ export default function OrderDetailPage() {
                           )}
                         >
                           {isCompleted || isCurrent ? (
-                            <Check className="h-6 w-6" />
+                            STATUS_COLORS[status.name]?.icon || <Check className="h-6 w-6" />
                           ) : (
                             status.order
                           )}
