@@ -72,7 +72,7 @@ export function OrderDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">Order Details Loading</DialogTitle>
-        <DialogContent className="w-full sm:max-w-7xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
           <div className="flex items-center justify-center h-full">
             <Loading />
           </div>
@@ -85,7 +85,7 @@ export function OrderDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">Order Details</DialogTitle>
-        <DialogContent className="w-full sm:max-w-7xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <p className="text-muted-foreground">
@@ -106,7 +106,7 @@ export function OrderDetailModal({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogTitle className="sr-only">Order Details - {orderData.orderNumber}</DialogTitle>
-      <DialogContent className="w-full sm:max-w-7xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+      <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
         {/* Header */}
         <div className="px-6 py-4 border-b bg-muted/30 flex-shrink-0">
           <div>
@@ -414,32 +414,34 @@ export function OrderDetailModal({
                   ⚙️ System Information
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 text-sm pt-4">
-                <div className="flex justify-between items-start">
-                  <span className="text-slate-600">Order ID</span>
-                  <span className="text-xs font-mono text-slate-900 break-all text-right max-w-xs">
-                    {orderData.id}
-                  </span>
-                </div>
-                {orderData.customerId && (
-                  <div className="flex justify-between items-start">
-                    <span className="text-slate-600">Customer ID</span>
-                    <span className="text-xs font-mono text-slate-900 break-all text-right max-w-xs">
-                      {orderData.customerId}
-                    </span>
+              <CardContent className="pt-4">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-slate-600 text-xs">Order ID</p>
+                    <p className="text-xs font-mono text-slate-900 break-all mt-1">
+                      {orderData.id}
+                    </p>
                   </div>
-                )}
-                <div className="flex justify-between items-start border-t border-slate-200 pt-3">
-                  <span className="text-slate-600">Created At</span>
-                  <span className="font-semibold text-slate-900 text-right">
-                    {dateTimeFormat(orderData.createdAt)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-start">
-                  <span className="text-slate-600">Updated At</span>
-                  <span className="font-semibold text-slate-900 text-right">
-                    {dateTimeFormat(orderData.updatedAt)}
-                  </span>
+                  {orderData.customerId && (
+                    <div>
+                      <p className="text-slate-600 text-xs">Customer ID</p>
+                      <p className="text-xs font-mono text-slate-900 break-all mt-1">
+                        {orderData.customerId}
+                      </p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-slate-600 text-xs">Created At</p>
+                    <p className="font-semibold text-slate-900 mt-1">
+                      {dateTimeFormat(orderData.createdAt)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-slate-600 text-xs">Updated At</p>
+                    <p className="font-semibold text-slate-900 mt-1">
+                      {dateTimeFormat(orderData.updatedAt)}
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
