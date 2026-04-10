@@ -49,6 +49,7 @@ interface StatusTab {
 interface FilterState {
   status: string;
   paymentStatus: string;
+  paymentMethod: string;
   search: string;
 }
 
@@ -71,6 +72,7 @@ export default function OrdersPage() {
   const [filters, setFilters] = useState<FilterState>({
     status: "",
     paymentStatus: "",
+    paymentMethod: "",
     search: "",
   });
 
@@ -104,6 +106,7 @@ export default function OrdersPage() {
   const currentFilters = JSON.stringify({
     status: filters.status,
     paymentStatus: filters.paymentStatus,
+    paymentMethod: filters.paymentMethod,
     search: filters.search,
     businessId: profile?.businessId || AppDefault.BUSINESS_ID,
   });
@@ -128,6 +131,7 @@ export default function OrdersPage() {
         pageSize: 15,
         status: filters.status || undefined,
         paymentStatus: filters.paymentStatus && filters.paymentStatus !== "ALL" ? filters.paymentStatus : undefined,
+        paymentMethod: filters.paymentMethod || undefined,
         search: filters.search || undefined,
         businessId: profile?.businessId || AppDefault.BUSINESS_ID,
       })
@@ -239,12 +243,17 @@ export default function OrdersPage() {
     setCurrentPage(1);
   };
 
-  const handleClearFilters = () => {
-    setFilters({ status: "", paymentStatus: "", search: "" });
+  const handlePaymentMethodChange = (value: string) => {
+    setFilters((prev) => ({ ...prev, paymentMethod: value }));
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = filters.status || filters.paymentStatus || filters.search;
+  const handleClearFilters = () => {
+    setFilters({ status: "", paymentStatus: "", paymentMethod: "", search: "" });
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters = filters.status || filters.paymentStatus || filters.paymentMethod || filters.search;
 
   // Create table columns
   const tableColumns = useMemo(
@@ -360,6 +369,25 @@ export default function OrdersPage() {
               />
             </div>
 
+            {/* Payment Method Filter */}
+            <div className="w-auto flex-shrink-0
+              [&>.space-y-2]:!w-auto [&>.space-y-2]:!flex [&>.space-y-2]:!flex-col [&>.space-y-2]:!gap-1
+              [&_button[role=combobox]]:!w-auto [&_button[role=combobox]]:min-w-[140px]
+              [&_.w-full]:!w-auto">
+              <CustomSelect
+                options={[
+                  { value: "", label: "All Methods" },
+                  { value: "CASH", label: "Cash" },
+                  { value: "BANK", label: "Bank" },
+                ]}
+                value={filters.paymentMethod || ""}
+                placeholder="Filter by payment method"
+                onValueChange={handlePaymentMethodChange}
+                label="Payment Method"
+                size="xl"
+              />
+            </div>
+
             {/* Clear Filters Button */}
             {hasActiveFilters && (
               <CustomButton
@@ -393,6 +421,17 @@ export default function OrdersPage() {
                 <span>Payment: {filters.paymentStatus}</span>
                 <button
                   onClick={() => setFilters((prev) => ({ ...prev, paymentStatus: "" }))}
+                  className="hover:opacity-70"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+            {filters.paymentMethod && (
+              <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-sm font-medium text-primary">
+                <span>Method: {filters.paymentMethod}</span>
+                <button
+                  onClick={() => setFilters((prev) => ({ ...prev, paymentMethod: "" }))}
                   className="hover:opacity-70"
                 >
                   <X className="h-3 w-3" />
@@ -579,15 +618,51 @@ function createOrderTableColumns(
       },
     },
     {
+      key: "paymentMethod",
+      label: "Payment Method",
+      minWidth: "120px",
+      maxWidth: "150px",
+      render: (order) => {
+        const getPaymentMethodColor = (method: string) => {
+          switch (method) {
+            case "CASH":
+              return "bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-800";
+            case "BANK":
+              return "bg-blue-100 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800";
+            default:
+              return "bg-gray-100 dark:bg-gray-950/30 text-gray-800 dark:text-gray-300 border border-gray-300 dark:border-gray-800";
+          }
+        };
+        return (
+          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getPaymentMethodColor(order?.paymentMethod)}`}>
+            {order?.paymentMethod || "---"}
+          </span>
+        );
+      },
+    },
+    {
       key: "paymentStatus",
       label: "Payment Status",
       minWidth: "130px",
       maxWidth: "160px",
       render: (order) => {
-        const paymentStatus = order?.payment?.paymentStatus || "---";
+        const getPaymentStatusColor = (status: string) => {
+          switch (status) {
+            case "PAID":
+              return "bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-800";
+            case "PENDING":
+              return "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-800";
+            case "REFUNDED":
+              return "bg-purple-100 dark:bg-purple-950/30 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800";
+            case "UNPAID":
+              return "bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-800";
+            default:
+              return "bg-gray-100 dark:bg-gray-950/30 text-gray-800 dark:text-gray-300 border border-gray-300 dark:border-gray-800";
+          }
+        };
         return (
-          <span className="text-xs text-muted-foreground">
-            {paymentStatus}
+          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getPaymentStatusColor(order?.paymentStatus)}`}>
+            {order?.paymentStatus || "---"}
           </span>
         );
       },
@@ -604,23 +679,19 @@ function createOrderTableColumns(
       ),
     },
     {
-      key: "finalTotal",
+      key: "totalAmount",
       label: "Total",
       minWidth: "110px",
       maxWidth: "140px",
       render: (order) => {
-        const finalTotal = order?.pricing?.after?.finalTotal ?? order?.pricing?.before?.finalTotal ?? 0;
-        const hadChange = order?.pricing?.hadOrderLevelChangeFromPOS;
-        const beforeTotal = order?.pricing?.before?.finalTotal ?? 0;
-
         return (
           <div className="flex flex-col">
             <span className="text-xs font-bold text-green-600 dark:text-green-400">
-              {formatCurrency(finalTotal)}
+              {formatCurrency(order?.totalAmount || 0)}
             </span>
-            {hadChange && beforeTotal !== finalTotal && (
-              <span className="text-xs text-muted-foreground line-through">
-                {formatCurrency(beforeTotal)}
+            {order?.discountAmount && order.discountAmount > 0 && (
+              <span className="text-xs text-red-600 dark:text-red-400 font-medium">
+                Save {formatCurrency(order.discountAmount)}
               </span>
             )}
           </div>
