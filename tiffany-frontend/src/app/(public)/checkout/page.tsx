@@ -16,6 +16,8 @@ import { PageHeader } from "@/components/shared/common/page-header";
 import { formatCurrency } from "@/utils/common/currency-format";
 import { CartItemCard } from "@/components/shared/cart-item-card/cart-item-card";
 import { ComboboxSelectLocation } from "@/components/shared/combobox/combobox-select-location";
+import LocationModal from "@/redux/features/location/components/location-modal";
+import { Button } from "@/components/ui/button";
 
 interface LocationResponse {
   id: string;
@@ -34,9 +36,27 @@ export default function CheckoutPage() {
   const [customerNote, setCustomerNote] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"CASH" | "BANK">("CASH");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentCoords, setCurrentCoords] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  // Get user GPS coords on mount
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) =>
+        setCurrentCoords({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        }),
+      () => {},
+    );
   }, []);
 
   // Fetch cart to restore state after page refresh
@@ -118,6 +138,32 @@ export default function CheckoutPage() {
     }
   };
 
+  const handleAddLocation = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = async () => {
+    setIsModalOpen(false);
+    // Refresh locations list after modal closes
+    try {
+      const result = await dispatch(
+        fetchAllLocationsService({
+          pageNo: 1,
+          pageSize: 15,
+        })
+      ).unwrap();
+
+      if (result?.content && result.content.length > 0) {
+        const defaultAddr = result.content.find((addr: any) => addr.isDefault === true);
+        if (defaultAddr && !selectedAddress?.id) {
+          setSelectedAddress(defaultAddr);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to refresh locations:", error);
+    }
+  };
+
   if (!mounted || !authReady) {
     return null;
   }
@@ -142,6 +188,15 @@ export default function CheckoutPage() {
                   <MapPin className="h-5 w-5" />
                   Delivery Address
                 </h2>
+                <Button
+                  onClick={handleAddLocation}
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 h-8"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Location
+                </Button>
               </div>
               <ComboboxSelectLocation
                 dataSelect={selectedAddress}
@@ -352,6 +407,14 @@ export default function CheckoutPage() {
           )}
         </CustomButton>
       </div>
+
+      {/* Location Modal */}
+      <LocationModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        editData={null}
+        initialCoords={currentCoords}
+      />
     </>
   );
 }
