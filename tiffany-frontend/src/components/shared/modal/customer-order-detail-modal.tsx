@@ -139,39 +139,71 @@ export function CustomerOrderDetailModal({
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-6 space-y-6">
-            {/* Order Status Timeline */}
+            {/* Order Status Timeline - Modern Progress Bar */}
             {!isCancelled ? (
-              <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-5 shadow-sm">
-                <div className="flex items-center justify-between gap-3">
+              <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-6 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-900 mb-4">Order Progress</h3>
+
+                {/* Linear Progress Bar */}
+                <div className="flex items-center gap-0 mb-6">
                   {ORDER_STATUS_STEPS.map((step, index) => {
                     const isCompleted = index < currentStepIndex;
                     const isActive = step.status === orderData.orderStatus;
 
                     return (
-                      <div key={step.status} className="flex-1 flex flex-col items-center gap-2">
+                      <div
+                        key={step.status}
+                        className="flex items-center flex-1 gap-0"
+                      >
                         {/* Step Circle */}
                         <div
                           className={cn(
-                            "w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all flex-shrink-0",
+                            "w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all ring-2 ring-offset-2 dark:ring-offset-slate-950",
                             isCompleted || isActive
-                              ? "bg-primary text-white shadow-lg"
-                              : "bg-slate-200 text-slate-400"
+                              ? "bg-primary text-white ring-primary/30 shadow-md shadow-primary/20"
+                              : "bg-slate-200 text-slate-400 ring-slate-300"
                           )}
                         >
-                          {isCompleted ? (
-                            <Check className="h-6 w-6" />
-                          ) : (
-                            getStatusIcon(step.status)
-                          )}
+                          {getStatusIcon(step.status)}
                         </div>
 
-                        {/* Step Label */}
-                        <p className={cn(
-                          "text-xs font-bold text-center transition-colors",
-                          isCompleted || isActive ? "text-slate-900" : "text-slate-500"
+                        {/* Connector Line */}
+                        {index < ORDER_STATUS_STEPS.length - 1 && (
+                          <div className="flex-1 flex items-center px-1">
+                            <div
+                              className={cn(
+                                "w-full h-2 rounded transition-colors",
+                                isCompleted || isActive
+                                  ? "bg-gradient-to-r from-primary via-primary to-primary shadow-md shadow-primary/30"
+                                  : "bg-slate-300"
+                              )}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Status Labels */}
+                <div className="flex items-flex-start gap-0">
+                  {ORDER_STATUS_STEPS.map((step) => {
+                    const isCompleted = ORDER_STATUS_STEPS.indexOf(step) < currentStepIndex;
+                    const isActive = step.status === orderData.orderStatus;
+
+                    return (
+                      <div
+                        key={step.status}
+                        className="flex flex-col items-center flex-1"
+                      >
+                        <span className={cn(
+                          "text-xs font-bold whitespace-nowrap px-2 block text-center",
+                          isCompleted || isActive
+                            ? "text-primary"
+                            : "text-slate-500"
                         )}>
                           {step.label}
-                        </p>
+                        </span>
                       </div>
                     );
                   })}
