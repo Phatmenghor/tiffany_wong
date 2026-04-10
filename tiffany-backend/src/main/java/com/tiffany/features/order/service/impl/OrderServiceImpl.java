@@ -203,9 +203,6 @@ public class OrderServiceImpl implements OrderService {
             OrderItem orderItem = orderMapper.createOrderItemFromHelper(helper);
             orderItem.calculateTotalPrice();
 
-            // Set default audit trail values for cart items (no POS changes)
-            orderItem.setHadChangeFromPOS(false);
-
             subtotal = subtotal.add(orderItem.getTotalPrice());
             // Accumulate discount = base price - final price per item * quantity
             BigDecimal itemDiscount = cartItem.getCurrentPrice().subtract(cartItem.getFinalPrice())
