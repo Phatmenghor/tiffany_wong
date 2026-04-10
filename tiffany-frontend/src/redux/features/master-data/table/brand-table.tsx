@@ -61,7 +61,7 @@ export const brandTableColumns = ({
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="h-full w-full flex items-center justify-center bg-primary/10 dark:bg-primary/20">
+              <div className="h-full w-full flex items-center justify-center bg-primary/10">
                 <span className="text-xs font-semibold text-primary">
                   {brand?.name?.charAt(0)?.toUpperCase() || "B"}
                 </span>

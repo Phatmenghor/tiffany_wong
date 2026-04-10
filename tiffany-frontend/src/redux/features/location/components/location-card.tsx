@@ -26,16 +26,16 @@ interface LocationCardProps {
 
 // Label → theme colours
 const LABEL_THEME: Record<string, { bg: string; text: string; accent: string; iconBg: string }> = {
-  home:      { bg: "bg-blue-50 dark:bg-blue-950/20",      text: "text-blue-600 dark:text-blue-400",    accent: "bg-blue-500",    iconBg: "bg-blue-100 dark:bg-blue-900/40"    },
-  house:     { bg: "bg-blue-50 dark:bg-blue-950/20",      text: "text-blue-600 dark:text-blue-400",    accent: "bg-blue-500",    iconBg: "bg-blue-100 dark:bg-blue-900/40"    },
-  office:    { bg: "bg-violet-50 dark:bg-violet-950/20",  text: "text-violet-600 dark:text-violet-400",accent: "bg-violet-500",  iconBg: "bg-violet-100 dark:bg-violet-900/40"},
-  work:      { bg: "bg-violet-50 dark:bg-violet-950/20",  text: "text-violet-600 dark:text-violet-400",accent: "bg-violet-500",  iconBg: "bg-violet-100 dark:bg-violet-900/40"},
-  shop:      { bg: "bg-orange-50 dark:bg-orange-950/20",  text: "text-orange-600 dark:text-orange-400",accent: "bg-orange-500",  iconBg: "bg-orange-100 dark:bg-orange-900/40"},
-  store:     { bg: "bg-orange-50 dark:bg-orange-950/20",  text: "text-orange-600 dark:text-orange-400",accent: "bg-orange-500",  iconBg: "bg-orange-100 dark:bg-orange-900/40"},
-  building:  { bg: "bg-slate-50 dark:bg-slate-950/20",    text: "text-slate-600 dark:text-slate-400",  accent: "bg-slate-500",   iconBg: "bg-slate-100 dark:bg-slate-900/40" },
-  apartment: { bg: "bg-slate-50 dark:bg-slate-950/20",    text: "text-slate-600 dark:text-slate-400",  accent: "bg-slate-500",   iconBg: "bg-slate-100 dark:bg-slate-900/40" },
-  family:    { bg: "bg-rose-50 dark:bg-rose-950/20",      text: "text-rose-600 dark:text-rose-400",    accent: "bg-rose-500",    iconBg: "bg-rose-100 dark:bg-rose-900/40"   },
-  love:      { bg: "bg-rose-50 dark:bg-rose-950/20",      text: "text-rose-600 dark:text-rose-400",    accent: "bg-rose-500",    iconBg: "bg-rose-100 dark:bg-rose-900/40"   },
+  home:      { bg: "bg-blue-50",      text: "text-blue-600",    accent: "bg-blue-500",    iconBg: "bg-blue-100"    },
+  house:     { bg: "bg-blue-50",      text: "text-blue-600",    accent: "bg-blue-500",    iconBg: "bg-blue-100"    },
+  office:    { bg: "bg-violet-50",  text: "text-violet-600",accent: "bg-violet-500",  iconBg: "bg-violet-100"},
+  work:      { bg: "bg-violet-50",  text: "text-violet-600",accent: "bg-violet-500",  iconBg: "bg-violet-100"},
+  shop:      { bg: "bg-orange-50",  text: "text-orange-600",accent: "bg-orange-500",  iconBg: "bg-orange-100"},
+  store:     { bg: "bg-orange-50",  text: "text-orange-600",accent: "bg-orange-500",  iconBg: "bg-orange-100"},
+  building:  { bg: "bg-slate-50",    text: "text-slate-600",  accent: "bg-slate-500",   iconBg: "bg-slate-100" },
+  apartment: { bg: "bg-slate-50",    text: "text-slate-600",  accent: "bg-slate-500",   iconBg: "bg-slate-100" },
+  family:    { bg: "bg-rose-50",      text: "text-rose-600",    accent: "bg-rose-500",    iconBg: "bg-rose-100"   },
+  love:      { bg: "bg-rose-50",      text: "text-rose-600",    accent: "bg-rose-500",    iconBg: "bg-rose-100"   },
 };
 
 function getLabelTheme(label?: string | null) {
@@ -76,7 +76,7 @@ export function LocationCard({
       className={cn(
         "group relative rounded-xl border bg-background overflow-hidden transition-all duration-200 shadow-sm hover:shadow-md",
         isPrimary
-          ? "border-amber-300/70 dark:border-amber-700/50"
+          ? "border-amber-300/70"
           : "border-border"
       )}
     >
@@ -100,7 +100,7 @@ export function LocationCard({
             className={cn(
               "p-2 rounded-lg shrink-0 mt-0.5",
               isPrimary
-                ? "bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400"
+                ? "bg-amber-100 text-amber-600"
                 : theme
                 ? `${theme.iconBg} ${theme.text}`
                 : "bg-primary/10 text-primary"
@@ -117,14 +117,14 @@ export function LocationCard({
                 className={cn(
                   "text-sm font-semibold leading-tight",
                   isPrimary
-                    ? "text-amber-700 dark:text-amber-400"
+                    ? "text-amber-700"
                     : "text-foreground"
                 )}
               >
                 {location.label || "Location"}
               </span>
               {isPrimary && (
-                <Badge className="h-5 px-2 text-[10px] font-bold tracking-wide bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:border-amber-700/50 shrink-0 flex items-center gap-1">
+                <Badge className="h-5 px-2 text-[10px] font-bold tracking-wide bg-amber-100 text-amber-700 border-amber-200 shrink-0 flex items-center gap-1">
                   <Crown className="h-3 w-3" />
                   Default
                 </Badge>

@@ -137,11 +137,11 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
             onMouseLeave={handleMouseLeave}
           >
             <DialogTitle className="sr-only">{displayName || "Image Preview"}</DialogTitle>
-            <div className="relative bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-2xl border border-border">
+            <div className="relative bg-white p-6 rounded-2xl shadow-2xl border border-border">
               <div className="flex flex-col items-center gap-4">
                 {/* Loading spinner */}
                 {imageLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-900/80 rounded-2xl z-10">
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-2xl z-10">
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
                       <p className="text-sm text-muted-foreground">
@@ -162,7 +162,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
                     transition: "opacity 0.3s",
                   }}
                 />
-                <p className="text-lg font-semibold text-center text-gray-900 dark:text-white">
+                <p className="text-lg font-semibold text-center text-gray-900">
                   {displayName}
                 </p>
               </div>

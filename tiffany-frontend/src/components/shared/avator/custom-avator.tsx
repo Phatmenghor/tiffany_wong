@@ -69,10 +69,10 @@ export const CustomAvatar: React.FC<CustomerAvatarProps> = ({
       <Avatar
         className={`${
           avatarSizes[size].avatar
-        } border-2 border-background dark:border-card shadow-sm transition-all ${className}`}
+        } border-2 border-background shadow-sm transition-all ${className}`}
       >
         <AvatarImage src={avatarImageUrl} alt={name || "User"} />
-        <AvatarFallback className="bg-primary/10 dark:bg-primary/20 text-primary font-semibold">
+        <AvatarFallback className="bg-primary/10 text-primary font-semibold">
           {fallbackText}
         </AvatarFallback>
       </Avatar>

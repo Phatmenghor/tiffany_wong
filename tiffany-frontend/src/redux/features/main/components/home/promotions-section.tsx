@@ -74,10 +74,10 @@ const PromotionsSectionComponent = ({
    * Features: gradient background, decorative blur, responsive sizing
    */
   const PromotionHeader = ({ showDecoration = false }) => (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-red-950/20 dark:via-orange-950/20 dark:to-yellow-950/20 p-4 sm:p-6 md:p-8 mb-6 shadow-sm">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 p-4 sm:p-6 md:p-8 mb-6 shadow-sm">
       {/* Decorative blur effect - only on content view */}
       {showDecoration && (
-        <div className="absolute top-0 right-0 w-32 h-32 sm:w-64 sm:h-64 bg-gradient-to-br from-red-200/20 to-orange-200/20 dark:from-red-800/10 dark:to-orange-800/10 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-32 h-32 sm:w-64 sm:h-64 bg-gradient-to-br from-red-200/20 to-orange-200/20 rounded-full blur-3xl" />
       )}
 
       <div className="relative">

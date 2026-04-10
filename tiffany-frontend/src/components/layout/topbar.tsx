@@ -168,8 +168,8 @@ export function TopBar({ onMenuClick, onFullscreenClick }: TopBarProps) {
         <AlertDialogContent className="w-full sm:max-w-md rounded-2xl">
           <AlertDialogHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-100 dark:bg-red-900/20">
-                <LogOut className="h-5 w-5 text-red-600 dark:text-red-400" />
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-100">
+                <LogOut className="h-5 w-5 text-red-600" />
               </div>
               <div>
                 <AlertDialogTitle className="text-left text-lg font-bold">

@@ -145,13 +145,13 @@ export function LocationSelectTab({
         </Button>
 
         {geocodeSuccess && geocodedCoords && (
-          <div className="flex items-center gap-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg px-4 py-3">
-            <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500 shrink-0" />
+          <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3">
+            <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
             <div className="flex-1">
-              <p className="text-xs font-semibold text-green-700 dark:text-green-400">
+              <p className="text-xs font-semibold text-green-700">
                 Coordinates Resolved
               </p>
-              <p className="text-xs font-mono text-green-600 dark:text-green-500 mt-1">
+              <p className="text-xs font-mono text-green-600 mt-1">
                 {geocodedCoords.lat.toFixed(6)}, {geocodedCoords.lng.toFixed(6)}
               </p>
             </div>

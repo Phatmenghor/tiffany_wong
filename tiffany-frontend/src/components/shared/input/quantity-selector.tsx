@@ -137,7 +137,7 @@ export function QuantitySelector({
         className={cn(
           "text-center font-bold rounded border focus:outline-none focus:ring-2",
           pending
-            ? "bg-amber-50 text-amber-600 border-amber-200 focus:ring-amber-300 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800"
+            ? "bg-amber-50 text-amber-600 border-amber-200 focus:ring-amber-300"
             : "bg-primary/10 text-primary border-primary/20 focus:ring-primary/30",
           isSmall ? "w-12 h-8 text-sm" : "w-16 h-10 text-lg",
         )}

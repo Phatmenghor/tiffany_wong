@@ -600,9 +600,9 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
                 </div>
 
                 {hasCoords && (
-                  <div className="flex items-center gap-2 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg px-3 py-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />
-                    <span className="text-xs font-mono text-green-700 dark:text-green-400 flex-1">{latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
+                  <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                    <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                    <span className="text-xs font-mono text-green-700 flex-1">{latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
                     <Badge variant="secondary" className="text-xs">Set</Badge>
                   </div>
                 )}
@@ -637,15 +637,15 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
                 className={cn(
                   "w-full flex items-center gap-3 rounded-lg border-2 p-3 text-left transition-all focus:outline-none",
                   isDefaultValue
-                    ? "border-amber-300 bg-amber-50/50 dark:bg-amber-950/20"
+                    ? "border-amber-300 bg-amber-50/50"
                     : "border-border hover:border-primary/30 hover:bg-muted/30"
                 )}
               >
-                <div className={cn("p-2 rounded-lg shrink-0", isDefaultValue ? "bg-amber-100 dark:bg-amber-900/40" : "bg-muted")}>
+                <div className={cn("p-2 rounded-lg shrink-0", isDefaultValue ? "bg-amber-100" : "bg-muted")}>
                   <Star className={cn("h-4 w-4", isDefaultValue ? "text-amber-500 fill-amber-500" : "text-muted-foreground")} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={cn("text-sm font-semibold", isDefaultValue ? "text-amber-700 dark:text-amber-400" : "text-foreground")}>
+                  <p className={cn("text-sm font-semibold", isDefaultValue ? "text-amber-700" : "text-foreground")}>
                     {isDefaultValue ? "Default Location" : "Set as Default"}
                   </p>
                   <p className="text-xs text-muted-foreground">Default address for deliveries</p>

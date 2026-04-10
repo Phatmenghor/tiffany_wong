@@ -168,7 +168,7 @@ export default function HomePage() {
       </div>
 
       {/* Promotions Section - Highlighted Background */}
-      <div className="relative py-6 sm:py-10 bg-amber-50/30 dark:bg-amber-950/10">
+      <div className="relative py-6 sm:py-10 bg-amber-50/30">
         <PageContainer>
           <PromotionsSection
             products={promotionProducts}

@@ -21,7 +21,7 @@ export function Skeleton({ className, isLoading = true, children }: SkeletonProp
   return (
     <div
       className={cn(
-        "animate-pulse bg-gray-200 dark:bg-gray-700 rounded",
+        "animate-pulse bg-gray-200 rounded",
         className
       )}
     />

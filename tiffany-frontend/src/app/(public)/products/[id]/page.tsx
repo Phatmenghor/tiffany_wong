@@ -477,7 +477,7 @@ export default function ProductDetailPage() {
                   <span className="text-lg text-muted-foreground line-through leading-none">
                     {formatCurrency(getOriginalPrice()!)}
                   </span>
-                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-full">
+                  <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
                     Save {formatCurrency(getOriginalPrice()! - getDisplayPrice())}
                   </span>
                 </>
@@ -647,7 +647,7 @@ export default function ProductDetailPage() {
                 variant="outline"
                 className={cn(
                   "h-11 rounded-xl gap-2 transition-all font-medium",
-                  isFavorited ? "bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100 dark:bg-rose-950/30 dark:border-rose-800 dark:text-rose-400" : ""
+                  isFavorited ? "bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100" : ""
                 )}
                 onClick={handleToggleFavorite}
                 disabled={isTogglingFavorite}

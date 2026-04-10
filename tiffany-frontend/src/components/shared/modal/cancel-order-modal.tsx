@@ -104,9 +104,9 @@ export function CancelOrderModal({
           {/* Body */}
           <FormBody>
             {/* Alert Box */}
-            <Alert className="border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/20">
-              <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
-              <AlertDescription className="text-red-700 dark:text-red-300">
+            <Alert className="border-red-200 bg-red-50">
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-700">
                 This action cannot be undone. The order will be marked as cancelled and no longer processing.
               </AlertDescription>
             </Alert>
@@ -119,7 +119,7 @@ export function CancelOrderModal({
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">New Status:</span>
-                <span className="text-sm font-semibold px-2.5 py-1 rounded-md bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-800">
+                <span className="text-sm font-semibold px-2.5 py-1 rounded-md bg-red-100 text-red-800 border border-red-300">
                   CANCELLED
                 </span>
               </div>
