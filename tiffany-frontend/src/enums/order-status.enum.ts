@@ -1,46 +1,22 @@
 // Order Status Enum - matches backend OrderStatus enum
+// Backend values: PENDING, CONFIRMED, COMPLETED, CANCELLED
 export enum OrderStatus {
   PENDING = 'PENDING',
-  PENDING_POS_CONFIRMATION = 'PENDING_POS_CONFIRMATION',  // Added: waiting for admin confirmation of POS changes
   CONFIRMED = 'CONFIRMED',
-  PREPARING = 'PREPARING',
-  READY = 'READY',
-  IN_TRANSIT = 'IN_TRANSIT',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
-  FAILED = 'FAILED',
 }
 
 // Display names and descriptions for UI
 export const OrderStatusConfig = {
   [OrderStatus.PENDING]: {
     label: 'Pending',
-    description: 'Order placed, awaiting business confirmation',
+    description: 'Order placed, awaiting confirmation',
     color: 'warning',
-  },
-  [OrderStatus.PENDING_POS_CONFIRMATION]: {
-    label: 'Pending POS Confirmation',
-    description: 'Admin made changes in POS, waiting for confirmation',
-    color: 'danger',
   },
   [OrderStatus.CONFIRMED]: {
     label: 'Confirmed',
-    description: 'Business confirmed the order',
-    color: 'info',
-  },
-  [OrderStatus.PREPARING]: {
-    label: 'Preparing',
-    description: 'Staff is preparing the order',
-    color: 'warning',
-  },
-  [OrderStatus.READY]: {
-    label: 'Ready',
-    description: 'Order ready for pickup or delivery',
-    color: 'success',
-  },
-  [OrderStatus.IN_TRANSIT]: {
-    label: 'In Transit',
-    description: 'Order is on the way to customer',
+    description: 'Order confirmed',
     color: 'info',
   },
   [OrderStatus.COMPLETED]: {
@@ -51,11 +27,6 @@ export const OrderStatusConfig = {
   [OrderStatus.CANCELLED]: {
     label: 'Cancelled',
     description: 'Order cancelled',
-    color: 'danger',
-  },
-  [OrderStatus.FAILED]: {
-    label: 'Failed',
-    description: 'Order failed',
     color: 'danger',
   },
 };
