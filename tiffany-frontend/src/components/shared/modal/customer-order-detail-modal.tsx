@@ -144,22 +144,37 @@ export function CustomerOrderDetailModal({
               <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-8 shadow-sm">
                 <h3 className="text-base font-bold text-slate-900 mb-10">Order Progress</h3>
 
-                {/* Progress Steps with Icons and Labels */}
-                <div className="flex items-center justify-between gap-4 px-2">
-                  {ORDER_STATUS_STEPS.map((step, index) => {
-                    const isCompleted = index < currentStepIndex;
-                    const isActive = step.status === orderData.orderStatus;
+                {/* Progress Steps with Full Width Connection Lines */}
+                <div className="relative">
+                  {/* Full Width Background Line */}
+                  <div className="absolute top-7 left-0 right-0 h-1 bg-slate-300 rounded-full">
+                    {/* Filled Progress Line */}
+                    <div
+                      className={cn(
+                        "h-full bg-gradient-to-r from-primary via-primary to-primary rounded-full transition-all duration-500 shadow-sm shadow-primary/30",
+                        currentStepIndex > 0 && "shadow-md shadow-primary/30"
+                      )}
+                      style={{
+                        width: `${((currentStepIndex) / (ORDER_STATUS_STEPS.length - 1)) * 100}%`,
+                      }}
+                    />
+                  </div>
 
-                    return (
-                      <div
-                        key={step.status}
-                        className="flex flex-col items-center flex-1 gap-0"
-                      >
-                        {/* Step Circle with Icon and Label */}
-                        <div className="flex flex-col items-center gap-2 mb-2">
+                  {/* Steps Container */}
+                  <div className="flex items-start justify-between">
+                    {ORDER_STATUS_STEPS.map((step, index) => {
+                      const isCompleted = index < currentStepIndex;
+                      const isActive = step.status === orderData.orderStatus;
+
+                      return (
+                        <div
+                          key={step.status}
+                          className="flex flex-col items-center relative z-10"
+                        >
+                          {/* Step Circle with Icon */}
                           <div
                             className={cn(
-                              "w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 transition-all ring-2 ring-offset-2 dark:ring-offset-slate-950",
+                              "w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 transition-all ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-950",
                               isCompleted || isActive
                                 ? "bg-primary text-white ring-primary/30 shadow-md shadow-primary/20"
                                 : "bg-slate-200 text-slate-400 ring-slate-300"
@@ -167,8 +182,10 @@ export function CustomerOrderDetailModal({
                           >
                             {getStatusIcon(step.status)}
                           </div>
+
+                          {/* Label */}
                           <span className={cn(
-                            "text-sm font-bold whitespace-nowrap px-2 text-center",
+                            "text-sm font-bold mt-3 whitespace-nowrap",
                             isCompleted || isActive
                               ? "text-primary"
                               : "text-slate-500"
@@ -176,23 +193,9 @@ export function CustomerOrderDetailModal({
                             {step.label}
                           </span>
                         </div>
-
-                        {/* Connector Line */}
-                        {index < ORDER_STATUS_STEPS.length - 1 && (
-                          <div className="flex-1 flex items-center px-2 h-8">
-                            <div
-                              className={cn(
-                                "w-full h-2.5 rounded-full transition-colors",
-                                isCompleted || isActive
-                                  ? "bg-gradient-to-r from-primary via-primary to-primary shadow-md shadow-primary/30"
-                                  : "bg-slate-300"
-                              )}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             ) : (
