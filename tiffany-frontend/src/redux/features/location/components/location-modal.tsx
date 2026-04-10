@@ -396,56 +396,6 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
     );
   }, [reverseGeocode]);
 
-  const handleProvinceChange = useCallback((province: ProvinceResponseModel | null) => {
-    if (!province) return;
-    selectProvince(province); selectDistrict(null); selectCommune(null);
-    setSelectedVillage(null); setGeocodeSuccess(false); setGeocodedCoords(null);
-    setValue("province", province.provinceEn, { shouldDirty: true });
-    setValue("district", "", { shouldDirty: true }); setValue("commune", "", { shouldDirty: true });
-    setValue("village", "", { shouldDirty: true }); setValue("latitude", 0, { shouldDirty: true }); setValue("longitude", 0, { shouldDirty: true });
-  }, [selectProvince, selectDistrict, selectCommune, setValue]);
-
-  const handleDistrictChange = useCallback((district: DistrictResponseModel | null) => {
-    if (!district) return;
-    selectDistrict(district); selectCommune(null);
-    setSelectedVillage(null); setGeocodeSuccess(false); setGeocodedCoords(null);
-    setValue("district", district.districtEn, { shouldDirty: true });
-    setValue("commune", "", { shouldDirty: true }); setValue("village", "", { shouldDirty: true });
-    setValue("latitude", 0, { shouldDirty: true }); setValue("longitude", 0, { shouldDirty: true });
-  }, [selectDistrict, selectCommune, setValue]);
-
-  const handleCommuneChange = useCallback((commune: CommuneResponseModel | null) => {
-    if (!commune) return;
-    selectCommune(commune); setSelectedVillage(null); setGeocodeSuccess(false); setGeocodedCoords(null);
-    setValue("commune", commune.communeEn, { shouldDirty: true });
-    setValue("village", "", { shouldDirty: true }); setValue("latitude", 0, { shouldDirty: true }); setValue("longitude", 0, { shouldDirty: true });
-  }, [selectCommune, setValue]);
-
-  const handleVillageChange = useCallback((village: VillageResponseModel | null) => {
-    setSelectedVillage(village); setGeocodeSuccess(false); setGeocodedCoords(null);
-    setValue("village", village?.villageEn ?? "", { shouldDirty: true });
-    setValue("latitude", 0, { shouldDirty: true }); setValue("longitude", 0, { shouldDirty: true });
-  }, [setValue]);
-
-  const handleGetCoordinates = useCallback(async () => {
-    const parts = [watch("houseNumber"), watch("streetNumber"), watch("village"), watch("commune"), watch("district"), watch("province")].filter(Boolean);
-    if (!parts.length) { showToast.error("Please select at least a province"); return; }
-    setIsGeocodingAddress(true); setGeocodeSuccess(false);
-    try {
-      await loadGoogleMapsScript();
-      new google.maps.Geocoder().geocode({ address: parts.join(", ") }, (results: any, status: any) => {
-        setIsGeocodingAddress(false);
-        if (status === "OK" && results?.length) {
-          const loc = results[0].geometry.location;
-          const lat = loc.lat(); const lng = loc.lng();
-          setValue("latitude", lat, { shouldDirty: true }); setValue("longitude", lng, { shouldDirty: true });
-          setGeocodedCoords({ lat, lng }); setGeocodeSuccess(true);
-          showToast.success("Coordinates found");
-        } else { showToast.error("Could not resolve coordinates"); }
-      });
-    } catch (err: any) { setIsGeocodingAddress(false); showToast.error(err?.message ?? "Failed to geocode"); }
-  }, [watch, setValue]);
-
   const onSubmit = async (data: LocationFormData) => {
     try {
       const payload = {
