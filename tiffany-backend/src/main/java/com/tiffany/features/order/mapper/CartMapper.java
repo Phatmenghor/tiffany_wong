@@ -90,7 +90,7 @@ public interface CartMapper {
     @Mapping(target = "totalItems", expression = "java(cart.getTotalItems())")
     @Mapping(target = "subtotal", expression = "java(cart.getSubtotal())")
     @Mapping(target = "totalDiscount", expression = "java(cart.getTotalDiscount())")
-    @Mapping(target = "finalTotal", expression = "java(cart.getSubtotal())")
+    @Mapping(target = "finalTotal", expression = "java(calculateFinalTotal(cart))")
     CartSummaryResponse toSummaryResponse(Cart cart);
 
     @AfterMapping
@@ -102,7 +102,23 @@ public interface CartMapper {
                     .mapToInt(item -> item.getQuantity() != null ? item.getQuantity() : 0)
                     .sum();
             response.setTotalQuantity(totalQuantity);
+
+            // Calculate subtotal before discount (sum of all item subtotals before discount)
+            BigDecimal subtotalBeforeDiscount = cart.getItems().stream()
+                    .map(item -> {
+                        BigDecimal price = item.getCurrentPrice() != null ? item.getCurrentPrice() : BigDecimal.ZERO;
+                        int qty = item.getQuantity() != null ? item.getQuantity() : 0;
+                        return price.multiply(new BigDecimal(qty));
+                    })
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            response.setSubtotalBeforeDiscount(subtotalBeforeDiscount);
         }
+    }
+
+    default BigDecimal calculateFinalTotal(Cart cart) {
+        BigDecimal subtotal = cart.getSubtotal() != null ? cart.getSubtotal() : BigDecimal.ZERO;
+        BigDecimal totalDiscount = cart.getTotalDiscount() != null ? cart.getTotalDiscount() : BigDecimal.ZERO;
+        return subtotal.subtract(totalDiscount);
     }
 
     /**
