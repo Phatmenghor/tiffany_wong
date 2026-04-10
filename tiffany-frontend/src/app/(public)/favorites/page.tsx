@@ -2,7 +2,14 @@
 
 import { useEffect, useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Heart, ShoppingCart, Trash2, LogIn, CheckCircle2, Loader2 } from "lucide-react";
+import {
+  Heart,
+  ShoppingCart,
+  Trash2,
+  LogIn,
+  CheckCircle2,
+  Loader2,
+} from "lucide-react";
 import { PageHeader } from "@/components/shared/common/page-header";
 import { useFavoriteState } from "@/redux/features/main/store/state/favorite-state";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
@@ -25,7 +32,8 @@ import { usePaginationLoadMore } from "@/hooks/use-pagination-load-more";
 export default function FavoritesPage() {
   const router = useRouter();
   const { isAuthenticated, authReady } = useAuthState();
-  const { dispatch, items, totalItems, pagination, loading, loaded } = useFavoriteState();
+  const { dispatch, items, totalItems, pagination, loading, loaded } =
+    useFavoriteState();
   const { dispatch: cartDispatch } = useCartState();
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [clearAllModalOpen, setClearAllModalOpen] = useState(false);
@@ -60,11 +68,6 @@ export default function FavoritesPage() {
   // Fixed page size of 15 for favorites
   const pageSize = 15;
 
-  const isInitialFavoritesLoading =
-    loading.fetch &&
-    items.length === 0 &&
-    !loaded;
-
   // Initial load
   useEffect(() => {
     if (!authReady) return;
@@ -75,21 +78,24 @@ export default function FavoritesPage() {
 
   // Load more handler
   const handleLoadMore = useCallback(() => {
-    if (
-      pagination.hasMore &&
-      !loading.fetch &&
-      items.length > 0
-    ) {
+    if (pagination.hasMore && !loading.fetch && items.length > 0) {
       const nextPage = pagination.currentPage + 1;
       dispatch(fetchFavoritePaginated({ pageNo: nextPage, pageSize }));
     }
-  }, [dispatch, pagination.hasMore, pagination.currentPage, loading.fetch, items.length, pageSize]);
+  }, [
+    dispatch,
+    pagination.hasMore,
+    pagination.currentPage,
+    loading.fetch,
+    items.length,
+    pageSize,
+  ]);
 
   // Smart pagination with debounce
   const { handleLoadMore: debouncedLoadMore } = usePaginationLoadMore(
     handleLoadMore,
     pagination.hasMore && !loading.fetch,
-    [pagination.hasMore, loading.fetch, handleLoadMore]
+    [pagination.hasMore, loading.fetch, handleLoadMore],
   );
 
   // Intersection observer for infinite scroll
@@ -108,7 +114,7 @@ export default function FavoritesPage() {
           debouncedLoadMore();
         }
       },
-      { threshold: 0.1, rootMargin: "200px" }
+      { threshold: 0.1, rootMargin: "200px" },
     );
 
     observerRef.current = observer;
@@ -146,7 +152,9 @@ export default function FavoritesPage() {
     cartDispatch(addToCart({ productId, quantity: 1 }))
       .unwrap()
       .then(() => {
-        return dispatch(toggleFavorite({ productId, isFavorited: true })).unwrap();
+        return dispatch(
+          toggleFavorite({ productId, isFavorited: true }),
+        ).unwrap();
       })
       .then(() => {
         showToast.success("Moved to cart");
@@ -215,7 +223,9 @@ export default function FavoritesPage() {
           <div className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-50 mx-auto mb-4">
             <Heart className="h-8 w-8 sm:h-10 sm:w-10 text-red-500" />
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold mb-2">No Favorites Yet</h1>
+          <h1 className="text-xl sm:text-2xl font-bold mb-2">
+            No Favorites Yet
+          </h1>
           <p className="text-sm text-muted-foreground mb-6">
             Save your favorite items to find them quickly later.
           </p>
