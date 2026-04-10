@@ -104,11 +104,10 @@ export default function OrdersPage() {
 
   // Build current filters string for comparison
   const currentFilters = JSON.stringify({
-    status: filters.status,
+    orderStatus: filters.status,
     paymentStatus: filters.paymentStatus,
     paymentMethod: filters.paymentMethod,
     search: filters.search,
-    businessId: profile?.businessId || AppDefault.BUSINESS_ID,
   });
 
   // Build display tabs from Redux status tabs
@@ -129,11 +128,10 @@ export default function OrdersPage() {
       fetchMyOrdersService({
         pageNo,
         pageSize: 15,
-        status: filters.status || undefined,
+        orderStatus: filters.status || undefined,
         paymentStatus: filters.paymentStatus && filters.paymentStatus !== "ALL" ? filters.paymentStatus : undefined,
         paymentMethod: filters.paymentMethod || undefined,
         search: filters.search || undefined,
-        businessId: profile?.businessId || AppDefault.BUSINESS_ID,
       })
     );
   };

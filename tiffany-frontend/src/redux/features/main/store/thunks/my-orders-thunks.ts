@@ -9,8 +9,9 @@ import { createApiThunk } from "@/utils/axios/api-wrapper";
 export interface FetchMyOrdersParams {
   pageNo?: number;
   pageSize?: number;
-  status?: string;
-  businessId?: string;
+  orderStatus?: string;
+  paymentStatus?: string;
+  paymentMethod?: string;
   search?: string;
 }
 
