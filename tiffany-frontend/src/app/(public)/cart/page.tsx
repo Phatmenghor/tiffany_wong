@@ -4,16 +4,13 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Trash2,
-  ShoppingBag,
   CreditCard,
-  LogIn,
   ShoppingCart,
   ArrowRight,
 } from "lucide-react";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { CustomButton } from "@/components/shared/button/custom-button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/utils/common/currency-format";
 import { showToast } from "@/components/shared/common/show-toast";
 import { clearCart, fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
@@ -24,86 +21,8 @@ import { DeleteConfirmationModal } from "@/components/shared/modal/delete-confir
 import { PageContainer } from "@/components/shared/common/page-container";
 import { PageHeader } from "@/components/shared/common/page-header";
 import { CartItemCard } from "@/components/shared/cart-item-card/cart-item-card";
-
-function CartItemSkeleton() {
-  return (
-    <div className="bg-card border rounded-2xl p-3 sm:p-4">
-      <div className="flex gap-3">
-        <Skeleton className="w-[72px] h-[72px] rounded-xl flex-shrink-0" />
-        <div className="flex-1 space-y-3">
-          <Skeleton className="h-5 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-          <div className="flex gap-2">
-            <Skeleton className="h-8 w-24" />
-            <Skeleton className="h-8 w-20" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CartPageSkeleton() {
-  return (
-    <PageContainer className="py-4 sm:py-8 pb-40 sm:pb-8">
-      <div className="mb-6 space-y-2">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-5 w-64" />
-      </div>
-      <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
-        <div className="lg:col-span-2 space-y-3">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <CartItemSkeleton key={i} />
-          ))}
-        </div>
-        <div className="hidden lg:block">
-          <Skeleton className="h-64 w-full rounded-2xl" />
-        </div>
-      </div>
-    </PageContainer>
-  );
-}
-
-function CartEmptyState({
-  title,
-  message,
-  onLogin,
-  showLogin,
-}: {
-  title: string;
-  message: string;
-  onLogin?: () => void;
-  showLogin?: boolean;
-}) {
-  const router = useRouter();
-  return (
-    <PageContainer className="py-16 sm:py-24">
-      <div className="max-w-xs mx-auto text-center">
-        <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5 shadow-sm">
-          <ShoppingCart className="h-10 w-10 text-primary" strokeWidth={1.5} />
-        </div>
-        <h1 className="text-xl font-bold mb-2">{title}</h1>
-        <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{message}</p>
-        <div className="flex flex-col gap-2.5">
-          {showLogin && onLogin && (
-            <CustomButton onClick={onLogin} className="w-full gap-2 h-11 rounded-xl">
-              <LogIn className="h-4 w-4" />
-              Sign In
-            </CustomButton>
-          )}
-          <CustomButton
-            variant={showLogin ? "outline" : "default"}
-            onClick={() => router.push("/products")}
-            className="w-full gap-2 h-11 rounded-xl"
-          >
-            <ShoppingBag className="h-4 w-4" />
-            Browse Products
-          </CustomButton>
-        </div>
-      </div>
-    </PageContainer>
-  );
-}
+import { CartPageSkeleton } from "./components/cart-page-skeleton";
+import { CartEmptyState } from "./components/cart-empty-state";
 
 export default function CartPage() {
   const router = useRouter();
