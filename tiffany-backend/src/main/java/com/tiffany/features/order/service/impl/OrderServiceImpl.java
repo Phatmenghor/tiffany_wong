@@ -246,13 +246,8 @@ public class OrderServiceImpl implements OrderService {
         order.setSubtotal(subtotal);
         order.setDiscountAmount(discountAmount);
 
-        // Set default audit trail values for cart orders (no POS changes)
-        order.setHadOrderLevelChangeFromPOS(false);
-        order.setOrderLevelChangeReason("No order-level changes - regular cart order");
-
-        BigDecimal deliveryFee = order.getDeliveryFee() != null ? order.getDeliveryFee() : BigDecimal.ZERO;
-        BigDecimal taxAmount = order.getTaxAmount() != null ? order.getTaxAmount() : BigDecimal.ZERO;
-        order.setTotalAmount(subtotal.subtract(discountAmount).add(deliveryFee).add(taxAmount));
+        // Calculate total = subtotal - discount (free shipping, no tax)
+        order.setTotalAmount(subtotal.subtract(discountAmount));
         orderRepository.save(order);
     }
 
