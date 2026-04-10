@@ -95,11 +95,18 @@ export const orderAdminTableColumns = ({
       label: "Type",
       minWidth: "10px",
       maxWidth: "400px",
-      render: (order) => (
-        <span className="text-xs font-medium">
-          {order?.orderFrom === "CUSTOMER" ? "Public" : "POS"}
-        </span>
-      ),
+      render: (order) => {
+        const getTypeColor = (orderFrom: string) => {
+          return orderFrom === "CUSTOMER"
+            ? "bg-blue-100 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800"
+            : "bg-purple-100 dark:bg-purple-950/30 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800";
+        };
+        return (
+          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getTypeColor(order?.orderFrom)}`}>
+            {order?.orderFrom === "CUSTOMER" ? "Public" : "POS"}
+          </span>
+        );
+      },
     },
     {
       key: "customerName",
@@ -214,7 +221,7 @@ export const orderAdminTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (order) => (
-        <span className="text-xs font-medium">
+        <span className="text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit bg-indigo-100 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800">
           {order?.deliveryOption?.name || "---"}
         </span>
       ),
