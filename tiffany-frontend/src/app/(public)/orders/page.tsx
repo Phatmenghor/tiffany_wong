@@ -2,40 +2,26 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import {
-  AlertCircle,
-  Search,
-  Eye,
-  X,
-  ShoppingBag,
-  XCircle,
-  Loader2,
-} from "lucide-react";
+import { ShoppingBag, AlertCircle } from "lucide-react";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useMyOrdersState } from "@/redux/features/main/store/state/my-orders-state";
 import { fetchMyOrdersService } from "@/redux/features/main/store/thunks/my-orders-thunks";
 import { setLoadedFilters, clearOrders } from "@/redux/features/main/store/slice/my-orders-slice";
-import { AppDefault } from "@/constants/app-resource/default/default";
-import { CustomButton } from "@/components/shared/button/custom-button";
 import { PageContainer } from "@/components/shared/common/page-container";
 import { PageHeader } from "@/components/shared/common/page-header";
-import { DataTableWithPagination, TableColumn } from "@/components/shared/common/data-table";
-import { formatCurrency } from "@/utils/common/currency-format";
+import { DataTableWithPagination } from "@/components/shared/common/data-table";
 import { OrderResponse } from "@/redux/features/main/store/models/response/order-response";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { getOrderStatusLabel } from "@/enums/order-status.enum";
 import { useScrollRestoration } from "@/hooks/use-scroll-restoration";
-import { dateTimeFormat } from "@/utils/date/date-time-format";
-import { ActionButton } from "@/components/shared/button/action-button";
 import { CustomerOrderDetailModal } from "@/components/shared/modal/customer-order-detail-modal";
 import { CancelOrderModal } from "@/components/shared/modal/cancel-order-modal";
 import { showToast } from "@/components/shared/common/show-toast";
-import { ORDER_STATUS_ADMIN_FILTER, PAYMENT_STATUS_ADMIN_FILTER } from "@/constants/status/filter-status";
-import { CustomSelect } from "@/components/shared/common/custom-select";
-import { indexDisplay } from "@/utils/common/common";
-import { useAppSelector, useAppDispatch } from "@/redux/store";
+import { useAppDispatch } from "@/redux/store";
 import { cancelOrderService } from "@/redux/features/main/store/thunks/my-orders-thunks";
+import { OrdersPageSkeleton } from "./components/orders-page-skeleton";
+import { OrdersFilters } from "./components/orders-filters";
+import { OrdersEmptyState } from "./components/orders-empty-state";
+import { OrdersErrorState } from "./components/orders-error-state";
+import { createOrderTableColumns } from "./utils/create-order-table-columns";
 
 type Order = OrderResponse;
 
@@ -288,208 +274,26 @@ export default function OrdersPage() {
       />
 
       {/* Filters Section */}
-      <div className="mt-8 mb-6 space-y-4">
-        {/* Search and Filters Row - Search left, Filters right */}
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end w-full">
-          {/* Search Bar - Left side, takes available space */}
-          <div className="flex-1 min-w-0 w-full sm:w-auto">
-            <label className="text-sm font-semibold text-foreground mb-2 block">
-              Search Orders
-            </label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search by order number..."
-                value={filters.search}
-                onChange={(e) => {
-                  setFilters((prev) => ({ ...prev, search: e.target.value }));
-                  setCurrentPage(1);
-                }}
-                className="pl-10 h-11 rounded-lg border-border/70 bg-background text-base"
-              />
-              {filters.search && (
-                <button
-                  onClick={() => {
-                    setFilters((prev) => ({ ...prev, search: "" }));
-                    setCurrentPage(1);
-                  }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Filters and Clear Button Container - Right side */}
-          <div className="flex flex-shrink-0 gap-3 items-end w-full sm:w-auto">
-            {/* Order Status Filter */}
-            <div className="w-auto flex-shrink-0
-              [&>.space-y-2]:!w-auto [&>.space-y-2]:!flex [&>.space-y-2]:!flex-col [&>.space-y-2]:!gap-1
-              [&_button[role=combobox]]:!w-auto [&_button[role=combobox]]:min-w-[140px]
-              [&_.w-full]:!w-auto">
-              <CustomSelect
-                options={[
-                  { value: "", label: "All Order Status" },
-                  ...ORDER_STATUS_ADMIN_FILTER.filter(opt => opt.value !== "ALL"),
-                ]}
-                value={filters.status || ""}
-                placeholder="Filter by order status"
-                onValueChange={handleStatusChange}
-                label="Order Status"
-                size="xl"
-              />
-            </div>
-
-            {/* Payment Status Filter */}
-            <div className="w-auto flex-shrink-0
-              [&>.space-y-2]:!w-auto [&>.space-y-2]:!flex [&>.space-y-2]:!flex-col [&>.space-y-2]:!gap-1
-              [&_button[role=combobox]]:!w-auto [&_button[role=combobox]]:min-w-[140px]
-              [&_.w-full]:!w-auto">
-              <CustomSelect
-                options={PAYMENT_STATUS_ADMIN_FILTER}
-                value={filters.paymentStatus || "ALL"}
-                placeholder="Filter by payment status"
-                onValueChange={handlePaymentStatusChange}
-                label="Payment Status"
-                size="xl"
-              />
-            </div>
-
-            {/* Payment Method Filter */}
-            <div className="w-auto flex-shrink-0
-              [&>.space-y-2]:!w-auto [&>.space-y-2]:!flex [&>.space-y-2]:!flex-col [&>.space-y-2]:!gap-1
-              [&_button[role=combobox]]:!w-auto [&_button[role=combobox]]:min-w-[140px]
-              [&_.w-full]:!w-auto">
-              <CustomSelect
-                options={[
-                  { value: "", label: "All Methods" },
-                  { value: "CASH", label: "Cash" },
-                  { value: "BANK", label: "Bank" },
-                ]}
-                value={filters.paymentMethod || ""}
-                placeholder="Filter by payment method"
-                onValueChange={handlePaymentMethodChange}
-                label="Payment Method"
-                size="xl"
-              />
-            </div>
-
-            {/* Clear Filters Button */}
-            {hasActiveFilters && (
-              <CustomButton
-                onClick={handleClearFilters}
-                variant="ghost"
-                className="h-11 px-4 flex items-center gap-2 border border-border/50 flex-shrink-0"
-              >
-                <X className="h-4 w-4" />
-                Clear
-              </CustomButton>
-            )}
-          </div>
-        </div>
-
-        {/* Active Filters Display */}
-        {hasActiveFilters && (
-          <div className="flex flex-wrap gap-2 pt-2">
-            {filters.status && (
-              <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-sm font-medium text-primary">
-                <span>Order: {filters.status}</span>
-                <button
-                  onClick={() => setFilters((prev) => ({ ...prev, status: "" }))}
-                  className="hover:opacity-70"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-            {filters.paymentStatus && filters.paymentStatus !== "ALL" && (
-              <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-sm font-medium text-primary">
-                <span>Payment: {filters.paymentStatus}</span>
-                <button
-                  onClick={() => setFilters((prev) => ({ ...prev, paymentStatus: "" }))}
-                  className="hover:opacity-70"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-            {filters.paymentMethod && (
-              <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-sm font-medium text-primary">
-                <span>Method: {filters.paymentMethod}</span>
-                <button
-                  onClick={() => setFilters((prev) => ({ ...prev, paymentMethod: "" }))}
-                  className="hover:opacity-70"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-            {filters.search && (
-              <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-sm font-medium text-primary">
-                <span>Search: {filters.search}</span>
-                <button
-                  onClick={() => setFilters((prev) => ({ ...prev, search: "" }))}
-                  className="hover:opacity-70"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      <OrdersFilters
+        filters={filters}
+        onStatusChange={handleStatusChange}
+        onPaymentStatusChange={handlePaymentStatusChange}
+        onPaymentMethodChange={handlePaymentMethodChange}
+        onSearchChange={(value) => {
+          setFilters((prev) => ({ ...prev, search: value }));
+          setCurrentPage(1);
+        }}
+        onClearFilters={handleClearFilters}
+        hasActiveFilters={hasActiveFilters}
+      />
 
       {/* Data Table */}
       {!isAuthenticated ? (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
-          <div className="flex items-start gap-4">
-            <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <h3 className="font-semibold text-red-900">Sign In Required</h3>
-              <p className="text-red-800 text-sm mt-1">
-                Please sign in to view your orders.
-              </p>
-              <CustomButton
-                onClick={() => router.push("/login")}
-                className="mt-4 h-10 rounded-lg"
-              >
-                Sign In
-              </CustomButton>
-            </div>
-          </div>
-        </div>
+        <OrdersErrorState isUnauthenticated />
       ) : error.list ? (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
-          <div className="flex items-start gap-4">
-            <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <h3 className="font-semibold text-red-900">Error Loading Orders</h3>
-              <p className="text-red-800 text-sm mt-1">{error.list}</p>
-            </div>
-          </div>
-        </div>
+        <OrdersErrorState errorMessage={error.list} />
       ) : orders.length === 0 && !loading.list ? (
-        <div className="rounded-2xl border border-dashed border-border bg-card p-12 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-            <ShoppingBag className="h-8 w-8 text-primary" />
-          </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">
-            {filters.status ? "No Orders Found" : "No Orders Yet"}
-          </h3>
-          <p className="text-muted-foreground mb-6">
-            {filters.status
-              ? `No orders with ${filters.status.toLowerCase()} status. Try a different filter.`
-              : "You haven't placed any orders yet. Start shopping now!"}
-          </p>
-          <CustomButton
-            onClick={() => router.push("/menu")}
-            className="rounded-xl h-11 px-6"
-          >
-            Browse Menu
-          </CustomButton>
-        </div>
+        <OrdersEmptyState hasFilters={!!filters.status} />
       ) : (
         <DataTableWithPagination
           data={orders}
@@ -529,191 +333,3 @@ export default function OrdersPage() {
   );
 }
 
-// Helper function to create table columns
-function createOrderTableColumns(
-  handleViewOrder: (order: Order) => void,
-  handleCancelOrder: (order: Order) => void,
-  cancelingOrderId: string | null,
-  pagination: any
-): TableColumn<Order>[] {
-  return [
-    {
-      key: "index",
-      label: "#",
-      minWidth: "40px",
-      maxWidth: "60px",
-      render: (_, index) => (
-        <span className="font-medium text-xs">
-          {indexDisplay(pagination.pageNo || 1, pagination.pageSize || 15, index + 1)}
-        </span>
-      ),
-    },
-    {
-      key: "createdAt",
-      label: "Created Date",
-      minWidth: "140px",
-      maxWidth: "170px",
-      render: (order) => (
-        <span className="text-xs text-muted-foreground">
-          {dateTimeFormat(order?.createdAt)}
-        </span>
-      ),
-    },
-    {
-      key: "orderNumber",
-      label: "Order #",
-      minWidth: "100px",
-      maxWidth: "130px",
-      render: (order) => (
-        <span className="text-xs font-mono font-medium">
-          {order?.orderNumber || "---"}
-        </span>
-      ),
-    },
-    {
-      key: "orderStatus",
-      label: "Status",
-      minWidth: "120px",
-      maxWidth: "150px",
-      render: (order) => {
-        const getStatusColor = (status: string) => {
-          switch (status) {
-            case "COMPLETED":
-            case "READY":
-            case "DELIVERED":
-              return "bg-green-100 text-green-800 border border-green-300";
-            case "CANCELLED":
-            case "FAILED":
-              return "bg-red-100 text-red-800 border border-red-300";
-            case "PENDING":
-              return "bg-yellow-100 text-yellow-800 border border-yellow-300";
-            case "PREPARING":
-            case "CONFIRMED":
-            case "PROCESSING":
-              return "bg-blue-100 text-blue-800 border border-blue-300";
-            case "SHIPPED":
-            case "IN_TRANSIT":
-              return "bg-cyan-100 text-cyan-800 border border-cyan-300";
-            default:
-              return "bg-gray-100 text-gray-800 border border-gray-300";
-          }
-        };
-        return (
-          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getStatusColor(order?.orderStatus)}`}>
-            {getOrderStatusLabel(order?.orderStatus)}
-          </span>
-        );
-      },
-    },
-    {
-      key: "paymentMethod",
-      label: "Payment Method",
-      minWidth: "120px",
-      maxWidth: "150px",
-      render: (order) => (
-        <span className="text-xs font-medium">
-          {order?.paymentMethod || "---"}
-        </span>
-      ),
-    },
-    {
-      key: "paymentStatus",
-      label: "Payment Status",
-      minWidth: "130px",
-      maxWidth: "160px",
-      render: (order) => {
-        const getPaymentStatusColor = (status: string) => {
-          switch (status) {
-            case "PAID":
-              return "bg-green-100 text-green-800 border border-green-300";
-            case "PENDING":
-              return "bg-yellow-100 text-yellow-800 border border-yellow-300";
-            case "REFUNDED":
-              return "bg-purple-100 text-purple-800 border border-purple-300";
-            case "UNPAID":
-              return "bg-red-100 text-red-800 border border-red-300";
-            default:
-              return "bg-gray-100 text-gray-800 border border-gray-300";
-          }
-        };
-        return (
-          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getPaymentStatusColor(order?.paymentStatus)}`}>
-            {order?.paymentStatus || "---"}
-          </span>
-        );
-      },
-    },
-    {
-      key: "items",
-      label: "Items",
-      minWidth: "80px",
-      maxWidth: "110px",
-      render: (order) => (
-        <span className="text-xs font-medium">
-          {order?.items?.length || 0}
-        </span>
-      ),
-    },
-    {
-      key: "totalAmount",
-      label: "Total",
-      minWidth: "110px",
-      maxWidth: "140px",
-      render: (order) => {
-        return (
-          <div className="flex flex-col">
-            <span className="text-xs font-bold text-green-600">
-              {formatCurrency(order?.totalAmount || 0)}
-            </span>
-            {order?.discountAmount && order.discountAmount > 0 && (
-              <span className="text-xs text-red-600 font-medium">
-                Save {formatCurrency(order.discountAmount)}
-              </span>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      key: "actions",
-      label: "Actions",
-      minWidth: "100px",
-      maxWidth: "130px",
-      render: (order) => (
-        <div className="flex items-center gap-2">
-          <ActionButton
-            icon={<Eye className="w-4 h-4" />}
-            tooltip="View Details"
-            onClick={() => handleViewOrder(order)}
-          />
-          {order.orderStatus === "PENDING" && (
-            <ActionButton
-              icon={cancelingOrderId === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
-              tooltip="Cancel Order"
-              onClick={() => handleCancelOrder(order)}
-              variant="destructive"
-              disabled={cancelingOrderId === order.id}
-            />
-          )}
-        </div>
-      ),
-    },
-  ];
-}
-
-function OrdersPageSkeleton() {
-  return (
-    <PageContainer className="py-8">
-      <div className="space-y-4">
-        <div className="h-12 bg-muted rounded-lg animate-pulse" />
-        <div className="h-11 bg-muted rounded-lg animate-pulse" />
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="rounded-lg border border-border p-4 space-y-3">
-            <div className="h-6 bg-muted rounded animate-pulse" />
-            <div className="h-4 bg-muted rounded animate-pulse" />
-          </div>
-        ))}
-      </div>
-    </PageContainer>
-  );
-}
