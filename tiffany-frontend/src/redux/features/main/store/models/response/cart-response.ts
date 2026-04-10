@@ -33,6 +33,14 @@ export interface CartItemModel {
   lastOptimisticTimestamp?: number;
   sku?: string;  // Product SKU from store master data
   barcode?: string;  // Product barcode from store master data
+
+  // Display fields for UI rendering
+  displayPrice?: number;
+  displayOriginPrice?: number;
+  displayPromotionType?: string | null;
+  displayPromotionValue?: number | null;
+  displayPromotionFromDate?: string | null;
+  displayPromotionToDate?: string | null;
 }
 
 // Backward compatible alias

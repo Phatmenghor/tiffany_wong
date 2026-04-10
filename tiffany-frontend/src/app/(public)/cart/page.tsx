@@ -241,6 +241,11 @@ export default function CartPage() {
                 hasPromotion={item.hasPromotion}
                 promotionType={item.promotionType}
                 promotionValue={item.promotionValue}
+                displayPrice={item.displayPrice}
+                displayOriginPrice={item.displayOriginPrice}
+                displayPromotionType={item.displayPromotionType}
+                displayPromotionValue={item.displayPromotionValue}
+                hasActivePromotion={item.hasActivePromotion}
                 onQuantityChange={(newQuantity) =>
                   handleUpdateQuantity(item.productId, item.productSizeId, newQuantity)
                 }

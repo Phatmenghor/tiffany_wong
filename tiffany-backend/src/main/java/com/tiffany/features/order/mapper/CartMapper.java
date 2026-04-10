@@ -37,16 +37,34 @@ public interface CartMapper {
 
     @AfterMapping
     default void setDiscountDetails(@MappingTarget CartItemResponse response, CartItem cartItem) {
+        // Set display prices
+        response.setDisplayPrice(response.getCurrentPriceAfterDiscount());
+        response.setDisplayOriginPrice(response.getCurrentPriceBeforeDiscount());
+
         if (response.getHasDiscount() != null && response.getHasDiscount()) {
             if (cartItem.getProductSize() != null && cartItem.getProductSize().isPromotionActive()) {
                 response.setDiscountType(cartItem.getProductSize().getPromotionType() != null ?
                         cartItem.getProductSize().getPromotionType().toString() : null);
+                response.setDisplayPromotionType(cartItem.getProductSize().getPromotionType() != null ?
+                        cartItem.getProductSize().getPromotionType().toString() : null);
+                response.setDisplayPromotionValue(cartItem.getProductSize().getPromotionValue());
+                response.setDisplayPromotionFromDate(cartItem.getProductSize().getPromotionFromDate());
+                response.setDisplayPromotionToDate(cartItem.getProductSize().getPromotionToDate());
+                response.setHasActivePromotion(true);
                 calculateDiscountAmount(response);
             } else if (cartItem.getProduct() != null && cartItem.getProduct().isPromotionActive()) {
                 response.setDiscountType(cartItem.getProduct().getPromotionType() != null ?
                         cartItem.getProduct().getPromotionType().toString() : null);
+                response.setDisplayPromotionType(cartItem.getProduct().getPromotionType() != null ?
+                        cartItem.getProduct().getPromotionType().toString() : null);
+                response.setDisplayPromotionValue(cartItem.getProduct().getPromotionValue());
+                response.setDisplayPromotionFromDate(cartItem.getProduct().getPromotionFromDate());
+                response.setDisplayPromotionToDate(cartItem.getProduct().getPromotionToDate());
+                response.setHasActivePromotion(true);
                 calculateDiscountAmount(response);
             }
+        } else {
+            response.setHasActivePromotion(false);
         }
     }
 

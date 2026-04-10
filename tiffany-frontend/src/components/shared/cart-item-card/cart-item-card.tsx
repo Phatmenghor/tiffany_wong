@@ -23,6 +23,12 @@ export interface CartItemCardProps {
   hasPromotion?: boolean;
   promotionType?: string | null;
   promotionValue?: number | null;
+  // Display fields
+  displayPrice?: number;
+  displayOriginPrice?: number;
+  displayPromotionType?: string | null;
+  displayPromotionValue?: number | null;
+  hasActivePromotion?: boolean;
   // Handlers
   onQuantityChange: (quantity: number) => void;
   onRemove: () => void;
@@ -44,11 +50,22 @@ export function CartItemCard({
   hasPromotion,
   promotionType,
   promotionValue,
+  displayPrice,
+  displayOriginPrice,
+  displayPromotionType,
+  displayPromotionValue,
+  hasActivePromotion,
   onQuantityChange,
   onRemove,
   showLink = true,
   showControls = true,
 }: CartItemCardProps) {
+  // Use display values if available, fallback to original values
+  const priceToDisplay = displayPrice ?? finalPrice;
+  const originPriceToDisplay = displayOriginPrice ?? currentPrice;
+  const promotionTypeToDisplay = displayPromotionType ?? promotionType;
+  const promotionValueToDisplay = displayPromotionValue ?? promotionValue;
+  const isActivePromo = hasActivePromotion ?? hasPromotion;
   const ImageComponent = (
     <div className="relative w-[80px] h-[80px] rounded-xl overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50 border border-slate-200 flex-shrink-0 shadow-sm hover:shadow-md transition-shadow">
       <Image
@@ -98,11 +115,11 @@ export function CartItemCard({
                 {productName}
               </h3>
             )}
-            {hasPromotion && (
+            {isActivePromo && promotionValueToDisplay != null && (
               <Badge className="text-[10px] px-2 py-0.5 leading-none flex-shrink-0 bg-red-100 text-red-700 border-0 font-semibold">
-                {promotionType === "PERCENTAGE"
-                  ? `-${promotionValue}%`
-                  : `-${formatCurrency(promotionValue || 0)}`}
+                {promotionTypeToDisplay === "PERCENTAGE"
+                  ? `-${promotionValueToDisplay}%`
+                  : `-${formatCurrency(promotionValueToDisplay)}`}
               </Badge>
             )}
           </div>
@@ -121,9 +138,9 @@ export function CartItemCard({
             <div className="flex items-center justify-between gap-3">
               {/* Price Display - Left Side */}
               <div className="flex items-baseline gap-2">
-                <span className="font-bold text-base text-slate-900">{formatCurrency(finalPrice)}</span>
-                {hasPromotion && currentPrice > finalPrice && (
-                  <span className="text-xs text-slate-500 line-through font-medium">{formatCurrency(currentPrice)}</span>
+                <span className="font-bold text-base text-slate-900">{formatCurrency(priceToDisplay)}</span>
+                {isActivePromo && originPriceToDisplay > priceToDisplay && (
+                  <span className="text-xs text-slate-500 line-through font-medium">{formatCurrency(originPriceToDisplay)}</span>
                 )}
               </div>
 
