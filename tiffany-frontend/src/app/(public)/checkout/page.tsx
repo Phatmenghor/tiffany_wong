@@ -32,6 +32,7 @@ export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<LocationResponse | null>(null);
   const [customerNote, setCustomerNote] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"CASH" | "BANK">("CASH");
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -103,7 +104,7 @@ export default function CheckoutPage() {
         addressId: selectedAddress.id,
         customerNote: customerNote || "",
         orderStatus: "PENDING",
-        PaymentBy: "ABA",
+        PaymentBy: paymentMethod,
       };
 
       await dispatch(createOrderService(payload) as any).unwrap();
@@ -197,6 +198,38 @@ export default function CheckoutPage() {
                 className="w-full border rounded-xl p-3 bg-background text-foreground text-sm resize-none"
                 rows={4}
               />
+            </div>
+
+            {/* Payment Method */}
+            <div className="bg-card border rounded-2xl p-4 sm:p-5">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                Payment Method
+              </h2>
+              <div className="space-y-3">
+                <label className="flex items-center gap-3 cursor-pointer p-3 border rounded-xl hover:bg-muted/50 transition-colors" onClick={() => setPaymentMethod("CASH")}>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="CASH"
+                    checked={paymentMethod === "CASH"}
+                    onChange={() => setPaymentMethod("CASH")}
+                    className="w-4 h-4"
+                  />
+                  <span className="font-medium">Cash on Delivery</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer p-3 border rounded-xl hover:bg-muted/50 transition-colors" onClick={() => setPaymentMethod("BANK")}>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="BANK"
+                    checked={paymentMethod === "BANK"}
+                    onChange={() => setPaymentMethod("BANK")}
+                    className="w-4 h-4"
+                  />
+                  <span className="font-medium">Bank Transfer</span>
+                </label>
+              </div>
             </div>
           </div>
 
