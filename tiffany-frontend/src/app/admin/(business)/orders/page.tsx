@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus } from "lucide-react";
 import { ROUTES } from "@/constants/app-routes/routes";
 import { CardHeaderSection } from "@/components/layout/card-header-section";
 import { DeleteConfirmationModal } from "@/components/shared/modal/delete-confirmation-modal";
@@ -186,10 +185,6 @@ export default function OrdersAdminPage() {
           searchValue={filters.search}
           searchPlaceholder="Search order..."
           onSearchChange={handleSearchChange}
-          buttonText="New Order"
-          buttonIcon={<Plus className="h-4 w-4" />}
-          buttonHref={ROUTES.ADMIN.ORDERS_CREATE}
-          buttonTooltip="Create a new POS order"
         >
           <CustomSelect
             options={ORDER_STATUS_ADMIN_FILTER}
