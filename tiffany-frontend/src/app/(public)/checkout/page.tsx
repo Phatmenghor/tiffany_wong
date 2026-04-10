@@ -200,37 +200,6 @@ export default function CheckoutPage() {
               />
             </div>
 
-            {/* Payment Method */}
-            <div className="bg-card border rounded-2xl p-4 sm:p-5">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
-                Payment Method
-              </h2>
-              <div className="space-y-3">
-                <label className="flex items-center gap-3 cursor-pointer p-3 border rounded-xl hover:bg-muted/50 transition-colors" onClick={() => setPaymentMethod("CASH")}>
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="CASH"
-                    checked={paymentMethod === "CASH"}
-                    onChange={() => setPaymentMethod("CASH")}
-                    className="w-4 h-4"
-                  />
-                  <span className="font-medium">Cash on Delivery</span>
-                </label>
-                <label className="flex items-center gap-3 cursor-pointer p-3 border rounded-xl hover:bg-muted/50 transition-colors" onClick={() => setPaymentMethod("BANK")}>
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="BANK"
-                    checked={paymentMethod === "BANK"}
-                    onChange={() => setPaymentMethod("BANK")}
-                    className="w-4 h-4"
-                  />
-                  <span className="font-medium">Bank Transfer</span>
-                </label>
-              </div>
-            </div>
           </div>
 
           {/* Order Summary */}
@@ -292,6 +261,38 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
+
+              {/* Payment Method - In Row */}
+              <div className="mb-5 p-4 bg-muted/30 rounded-xl border">
+                <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                  <CreditCard className="h-4 w-4" />
+                  Payment Method
+                </h3>
+                <div className="flex gap-2">
+                  <label className="flex-1 flex items-center gap-2 cursor-pointer p-2.5 border rounded-lg hover:bg-muted/50 transition-colors" onClick={() => setPaymentMethod("CASH")}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="CASH"
+                      checked={paymentMethod === "CASH"}
+                      onChange={() => setPaymentMethod("CASH")}
+                      className="w-4 h-4"
+                    />
+                    <span className="text-sm font-medium">Cash</span>
+                  </label>
+                  <label className="flex-1 flex items-center gap-2 cursor-pointer p-2.5 border rounded-lg hover:bg-muted/50 transition-colors" onClick={() => setPaymentMethod("BANK")}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="BANK"
+                      checked={paymentMethod === "BANK"}
+                      onChange={() => setPaymentMethod("BANK")}
+                      className="w-4 h-4"
+                    />
+                    <span className="text-sm font-medium">Bank</span>
+                  </label>
+                </div>
+              </div>
               <CustomButton
                 className="w-full mb-2.5 gap-2 h-11 rounded-xl"
                 onClick={handleCheckout}
