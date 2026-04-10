@@ -3,7 +3,7 @@
  * Redux thunks for fetching user's orders
  */
 
-import { axiosClientWithAuth } from "@/utils/axios";
+import { axiosClientWithAuth } from "@/utils/axios/axios-client";
 import { createApiThunk } from "@/utils/axios/api-wrapper";
 
 export interface FetchMyOrdersParams {

@@ -1,4 +1,4 @@
-import { axiosClientWithAuth } from "@/utils/axios";
+import { axiosClientWithAuth } from "@/utils/axios/axios-client";
 
 export interface uploadImageModel {
   base64: string;

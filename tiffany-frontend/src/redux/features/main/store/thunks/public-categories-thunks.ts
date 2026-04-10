@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { axiosClient } from "@/utils/axios";
+import { axiosClient } from "@/utils/axios/axios-client";
 import { PaginationResponseModel } from "@/redux/features/master-data/store/models/response/pagination-response";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
 

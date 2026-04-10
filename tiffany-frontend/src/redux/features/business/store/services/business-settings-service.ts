@@ -3,7 +3,7 @@
  * Handles API calls for system settings endpoints
  */
 
-import { axiosClient, axiosClientWithAuth } from "@/utils/axios";
+import { axiosClient, axiosClientWithAuth } from "@/utils/axios/axios-client";
 
 export interface SocialMedia {
   id: string;

@@ -1,4 +1,4 @@
-import { axiosClient, axiosClientWithAuth } from "@/utils/axios";
+import { axiosClient, axiosClientWithAuth } from "@/utils/axios/axios-client";
 import { createApiThunk } from "@/utils/axios/api-wrapper";
 import {
   AllProductResponseModel,

@@ -11,7 +11,7 @@ import {
   UpdateUserParams,
 } from "../models/request/users-request";
 import { UserResponseModel } from "../models/response/users-response";
-import { axiosClientWithAuth } from "@/utils/axios";
+import { axiosClientWithAuth } from "@/utils/axios/axios-client";
 import { createApiThunk } from "@/utils/axios/api-wrapper";
 
 /**

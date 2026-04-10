@@ -7,7 +7,7 @@ import {
   ChangePasswordRequest,
   LoginCredentialsRequest,
 } from "../models/request/auth-request";
-import { axiosClient, axiosClientWithAuth } from "@/utils/axios";
+import { axiosClient, axiosClientWithAuth } from "@/utils/axios/axios-client";
 import { createApiThunk } from "@/utils/axios/api-wrapper";
 import { storeAdminTokens, storeTokens } from "@/utils/local-storage/token";
 import { storeAdminUserInfo, storeUserInfo } from "@/utils/local-storage/userInfo";

@@ -3,7 +3,7 @@
  * Redux thunks for banner CRUD operations
  */
 
-import { axiosClientWithAuth } from "@/utils/axios";
+import { axiosClientWithAuth } from "@/utils/axios/axios-client";
 import { createApiThunk } from "@/utils/axios/api-wrapper";
 import {
   AllBannerRequest,

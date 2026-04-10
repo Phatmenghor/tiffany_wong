@@ -3,7 +3,7 @@
  * Redux thunks for Order CRUD operations
  */
 
-import { axiosClientWithAuth } from "@/utils/axios";
+import { axiosClientWithAuth } from "@/utils/axios/axios-client";
 import { createApiThunk } from "@/utils/axios/api-wrapper";
 import { PaymentOptionType } from "@/redux/features/master-data/store/models/response/payment-option-response";
 import { OrderResponse } from "../models/response/order-response";

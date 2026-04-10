@@ -7,7 +7,7 @@ import { Status } from "@/constants/status/status";
 import { AllProductRequest } from "@/redux/features/business/store/models/request/product-request";
 import { AllBannerRequest } from "@/redux/features/master-data/store/models/request/banner-request";
 import { AllCategoriesRequest } from "@/redux/features/master-data/store/models/request/categories-request";
-import { axiosClient, axiosClientWithAuth } from "@/utils/axios";
+import { axiosClient, axiosClientWithAuth } from "@/utils/axios/axios-client";
 import { createApiThunk } from "@/utils/axios/api-wrapper";
 
 export const fetchHomeBanners = createApiThunk<any, AllBannerRequest>(

@@ -1,4 +1,4 @@
-import { axiosClientWithAuth } from "@/utils/axios";
+import { axiosClientWithAuth } from "@/utils/axios/axios-client";
 import { createApiThunk } from "@/utils/axios/api-wrapper";
 import { ToggleFavoriteRequest } from "../models/request/favorite-request";
 import { AllFavoriteResponseModel } from "../models/response/favorite-response";
