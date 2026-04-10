@@ -265,7 +265,7 @@ export default function PublicProfilePage() {
                 >
                   <div className="relative ring-2 ring-primary/20 rounded-2xl">
                     <CustomAvatar
-                      imageUrl={userProfile?.profileImageUrl}
+                      imageUrl={userProfile?.profileImageUrl || undefined}
                       name={userProfile?.fullName}
                       size="xxl"
                     />
