@@ -143,6 +143,7 @@ function ComboboxSelectCategoriesPublicComponent({
     setLastPage(false);
     setData([]);
     fetchData(debouncedSearch, 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, open]);
 
   // Pagination: Load more when last item comes into view (ONLY if dropdown is open)
@@ -152,7 +153,8 @@ function ComboboxSelectCategoriesPublicComponent({
     }
 
     fetchData(debouncedSearch, page + 1);
-  }, [inView, open, page, data.length, debouncedSearch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inView, open, page, data.length]);
 
   const handleSelect = (categoryId: string) => {
     onChangeSelected(categoryId);
