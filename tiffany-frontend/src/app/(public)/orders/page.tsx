@@ -239,11 +239,7 @@ export default function OrdersPage() {
     setCurrentPage(1);
   };
 
-  const hasActiveFilters =
-    filters.status ||
-    filters.paymentStatus ||
-    filters.paymentMethod ||
-    filters.search;
+  const hasActiveFilters = !!(filters.status || filters.paymentStatus || filters.paymentMethod || filters.search);
 
   // Create table columns
   const tableColumns = useMemo(
