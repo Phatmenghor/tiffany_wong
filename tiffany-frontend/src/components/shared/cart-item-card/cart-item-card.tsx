@@ -17,16 +17,13 @@ export interface CartItemCardProps {
   productSizeId?: string | null;
   sizeName?: string | null;
   quantity: number;
-  // Display fields
   displayPrice: number;
   displayOriginPrice: number;
   displayPromotionType: string | null;
   displayPromotionValue: number | null;
   hasActivePromotion: boolean;
-  // Handlers
   onQuantityChange: (quantity: number) => void;
   onRemove: () => void;
-  // Options
   showLink?: boolean;
   showControls?: boolean;
 }
@@ -61,7 +58,6 @@ export function CartItemCard({
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 relative group">
-      {/* Delete Button - Top Right with lower opacity */}
       <CustomButton
         size="icon"
         variant="outline"
@@ -73,7 +69,6 @@ export function CartItemCard({
       </CustomButton>
 
       <div className="flex gap-4">
-        {/* Thumbnail */}
         {showLink ? (
           <Link href={`/products/${productId}`} className="flex-shrink-0 group/link">
             {ImageComponent}
@@ -82,9 +77,7 @@ export function CartItemCard({
           ImageComponent
         )}
 
-        {/* Info */}
         <div className="flex-1 min-w-0 flex flex-col justify-between pr-2">
-          {/* Product Name + Promotion Badge */}
           <div className="flex items-center gap-2 min-w-0 mb-2">
             {showLink ? (
               <Link href={`/products/${productId}`}>
@@ -106,7 +99,6 @@ export function CartItemCard({
             )}
           </div>
 
-          {/* Size Badge */}
           {sizeName && (
             <div className="mb-2">
               <span className="text-xs font-medium text-primary bg-primary/5 px-2.5 py-1 rounded-full flex-shrink-0 whitespace-nowrap inline-block border border-primary/30">
@@ -115,20 +107,15 @@ export function CartItemCard({
             </div>
           )}
 
-          {/* Price Info + Qty controls */}
           {showControls && (
             <div className="flex items-center justify-between gap-3">
-              {/* Price Display */}
-              <div className="flex flex-col gap-1">
-                <div className="flex items-baseline gap-2">
-                  <span className="font-bold text-base text-slate-900">{formatCurrency(displayPrice)}</span>
-                  {hasActivePromotion && displayOriginPrice > displayPrice && (
-                    <span className="text-xs text-slate-500 line-through font-medium">{formatCurrency(displayOriginPrice)}</span>
-                  )}
-                </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-bold text-base text-slate-900">{formatCurrency(displayPrice)}</span>
+                {hasActivePromotion && displayOriginPrice > displayPrice && (
+                  <span className="text-xs text-slate-500 line-through font-medium">{formatCurrency(displayOriginPrice)}</span>
+                )}
               </div>
 
-              {/* Quantity Controls */}
               <div className="flex items-center gap-1">
                 <CustomButton
                   size="icon"
