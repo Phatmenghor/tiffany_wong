@@ -100,22 +100,23 @@ public interface CartMapper {
     List<CartItemResponse> toItemResponseList(List<CartItem> cartItems);
 
     @Mapping(target = "totalItems", expression = "java(cart.getTotalItems())")
-    @Mapping(target = "subtotal", expression = "java(cart.getSubtotal())")
-    @Mapping(target = "totalDiscount", expression = "java(cart.getTotalDiscount())")
-    @Mapping(target = "finalTotal", expression = "java(calculateFinalTotal(cart))")
+    @Mapping(target = "subtotal", ignore = true)
+    @Mapping(target = "totalDiscount", ignore = true)
+    @Mapping(target = "finalTotal", ignore = true)
     CartSummaryResponse toSummaryResponse(Cart cart);
 
     @AfterMapping
     default void setSummaryCartItems(@MappingTarget CartSummaryResponse response, Cart cart) {
         if (cart.getItems() != null) {
             response.setItems(toItemResponseList(cart.getItems()));
-            // Calculate total quantity (sum of all item quantities)
+
+            // Calculate total quantity
             int totalQuantity = cart.getItems().stream()
                     .mapToInt(item -> item.getQuantity() != null ? item.getQuantity() : 0)
                     .sum();
             response.setTotalQuantity(totalQuantity);
 
-            // Calculate subtotal before discount (sum of all item subtotals before discount)
+            // Calculate subtotal before discount
             BigDecimal subtotalBeforeDiscount = cart.getItems().stream()
                     .map(item -> {
                         BigDecimal price = item.getCurrentPrice() != null ? item.getCurrentPrice() : BigDecimal.ZERO;
@@ -124,6 +125,19 @@ public interface CartMapper {
                     })
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             response.setSubtotalBeforeDiscount(subtotalBeforeDiscount);
+
+            // Calculate subtotal (after discount)
+            BigDecimal subtotal = cart.getItems().stream()
+                    .map(CartItem::getTotalPrice)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            response.setSubtotal(subtotal);
+
+            // Calculate total discount
+            BigDecimal totalDiscount = subtotalBeforeDiscount.subtract(subtotal);
+            response.setTotalDiscount(totalDiscount);
+
+            // Calculate final total (same as subtotal after discount)
+            response.setFinalTotal(subtotal);
         }
     }
 
