@@ -2,7 +2,7 @@
  * Scroll State Hook
  */
 
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
   selectScrollState,
   selectCurrentRoute,

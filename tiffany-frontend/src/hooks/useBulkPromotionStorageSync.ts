@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useRef } from "react";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { setSelectedProducts } from "@/redux/features/business/store/slice/bulk-promotion-slice";
 import { selectSelectedProductIds } from "@/redux/features/business/store/selectors/bulk-promotion-selector";
 

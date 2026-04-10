@@ -17,7 +17,7 @@
  */
 
 import { useEffect, useRef } from "react";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch } from '@/redux/store/hooks';
 import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
 
 /**

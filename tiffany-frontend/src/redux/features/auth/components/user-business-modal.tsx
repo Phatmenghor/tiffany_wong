@@ -25,7 +25,7 @@ import {
   createUserService,
   updateUserService,
 } from "../store/thunks/users-thunks";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { showToast } from "@/components/shared/common/show-toast";
 import { clearError, clearSelectedUser } from "../store/slice/users-slice";
 import {

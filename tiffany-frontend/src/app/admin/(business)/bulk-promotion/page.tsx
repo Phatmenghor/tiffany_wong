@@ -30,7 +30,7 @@ import {
 } from "@/components/shared/common/data-table";
 import { ROUTES } from "@/constants/app-routes/routes";
 import { showToast } from "@/components/shared/common/show-toast";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { useProductState } from "@/redux/features/business/store/state/product-state";
 import {
   fetchAllProductAdminService,

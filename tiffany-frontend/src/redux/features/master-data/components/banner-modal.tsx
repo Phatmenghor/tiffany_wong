@@ -13,7 +13,7 @@ import { FormHeader } from "@/components/shared/form-field/form-header";
 import { FormBody } from "@/components/shared/form-field/form-body";
 import { FormFooter } from "@/components/shared/form-field/form-footer";
 import { ModalMode, Status } from "@/constants/status/status";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
   selectError,
   selectOperations,

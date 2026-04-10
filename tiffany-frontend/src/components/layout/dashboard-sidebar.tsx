@@ -14,7 +14,7 @@ import { useIsMobile } from "@/redux/store/use-mobile";
 import { getImageWithFallback } from "@/constants/image-defaults";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { getProfileService } from "@/redux/features/auth/store/thunks/auth-thunks";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from '@/redux/store/hooks';
 import {
   selectBusinessSettings,
   selectBusinessName,

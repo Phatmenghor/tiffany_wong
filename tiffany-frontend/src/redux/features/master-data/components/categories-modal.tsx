@@ -12,7 +12,7 @@ import { FormHeader } from "@/components/shared/form-field/form-header";
 import { FormBody } from "@/components/shared/form-field/form-body";
 import { FormFooter } from "@/components/shared/form-field/form-footer";
 import { ModalMode, Status } from "@/constants/status/status";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
 import { showToast } from "@/components/shared/common/show-toast";
 import { BANNER_STATUS_CREATE_UPDATE } from "@/constants/status/create-update-status";

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { dateTimeFormat } from "@/utils/date/date-time-format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch } from '@/redux/store/hooks';
 import { fetchOrderDetailsService } from "@/redux/features/main/store/thunks/my-orders-thunks";
 import { formatCurrency } from "@/utils/common/currency-format";
 import { Loading } from "@/components/shared/common/loading";

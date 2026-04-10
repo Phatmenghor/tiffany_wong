@@ -1,4 +1,4 @@
-import { RootState } from "@/redux/store";
+import { RootState } from '@/redux/store/types';
 import { createSelector } from "@reduxjs/toolkit";
 
 // Stable empty array — avoids creating new references on every selector call

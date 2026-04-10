@@ -1,4 +1,4 @@
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from '@/redux/store/hooks';
 import { selectBusinessColors } from "@/redux/features/business/store/selectors/business-settings-selector";
 
 /**

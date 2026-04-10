@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useCallback } from "react";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch } from '@/redux/store/types';
 import {
   updateCartItem,
 } from "@/redux/features/main/store/thunks/cart-thunks";

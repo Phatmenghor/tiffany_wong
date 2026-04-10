@@ -27,7 +27,7 @@ import {
   resetProductPromotionOptimistic,
 } from "@/redux/features/business/store/slice/product-slice";
 import { productTableColumns } from "@/redux/features/business/table/product-table";
-import ProductModal from "@/redux/features/business/components/product-modal";
+import ProductModal from '@/redux/features/business/components/product-modal';
 import { ProductDetailModal } from "@/redux/features/business/components/product-detail-modal";
 import { PRODUCT_STATUS_FILTER, PRODUCT_SIZE_FILTER } from "@/constants/status/filter-status";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
@@ -35,7 +35,7 @@ import { useAdminCleanup } from "@/hooks/use-cleanup-on-unmount";
 import { AppDefault } from "@/constants/app-resource/default/default";
 import { setGlobalPageSize } from "@/redux/store/slices/global-settings-slice";
 import { selectGlobalPageSize } from "@/redux/store/selectors/global-settings-selectors";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from '@/redux/store/hooks';
 import { CollapsibleFilterPanel } from "@/redux/features/business/components/collapsible-filter-panel";
 import { FilterPanelConfig } from "@/redux/features/business/components/filter-types";
 

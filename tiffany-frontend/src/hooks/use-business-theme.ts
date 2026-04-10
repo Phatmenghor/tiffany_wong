@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { selectBusinessSettings } from "@/redux/features/business/store/selectors/business-settings-selector";
 import { fetchBusinessSettingsThunk } from "@/redux/features/business/store/thunks/business-settings-thunks";
 import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
 import { BusinessSettingsResponse } from "@/redux/features/business/store/services/business-settings-service";
 import { getCachedThemeColors, cacheThemeColors, hasThemeChanged } from "@/utils/common/theme-cache";
 import { AppDefault } from "@/constants/app-resource/default/default";
-import store from "@/redux/store";
+import store from '@/redux/store/configure';
 
 // Default brand colors from tailwind config
 const DEFAULT_COLORS = {

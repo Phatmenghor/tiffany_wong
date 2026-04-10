@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { dateTimeFormat } from "@/utils/date/date-time-format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { fetchUserByIdService } from "@/redux/features/auth/store/thunks/users-thunks";
 import { clearSelectedUser } from "@/redux/features/auth/store/slice/users-slice";
 import {

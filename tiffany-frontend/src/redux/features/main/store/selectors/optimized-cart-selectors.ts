@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { RootState } from '@/redux/store';
+import { RootState } from '@/redux/store/types';
 import { CartItemModel } from '../models/response/cart-response';
 
 // Base selectors

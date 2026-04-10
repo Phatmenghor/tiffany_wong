@@ -13,7 +13,7 @@ import { TextField } from "@/components/shared/form-field/text-field";
 import { SelectField } from "@/components/shared/form-field/select-field";
 import { DateTimePickerField } from "@/components/shared/form-field/date-picker-field";
 import { DisplayField } from "@/components/shared/form-field/display-field";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
   getProfileService,
   updateProfileService,

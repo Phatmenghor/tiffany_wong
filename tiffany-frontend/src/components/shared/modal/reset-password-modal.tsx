@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { AppDefault } from "@/constants/app-resource/default/default";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { adminChangePasswordService } from "@/redux/features/auth/store/thunks/users-thunks";
 import { selectIsResettingPassword } from "@/redux/features/auth/store/selectors/users-selectors";
 import { showToast } from "../common/show-toast";

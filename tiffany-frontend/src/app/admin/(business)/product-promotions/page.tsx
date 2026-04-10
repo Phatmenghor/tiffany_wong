@@ -31,7 +31,7 @@ import {
   resetTablePromotionsOptimistic,
 } from "@/redux/features/business/store/slice/product-slice";
 import { useRouter } from "next/navigation";
-import ProductModal from "@/redux/features/business/components/product-modal";
+import ProductModal from '@/redux/features/business/components/product-modal';
 import { ProductDetailModal } from "@/redux/features/business/components/product-detail-modal";
 import { CustomSelect } from "@/components/shared/common/custom-select";
 import { PRODUCT_STATUS_FILTER, PRODUCT_SIZE_FILTER } from "@/constants/status/filter-status";
@@ -41,7 +41,7 @@ import { useAdminCleanup } from "@/hooks/use-cleanup-on-unmount";
 import { AppDefault } from "@/constants/app-resource/default/default";
 import { setGlobalPageSize } from "@/redux/store/slices/global-settings-slice";
 import { selectGlobalPageSize } from "@/redux/store/selectors/global-settings-selectors";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from '@/redux/store/hooks';
 import { productPromotionTableColumns } from "@/redux/features/business/table/product-promotion-table";
 
 // Sort field options for promotions page

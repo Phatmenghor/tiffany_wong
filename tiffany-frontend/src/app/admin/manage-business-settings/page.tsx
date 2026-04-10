@@ -23,7 +23,7 @@ import {
 } from "@/redux/features/business/store/services/business-settings-service";
 import { ClickableImageUpload } from "@/components/shared/form-field/clickable-image-upload";
 import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { selectBusinessSettings } from "@/redux/features/business/store/selectors/business-settings-selector";
 import {
   fetchBusinessSettingsThunk,

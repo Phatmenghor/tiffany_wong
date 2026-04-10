@@ -3,18 +3,56 @@
  * Multi-tenant business portfolio system
  */
 
-import {
-  BusinessType,
-  ContactInfo,
-  SocialMediaLinks,
-  BusinessHours,
-  GalleryItem,
-  Service,
-  TeamMember,
-  CustomerReview,
-  ThemeSettings,
-  ProfileSectionSettings,
-} from './index';
+// Type definitions (previously in index.ts)
+export type BusinessType = string;
+export interface ContactInfo {
+  email?: string;
+  phone?: string;
+  address?: string;
+}
+export interface SocialMediaLinks {
+  facebook?: string;
+  instagram?: string;
+  twitter?: string;
+  linkedin?: string;
+}
+export interface BusinessHours {
+  day: string;
+  open: string;
+  close: string;
+}
+export interface GalleryItem {
+  id: string;
+  url: string;
+  title?: string;
+}
+export interface Service {
+  id: string;
+  name: string;
+  description?: string;
+  price?: number;
+}
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  image?: string;
+}
+export interface CustomerReview {
+  id: string;
+  author: string;
+  rating: number;
+  comment: string;
+}
+export interface ThemeSettings {
+  primaryColor?: string;
+  secondaryColor?: string;
+  font?: string;
+}
+export interface ProfileSectionSettings {
+  enabled: boolean;
+  displayOrder?: number;
+}
 
 export interface BusinessProfile {
   // Basic Information

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
   selectLocations,
   selectLocationData,

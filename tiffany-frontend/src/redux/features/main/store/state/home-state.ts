@@ -2,7 +2,7 @@
  * home-state.ts
  */
 
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
   selectHomeBanners,
   selectHomeCategories,

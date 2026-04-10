@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { dateTimeFormat } from "@/utils/date/date-time-format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
   selectOrderAdminIsFetchingDetail,
   selectSelectedOrder,

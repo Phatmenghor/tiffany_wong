@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown, Loader2, Plus } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { useDebounce } from "@/utils/debounce/debounce";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch } from '@/redux/store/hooks';
 import { fetchAllLocationsService } from "@/redux/features/location/store/thunks/location-thunks";
 import { useRouter } from "next/navigation";
 

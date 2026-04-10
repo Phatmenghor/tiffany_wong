@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useRef } from "react";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { selectPromotionSizeSelections } from "@/redux/features/business/store/selectors/promotion-size-selection-selector";
 import {
   selectAllSizesForProduct,

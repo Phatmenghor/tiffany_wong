@@ -21,7 +21,7 @@ import {
   registerCustomerService,
 } from "@/redux/features/auth/store/thunks/auth-thunks";
 import { showToast } from "@/components/shared/common/show-toast";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from '@/redux/store/hooks';
 import { selectBusinessName } from "@/redux/features/business/store/selectors/business-settings-selector";
 
 interface RegisterModalProps {

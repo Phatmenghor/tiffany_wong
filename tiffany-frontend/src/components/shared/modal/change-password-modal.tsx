@@ -13,7 +13,7 @@ import { FormBody } from "@/components/shared/form-field/form-body";
 import { FormFooter } from "@/components/shared/form-field/form-footer";
 import { CancelButton } from "@/components/shared/form-field/cancel-button";
 import { SubmitButton } from "@/components/shared/form-field/submid-button";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { changePasswordService } from "@/redux/features/auth/store/thunks/auth-thunks";
 import {
   selectIsProfileLoading,

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { MapPin, Phone, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PageContainer } from "../shared/common/page-container";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from '@/redux/store/hooks';
 import { selectBusinessSettings, selectPrimaryColor } from "@/redux/features/business/store/selectors/business-settings-selector";
 
 // Default constants for fallback

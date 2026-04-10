@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { useDebounce } from "@/utils/debounce/debounce";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch } from '@/redux/store/hooks';
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
 import { fetchAllCategoriesService } from "@/redux/features/master-data/store/thunks/categories-thunks";
 

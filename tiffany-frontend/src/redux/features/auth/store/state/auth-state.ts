@@ -2,7 +2,7 @@
  * Auth State Hook
  */
 
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
   selectError,
   selectIsLoading,

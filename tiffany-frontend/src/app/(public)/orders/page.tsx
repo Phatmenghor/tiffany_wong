@@ -15,7 +15,7 @@ import { useScrollRestoration } from "@/hooks/use-scroll-restoration";
 import { CustomerOrderDetailModal } from "@/components/shared/modal/customer-order-detail-modal";
 import { CancelOrderModal } from "@/components/shared/modal/cancel-order-modal";
 import { showToast } from "@/components/shared/common/show-toast";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch } from '@/redux/store/hooks';
 import { cancelOrderService } from "@/redux/features/main/store/thunks/my-orders-thunks";
 import { OrdersPageSkeleton } from "./components/orders-page-skeleton";
 import { OrdersFilters } from "./components/orders-filters";

@@ -28,7 +28,7 @@ import { useAdminCleanup } from "@/hooks/use-cleanup-on-unmount";
 import { AppDefault } from "@/constants/app-resource/default/default";
 import { setGlobalPageSize } from "@/redux/store/slices/global-settings-slice";
 import { selectGlobalPageSize } from "@/redux/store/selectors/global-settings-selectors";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from '@/redux/store/hooks';
 import { useDebounce } from "@/utils/debounce/debounce";
 import {
   ORDER_STATUS_ADMIN_FILTER,

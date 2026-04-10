@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
   selectIsAdmin,
   selectUserType,

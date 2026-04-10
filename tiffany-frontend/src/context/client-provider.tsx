@@ -4,11 +4,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { ReactNode, StrictMode, useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { Toaster } from "sonner";
-import store from "../redux/store";
+import store from "../redux/store/configure";
 import { ToastContainer } from "react-toastify";
 import { useBusinessTheme, initializeBusinessThemeFromCache } from "@/hooks/use-business-theme";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch } from '@/redux/store/hooks';
 import { fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
 
 interface ClientProvidersProps {

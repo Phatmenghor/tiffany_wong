@@ -1,4 +1,4 @@
-import { RootState } from "@/redux/store";
+import { RootState } from '@/redux/store/types';
 
 // Select all bulk promotion state
 export const selectBulkPromotionState = (state: RootState) =>

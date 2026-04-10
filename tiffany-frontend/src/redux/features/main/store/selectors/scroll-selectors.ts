@@ -2,7 +2,7 @@
  * Scroll State Selectors
  */
 
-import { RootState } from "@/redux/store";
+import { RootState } from '@/redux/store/types';
 import { createSelector } from "@reduxjs/toolkit";
 
 /**

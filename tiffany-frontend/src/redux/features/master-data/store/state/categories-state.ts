@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
   selectCategories,
   selectCategoriesContent,

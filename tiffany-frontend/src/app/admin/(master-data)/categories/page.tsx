@@ -31,7 +31,7 @@ import { categoriesTableColumns } from "@/redux/features/master-data/table/categ
 import CategoriesModal from "@/redux/features/master-data/components/categories-modal";
 import { CategoriesDetailModal } from "@/redux/features/master-data/components/categories-detail-modal";
 import { useAdminCleanup } from "@/hooks/use-cleanup-on-unmount";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from '@/redux/store/hooks';
 
 export default function CategoriesPage() {
   // Clean up state when leaving admin area (performance optimization)

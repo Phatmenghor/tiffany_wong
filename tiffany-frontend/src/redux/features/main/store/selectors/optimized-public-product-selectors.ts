@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { RootState } from '@/redux/store';
+import { RootState } from '@/redux/store/types';
 
 // Base selectors
 const selectPublicProductsState = (state: RootState) => state.publicProducts;

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { dateTimeFormat } from "@/utils/date/date-time-format";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
   selectIsFetchingDetail,
   selectSelectedProduct,

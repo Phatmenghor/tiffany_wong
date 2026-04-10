@@ -9,7 +9,7 @@ import {
   createProductService,
   updateProductService,
 } from "../store/thunks/product-thunks";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { showToast } from "@/components/shared/common/show-toast";
 import { clearError, clearSelectedProduct } from "../store/slice/product-slice";
 import {
@@ -31,13 +31,11 @@ import {
   updateProductSchema,
 } from "../store/models/schema/product-schema";
 import { Loading } from "@/components/shared/common/loading";
-import {
-  ProductBasicInfo,
-  ProductMainImage,
-  ProductPricing,
-  ProductSizes,
-  ProductImagesGallery,
-} from "./product-modal/index";
+import { ProductBasicInfo } from "./product-modal/product-basic-info";
+import { ProductMainImage } from "./product-modal/product-main-image";
+import { ProductPricing } from "./product-modal/product-pricing";
+import { ProductSizes } from "./product-modal/product-sizes";
+import { ProductImagesGallery } from "./product-modal/product-images-gallery";
 import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
 
 type Props = {

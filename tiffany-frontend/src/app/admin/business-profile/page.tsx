@@ -24,7 +24,7 @@ import {
   DayOfWeek,
 } from "@/types/system-admin";
 import Link from "next/link";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { fetchBusinessSettingsThunk } from "@/redux/features/business/store/thunks/business-settings-thunks";
 
 export default function BusinessProfileEditorPage() {

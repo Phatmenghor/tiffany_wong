@@ -20,7 +20,7 @@ import { TextareaField } from "@/components/shared/form-field/text-area-field";
 import { SelectField } from "@/components/shared/form-field/select-field";
 import { ClickableImageUpload } from "@/components/shared/form-field/clickable-image-upload";
 import { DateTimePickerField } from "@/components/shared/form-field/date-picker-field";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
   getProfileService,
   updateProfileService,

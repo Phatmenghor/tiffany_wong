@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { CreditCard } from "lucide-react";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch } from '@/redux/store/hooks';
 import { LocationResponseModel } from "@/redux/features/location/store/models/response/location-response";
 import { createOrderService } from "@/redux/features/main/store/thunks/order-thunks";
 import { fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
