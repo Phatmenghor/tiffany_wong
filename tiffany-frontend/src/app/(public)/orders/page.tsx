@@ -6,7 +6,10 @@ import { ShoppingBag, AlertCircle } from "lucide-react";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useMyOrdersState } from "@/redux/features/main/store/state/my-orders-state";
 import { fetchMyOrdersService } from "@/redux/features/main/store/thunks/my-orders-thunks";
-import { setLoadedFilters, clearOrders } from "@/redux/features/main/store/slice/my-orders-slice";
+import {
+  setLoadedFilters,
+  clearOrders,
+} from "@/redux/features/main/store/slice/my-orders-slice";
 import { PageContainer } from "@/components/shared/common/page-container";
 import { PageHeader } from "@/components/shared/common/page-header";
 import { DataTableWithPagination } from "@/components/shared/common/data-table";
@@ -15,13 +18,14 @@ import { useScrollRestoration } from "@/hooks/use-scroll-restoration";
 import { CustomerOrderDetailModal } from "@/components/shared/modal/customer-order-detail-modal";
 import { CancelOrderModal } from "@/components/shared/modal/cancel-order-modal";
 import { showToast } from "@/components/shared/common/show-toast";
-import { useAppDispatch } from '@/redux/store/hooks';
+import { useAppDispatch } from "@/redux/store/hooks";
 import { cancelOrderService } from "@/redux/features/main/store/thunks/my-orders-thunks";
 import { OrdersPageSkeleton } from "./components/orders-page-skeleton";
 import { OrdersFilters } from "./components/orders-filters";
 import { OrdersEmptyState } from "./components/orders-empty-state";
 import { OrdersErrorState } from "./components/orders-error-state";
 import { createOrderTableColumns } from "./utils/create-order-table-columns";
+import { CustomButton } from "@/components/shared/button/custom-button";
 
 type Order = OrderResponse;
 
@@ -111,10 +115,13 @@ export default function OrdersPage() {
         pageNo,
         pageSize: 15,
         orderStatus: filters.status || undefined,
-        paymentStatus: filters.paymentStatus && filters.paymentStatus !== "ALL" ? filters.paymentStatus : undefined,
+        paymentStatus:
+          filters.paymentStatus && filters.paymentStatus !== "ALL"
+            ? filters.paymentStatus
+            : undefined,
         paymentMethod: filters.paymentMethod || undefined,
         search: filters.search || undefined,
-      })
+      }),
     );
   };
 
@@ -223,16 +230,31 @@ export default function OrdersPage() {
   };
 
   const handleClearFilters = () => {
-    setFilters({ status: "", paymentStatus: "", paymentMethod: "", search: "" });
+    setFilters({
+      status: "",
+      paymentStatus: "",
+      paymentMethod: "",
+      search: "",
+    });
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = filters.status || filters.paymentStatus || filters.paymentMethod || filters.search;
+  const hasActiveFilters =
+    filters.status ||
+    filters.paymentStatus ||
+    filters.paymentMethod ||
+    filters.search;
 
   // Create table columns
   const tableColumns = useMemo(
-    () => createOrderTableColumns(handleViewOrder, handleCancelOrder, cancelingOrderId, pagination),
-    [cancelingOrderId, pagination]
+    () =>
+      createOrderTableColumns(
+        handleViewOrder,
+        handleCancelOrder,
+        cancelingOrderId,
+        pagination,
+      ),
+    [cancelingOrderId, pagination],
   );
 
   const totalOrders = pagination.totalElements;
@@ -332,4 +354,3 @@ export default function OrdersPage() {
     </PageContainer>
   );
 }
-
