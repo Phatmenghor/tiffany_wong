@@ -291,7 +291,7 @@ export default function FavoritesPage() {
       {/* End of favorites message */}
       {!pagination.hasMore && items.length > 0 && (
         <div className="text-center py-4 text-sm text-muted-foreground">
-          You've seen all your favorites!
+          You've seen it all!
         </div>
       )}
 

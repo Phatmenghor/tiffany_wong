@@ -251,9 +251,7 @@ export function ProductListPage({
                     products.length > 0 &&
                     !loading.list && (
                       <div className="text-center py-4 text-sm text-muted-foreground">
-                        {lockedPromotion
-                          ? "All deals loaded!"
-                          : "You've seen it all!"}
+                        You've seen it all!
                       </div>
                     )}
                 </>

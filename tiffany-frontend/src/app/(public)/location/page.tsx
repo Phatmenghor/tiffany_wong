@@ -290,7 +290,7 @@ export default function LocationPage() {
       {/* End of locations message */}
       {!locationPagination.hasMore && locations.length > 0 && (
         <div className="text-center py-4 text-sm text-muted-foreground">
-          All locations loaded!
+          You've seen it all!
         </div>
       )}
 
