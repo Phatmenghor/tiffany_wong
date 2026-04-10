@@ -17,11 +17,9 @@ import com.tiffany.features.order.models.Cart;
 import com.tiffany.features.order.models.Order;
 import com.tiffany.features.order.models.OrderDeliveryAddress;
 import com.tiffany.features.order.models.OrderItem;
-import com.tiffany.features.order.models.OrderStatusHistory;
 import com.tiffany.features.order.repository.CartRepository;
 import com.tiffany.features.order.repository.OrderDeliveryAddressRepository;
 import com.tiffany.features.order.repository.OrderRepository;
-import com.tiffany.features.order.repository.OrderStatusHistoryRepository;
 import com.tiffany.features.order.service.OrderService;
 import com.tiffany.security.SecurityUtils;
 import com.tiffany.shared.dto.PaginationResponse;
@@ -47,7 +45,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
-    private final OrderStatusHistoryRepository orderStatusHistoryRepository;
     private final ProductRepository productRepository;
     private final OrderDeliveryAddressRepository orderDeliveryAddressRepository;
     private final OrderMapper orderMapper;
@@ -76,8 +73,6 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-            createInitialOrderStatusHistory(savedOrder, currentUser.getId());
-
             Cart cart = cartRepository.findByUserIdWithItems(currentUser.getId())
                     .orElseThrow(() -> new ValidationException("Cart is empty or not found"));
 
@@ -88,7 +83,6 @@ public class OrderServiceImpl implements OrderService {
             log.info("Processing cart items - count: {}", cart.getItems().size());
             createOrderItemsFromCart(savedOrder.getId(), cart);
 
-            createPaymentRecord(savedOrder);
             clearCartAfterOrder(currentUser.getId());
 
             OrderResponse response = getOrderById(savedOrder.getId());
@@ -113,11 +107,6 @@ public class OrderServiceImpl implements OrderService {
 
         Page<Order> page = orderRepository.findByCustomerIdAndIsDeletedFalseOrderByCreatedAtDesc(currentUser.getId(), pageable);
 
-        page.getContent().forEach(order -> {
-            List<OrderStatusHistory> statusHistory = orderRepository.findStatusHistoryByOrderId(order.getId());
-            order.setStatusHistory(statusHistory);
-        });
-
         PaginationResponse<OrderResponse> response = orderMapper.toPaginationResponse(page, paginationMapper);
         log.info("Customer orders retrieved - count: {}, total: {}", page.getNumberOfElements(), page.getTotalElements());
 
@@ -129,11 +118,6 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse getOrderById(UUID orderId) {
         Order order = orderRepository.findByIdWithDetails(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
-
-        // Load statusHistory separately to avoid MultipleBagFetchException
-        // This ensures changedByUser is eagerly loaded
-        List<OrderStatusHistory> statusHistory = orderRepository.findStatusHistoryByOrderId(orderId);
-        order.setStatusHistory(statusHistory);
 
         return orderMapper.toResponse(order);
     }
@@ -154,11 +138,6 @@ public class OrderServiceImpl implements OrderService {
                 pageable
         );
 
-        for (Order order : page.getContent()) {
-            List<OrderStatusHistory> statusHistory = orderRepository.findStatusHistoryByOrderId(order.getId());
-            order.setStatusHistory(statusHistory);
-        }
-
         PaginationResponse<OrderResponse> response = orderMapper.toPaginationResponse(page, paginationMapper);
         log.info("Orders retrieved - count: {}, total: {}", page.getNumberOfElements(), page.getTotalElements());
 
@@ -171,13 +150,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new NotFoundException("Order not found"));
 
         if (request.getOrderStatus() != null) {
-            OrderStatus previousStatus = order.getOrderStatus();
             order.updateStatus(request.getOrderStatus());
-
-            // Deduct stock via FIFO when order moves to CONFIRMED
-            if (request.getOrderStatus() == OrderStatus.CONFIRMED && previousStatus != OrderStatus.CONFIRMED) {
-                deductStockForOrder(order);
-            }
         }
 
         if (request.getPaymentStatus() != null) {
@@ -251,11 +224,6 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
     }
 
-    private void createPaymentRecord(Order order) {
-        // Payment record creation removed - Payment entity deleted
-        // Payment handling is now managed separately from orders
-    }
-
     private void clearCartAfterOrder(UUID customerId) {
         cartRepository.findByUserIdAndIsDeletedFalse(customerId)
                 .ifPresent(cart -> {
@@ -264,36 +232,6 @@ public class OrderServiceImpl implements OrderService {
                     }
                     log.info("Cart cleared after order for customer: {}", customerId);
                 });
-    }
-
-    private void createInitialOrderStatusHistory(Order order, UUID userId) {
-        try {
-            User user = securityUtils.getCurrentUser();
-            String changedByName = user != null ? user.getFullName() : "System";
-
-            OrderStatusHistory history = new OrderStatusHistory();
-            history.setOrderId(order.getId());
-            history.setOrderStatus(order.getOrderStatus());
-            history.setChangedByUserId(userId);
-            history.setChangedByName(changedByName);
-            history.setNote("Order created from checkout");
-
-            orderStatusHistoryRepository.save(history);
-            log.info("Status history created - orderNumber: {}, status: {}", order.getOrderNumber(), order.getOrderStatus());
-        } catch (Exception e) {
-            log.warn("Failed to create status history: {}", e.getMessage());
-        }
-    }
-
-    // Order number generation is now handled by orderNumberGenerator with per-business counters
-    // Format: ORD-YYYYMMDD-XXXXX (where XXXXX can be 00001-99999, 100000 onwards)
-
-    /**
-     * Deduct stock via FIFO for each item in the order.
-     * Called when order status changes to CONFIRMED.
-     */
-    private void deductStockForOrder(Order order) {
-        // Stock deduction disabled - no-op method
     }
 
     private OrderDeliveryAddress createDeliveryAddressSnapshot(UUID orderId, UUID addressId) {
