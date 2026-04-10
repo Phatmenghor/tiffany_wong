@@ -52,7 +52,16 @@ export default function CheckoutPage() {
       setLoadingAddresses(true);
       try {
         console.log("🔄 Fetching addresses...");
-        const response = await fetch("/api/v1/locations/my-addresses/all");
+        const response = await fetch("/api/v1/locations/my-addresses/all", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            pageNo: 1,
+            pageSize: 100,
+          }),
+        });
         console.log("📡 API Response status:", response.status);
 
         if (response.ok) {
