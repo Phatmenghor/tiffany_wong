@@ -97,4 +97,30 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             @Param("paymentMethod") com.tiffany.enums.payment.PaymentMethod paymentMethod,
             @Param("paymentStatus") com.tiffany.enums.payment.PaymentStatus paymentStatus,
             Pageable pageable);
+
+    /**
+     * Find paginated customer orders with optional filters and eager loading of related entities
+     * Supports filtering by:
+     * - customerId (required)
+     * - orderStatus
+     * - paymentMethod
+     * - paymentStatus
+     *
+     * Uses JOIN FETCH to prevent N+1 query problem
+     * NOTE: statusHistory is loaded separately to avoid MultipleBagFetchException
+     */
+    @Query("SELECT DISTINCT o FROM Order o " +
+           "LEFT JOIN FETCH o.customer c " +
+           "LEFT JOIN FETCH o.deliveryAddress " +
+           "WHERE o.customerId = :customerId AND o.isDeleted = false " +
+           "AND (:orderStatus IS NULL OR o.orderStatus = :orderStatus) " +
+           "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
+           "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus) " +
+           "ORDER BY o.createdAt DESC")
+    Page<Order> findCustomerOrdersWithFilters(
+            @Param("customerId") UUID customerId,
+            @Param("orderStatus") OrderStatus orderStatus,
+            @Param("paymentMethod") com.tiffany.enums.payment.PaymentMethod paymentMethod,
+            @Param("paymentStatus") com.tiffany.enums.payment.PaymentStatus paymentStatus,
+            Pageable pageable);
 }

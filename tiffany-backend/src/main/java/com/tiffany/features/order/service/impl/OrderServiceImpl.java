@@ -98,14 +98,20 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public PaginationResponse<OrderResponse> getCustomerOrderHistory(OrderFilterRequest filter) {
         User currentUser = securityUtils.getCurrentUser();
-        log.info("Get customer order history - userId: {}, page: {}, size: {}",
-                currentUser.getId(), filter.getPageNo(), filter.getPageSize());
+        log.info("Get customer order history - userId: {}, page: {}, size: {}, filters: orderStatus={}, paymentMethod={}, paymentStatus={}",
+                currentUser.getId(), filter.getPageNo(), filter.getPageSize(), filter.getOrderStatus(), filter.getPaymentMethod(), filter.getPaymentStatus());
 
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection()
         );
 
-        Page<Order> page = orderRepository.findByCustomerIdAndIsDeletedFalseOrderByCreatedAtDesc(currentUser.getId(), pageable);
+        Page<Order> page = orderRepository.findCustomerOrdersWithFilters(
+                currentUser.getId(),
+                filter.getOrderStatus(),
+                filter.getPaymentMethod(),
+                filter.getPaymentStatus(),
+                pageable
+        );
 
         PaginationResponse<OrderResponse> response = orderMapper.toPaginationResponse(page, paginationMapper);
         log.info("Customer orders retrieved - count: {}, total: {}", page.getNumberOfElements(), page.getTotalElements());
