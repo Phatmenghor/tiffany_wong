@@ -96,7 +96,7 @@ export default function ProductDetailPage() {
   useEffect(() => { setIsFavorited(isFavoritedFromStore); }, [isFavoritedFromStore]);
 
   // Get quantity for a size - standardized naming
-  // Returns: quantity from Redux cart if available, otherwise from API quantityInCart
+  // Returns: quantity from Redux cart if available, otherwise from API quantity
   const getQuantityForSize = useCallback(
     (sizeId: string | null) => {
       if (!product) return 0;
@@ -106,13 +106,13 @@ export default function ProductDetailPage() {
       // Use Redux cart state if available (authoritative during session)
       if (cartItem) return cartItem.quantity;
 
-      // Fallback to API response quantityInCart
+      // Fallback to API response quantity
       if (sizeId) {
         const size = product.sizes?.find((s) => s.id === sizeId);
         return getSizeQuantity(size);
       }
       // For unsized products
-      return product.quantityInCart || 0;
+      return product.quantity || 0;
     },
     [cartItems, product]
   );
