@@ -289,16 +289,8 @@ export default function LocationPage() {
 
       {/* End of locations message */}
       {!locationPagination.hasMore && locations.length > 0 && (
-        <div className="flex flex-col items-center justify-center mt-12 py-8 px-4">
-          <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 mb-4">
-            <CheckCircle2 className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-          </div>
-          <h3 className="text-base sm:text-lg font-semibold mb-2 text-center">
-            All locations loaded!
-          </h3>
-          <p className="text-xs sm:text-sm text-muted-foreground text-center max-w-md">
-            You've loaded all your saved locations. Add a new one to expand your coverage.
-          </p>
+        <div className="text-center py-4 text-sm text-muted-foreground">
+          All locations loaded!
         </div>
       )}
 

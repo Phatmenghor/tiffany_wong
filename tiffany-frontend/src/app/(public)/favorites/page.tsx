@@ -290,16 +290,8 @@ export default function FavoritesPage() {
 
       {/* End of favorites message */}
       {!pagination.hasMore && items.length > 0 && (
-        <div className="flex flex-col items-center justify-center mt-10 py-8 px-4">
-          <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 mb-4">
-            <CheckCircle2 className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-          </div>
-          <h3 className="text-base sm:text-lg font-semibold mb-2 text-center">
-            You've seen all your favorites!
-          </h3>
-          <p className="text-xs sm:text-sm text-muted-foreground text-center max-w-md">
-            You've reached the end of your saved items. Keep shopping to add more favorites!
-          </p>
+        <div className="text-center py-4 text-sm text-muted-foreground">
+          You've seen all your favorites!
         </div>
       )}
 

@@ -250,28 +250,10 @@ export function ProductListPage({
                   {!pagination.hasMore &&
                     products.length > 0 &&
                     !loading.list && (
-                      <div className="flex flex-col items-center justify-center mt-10 py-8">
-                        <div
-                          className={`flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
-                            lockedPromotion
-                              ? "bg-orange-500/10"
-                              : "bg-primary/10"
-                          }`}
-                        >
-                          <CheckCircle2
-                            className={`h-8 w-8 ${lockedPromotion ? "text-orange-500" : "text-primary"}`}
-                          />
-                        </div>
-                        <h3 className="text-lg font-semibold mb-2">
-                          {lockedPromotion
-                            ? "All deals loaded!"
-                            : "You've seen it all!"}
-                        </h3>
-                        <p className="text-sm text-muted-foreground text-center max-w-md">
-                          {lockedPromotion
-                            ? "You've seen all current promotions. Check back later for new deals!"
-                            : "You've reached the end of products. Check back later for new arrivals!"}
-                        </p>
+                      <div className="text-center py-4 text-sm text-muted-foreground">
+                        {lockedPromotion
+                          ? "All deals loaded!"
+                          : "You've seen it all!"}
                       </div>
                     )}
                 </>
