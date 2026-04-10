@@ -25,10 +25,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePublicCategoriesState } from "@/redux/features/main/store/state/public-categories-state";
-import { usePublicBrandsState } from "@/redux/features/main/store/state/public-brands-state";
 import { ComboboxSelectCategoriesPublic } from "@/components/shared/combobox/combobox_select_categories_public";
-
 
 interface ProductFiltersProps {
   totalResults: number;
@@ -43,7 +40,6 @@ function ProductFiltersComponent({
 }: ProductFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [hasPromotion, setHasPromotion] = useState<boolean>(false);
@@ -62,10 +58,22 @@ function ProductFiltersComponent({
   useEffect(() => {
     setSelectedCategory(categoryIdParam);
     setHasPromotion(hasPomParam === "true");
-    setHasSizes(hasSizesParam === "true" ? true : hasSizesParam === "false" ? false : null);
+    setHasSizes(
+      hasSizesParam === "true"
+        ? true
+        : hasSizesParam === "false"
+          ? false
+          : null,
+    );
     setMinPrice(minPriceParam);
     setMaxPrice(maxPriceParam);
-  }, [categoryIdParam, hasPomParam, hasSizesParam, minPriceParam, maxPriceParam]);
+  }, [
+    categoryIdParam,
+    hasPomParam,
+    hasSizesParam,
+    minPriceParam,
+    maxPriceParam,
+  ]);
 
   const pushParams = useCallback(
     (params: URLSearchParams) => {
@@ -84,7 +92,6 @@ function ProductFiltersComponent({
     },
     [searchParams, pushParams],
   );
-
 
   const applyPrice = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -119,7 +126,6 @@ function ProductFiltersComponent({
     (!lockedPromotion && hasPromotion ? 1 : 0) +
     (hasSizes !== null ? 1 : 0) +
     (hasPriceFilter ? 1 : 0);
-
 
   // Create filter content once to avoid duplicate component instances
   const filterContent = (
@@ -196,9 +202,7 @@ function ProductFiltersComponent({
           <label className="text-sm font-semibold">Product Size</label>
         </div>
         <div className="space-y-2.5">
-          <label
-            className="flex items-center gap-3 cursor-pointer group"
-          >
+          <label className="flex items-center gap-3 cursor-pointer group">
             <Checkbox
               id="has-sizes-true"
               checked={hasSizes === true}
@@ -210,9 +214,7 @@ function ProductFiltersComponent({
               Has Sizes
             </span>
           </label>
-          <label
-            className="flex items-center gap-3 cursor-pointer group"
-          >
+          <label className="flex items-center gap-3 cursor-pointer group">
             <Checkbox
               id="has-sizes-false"
               checked={hasSizes === false}
@@ -317,9 +319,7 @@ function ProductFiltersComponent({
 
             {/* Scrollable content */}
             <ScrollArea className="flex-1">
-              <div className="p-5">
-                {filterContent}
-              </div>
+              <div className="p-5">{filterContent}</div>
             </ScrollArea>
           </div>
         </div>
@@ -402,9 +402,7 @@ function ProductFiltersComponent({
                   </p>
                 </SheetHeader>
                 <ScrollArea className="flex-1">
-                  <div className="p-5">
-                    {filterContent}
-                  </div>
+                  <div className="p-5">{filterContent}</div>
                 </ScrollArea>
               </SheetContent>
             </Sheet>
@@ -415,11 +413,14 @@ function ProductFiltersComponent({
   );
 }
 
-export const ProductFilters = memo(ProductFiltersComponent, (prevProps, nextProps) => {
-  // Only re-render if basePath or lockedPromotion changes
-  // Ignore totalResults changes as they don't affect filter behavior
-  return (
-    prevProps.basePath === nextProps.basePath &&
-    prevProps.lockedPromotion === nextProps.lockedPromotion
-  );
-});
+export const ProductFilters = memo(
+  ProductFiltersComponent,
+  (prevProps, nextProps) => {
+    // Only re-render if basePath or lockedPromotion changes
+    // Ignore totalResults changes as they don't affect filter behavior
+    return (
+      prevProps.basePath === nextProps.basePath &&
+      prevProps.lockedPromotion === nextProps.lockedPromotion
+    );
+  },
+);
