@@ -509,7 +509,7 @@ BEGIN
             v_order_id,
             p.id,
             p.name,
-            p.image_url,
+            p.main_image_url,
             ps.id,
             ps.size_name,
             p.sku,
@@ -544,7 +544,7 @@ BEGIN
             -- Total Price: unit_price * quantity
             (p.price * CASE WHEN (ROW_NUMBER() OVER (PARTITION BY v_order_id ORDER BY random()))::int % 3 = 0 THEN 1 ELSE 2 END)::numeric(10,2)
         FROM (
-            SELECT id, name, price, image_url, sku FROM products ORDER BY id LIMIT 6 OFFSET ((ABS(hashtext(v_order_id::text)) % 99994))
+            SELECT id, name, price, main_image_url, sku FROM products ORDER BY id LIMIT 6 OFFSET ((ABS(hashtext(v_order_id::text)) % 99994))
         ) p
         CROSS JOIN (SELECT id, size_name FROM product_sizes LIMIT 1) ps;
 
