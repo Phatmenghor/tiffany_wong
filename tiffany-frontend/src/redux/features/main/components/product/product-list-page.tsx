@@ -122,31 +122,30 @@ export function ProductListPage({
         ? true
         : searchParams.get("hasPromotion") === "true" || undefined;
 
-      await dispatch(
-        fetchPublicProducts({
-          pageNo,
-          pageSize: getPageSize(),
-          ...(search && { search }),
-          ...(hasPromotion && { hasPromotion: true }),
-          ...(categoryId && { categoryId }),
-          ...(brandId && { brandId }),
-          ...(statuses.length > 0 && { statuses }),
-          ...(sortBy && { sortBy }),
-          ...(minPrice && { minPrice: Number(minPrice) }),
-          ...(maxPrice && { maxPrice: Number(maxPrice) }),
-          ...(hasSizesParam && { hasSize: hasSizesParam === "true" }),
-        }),
-      );
+      const requestParams: any = {
+        pageNo,
+        pageSize: getPageSize(),
+      };
+
+      if (search) requestParams.search = search;
+      if (hasPromotion) requestParams.hasPromotion = true;
+      if (categoryId) requestParams.categoryId = categoryId;
+      if (brandId) requestParams.brandId = brandId;
+      if (statuses.length > 0) requestParams.statuses = statuses;
+      if (sortBy) requestParams.sortBy = sortBy;
+      if (minPrice) requestParams.minPrice = Number(minPrice);
+      if (maxPrice) requestParams.maxPrice = Number(maxPrice);
+      if (hasSizesParam) requestParams.hasSize = hasSizesParam === "true";
+
+      await dispatch(fetchPublicProducts(requestParams));
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       dispatch,
       search,
       lockedPromotion,
-      searchParams,
       categoryId,
       brandId,
-      statusParam,
+      statuses,
       sortBy,
       minPrice,
       maxPrice,
