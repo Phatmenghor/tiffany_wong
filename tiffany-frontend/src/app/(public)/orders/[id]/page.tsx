@@ -436,17 +436,13 @@ export default function OrderDetailPage() {
                         <div
                           className={cn(
                             "w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all ring-2 ring-offset-2 dark:ring-offset-slate-950",
-                            isCompleted
+                            isCompleted || isCurrent
                               ? "bg-primary text-primary-foreground ring-primary/30 shadow-md shadow-primary/20"
-                              : isCurrent
-                                ? "bg-primary/20 text-primary ring-primary/50 shadow-lg shadow-primary/20 animate-pulse"
-                                : "bg-muted text-muted-foreground ring-muted"
+                              : "bg-muted text-muted-foreground ring-muted"
                           )}
                         >
-                          {isCompleted ? (
+                          {isCompleted || isCurrent ? (
                             <Check className="h-6 w-6" />
-                          ) : isCurrent ? (
-                            <span className="text-lg">●</span>
                           ) : (
                             status.order
                           )}
@@ -457,7 +453,7 @@ export default function OrderDetailPage() {
                           <div
                             className={cn(
                               "flex-1 h-1.5 mx-1 transition-colors",
-                              isCompleted
+                              isCompleted || isCurrent
                                 ? "bg-gradient-to-r from-primary to-primary"
                                 : "bg-muted"
                             )}
@@ -484,7 +480,7 @@ export default function OrderDetailPage() {
                       >
                         <span className={cn(
                           "text-xs font-bold whitespace-nowrap px-2 block text-center",
-                          isCompleted
+                          isCompleted || isCurrent
                             ? "text-primary"
                             : "text-muted-foreground"
                         )}>
