@@ -234,13 +234,7 @@ export default function CartPage() {
                 productImageUrl={item.productImageUrl}
                 productSizeId={item.productSizeId}
                 sizeName={item.sizeName}
-                currentPrice={item.currentPrice}
-                finalPrice={item.finalPrice}
                 quantity={item.quantity}
-                totalPrice={item.totalPrice}
-                hasPromotion={item.hasPromotion}
-                promotionType={item.promotionType}
-                promotionValue={item.promotionValue}
                 displayPrice={item.displayPrice}
                 displayOriginPrice={item.displayOriginPrice}
                 displayPromotionType={item.displayPromotionType}

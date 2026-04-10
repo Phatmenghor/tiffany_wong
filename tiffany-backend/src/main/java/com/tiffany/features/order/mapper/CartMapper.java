@@ -17,10 +17,7 @@ public interface CartMapper {
     @Mapping(target = "productSizeId", source = "productSizeId")
     @Mapping(target = "sizeName", source = "sizeName")
     @Mapping(target = "quantity", source = "quantity")
-    @Mapping(target = "currentPriceBeforeDiscount", expression = "java(cartItem.getCurrentPrice())")
-    @Mapping(target = "currentPriceAfterDiscount", expression = "java(cartItem.getFinalPrice())")
     @Mapping(target = "subtotalAfterDiscount", expression = "java(cartItem.getTotalPrice())")
-    @Mapping(target = "hasDiscount", expression = "java(cartItem.hasDiscount())")
     CartItemResponse toItemResponse(CartItem cartItem);
 
     @AfterMapping
@@ -37,32 +34,25 @@ public interface CartMapper {
 
     @AfterMapping
     default void setDiscountDetails(@MappingTarget CartItemResponse response, CartItem cartItem) {
-        // Set display prices
-        response.setDisplayPrice(response.getCurrentPriceAfterDiscount());
-        response.setDisplayOriginPrice(response.getCurrentPriceBeforeDiscount());
+        // Set display prices from cart item
+        response.setDisplayPrice(cartItem.getFinalPrice());
+        response.setDisplayOriginPrice(cartItem.getCurrentPrice());
 
-        if (response.getHasDiscount() != null && response.getHasDiscount()) {
-            if (cartItem.getProductSize() != null && cartItem.getProductSize().isPromotionActive()) {
-                response.setDiscountType(cartItem.getProductSize().getPromotionType() != null ?
-                        cartItem.getProductSize().getPromotionType().toString() : null);
-                response.setDisplayPromotionType(cartItem.getProductSize().getPromotionType() != null ?
-                        cartItem.getProductSize().getPromotionType().toString() : null);
-                response.setDisplayPromotionValue(cartItem.getProductSize().getPromotionValue());
-                response.setDisplayPromotionFromDate(cartItem.getProductSize().getPromotionFromDate());
-                response.setDisplayPromotionToDate(cartItem.getProductSize().getPromotionToDate());
-                response.setHasActivePromotion(true);
-                calculateDiscountAmount(response);
-            } else if (cartItem.getProduct() != null && cartItem.getProduct().isPromotionActive()) {
-                response.setDiscountType(cartItem.getProduct().getPromotionType() != null ?
-                        cartItem.getProduct().getPromotionType().toString() : null);
-                response.setDisplayPromotionType(cartItem.getProduct().getPromotionType() != null ?
-                        cartItem.getProduct().getPromotionType().toString() : null);
-                response.setDisplayPromotionValue(cartItem.getProduct().getPromotionValue());
-                response.setDisplayPromotionFromDate(cartItem.getProduct().getPromotionFromDate());
-                response.setDisplayPromotionToDate(cartItem.getProduct().getPromotionToDate());
-                response.setHasActivePromotion(true);
-                calculateDiscountAmount(response);
-            }
+        // Check for promotions on product size first, then product
+        if (cartItem.getProductSize() != null && cartItem.getProductSize().isPromotionActive()) {
+            response.setDisplayPromotionType(cartItem.getProductSize().getPromotionType() != null ?
+                    cartItem.getProductSize().getPromotionType().toString() : null);
+            response.setDisplayPromotionValue(cartItem.getProductSize().getPromotionValue());
+            response.setDisplayPromotionFromDate(cartItem.getProductSize().getPromotionFromDate());
+            response.setDisplayPromotionToDate(cartItem.getProductSize().getPromotionToDate());
+            response.setHasActivePromotion(true);
+        } else if (cartItem.getProduct() != null && cartItem.getProduct().isPromotionActive()) {
+            response.setDisplayPromotionType(cartItem.getProduct().getPromotionType() != null ?
+                    cartItem.getProduct().getPromotionType().toString() : null);
+            response.setDisplayPromotionValue(cartItem.getProduct().getPromotionValue());
+            response.setDisplayPromotionFromDate(cartItem.getProduct().getPromotionFromDate());
+            response.setDisplayPromotionToDate(cartItem.getProduct().getPromotionToDate());
+            response.setHasActivePromotion(true);
         } else {
             response.setHasActivePromotion(false);
         }
@@ -70,39 +60,16 @@ public interface CartMapper {
 
     @AfterMapping
     default void calculatePricingBreakdown(@MappingTarget CartItemResponse response, CartItem cartItem) {
-        if (response.getCurrentPriceBeforeDiscount() != null && response.getQuantity() != null) {
-            BigDecimal subtotalBeforeDiscount = response.getCurrentPriceBeforeDiscount()
+        if (response.getDisplayOriginPrice() != null && response.getQuantity() != null) {
+            // Calculate subtotal before discount
+            BigDecimal subtotalBeforeDiscount = response.getDisplayOriginPrice()
                     .multiply(new BigDecimal(response.getQuantity()));
             response.setSubtotalBeforeDiscount(subtotalBeforeDiscount);
 
+            // Calculate subtotal discount amount
             if (response.getSubtotalAfterDiscount() != null) {
                 BigDecimal subtotalDiscountAmount = subtotalBeforeDiscount.subtract(response.getSubtotalAfterDiscount());
                 response.setSubtotalDiscountAmount(subtotalDiscountAmount);
-
-                if (response.getCurrentPriceBeforeDiscount().compareTo(BigDecimal.ZERO) > 0 && response.getCurrentPriceAfterDiscount() != null) {
-                    BigDecimal itemDiscountAmount = response.getCurrentPriceBeforeDiscount()
-                            .subtract(response.getCurrentPriceAfterDiscount());
-                    response.setDiscountAmountPerItem(itemDiscountAmount);
-                }
-            }
-        }
-    }
-
-    default void calculateDiscountAmount(CartItemResponse response) {
-        if (response.getCurrentPriceBeforeDiscount() != null && response.getCurrentPriceAfterDiscount() != null) {
-            BigDecimal discountAmount = response.getCurrentPriceBeforeDiscount()
-                    .subtract(response.getCurrentPriceAfterDiscount());
-
-            // Only set discount if positive (meaning there's actual discount)
-            if (discountAmount.compareTo(BigDecimal.ZERO) > 0) {
-                response.setDiscountAmountPerItem(discountAmount);
-
-                if ("PERCENTAGE".equals(response.getDiscountType()) && response.getCurrentPriceBeforeDiscount().compareTo(BigDecimal.ZERO) > 0) {
-                    BigDecimal discountPercent = discountAmount
-                            .divide(response.getCurrentPriceBeforeDiscount(), 2, java.math.RoundingMode.HALF_UP)
-                            .multiply(new BigDecimal(100));
-                    response.setDiscountPercentage(discountPercent);
-                }
             }
         }
     }

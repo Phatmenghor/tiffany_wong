@@ -22,17 +22,6 @@ public class CartItemResponse {
 
     private Integer quantity;
 
-    private BigDecimal currentPriceBeforeDiscount;
-    private BigDecimal currentPriceAfterDiscount;
-    private BigDecimal discountAmountPerItem;
-    private String discountType;
-    private BigDecimal discountPercentage;
-    private Boolean hasDiscount;
-
-    private BigDecimal subtotalBeforeDiscount;
-    private BigDecimal subtotalDiscountAmount;
-    private BigDecimal subtotalAfterDiscount;
-
     // Display fields for UI rendering
     private BigDecimal displayPrice;
     private BigDecimal displayOriginPrice;
@@ -41,4 +30,9 @@ public class CartItemResponse {
     private LocalDateTime displayPromotionFromDate;
     private LocalDateTime displayPromotionToDate;
     private Boolean hasActivePromotion;
+
+    // Subtotal calculations
+    private BigDecimal subtotalBeforeDiscount;
+    private BigDecimal subtotalDiscountAmount;
+    private BigDecimal subtotalAfterDiscount;
 }
