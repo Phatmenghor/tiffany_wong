@@ -118,12 +118,12 @@ const recalculateTotals = (state: CartState) => {
 
   // Calculate subtotal before discount (at original prices)
   const subtotalBeforeDiscount = state.items.reduce(
-    (sum, i) => sum + (i.currentPrice * i.quantity),
+    (sum, i) => sum + (i.displayOriginPrice * i.quantity),
     0
   );
 
   // Calculate final total (at discounted prices)
-  state.finalTotal = state.items.reduce((sum, i) => sum + i.totalPrice, 0);
+  state.finalTotal = state.items.reduce((sum, i) => sum + (i.displayPrice * i.quantity), 0);
 
   // Subtotal is the same as finalTotal (no shipping/fees at this stage)
   state.subtotal = state.finalTotal;
