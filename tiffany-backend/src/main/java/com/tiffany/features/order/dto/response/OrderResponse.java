@@ -25,7 +25,6 @@ public class OrderResponse extends BaseAuditResponse {
 
     private BigDecimal subtotal;
     private BigDecimal discountAmount;
-    private BigDecimal deliveryFee;
     private BigDecimal totalAmount;
 
     private List<OrderItemResponse> items;
