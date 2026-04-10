@@ -474,7 +474,7 @@ export default function UserBusinessModal({
                             shouldDirty: true,
                           })
                         }
-                        aspectRatio="1/1"
+                        aspectRatio="square"
                         height="h-40"
                         maxSize={5}
                         disabled={isSubmitting}
