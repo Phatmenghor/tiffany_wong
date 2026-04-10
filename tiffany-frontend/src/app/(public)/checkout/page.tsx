@@ -51,22 +51,34 @@ export default function CheckoutPage() {
     const fetchAddresses = async () => {
       setLoadingAddresses(true);
       try {
+        console.log("🔄 Fetching addresses...");
         const response = await fetch("/api/v1/locations/my-addresses/all");
+        console.log("📡 API Response status:", response.status);
+
         if (response.ok) {
           const data = await response.json();
+          console.log("📦 Full response data:", data);
+          console.log("🎯 Extracted content:", data.data?.content);
+
           const locationList = data.data?.content || [];
+          console.log("✅ Final locationList:", locationList);
+
           setAddresses(locationList);
 
           // Auto-select default address
           const defaultAddr = locationList.find((addr: LocationResponse) => addr.isDefault);
           if (defaultAddr) {
+            console.log("📍 Auto-selected default:", defaultAddr);
             setSelectedAddressId(defaultAddr.id);
           } else if (locationList.length > 0) {
+            console.log("📍 Auto-selected first:", locationList[0]);
             setSelectedAddressId(locationList[0].id);
           }
+        } else {
+          console.error("❌ API error:", response.status, response.statusText);
         }
       } catch (error) {
-        console.error("Failed to fetch addresses:", error);
+        console.error("❌ Failed to fetch addresses:", error);
       } finally {
         setLoadingAddresses(false);
       }
