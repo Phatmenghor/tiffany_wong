@@ -109,11 +109,7 @@ function CenterPin({ size = "h-9 w-9", isDragging }: { size?: string; isDragging
 export default function LocationModal({ isOpen, onClose, editData, initialCoords }: LocationModalProps) {
   const isCreate = !editData;
   const { create, update, operations, error: reduxError, clearError } = useLocationState();
-  const {
-    selectedProvince, selectedDistrict, selectedCommune,
-    selectProvince, selectDistrict, selectCommune,
-    reset: resetPublicLocation,
-  } = usePublicLocationState();
+  const { reset: resetPublicLocation } = usePublicLocationState();
 
   const { isCreating, isUpdating } = operations;
   const isSubmitting = isCreate ? isCreating : isUpdating;
@@ -127,7 +123,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
   const fullscreenSearchRef = useRef<HTMLInputElement>(null);
   const fullscreenAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const geocodeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const setValueRef = useRef<typeof setValue>(null!);
+  const setValueRef = useRef<any>(null!);
 
   const [isMapReady, setIsMapReady] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
