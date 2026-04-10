@@ -44,7 +44,11 @@ const imageLoadedCache = new Set<string>();
 
 function ProductCardComponent({ product, className }: ProductCardProps) {
   const { dispatch: cartDispatch } = useCartState();
-  const { dispatch: favoriteDispatch, items: favoriteItems, loaded: favLoaded } = useFavoriteState();
+  const {
+    dispatch: favoriteDispatch,
+    items: favoriteItems,
+    loaded: favLoaded,
+  } = useFavoriteState();
   const { isAuthenticated } = useAuthState();
 
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -53,8 +57,12 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
   // Use optimized memoized selectors - only subscribe to this product's quantity
   // CRITICAL: This component only re-renders when THIS product's quantity changes,
   // not when any other cart item changes!
-  const quantity = useSelector((state: RootState) => selectProductQuantityInCart(state, product.id, null));
-  const totalQuantity = useSelector((state: RootState) => selectProductTotalQuantity(state, product.id));
+  const quantity = useSelector((state: RootState) =>
+    selectProductQuantityInCart(state, product.id, null),
+  );
+  const totalQuantity = useSelector((state: RootState) =>
+    selectProductTotalQuantity(state, product.id),
+  );
 
   // Derive from the favorites store (authoritative) — falls back to prop when not yet loaded.
   // This fixes the bug where navigating away and back shows stale isFavorited from listing data.
@@ -73,10 +81,14 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
   // This is used to determine if we show Add to Cart or +/- buttons
   const isInCart = totalQuantity > 0;
 
+  const imageUrl = sanitizeImageUrl(
+    product.mainImageUrl,
+    getImageWithFallback(undefined, "product"),
+  );
 
-  const imageUrl = sanitizeImageUrl(product.mainImageUrl, getImageWithFallback(undefined, "product"));
-
-  const [imageLoaded, setImageLoaded] = useState(imageLoadedCache.has(imageUrl));
+  const [imageLoaded, setImageLoaded] = useState(
+    imageLoadedCache.has(imageUrl),
+  );
   const [imageError, setImageError] = useState(false);
 
   const handleImageLoad = () => {
@@ -155,7 +167,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
         promotionFromDate: product.displayPromotionFromDate || null,
         promotionToDate: product.displayPromotionToDate || null,
         optimisticTimestamp: timestamp,
-      })
+      }),
     );
 
     // Queue API call with debounce (500ms delay)
@@ -172,41 +184,51 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
    * 2. Debounced API call (batches rapid clicks)
    * 3. Conflict resolution protects against stale responses
    */
-  const handleIncrement = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleIncrement = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    // For sized products, open the size modal to select size
-    if (product.hasSizes) {
-      setShowSizeModal(true);
-      return;
-    }
+      // For sized products, open the size modal to select size
+      if (product.hasSizes) {
+        setShowSizeModal(true);
+        return;
+      }
 
-    // Only allow increment if item is already in cart (isInCart button shown)
-    if (!isInCart) {
-      return;
-    }
+      // Only allow increment if item is already in cart (isInCart button shown)
+      if (!isInCart) {
+        return;
+      }
 
-    // Increment the quantity (source of truth: Redux)
-    const newQty = quantity + 1;
-    const key = cartItemKey(product.id, null);
-    const ts = Date.now();
+      // Increment the quantity (source of truth: Redux)
+      const newQty = quantity + 1;
+      const key = cartItemKey(product.id, null);
+      const ts = Date.now();
 
-    // Dispatch optimistic update to Redux immediately
-    // User sees +1 instantly, no loading state
-    cartDispatch(
-      updateLocalCartItem({
-        productId: product.id,
-        productSizeId: null,
-        quantity: newQty,
-        optimisticTimestamp: ts,
-      })
-    );
+      // Dispatch optimistic update to Redux immediately
+      // User sees +1 instantly, no loading state
+      cartDispatch(
+        updateLocalCartItem({
+          productId: product.id,
+          productSizeId: null,
+          quantity: newQty,
+          optimisticTimestamp: ts,
+        }),
+      );
 
-    // Queue API call with debounce (500ms)
-    // Multiple rapid clicks get batched into single API call
-    debouncedUpdate(key, product.id, null, newQty, ts);
-  }, [product, quantity, isInCart, cartDispatch, debouncedUpdate, setShowSizeModal]);
+      // Queue API call with debounce (500ms)
+      // Multiple rapid clicks get batched into single API call
+      debouncedUpdate(key, product.id, null, newQty, ts);
+    },
+    [
+      product,
+      quantity,
+      isInCart,
+      cartDispatch,
+      debouncedUpdate,
+      setShowSizeModal,
+    ],
+  );
 
   /**
    * Decrement quantity by 1, remove if reaches 0
@@ -217,46 +239,56 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
    * - Debounced API call sends quantity=0 to backend
    * - Backend deletes cart item
    */
-  const handleDecrement = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleDecrement = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    // For sized products, open the size modal to select size
-    if (product.hasSizes) {
-      setShowSizeModal(true);
-      return;
-    }
+      // For sized products, open the size modal to select size
+      if (product.hasSizes) {
+        setShowSizeModal(true);
+        return;
+      }
 
-    // Only allow decrement if item is already in cart (isInCart button shown)
-    if (!isInCart) {
-      return;
-    }
+      // Only allow decrement if item is already in cart (isInCart button shown)
+      if (!isInCart) {
+        return;
+      }
 
-    // Decrement the quantity (min 0, which triggers removal)
-    const newQty = Math.max(0, quantity - 1);
-    const key = cartItemKey(product.id, null);
-    const ts = Date.now();
+      // Decrement the quantity (min 0, which triggers removal)
+      const newQty = Math.max(0, quantity - 1);
+      const key = cartItemKey(product.id, null);
+      const ts = Date.now();
 
-    // Dispatch optimistic update to Redux immediately
-    // If quantity = 0, item is removed from cart state
-    cartDispatch(
-      updateLocalCartItem({
-        productId: product.id,
-        productSizeId: null,
-        quantity: newQty,
-        optimisticTimestamp: ts,
-      })
-    );
+      // Dispatch optimistic update to Redux immediately
+      // If quantity = 0, item is removed from cart state
+      cartDispatch(
+        updateLocalCartItem({
+          productId: product.id,
+          productSizeId: null,
+          quantity: newQty,
+          optimisticTimestamp: ts,
+        }),
+      );
 
-    // Show removal message when reaching 0
-    if (quantity === 1) {
-      showToast.success("Removed from cart");
-    }
+      // Show removal message when reaching 0
+      if (quantity === 1) {
+        showToast.success("Removed from cart");
+      }
 
-    // Queue API call with debounce
-    // Backend receives quantity=0 and deletes the cart item
-    debouncedUpdate(key, product.id, null, newQty, ts);
-  }, [product, quantity, isInCart, cartDispatch, debouncedUpdate, setShowSizeModal]);
+      // Queue API call with debounce
+      // Backend receives quantity=0 and deletes the cart item
+      debouncedUpdate(key, product.id, null, newQty, ts);
+    },
+    [
+      product,
+      quantity,
+      isInCart,
+      cartDispatch,
+      debouncedUpdate,
+      setShowSizeModal,
+    ],
+  );
 
   // Favorite toggle with optimistic UI update (like Facebook)
   // Updates UI instantly, syncs with API in background
@@ -264,7 +296,10 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!isAuthenticated) { setShowLoginModal(true); return; }
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
 
     // Update UI instantly - no delay, no disabled state!
     const newFavState = !isFavorited;
@@ -296,7 +331,9 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
         >
           {/* Image */}
           <div className="relative aspect-square overflow-hidden bg-muted/30">
-            {!imageLoaded && <Skeleton className="absolute inset-0 w-full h-full" />}
+            {!imageLoaded && (
+              <Skeleton className="absolute inset-0 w-full h-full" />
+            )}
 
             <Image
               src={imageError ? appImages.NoImage : imageUrl}
@@ -316,10 +353,13 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
             {/* Promo badge */}
             {product?.hasActivePromotion && (
               <div className="absolute top-2 left-2 z-10 pointer-events-none">
-                <Badge variant="destructive" className="text-xs font-bold px-2 py-0.5 shadow-md">
+                <Badge
+                  variant="destructive"
+                  className="text-xs font-bold px-2 py-0.5 shadow-md"
+                >
                   {product.displayPromotionType === "PERCENTAGE"
-                    ? `-${product.displayPromotionValue}%`
-                    : `-${formatCurrency(product.displayPromotionValue)}`}
+                    ? `${product.displayPromotionValue}%`
+                    : `${formatCurrency(product.displayPromotionValue)}`}
                 </Badge>
               </div>
             )}
@@ -327,7 +367,12 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
             {/* Out of stock overlay */}
             {isOutOfStock && (
               <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center pointer-events-none">
-                <Badge variant="secondary" className="text-xs font-semibold px-3 py-1">Out of Stock</Badge>
+                <Badge
+                  variant="secondary"
+                  className="text-xs font-semibold px-3 py-1"
+                >
+                  Out of Stock
+                </Badge>
               </div>
             )}
 
@@ -344,14 +389,22 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
                 )}
                 onClick={handleToggleFavorite}
               >
-                <Heart className={cn("h-4 w-4 transition-all duration-150", isFavorited && "fill-current")} />
+                <Heart
+                  className={cn(
+                    "h-4 w-4 transition-all duration-150",
+                    isFavorited && "fill-current",
+                  )}
+                />
               </CustomButton>
             </div>
 
             {/* Sizes badge */}
             {product.hasSizes && (
               <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
-                <Badge variant="secondary" className="text-xs font-medium px-1.5 py-0.5 shadow-sm bg-background/90 backdrop-blur-sm gap-1">
+                <Badge
+                  variant="secondary"
+                  className="text-xs font-medium px-1.5 py-0.5 shadow-sm bg-background/90 backdrop-blur-sm gap-1"
+                >
                   <Ruler className="h-3 w-3" />
                   Sizes
                 </Badge>
@@ -361,14 +414,23 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
 
           {/* Info */}
           <div className="p-3 flex flex-col flex-1">
-            <h3 className="font-medium text-sm line-clamp-2 mb-2 leading-snug min-h-[40px]">{product.name}</h3>
+            <h3 className="font-medium text-sm line-clamp-2 mb-2 leading-snug min-h-[40px]">
+              {product.name}
+            </h3>
 
             <div className="mt-auto">
               <div className="flex flex-col mb-2.5">
-                <span className={cn("text-xs text-muted-foreground line-through", !product.hasActivePromotion && "invisible")}>
+                <span
+                  className={cn(
+                    "text-xs text-muted-foreground line-through",
+                    !product.hasActivePromotion && "invisible",
+                  )}
+                >
                   {formatCurrency(product.displayOriginPrice)}
                 </span>
-                <span className="text-base font-bold text-primary">{formatCurrency(product.displayPrice)}</span>
+                <span className="text-base font-bold text-primary">
+                  {formatCurrency(product.displayPrice)}
+                </span>
               </div>
 
               {isInCart ? (
@@ -410,7 +472,11 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
       </Link>
 
       <LoginModal open={showLoginModal} onOpenChange={setShowLoginModal} />
-      <SizeSelectionModal open={showSizeModal} onOpenChange={setShowSizeModal} product={product} />
+      <SizeSelectionModal
+        open={showSizeModal}
+        onOpenChange={setShowSizeModal}
+        product={product}
+      />
     </>
   );
 }
@@ -438,11 +504,14 @@ export const ProductCard = memo(
       // Image URL must not change
       prevProps.product.mainImageUrl === nextProps.product.mainImageUrl &&
       // Promotion status must not change
-      prevProps.product.hasActivePromotion === nextProps.product.hasActivePromotion &&
+      prevProps.product.hasActivePromotion ===
+        nextProps.product.hasActivePromotion &&
       // Promotion value must not change (for display)
-      prevProps.product.displayPromotionValue === nextProps.product.displayPromotionValue &&
+      prevProps.product.displayPromotionValue ===
+        nextProps.product.displayPromotionValue &&
       // Promotion type must not change
-      prevProps.product.displayPromotionType === nextProps.product.displayPromotionType &&
+      prevProps.product.displayPromotionType ===
+        nextProps.product.displayPromotionType &&
       // Status must not change
       prevProps.product.status === nextProps.product.status &&
       // Sizes must not change
@@ -450,5 +519,5 @@ export const ProductCard = memo(
       // className must match (usually doesn't change)
       prevProps.className === nextProps.className
     );
-  }
+  },
 );
