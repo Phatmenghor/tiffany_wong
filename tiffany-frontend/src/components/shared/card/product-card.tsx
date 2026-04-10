@@ -32,7 +32,7 @@ import {
   selectProductQuantityInCart,
   selectProductTotalQuantity,
 } from "@/redux/features/main/store/selectors/optimized-cart-selectors";
-import { RootState } from "@/redux/store";
+import { RootState } from "@/redux/store/types";
 
 interface ProductCardProps {
   product: ProductDetailResponseModel;
