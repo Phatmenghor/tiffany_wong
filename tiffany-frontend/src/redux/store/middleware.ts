@@ -32,19 +32,7 @@ export const loggingMiddleware: Middleware =
     const previousState = storeAPI.getState();
 
     // Log action
-    console.group(`📦 Redux Action: ${action.type}`);
-    console.log("🔹 Action:", action);
-
     const result = next(action);
-
-    const nextState = storeAPI.getState();
-
-    // Log state changes
-    console.log("📊 State Changed:", {
-      previous: previousState,
-      next: nextState,
-    });
-    console.groupEnd();
 
     return result;
   };
@@ -65,9 +53,6 @@ export const authLoggingMiddleware: Middleware =
 
     const isAuthAction = action.type.startsWith("auth/");
 
-    if (isAuthAction) {
-      console.log("🔐 [AUTH]", action.type, action.payload);
-    }
 
     return next(action);
   };
@@ -99,7 +84,6 @@ export const userLoggingMiddleware: Middleware =
       };
 
       const icon = icons[action.type] || "👤";
-      console.log(`${icon} [USERS]`, action.type, action.payload);
     }
 
     return next(action);
@@ -146,7 +130,6 @@ export const autoFetchProfileMiddleware: Middleware =
 
       // Check if profile not already loaded
       if (!state.auth.profile) {
-        console.log("🔐 [MIDDLEWARE] Auto-fetching profile...");
         // Dynamically import to avoid circular dependencies
         import("../features/auth/store/thunks/auth-thunks").then(
           ({ getProfileService }) => {

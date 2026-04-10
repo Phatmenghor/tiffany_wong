@@ -187,9 +187,7 @@ export default function AdminProfilePage() {
       let profileImageUrl = imageData;
       if (isBase64Image(profileImageUrl)) {
         try {
-          console.log("📤 [UPLOAD CDN] Uploading image to CDN...");
           profileImageUrl = await uploadImage(profileImageUrl);
-          console.log("✅ [UPLOAD CDN] Image URL from CDN:", profileImageUrl);
         } catch (error) {
           console.error("Failed to upload image to CDN:", error);
           showToast.error("Failed to upload image");
@@ -208,14 +206,10 @@ export default function AdminProfilePage() {
         profileImageUrl,
       };
 
-      console.log("🔄 [UPDATE API] Updating profile with image URL...");
       const updatedProfile = await dispatch(updateProfileService(payload)).unwrap();
-      console.log("✅ [UPDATE API] Profile picture updated:", updatedProfile);
 
       // Reload profile to ensure we have the latest from server
-      console.log("🔄 [FETCH] Reloading profile data...");
       const freshProfile = await dispatch(getProfileService()).unwrap();
-      console.log("✅ [FETCH] Fresh profile loaded:", freshProfile);
 
       showToast.success("Profile picture updated successfully");
     } catch (error: any) {
@@ -258,14 +252,10 @@ export default function AdminProfilePage() {
         profileImageUrl: "",
       };
 
-      console.log("🔄 [UPDATE API] Removing profile picture...");
       const updatedProfile = await dispatch(updateProfileService(payload)).unwrap();
-      console.log("✅ [UPDATE API] Profile picture removed:", updatedProfile);
 
       // Reload profile to ensure we have the latest from server
-      console.log("🔄 [FETCH] Reloading profile data...");
       const freshProfile = await dispatch(getProfileService()).unwrap();
-      console.log("✅ [FETCH] Fresh profile loaded:", freshProfile);
 
       // Clear form value
       setValue("profileImageUrl", "");

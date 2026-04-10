@@ -70,8 +70,6 @@ export default function UserBusinessPage() {
       accountStatuses: filters.accountStatus === AccountStatus.ALL ? [] : [filters.accountStatus],
     };
 
-    console.log("📤 Sending business users filter to API:", filterPayload);
-
     dispatch(fetchAllUsersService(filterPayload));
   }, [dispatch, debouncedSearch, filters.accountStatus, filters.role, filters.pageNo, globalPageSize]);
 

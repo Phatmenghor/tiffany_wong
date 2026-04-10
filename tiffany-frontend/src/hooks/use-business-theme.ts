@@ -37,7 +37,6 @@ function cacheBusinessSettings(settings: BusinessSettingsResponse) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(BUSINESS_SETTINGS_CACHE_KEY, JSON.stringify(settings));
-    console.log("## [THEME] Cached full business settings to localStorage");
   } catch (error) {
     console.error("## [THEME] Error caching business settings:", error);
   }
@@ -95,10 +94,8 @@ export function initializeBusinessThemeFromCache() {
   // Load and apply colors from cache synchronously (instant, before page renders)
   const cachedColors = getCachedThemeColors(SYSTEM_ID);
   if (cachedColors) {
-    console.log("## [THEME] Applying cached colors synchronously (instant)");
     applyColors(cachedColors.primaryColor);
   } else {
-    console.log("## [THEME] No cached theme, applying defaults");
     applyColors(DEFAULT_COLORS.primary);
   }
 }
@@ -120,7 +117,6 @@ export function useBusinessTheme() {
 
   // Fetch business settings on component mount
   const fetchSettings = () => {
-    console.log("## [THEME] Fetching business settings...");
     dispatch(fetchBusinessSettingsThunk()).then((action) => {
       if (action.meta.requestStatus === "fulfilled" && action.payload) {
         const payload = action.payload as BusinessSettingsResponse;
@@ -137,10 +133,7 @@ export function useBusinessTheme() {
         // Apply colors
         if (payload.primaryColor) {
           applyColors(payload.primaryColor);
-          console.log("## [THEME] Colors updated from API");
         }
-      } else {
-        console.log("## [THEME] Failed to fetch, using cache");
       }
     });
   };
@@ -151,7 +144,6 @@ export function useBusinessTheme() {
 
     // Add listener for browser back/forward buttons
     const handlePopState = () => {
-      console.log("## [THEME] Browser navigation detected, restoring settings...");
       fetchSettings();
     };
 

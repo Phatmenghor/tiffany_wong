@@ -383,7 +383,6 @@ export default function BulkPromotionPage() {
   const handleEditProduct = useCallback(
     (product: ProductDetailResponseModel) => {
       // Navigate to product edit or show modal
-      console.log("Edit product:", product.id);
     },
     [],
   );

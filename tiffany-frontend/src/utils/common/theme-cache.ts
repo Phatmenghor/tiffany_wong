@@ -20,11 +20,9 @@ function getCookie(name: string): string | null {
       cookie = cookie.trim();
       if (cookie.indexOf(nameEQ) === 0) {
         const value = decodeURIComponent(cookie.substring(nameEQ.length));
-        console.log(`[THEME CACHE] Retrieved cookie ${name}`);
         return value;
       }
     }
-    console.log(`[THEME CACHE] Cookie ${name} not found`);
     return null;
   } catch (error) {
     console.error(`[THEME CACHE] Error reading cookie ${name}:`, error);
@@ -42,7 +40,6 @@ function setCookie(name: string, value: string, days: number = 30): void {
   expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
   // Match auth token cookie pattern with SameSite attribute
   document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
-  console.log(`[THEME CACHE] Cookie set: ${name}`);
 }
 
 /**
@@ -76,10 +73,6 @@ export function cacheThemeColors(
       timestamp: Date.now(),
     };
     setCookie(cookieName, JSON.stringify(cacheData), 30);
-    console.log(
-      `[THEME CACHE] Cached colors for business ${businessId}:`,
-      colors
-    );
   } catch (error) {
     console.error("[THEME CACHE] Failed to cache theme colors:", error);
   }

@@ -111,7 +111,6 @@ export default function BusinessSettingsPage() {
           const cached = JSON.parse(cachedSettings);
           const formData = convertResponseToFormData(cached);
           form.reset(formData);
-          console.log("[ADMIN] Form loaded instantly from cache");
           setIsLoading(false); // Hide loading spinner since we have data
         } catch (error) {
           console.error("[ADMIN] Error parsing cached settings:", error);
@@ -121,7 +120,6 @@ export default function BusinessSettingsPage() {
       }
 
       // Then fetch fresh data from API in background
-      console.log("[ADMIN] Fetching fresh business settings from API...");
       const action = await dispatch(fetchBusinessSettingsThunk());
 
       // Check if the action was fulfilled and has a payload
@@ -130,7 +128,6 @@ export default function BusinessSettingsPage() {
 
         const formData = convertResponseToFormData(data);
         form.reset(formData);
-        console.log("[ADMIN] Form updated with fresh API data");
 
         // Check if colors changed and update cache if needed
         const cachedColors = getCachedThemeColors(SYSTEM_ID);
@@ -139,7 +136,6 @@ export default function BusinessSettingsPage() {
         };
 
         if (hasThemeChanged(cachedColors, currentColors)) {
-          console.log(`[THEME] Colors changed, updating cache`);
           cacheThemeColors(SYSTEM_ID, currentColors);
         }
 
@@ -180,9 +176,7 @@ export default function BusinessSettingsPage() {
       let logoSystemUrl = data.logoSystemUrl;
       if (logoSystemUrl && isBase64Image(logoSystemUrl)) {
         try {
-          console.log("📤 [UPLOAD CDN] Uploading logo to CDN...");
           logoSystemUrl = await uploadImage(logoSystemUrl);
-          console.log("✅ [UPLOAD CDN] Logo URL from CDN:", logoSystemUrl);
         } catch (error) {
           console.error("Failed to upload logo:", error);
           showToast.error("Failed to upload logo");
@@ -212,25 +206,15 @@ export default function BusinessSettingsPage() {
       if (action.meta.requestStatus === "fulfilled" && action.payload) {
         const result = action.payload as BusinessSettingsResponse;
 
-        // Log the saved data
-        console.log("[FORM] Business settings saved to Redux:", {
-          systemName: result.systemName,
-          logoSystemUrl: result.logoSystemUrl,
-          primaryColor: result.primaryColor,
-          description: result.description,
-        });
-
         // Reset form with updated data from API
         const updatedFormData = convertResponseToFormData(result);
         form.reset(updatedFormData);
-        console.log("[FORM] Form reset with updated data");
 
         // Cache the colors for instant load on next page refresh
         const colors = {
           primaryColor: result.primaryColor || "",
         };
         cacheThemeColors(SYSTEM_ID, colors);
-        console.log(`[THEME] Cached colors`);
 
         // Apply colors in real-time without refresh
         if (result.primaryColor) {

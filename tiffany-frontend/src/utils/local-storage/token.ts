@@ -7,13 +7,11 @@ function setNativeCookie(name: string, value: string, maxAge: number): void {
   const expires = new Date();
   expires.setSeconds(expires.getSeconds() + maxAge);
   document.cookie = `${name}=${encodeURIComponent(value)}; path=/; expires=${expires.toUTCString()}`;
-  console.log(`## [COOKIE] Set ${name} with maxAge ${maxAge}s`);
 }
 
 function deleteNativeCookie(name: string): void {
   if (typeof window === "undefined") return;
   document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-  console.log(`## [COOKIE] Deleted ${name}`);
 }
 
 // Cookie names - use centralized constants
@@ -78,8 +76,6 @@ export function storeToken(token: string | undefined): void {
   // Store in both cookie and localStorage for reliability
   setCookie(ACCESS_TOKEN_KEY, token, { maxAge, path: "/" });
   localStorage.setItem(ACCESS_TOKEN_KEY, token);
-
-  console.log("## [TOKEN] Access token stored in cookie and localStorage");
 }
 
 /**
@@ -95,8 +91,6 @@ export function storeRefreshToken(refreshToken: string | undefined): void {
   // Store in both cookie and localStorage for reliability
   setCookie(REFRESH_TOKEN_KEY, refreshToken, { maxAge, path: "/" });
   localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-
-  console.log("## [TOKEN] Refresh token stored in cookie and localStorage");
 }
 
 /**
@@ -133,7 +127,6 @@ export function storeTokens(
 export function clearToken(): void {
   deleteCookie(ACCESS_TOKEN_KEY);
   localStorage.removeItem(ACCESS_TOKEN_KEY);
-  console.log("## [TOKEN] Access token cleared from cookie and localStorage");
 }
 
 /**
@@ -142,7 +135,6 @@ export function clearToken(): void {
 export function clearRefreshToken(): void {
   deleteCookie(REFRESH_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
-  console.log("## [TOKEN] Refresh token cleared from cookie and localStorage");
 }
 
 /**

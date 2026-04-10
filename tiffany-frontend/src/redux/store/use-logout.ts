@@ -26,15 +26,11 @@ export function useLogout() {
 
   const handleLogout = useCallback(async () => {
     try {
-      console.log("📤 Logging out user...", { userType, isAdmin, currentPath: pathname });
-
       // Call logout API to invalidate session on server
       await dispatch(logoutService()).unwrap();
-
-      console.log("✓ Logout successful");
     } catch (error) {
       // Even if API call fails, clear local state
-      console.error("✗ Logout API failed, clearing local state:", error);
+      console.error("Logout API failed, clearing local state:", error);
       dispatch(logout());
     } finally {
       // Determine redirect behavior based on current page
@@ -44,12 +40,10 @@ export function useLogout() {
 
       if (isPublicPage) {
         // For public pages, just refresh to clear auth state
-        console.log("🔄 Refreshing public page after logout");
         window.location.reload();
       } else {
         // For admin or auth pages, redirect to login
         const redirectUrl = isAdmin ? ROUTES.AUTH.LOGIN : ROUTES.AUTH.LOGIN;
-        console.log("📍 Redirecting to:", redirectUrl);
         router.push(redirectUrl);
       }
     }

@@ -237,7 +237,6 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
                     src={isHydrated ? getImageWithFallback(logoUrl, "logo") : getImageWithFallback(undefined, "logo")}
                     alt={isHydrated ? businessName : "Dashboard"}
                     className="w-full h-full object-cover rounded"
-                    onLoad={() => console.log("✅ [SIDEBAR] Logo loaded:", logoUrl)}
                     onError={(e) => {
                       console.error("❌ [SIDEBAR] Failed to load logo:", logoUrl);
                       (e.target as HTMLImageElement).src = getImageWithFallback(undefined, "logo");

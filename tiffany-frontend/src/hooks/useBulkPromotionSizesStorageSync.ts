@@ -180,7 +180,6 @@ export function useBulkPromotionSizesStorageSync(
     try {
       localStorage.removeItem(storageKey);
       dispatch(clearAllSizeSelections());
-      console.log(`🗑️ Selected sizes cleared from localStorage`);
     } catch (error) {
       console.error("Error clearing size selections:", error);
     }

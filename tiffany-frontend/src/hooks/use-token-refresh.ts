@@ -26,27 +26,14 @@ export function useTokenRefresh() {
         bufferSeconds: 300, // Refresh 5 minutes before expiry
         checkIntervalMs: 60000, // Check every 1 minute
         onTokenRefreshed: (userType) => {
-          console.log(
-            `✅ Token auto-refreshed for ${userType === "OWNER" ? "admin" : "customer"}`
-          );
+          // Token refreshed successfully
         },
         onRefreshFailed: (error) => {
           console.warn("⚠️ Token refresh failed:", error);
         },
       });
 
-      console.log("🔄 Token refresh manager initialized");
-
-      // Log token status on startup
-      const status = managerRef.current.getStatus();
-      console.log("📊 Token Status:", {
-        customerExpiresIn: status.customerTimeToExpiry
-          ? `${status.customerTimeToExpiry}s`
-          : "No token",
-        ownerExpiresIn: status.ownerTimeToExpiry
-          ? `${status.ownerTimeToExpiry}s`
-          : "No token",
-      });
+      // Token refresh manager initialized
     }
 
     // Cleanup on unmount (but don't stop manager - it should stay active)

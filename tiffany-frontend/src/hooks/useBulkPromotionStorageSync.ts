@@ -164,7 +164,6 @@ export function useBulkPromotionStorageSync(
   const clearSelections = () => {
     try {
       localStorage.removeItem(storageKey);
-      console.log(`🗑️ Selected products cleared from localStorage`);
     } catch (error) {
       console.error("Error clearing selections:", error);
     }

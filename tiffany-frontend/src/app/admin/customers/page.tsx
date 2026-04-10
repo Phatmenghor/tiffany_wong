@@ -64,8 +64,6 @@ export default function CustomerUsersPage() {
       accountStatuses: filters.accountStatus === AccountStatus.ALL ? [] : [filters.accountStatus],
     };
 
-    console.log("📤 Sending customer filter to API:", filterPayload);
-
     dispatch(fetchAllUsersService(filterPayload));
   }, [dispatch, debouncedSearch, filters.accountStatus, filters.pageNo, globalPageSize]);
 

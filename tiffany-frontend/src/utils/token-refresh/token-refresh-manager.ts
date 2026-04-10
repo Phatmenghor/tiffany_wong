@@ -57,9 +57,6 @@ export class TokenRefreshManager {
       return;
     }
 
-    console.log(
-      `TokenRefreshManager: Starting with ${this.checkIntervalMs}ms check interval`
-    );
 
     this.refreshCheckIntervalId = setInterval(() => {
       this.checkAndRefreshTokens();
@@ -76,7 +73,6 @@ export class TokenRefreshManager {
     if (this.refreshCheckIntervalId) {
       clearInterval(this.refreshCheckIntervalId);
       this.refreshCheckIntervalId = null;
-      console.log("TokenRefreshManager: Stopped");
     }
   }
 
@@ -115,16 +111,12 @@ export class TokenRefreshManager {
     expectedUserType: "CUSTOMER" | "OWNER"
   ): Promise<void> {
     if (this.isRefreshing) {
-      console.log(
-        `TokenRefreshManager: Already refreshing, skipping ${expectedUserType} token refresh`
-      );
       return;
     }
 
     this.isRefreshing = true;
 
     try {
-      console.log(`TokenRefreshManager: Refreshing ${expectedUserType} token`);
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/refresh`,
@@ -162,9 +154,6 @@ export class TokenRefreshManager {
         storeTokens(newAccessToken, newRefreshToken);
       }
 
-      console.log(
-        `TokenRefreshManager: ${expectedUserType} token refreshed successfully`
-      );
       this.onTokenRefreshed?.(actualUserType as "CUSTOMER" | "OWNER");
     } catch (error) {
       console.error(

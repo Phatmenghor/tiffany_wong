@@ -27,7 +27,6 @@ function initializeTheme() {
     const cachedSettingsStr = localStorage.getItem(BUSINESS_SETTINGS_CACHE_KEY);
 
     if (!cachedSettingsStr) {
-      console.log("[THEME] No cached business settings found, using defaults");
       return;
     }
 
@@ -36,11 +35,8 @@ function initializeTheme() {
       const primaryColor = cachedSettings?.primaryColor;
 
       if (!primaryColor) {
-        console.log("[THEME] No primary color in cached settings");
         return;
       }
-
-      console.log("[THEME INIT] Applying cached primary color:", primaryColor);
 
       // Apply colors immediately
       applyThemeColorsSync(primaryColor);
