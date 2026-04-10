@@ -85,7 +85,7 @@ export default function LoginPage() {
                 name="userIdentifier"
                 label="Email or Username"
                 placeholder="name@example.com"
-                control={form.control}
+                control={form.control as any}
                 error={form.formState.errors.userIdentifier}
                 disabled={isLoading}
                 required
@@ -95,7 +95,7 @@ export default function LoginPage() {
                 name="password"
                 label="Password"
                 placeholder="Enter your password"
-                control={form.control}
+                control={form.control as any}
                 error={form.formState.errors.password}
                 disabled={isLoading}
                 required
