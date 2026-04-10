@@ -34,8 +34,6 @@ import { showToast } from "@/components/shared/common/show-toast";
 import { ORDER_STATUS_ADMIN_FILTER, PAYMENT_STATUS_ADMIN_FILTER } from "@/constants/status/filter-status";
 import { CustomSelect } from "@/components/shared/common/custom-select";
 import { indexDisplay } from "@/utils/common/common";
-import { setGlobalPageSize } from "@/redux/store/slices/global-settings-slice";
-import { selectGlobalPageSize } from "@/redux/store/selectors/global-settings-selectors";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { cancelOrderService } from "@/redux/features/main/store/thunks/my-orders-thunks";
 
@@ -66,8 +64,6 @@ export default function OrdersPage() {
     statusTabs,
     loadedFilters,
   } = useMyOrdersState();
-
-  const globalPageSize = useAppSelector(selectGlobalPageSize);
 
   const [filters, setFilters] = useState<FilterState>({
     status: "",
@@ -224,12 +220,6 @@ export default function OrdersPage() {
     loadOrders(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  // Page size is now fixed at 15 items per page
-  // const handlePageSizeChange = (size: number) => {
-  //   dispatch(setGlobalPageSize(size));
-  //   setCurrentPage(1);
-  // };
 
   const handleStatusChange = (value: string) => {
     setFilters((prev) => ({ ...prev, status: value }));
