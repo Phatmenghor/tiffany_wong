@@ -1,104 +1,36 @@
 /**
  * Order Response Types
- * Complete type definitions matching backend OrderResponse
+ * Simplified type definitions matching backend OrderResponse
  */
 
-import { OrderStatus } from '@/enums/order-status.enum';
-import { OrderSource } from '@/enums/order-source.enum';
+export type PaymentMethod = "CASH" | "BANK";
+export type PaymentStatus = "PAID" | "UNPAID" | "REFUNDED";
+export type OrderStatus = "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 
-export interface OrderStatusHistoryUserInfo {
-  userId: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  businessId?: string;
-  fullName?: string;
-}
-
-export interface OrderStatusHistoryResponse {
-  id: string;
-  statusName: string;
-  statusDescription: string | null;
-  note: string | null;
-  changedBy: OrderStatusHistoryUserInfo | null;
-  changedAt: string;
-}
-
-export interface OrderDeliveryAddressDto {
-  village: string;
-  commune: string;
-  district: string;
-  province: string;
-  streetNumber: string;
-  houseNumber: string;
-  note: string;
-  latitude: number;
-  longitude: number;
-}
-
-export interface OrderDeliveryOptionDto {
-  name: string;
-  description: string;
-  imageUrl: string;
-  price: number;
-}
-
-// Pricing snapshot at a point in time (before or after modifications)
-export interface OrderPricingSnapshot {
-  totalItems: number;
-  subtotalBeforeDiscount: number;
-  subtotal: number;
-  discountAmount: number;
-  hasActivePromotion: boolean;
-  promotionType: string | null;
-  promotionValue: number | null;
-  deliveryFee: number;
-  taxAmount: number;
-  finalTotal: number;
-}
-
-// Nested pricing with before/after audit trail — matches backend OrderPricingInfo
-export interface OrderPricingInfo {
-  before: OrderPricingSnapshot;
-  hadOrderLevelChangeFromPOS: boolean;
-  after: OrderPricingSnapshot | null;
-  reason: string;
-}
-
-export interface OrderPaymentInfo {
-  paymentMethod: string;
-  paymentStatus: "PENDING" | "PAID" | "UNPAID" | "REFUNDED" | "PARTIALLY_PAID";
-}
-
-export interface OrderItemProductInfo {
-  id: string;
-  name: string;
-  imageUrl: string;
-  sizeId: string | null;
-  sizeName: string;
-  status: "ACTIVE" | "INACTIVE";
-}
-
-// Pricing snapshot for a single item at a point in time
-export interface OrderItemPricingSnapshot {
-  currentPrice: number;
-  finalPrice: number;
-  quantity: number;
-  discountAmount: number;
-  totalPrice: number;
-  hasActivePromotion: boolean;
-  promotionType: string | null;
-  promotionValue: number | null;
-}
-
-// Item with before/after audit trail — matches backend OrderItemResponse
+// Order Item Response - matches CartItemResponse structure for consistency
 export interface OrderItemResponse {
   id: string;
-  product: OrderItemProductInfo;
-  before: OrderItemPricingSnapshot;
-  hadChangeFromPOS: boolean;
-  after: OrderItemPricingSnapshot | null;
-  reason: string | null;
+  productId: string;
+  productName: string;
+  productImageUrl: string;
+  productSizeId: string | null;
+  sizeName: string;
+  sku: string;
+  quantity: number;
+
+  // Display fields for UI rendering
+  displayPrice: number;
+  displayOriginPrice: number;
+  displayPromotionType: string | null;
+  displayPromotionValue: number | null;
+  displayPromotionFromDate: string | null;
+  displayPromotionToDate: string | null;
+  hasActivePromotion: boolean;
+
+  // Subtotal calculations
+  subtotalBeforeDiscount: number;
+  subtotalDiscountAmount: number;
+  subtotalAfterDiscount: number;
 }
 
 export interface OrderResponse {
@@ -111,16 +43,13 @@ export interface OrderResponse {
   customerId: string;
   customerName: string;
   customerPhone: string;
-  businessId: string;
-  businessName: string;
-  deliveryAddress: OrderDeliveryAddressDto;
-  deliveryOption: OrderDeliveryOptionDto;
+  customerEmail: string;
+  customerNote: string | null;
   orderStatus: OrderStatus;
-  source: OrderSource;
-  customerNote: string;
-  businessNote: string | null;
-  pricing: OrderPricingInfo;
-  payment: OrderPaymentInfo;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  subtotal: number;
+  discountAmount: number;
+  totalAmount: number;
   items: OrderItemResponse[];
-  statusHistory: OrderStatusHistoryResponse[];
 }

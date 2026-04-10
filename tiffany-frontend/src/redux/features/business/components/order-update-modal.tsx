@@ -25,9 +25,8 @@ import { clearSelectedOrder } from "../store/slice/order-admin-slice";
 // Validation schema
 const updateOrderSchema = z.object({
   orderStatus: z.string().min(1, "Order status is required"),
-  businessNote: z.string().optional(),
-  paymentMethod: z.string().min(1, "Payment method is required"),
   paymentStatus: z.string().min(1, "Payment status is required"),
+  customerNote: z.string().optional(),
 });
 
 type UpdateOrderData = z.infer<typeof updateOrderSchema>;
@@ -46,16 +45,10 @@ const ORDER_STATUS_OPTIONS = [
   { label: "Cancelled", value: "CANCELLED" },
 ];
 
-const PAYMENT_METHOD_OPTIONS = [
-  { label: "Cash", value: "CASH" },
-  { label: "Card", value: "CARD" },
-  { label: "Bank Transfer", value: "BANK_TRANSFER" },
-];
-
 const PAYMENT_STATUS_OPTIONS = [
   { label: "Paid", value: "PAID" },
   { label: "Unpaid", value: "UNPAID" },
-  { label: "Pending", value: "PENDING" },
+  { label: "Refunded", value: "REFUNDED" },
 ];
 
 export function OrderUpdateModal({
@@ -78,9 +71,8 @@ export function OrderUpdateModal({
     resolver: zodResolver(updateOrderSchema),
     defaultValues: {
       orderStatus: "PENDING",
-      businessNote: "",
-      paymentMethod: "CASH",
-      paymentStatus: "PENDING",
+      paymentStatus: "UNPAID",
+      customerNote: "",
     },
     mode: "onChange",
   });
@@ -94,9 +86,8 @@ export function OrderUpdateModal({
     if (isOpen && orderData) {
       reset({
         orderStatus: orderData.orderStatus || "PENDING",
-        businessNote: orderData.businessNote || "",
-        paymentMethod: orderData.payment?.paymentMethod || "CASH",
-        paymentStatus: orderData.payment?.paymentStatus || "PENDING",
+        paymentStatus: orderData.paymentStatus || "UNPAID",
+        customerNote: orderData.customerNote || "",
       });
     }
   }, [isOpen, orderData, reset]);
@@ -114,11 +105,8 @@ export function OrderUpdateModal({
     try {
       const updatePayload = {
         orderStatus: data.orderStatus,
-        businessNote: data.businessNote,
-        payment: {
-          paymentMethod: data.paymentMethod,
-          paymentStatus: data.paymentStatus,
-        },
+        paymentStatus: data.paymentStatus,
+        customerNote: data.customerNote,
       };
 
       const response = await fetch(`/api/v1/orders/${orderId}`, {
@@ -173,18 +161,6 @@ export function OrderUpdateModal({
               error={errors.orderStatus}
             />
 
-            {/* Payment Method */}
-            <SelectField
-              control={control}
-              name="paymentMethod"
-              label="Payment Method"
-              placeholder="Select payment method"
-              options={PAYMENT_METHOD_OPTIONS}
-              required
-              disabled={isSaving || isFetchingDetail}
-              error={errors.paymentMethod}
-            />
-
             {/* Payment Status */}
             <SelectField
               control={control}
@@ -197,14 +173,14 @@ export function OrderUpdateModal({
               error={errors.paymentStatus}
             />
 
-            {/* Business Note */}
+            {/* Customer Note */}
             <TextAreaField
               control={control}
-              name="businessNote"
-              label="Business Note"
-              placeholder="Enter business note (optional)"
+              name="customerNote"
+              label="Customer Note"
+              placeholder="Enter customer note (optional)"
               disabled={isSaving || isFetchingDetail}
-              error={errors.businessNote}
+              error={errors.customerNote}
               rows={3}
             />
           </FormBody>

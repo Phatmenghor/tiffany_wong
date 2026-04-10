@@ -147,19 +147,19 @@ export function CustomerOrderDetailModal({
                     />
                     <DisplayField
                       label="Payment Method"
-                      value={orderData.payment?.paymentMethod || "---"}
+                      value={orderData.paymentMethod || "---"}
                     />
                     <DisplayField
                       label="Payment Status"
                       value={
                         <span
                           className={
-                            orderData.payment?.paymentStatus === "PAID"
+                            orderData.paymentStatus === "PAID"
                               ? "text-green-600 dark:text-green-400 font-medium"
                               : "text-orange-600 dark:text-orange-400 font-medium"
                           }
                         >
-                          {orderData.payment?.paymentStatus || "---"}
+                          {orderData.paymentStatus || "---"}
                         </span>
                       }
                     />
@@ -208,53 +208,37 @@ export function CustomerOrderDetailModal({
                 <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded-lg p-3">
                   <h4 className="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase tracking-wider mb-3">💰 Pricing Details</h4>
                   <div className="space-y-3">
-                    {/* Before Snapshot */}
-                    {(() => {
-                      const before = orderData.pricing?.before;
-                      return (
-                        <div className="bg-gray-50 dark:bg-gray-950/20 border border-gray-200 dark:border-gray-900 rounded p-3 space-y-2">
-                          <h5 className="text-xs font-medium text-gray-700 dark:text-gray-300 font-bold mb-2">📌 Pricing</h5>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                            <DisplayField
-                              label="Items"
-                              value={String(before?.totalItems || 0)}
-                            />
-                            <DisplayField
-                              label="Subtotal"
-                              value={formatCurrency(before?.subtotal || 0)}
-                            />
-                            {(before?.discountAmount ?? 0) > 0 && (
-                              <DisplayField
-                                label="Discount"
-                                value={
-                                  <span className="text-red-600 dark:text-red-400 font-semibold">
-                                    -{formatCurrency(before!.discountAmount)}
-                                  </span>
-                                }
-                              />
-                            )}
-                            <DisplayField
-                              label="Delivery Fee"
-                              value={formatCurrency(before?.deliveryFee || 0)}
-                            />
-                            {(before?.taxAmount ?? 0) > 0 && (
-                              <DisplayField
-                                label="Tax"
-                                value={formatCurrency(before!.taxAmount)}
-                              />
-                            )}
-                            <DisplayField
-                              label="Final Total"
-                              value={
-                                <span className="text-lg font-bold text-green-600 dark:text-green-400">
-                                  {formatCurrency(before?.finalTotal || 0)}
-                                </span>
-                              }
-                            />
-                          </div>
-                        </div>
-                      );
-                    })()}
+                    <div className="bg-gray-50 dark:bg-gray-950/20 border border-gray-200 dark:border-gray-900 rounded p-3 space-y-2">
+                      <h5 className="text-xs font-medium text-gray-700 dark:text-gray-300 font-bold mb-2">📌 Order Total</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                        <DisplayField
+                          label="Items"
+                          value={String(orderData.items?.length || 0)}
+                        />
+                        <DisplayField
+                          label="Subtotal"
+                          value={formatCurrency(orderData.subtotal || 0)}
+                        />
+                        {(orderData.discountAmount ?? 0) > 0 && (
+                          <DisplayField
+                            label="Discount"
+                            value={
+                              <span className="text-red-600 dark:text-red-400 font-semibold">
+                                -{formatCurrency(orderData.discountAmount)}
+                              </span>
+                            }
+                          />
+                        )}
+                        <DisplayField
+                          label="Total Amount"
+                          value={
+                            <span className="text-lg font-bold text-green-600 dark:text-green-400">
+                              {formatCurrency(orderData.totalAmount || 0)}
+                            </span>
+                          }
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -278,11 +262,11 @@ export function CustomerOrderDetailModal({
                       <div className="mb-3">
                         <div className="flex items-start gap-3">
                           {/* Product Image */}
-                          {item.product?.imageUrl && (
+                          {item.productImageUrl && (
                             <div className="flex-shrink-0 rounded-lg overflow-hidden border border-border">
                               <img
-                                src={item.product.imageUrl}
-                                alt={item.product.name}
+                                src={item.productImageUrl}
+                                alt={item.productName}
                                 className="w-16 h-16 object-cover"
                               />
                             </div>
@@ -291,18 +275,18 @@ export function CustomerOrderDetailModal({
                           <div className="flex-1">
                             <div className="flex items-center justify-between gap-2 mb-1">
                               <h4 className="font-semibold text-sm">
-                                #{idx + 1} - {item.product?.name || "Unknown"}
+                                #{idx + 1} - {item.productName || "Unknown"}
                               </h4>
-                              {(item.before?.discountAmount ?? 0) > 0 && (
+                              {item.hasActivePromotion && (
                                 <span className="text-xs px-2 py-1 bg-red-600 dark:bg-red-700 text-white rounded whitespace-nowrap">
                                   💰 Discounted
                                 </span>
                               )}
                             </div>
                             {/* Size and SKU */}
-                            {item.product?.sizeName && (
+                            {item.sizeName && (
                               <div className="text-xs text-muted-foreground">
-                                Size: <span className="font-medium">{item.product.sizeName}</span>
+                                Size: <span className="font-medium">{item.sizeName}</span>
                               </div>
                             )}
                           </div>
@@ -314,18 +298,18 @@ export function CustomerOrderDetailModal({
                         <div className="grid grid-cols-3 gap-3 text-xs">
                           <div>
                             <span className="text-muted-foreground">Quantity:</span>
-                            <p className="font-medium">{item.before?.quantity || 0}</p>
+                            <p className="font-medium">{item.quantity}</p>
                           </div>
                           <div>
                             <span className="text-muted-foreground">Unit Price:</span>
                             <p className="font-medium">
-                              {formatCurrency(item.before?.finalPrice || 0)}
+                              {formatCurrency(item.displayPrice)}
                             </p>
                           </div>
                           <div>
                             <span className="text-muted-foreground">Subtotal:</span>
                             <p className="font-bold text-green-600 dark:text-green-400">
-                              {formatCurrency(item.before?.totalPrice || 0)}
+                              {formatCurrency(item.subtotalAfterDiscount || 0)}
                             </p>
                           </div>
                         </div>
@@ -336,102 +320,6 @@ export function CustomerOrderDetailModal({
               </Card>
             )}
 
-            {/* Delivery Information */}
-            {orderData.deliveryAddress && (
-              <Card className="border-0 shadow-sm bg-gradient-to-br from-background to-muted/30">
-                <CardHeader className="pb-4 border-b">
-                  <CardTitle className="text-lg font-bold text-foreground">📍 Delivery Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 pt-4">
-                  {/* Delivery Details */}
-                  <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg p-3">
-                    <h4 className="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider mb-3">📫 Address & Delivery</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <DisplayField
-                        label="Full Address"
-                        value={
-                          <span className="text-sm">
-                            {(() => {
-                              const parts = [
-                                orderData.deliveryAddress.houseNumber,
-                                orderData.deliveryAddress.streetNumber,
-                                orderData.deliveryAddress.village,
-                                orderData.deliveryAddress.commune,
-                                orderData.deliveryAddress.district,
-                                orderData.deliveryAddress.province,
-                              ].filter(Boolean);
-                              return parts.length > 0
-                                ? parts.join(", ")
-                                : "---";
-                            })()}
-                          </span>
-                        }
-                      />
-                      {orderData.deliveryOption && (
-                        <>
-                          <DisplayField
-                            label="Delivery Method"
-                            value={orderData.deliveryOption.name || "---"}
-                          />
-                          <DisplayField
-                            label="Delivery Fee"
-                            value={formatCurrency(orderData.deliveryOption.price || 0)}
-                          />
-                        </>
-                      )}
-                      {orderData.deliveryAddress.note && (
-                        <div className="md:col-span-2">
-                          <label className="text-xs font-bold text-muted-foreground uppercase block mb-1">
-                            Delivery Note
-                          </label>
-                          <p className="text-sm text-foreground">
-                            {orderData.deliveryAddress.note}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Status History */}
-            {orderData.statusHistory && orderData.statusHistory.length > 0 && (
-              <Card className="border-0 shadow-sm bg-gradient-to-br from-background to-muted/30">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-bold text-foreground">
-                    📈 Status History ({orderData.statusHistory.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {orderData.statusHistory.map((history, idx) => (
-                    <div
-                      key={history.id}
-                      className="text-sm border border-border rounded-lg p-3"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-muted-foreground">
-                            Step {idx + 1}
-                          </span>
-                          <span className="font-semibold text-sm text-foreground">
-                            {history.statusName}
-                          </span>
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          {dateTimeFormat(history.changedAt)}
-                        </span>
-                      </div>
-                      {history.note && (
-                        <p className="text-xs text-muted-foreground mb-2 ml-1">
-                          {history.note}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            )}
           </div>
         </div>
       </DialogContent>

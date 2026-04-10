@@ -117,14 +117,6 @@ export function OrderDetailModal({
                       value={orderData.orderNumber}
                     />
                     <DisplayField
-                      label="Order Type"
-                      value={
-                        orderData.orderFrom === "CUSTOMER"
-                          ? "Customer (Public)"
-                          : "Business (POS)"
-                      }
-                    />
-                    <DisplayField
                       label="Order Status"
                       value={getOrderStatusLabel(orderData.orderStatus)}
                     />
@@ -133,24 +125,20 @@ export function OrderDetailModal({
                       value={dateTimeFormat(orderData.createdAt)}
                     />
                     <DisplayField
-                      label="Business"
-                      value={orderData.businessName || "---"}
-                    />
-                    <DisplayField
                       label="Payment Method"
-                      value={orderData.payment?.paymentMethod || "---"}
+                      value={orderData.paymentMethod || "---"}
                     />
                     <DisplayField
                       label="Payment Status"
                       value={
                         <span
                           className={
-                            orderData.payment?.paymentStatus === "PAID"
+                            orderData.paymentStatus === "PAID"
                               ? "text-green-600 font-medium"
                               : "text-orange-600 font-medium"
                           }
                         >
-                          {orderData.payment?.paymentStatus || "---"}
+                          {orderData.paymentStatus || "---"}
                         </span>
                       }
                     />
@@ -158,7 +146,7 @@ export function OrderDetailModal({
                       label="Customer Name"
                       value={
                         <span className="font-semibold text-foreground">
-                          {orderData.customerName || "Walk-in Customer"}
+                          {orderData.customerName || "Customer"}
                         </span>
                       }
                     />
@@ -199,155 +187,37 @@ export function OrderDetailModal({
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
                   <h4 className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-3">💰 Pricing Details</h4>
                   <div className="space-y-3">
-                    {/* Before Snapshot */}
-                    {(() => {
-                      const before = orderData.pricing?.before;
-                      return (
-                        <div className="bg-gray-50 border border-gray-200 rounded p-3 space-y-2">
-                          <h5 className="text-xs font-medium text-gray-700 font-bold mb-2">📌 Before (Item Discounts Applied)</h5>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                            <DisplayField
-                              label="Total Items"
-                              value={String(before?.totalItems || 0)}
-                            />
-                            <DisplayField
-                              label="Original Subtotal"
-                              value={formatCurrency(before?.subtotalBeforeDiscount || 0)}
-                            />
-                            {before?.hasActivePromotion && (before?.discountAmount ?? 0) > 0 && (
-                              <>
-                                <DisplayField
-                                  label="Item Discounts"
-                                  value={
-                                    <span className="text-red-600 font-semibold">
-                                      -{formatCurrency(before!.discountAmount)}
-                                    </span>
-                                  }
-                                />
-                                {before?.promotionType && (
-                                  <DisplayField
-                                    label="Discount Type"
-                                    value={
-                                      <span className="font-medium text-blue-600">
-                                        {before.promotionType === "PERCENTAGE" ? "PERCENTAGE" : "FIXED_AMOUNT"}
-                                      </span>
-                                    }
-                                  />
-                                )}
-                              </>
-                            )}
-                            <DisplayField
-                              label="Subtotal After Items"
-                              value={
-                                <span className="font-semibold">
-                                  {formatCurrency(before?.subtotal || 0)}
-                                </span>
-                              }
-                            />
-                            <DisplayField
-                              label="Delivery Fee"
-                              value={formatCurrency(before?.deliveryFee || 0)}
-                            />
-                            {(before?.taxAmount ?? 0) > 0 && (
-                              <DisplayField
-                                label="Tax"
-                                value={formatCurrency(before!.taxAmount)}
-                              />
-                            )}
-                            <DisplayField
-                              label="Final Total"
-                              value={
-                                <span className="text-lg font-bold text-green-600">
-                                  {formatCurrency(before?.finalTotal || 0)}
-                                </span>
-                              }
-                            />
-                          </div>
-                        </div>
-                      );
-                    })()}
-
-                    {/* After Snapshot (if changes occurred) */}
-                    {orderData.pricing?.hadOrderLevelChangeFromPOS && orderData.pricing?.after && (
-                      <div className="bg-orange-50 border border-orange-200 rounded p-3 space-y-2">
-                        <h5 className="text-xs font-medium text-orange-700 font-bold mb-2">🔄 After (Order-Level Discount Applied)</h5>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                    <div className="bg-gray-50 border border-gray-200 rounded p-3 space-y-2">
+                      <h5 className="text-xs font-medium text-gray-700 font-bold mb-2">📌 Order Total</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                        <DisplayField
+                          label="Total Items"
+                          value={String(orderData.items?.length || 0)}
+                        />
+                        <DisplayField
+                          label="Subtotal"
+                          value={formatCurrency(orderData.subtotal || 0)}
+                        />
+                        {(orderData.discountAmount ?? 0) > 0 && (
                           <DisplayField
-                            label="Total Items"
-                            value={String(orderData.pricing.after?.totalItems || 0)}
-                          />
-                          <DisplayField
-                            label="Original Subtotal"
-                            value={formatCurrency(orderData.pricing.after?.subtotalBeforeDiscount || 0)}
-                          />
-                          {orderData.pricing.after?.hasActivePromotion && (orderData.pricing.after?.discountAmount ?? 0) > 0 && (
-                            <>
-                              <DisplayField
-                                label="All Discounts (Items + Order)"
-                                value={
-                                  <span className="text-red-600 font-semibold">
-                                    -{formatCurrency(orderData.pricing.after!.discountAmount)}
-                                  </span>
-                                }
-                              />
-                              {orderData.pricing.after?.promotionType && (
-                                <DisplayField
-                                  label="Order Discount Type"
-                                  value={
-                                    <span className="font-medium text-orange-600">
-                                      {orderData.pricing.after.promotionType === "PERCENTAGE" ? "PERCENTAGE" : "FIXED_AMOUNT"}
-                                    </span>
-                                  }
-                                />
-                              )}
-                              {orderData.pricing.after?.promotionValue && orderData.pricing.after.promotionValue > 0 && (
-                                <DisplayField
-                                  label="Order Discount Amount"
-                                  value={
-                                    <span className="font-semibold text-orange-600">
-                                      {orderData.pricing.after.promotionType === "PERCENTAGE"
-                                        ? `${orderData.pricing.after.promotionValue}%`
-                                        : formatCurrency(orderData.pricing.after.promotionValue)}
-                                    </span>
-                                  }
-                                />
-                              )}
-                            </>
-                          )}
-                          <DisplayField
-                            label="Subtotal After All"
+                            label="Discount"
                             value={
-                              <span className="font-semibold">
-                                {formatCurrency(orderData.pricing.after?.subtotal || 0)}
+                              <span className="text-red-600 font-semibold">
+                                -{formatCurrency(orderData.discountAmount)}
                               </span>
                             }
                           />
-                          <DisplayField
-                            label="Delivery Fee"
-                            value={formatCurrency(orderData.pricing.after?.deliveryFee || 0)}
-                          />
-                          {(orderData.pricing.after?.taxAmount ?? 0) > 0 && (
-                            <DisplayField
-                              label="Tax"
-                              value={formatCurrency(orderData.pricing.after!.taxAmount)}
-                            />
-                          )}
-                          <DisplayField
-                            label="Final Total"
-                            value={
-                              <span className="text-lg font-bold text-green-600">
-                                {formatCurrency(orderData.pricing.after?.finalTotal || 0)}
-                              </span>
-                            }
-                          />
-                        </div>
-                        {orderData.pricing?.reason && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            <span className="font-semibold">Reason:</span> {orderData.pricing.reason}
-                          </p>
                         )}
+                        <DisplayField
+                          label="Total Amount"
+                          value={
+                            <span className="text-lg font-bold text-green-600">
+                              {formatCurrency(orderData.totalAmount || 0)}
+                            </span>
+                          }
+                        />
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -362,301 +232,81 @@ export function OrderDetailModal({
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {orderData.items.map((item, idx) => {
-                    const before = item.before;
-                    const after = item.after;
-                    // Show 'after' if item changed from POS, otherwise show 'before'
-                    const current = item.hadChangeFromPOS ? (after ?? before) : (before ?? after);
-
-                    return (
-                      <div
-                        key={item.id}
-                        className={`p-4 border rounded-lg ${
-                          item.hadChangeFromPOS
-                            ? "bg-orange-50 border-orange-200"
-                            : "bg-gray-50"
-                        }`}
-                      >
-                        {/* Product Image and Header */}
-                        <div className="mb-3">
-                          <div className="flex items-start gap-3">
-                            {/* Product Image - 64x64 */}
-                            {item.product?.imageUrl && (
-                              <div className="flex-shrink-0 rounded-lg overflow-hidden border border-gray-200">
-                                <img
-                                  src={item.product.imageUrl}
-                                  alt={item.product.name}
-                                  className="w-16 h-16 object-cover"
-                                />
-                              </div>
-                            )}
-                            {/* Product Name, Badges, and Details */}
-                            <div className="flex-1">
-                              <div className="flex items-center justify-between gap-2 mb-1">
-                                <h4 className="font-semibold text-sm">
-                                  #{idx + 1} - {item.product?.name || "Unknown"}
-                                </h4>
-                                <div className="flex gap-2">
-                                  {(current?.discountAmount ?? 0) > 0 && (
-                                    <span className="text-xs px-2 py-1 bg-red-600 text-white rounded whitespace-nowrap">
-                                      💰 Discounted
-                                    </span>
-                                  )}
-                                  {item.hadChangeFromPOS && (
-                                    <span className="text-xs px-2 py-1 bg-orange-600 text-white rounded whitespace-nowrap">
-                                      Modified
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                              {/* Size, SKU, and Barcode - under product name */}
-                              <div className="flex flex-wrap gap-3 text-xs">
-                                {item.product?.sizeName && item.product?.sku && (
-                                  <span className="text-muted-foreground">
-                                    Size: <span className="font-medium">{item.product.sizeName}</span>
-                                    {" | "}
-                                    SKU: <span className="font-mono font-medium text-foreground">{item.product.sku}</span>
-                                  </span>
-                                )}
-                                {item.product?.barcode && (
-                                  <span className="text-muted-foreground">
-                                    Barcode: <span className="font-mono font-medium text-foreground">{item.product.barcode}</span>
-                                  </span>
-                                )}
-                              </div>
+                  {orderData.items.map((item, idx) => (
+                    <div key={item.id} className="p-4 border rounded-lg bg-gray-50">
+                      {/* Product Image and Header */}
+                      <div className="mb-3">
+                        <div className="flex items-start gap-3">
+                          {/* Product Image */}
+                          {item.productImageUrl && (
+                            <div className="flex-shrink-0 rounded-lg overflow-hidden border border-gray-200">
+                              <img
+                                src={item.productImageUrl}
+                                alt={item.productName}
+                                className="w-16 h-16 object-cover"
+                              />
                             </div>
-                          </div>
-                        </div>
-
-                        {/* Current State - Show Before if no changes, After if changes occurred */}
-                        <div className="space-y-4">
-                          <div>
-                            <h5 className="text-xs font-medium text-muted-foreground mb-2 uppercase">
-                              {item.hadChangeFromPOS ? "After Changes" : "Current"}
-                            </h5>
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs pl-2 border-l-2 border-current">
-                              <div>
-                                <span className="text-muted-foreground">
-                                  Quantity:
+                          )}
+                          {/* Product Name and Details */}
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between gap-2 mb-1">
+                              <h4 className="font-semibold text-sm">
+                                #{idx + 1} - {item.productName}
+                              </h4>
+                              {item.hasActivePromotion && (
+                                <span className="text-xs px-2 py-1 bg-red-600 text-white rounded whitespace-nowrap">
+                                  💰 Discounted
                                 </span>
-                                <p className="font-medium">
-                                  {current?.quantity || 0}
-                                </p>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground">Price:</span>
-                                <p className="font-medium">
-                                  {formatCurrency(current?.finalPrice || 0)}
-                                </p>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground">Total:</span>
-                                <p className="font-bold text-green-600">
-                                  {formatCurrency(current?.totalPrice || 0)}
-                                </p>
-                              </div>
-                              {(current?.discountAmount ?? 0) > 0 && (
-                                <div>
-                                  <span className="text-muted-foreground">
-                                    Discount:
-                                  </span>
-                                  <p className="font-medium text-red-600">
-                                    -{formatCurrency(current!.discountAmount)}
-                                  </p>
-                                </div>
                               )}
-                              {current?.hasActivePromotion && current?.promotionValue !== null && (
-                                <div>
-                                  <span className="text-muted-foreground">
-                                    Promo:
-                                  </span>
-                                  <p className="font-medium text-green-600 text-sm">
-                                    {current.promotionType === "PERCENTAGE"
-                                      ? `${current.promotionValue}%`
-                                      : `$${current.promotionValue.toFixed(2)}`}
-                                  </p>
-                                </div>
+                            </div>
+                            {/* Size and SKU */}
+                            <div className="flex flex-wrap gap-3 text-xs">
+                              {item.sizeName && (
+                                <span className="text-muted-foreground">
+                                  Size: <span className="font-medium">{item.sizeName}</span>
+                                </span>
                               )}
-
-                              {item.hadChangeFromPOS && before && (
-                                <div className="col-span-full text-muted-foreground">
-                                  Original:{" "}
-                                  {formatCurrency(before.finalPrice)} → Current:{" "}
-                                  {formatCurrency(current?.finalPrice || 0)}
-                                </div>
+                              {item.sku && (
+                                <span className="text-muted-foreground">
+                                  SKU: <span className="font-mono font-medium text-foreground">{item.sku}</span>
+                                </span>
                               )}
                             </div>
                           </div>
                         </div>
+                      </div>
 
-                        {item.hadChangeFromPOS && item.reason && (
-                          <div className="mt-2 text-xs p-2 bg-orange-100 rounded">
-                            <span className="font-medium">Reason: </span>
-                            {item.reason}
+                      {/* Item Pricing */}
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+                        <div>
+                          <span className="text-muted-foreground">Quantity:</span>
+                          <p className="font-medium">{item.quantity}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Unit Price:</span>
+                          <p className="font-medium">{formatCurrency(item.displayPrice)}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Subtotal:</span>
+                          <p className="font-bold text-green-600">
+                            {formatCurrency(item.subtotalAfterDiscount || 0)}
+                          </p>
+                        </div>
+                        {item.hasActivePromotion && item.subtotalDiscountAmount && (
+                          <div>
+                            <span className="text-muted-foreground">Discount:</span>
+                            <p className="font-medium text-red-600">
+                              -{formatCurrency(item.subtotalDiscountAmount)}
+                            </p>
                           </div>
                         )}
                       </div>
-                    );
-                  })}
-                </CardContent>
-              </Card>
-            )}
-
-
-            {/* Delivery Information */}
-            {orderData.deliveryAddress && (
-              <Card className="border-0 shadow-sm bg-gradient-to-br from-background to-muted/30">
-                <CardHeader className="pb-4 border-b">
-                  <CardTitle className="text-lg font-bold text-foreground">📍 Delivery Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 pt-4">
-                  {/* Delivery Details */}
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                    <h4 className="text-xs font-bold text-blue-700 uppercase tracking-wider mb-3">📫 Address & Delivery</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <DisplayField
-                        label="Full Address"
-                        value={
-                          <span className="text-sm">
-                            {(() => {
-                              const parts = [
-                                orderData.deliveryAddress.houseNumber,
-                                orderData.deliveryAddress.streetNumber,
-                                orderData.deliveryAddress.village,
-                                orderData.deliveryAddress.commune,
-                                orderData.deliveryAddress.district,
-                                orderData.deliveryAddress.province,
-                              ].filter(Boolean);
-                              return parts.length > 0
-                                ? parts.join(", ")
-                                : "---";
-                            })()}
-                          </span>
-                        }
-                      />
-                      {orderData.deliveryOption && (
-                        <>
-                          <DisplayField
-                            label="Delivery Method"
-                            value={orderData.deliveryOption.name || "---"}
-                          />
-                          <DisplayField
-                            label="Delivery Fee"
-                            value={formatCurrency(orderData.deliveryOption.price || 0)}
-                          />
-                        </>
-                      )}
-                      {orderData.deliveryAddress.note && (
-                        <div className="md:col-span-2">
-                          <label className="text-xs font-bold text-muted-foreground uppercase block mb-1">
-                            Delivery Note
-                          </label>
-                          <div className="flex items-start justify-between gap-3">
-                            <p className="text-sm text-foreground flex-1">
-                              {orderData.deliveryAddress.note}
-                            </p>
-                            <div className="flex gap-1 flex-shrink-0">
-                              {/* Copy Button */}
-                              <button
-                                onClick={() => {
-                                  const fullAddress = [
-                                    orderData.deliveryAddress.houseNumber,
-                                    orderData.deliveryAddress.streetNumber,
-                                    orderData.deliveryAddress.village,
-                                    orderData.deliveryAddress.commune,
-                                    orderData.deliveryAddress.district,
-                                    orderData.deliveryAddress.province,
-                                  ]
-                                    .filter(Boolean)
-                                    .join(", ");
-                                  navigator.clipboard.writeText(
-                                    `${fullAddress}\n\nDelivery Note: ${orderData.deliveryAddress.note}`
-                                  );
-                                  showToast.success("✅ Address copied!");
-                                }}
-                                className="text-blue-600 hover:text-blue-700 hover:bg-blue-100 p-2 rounded transition-colors font-semibold"
-                                title="Copy address and note"
-                              >
-                                📋 Copy
-                              </button>
-                              {/* View Google Maps Button */}
-                              {orderData.deliveryAddress.latitude &&
-                                orderData.deliveryAddress.longitude && (
-                                  <button
-                                    onClick={() => {
-                                      const mapsUrl = `https://www.google.com/maps?q=${orderData.deliveryAddress.latitude},${orderData.deliveryAddress.longitude}`;
-                                      window.open(mapsUrl, "_blank");
-                                    }}
-                                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-100 p-2 rounded transition-colors font-semibold"
-                                    title="View on Google Maps"
-                                  >
-                                    🗺️ Map
-                                  </button>
-                                )}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-
-            {/* Status History */}
-            {orderData.statusHistory && orderData.statusHistory.length > 0 && (
-              <Card className="border-0 shadow-sm bg-gradient-to-br from-background to-muted/30">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-bold text-foreground">
-                    📈 Status History ({orderData.statusHistory.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {orderData.statusHistory.map((history, idx) => (
-                    <div
-                      key={history.id}
-                      className="text-sm border border-border rounded-lg p-3"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-muted-foreground">
-                            Step {idx + 1}
-                          </span>
-                          <span className="font-semibold text-sm text-foreground">
-                            {history.statusName}
-                          </span>
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          {dateTimeFormat(history.changedAt)}
-                        </span>
-                      </div>
-                      {history.note && (
-                        <p className="text-xs text-muted-foreground mb-2 ml-1">
-                          {history.note}
-                        </p>
-                      )}
-                      {history.changedBy && (
-                        <div className="text-xs ml-1">
-                          <p className="text-muted-foreground">
-                            Changed by:{" "}
-                            <span className="font-medium text-foreground">
-                              {history.changedBy.fullName ||
-                                `${history.changedBy.firstName} ${history.changedBy.lastName}`}
-                            </span>
-                          </p>
-                          {history.changedBy.phoneNumber && (
-                            <p className="text-muted-foreground">
-                              {history.changedBy.phoneNumber}
-                            </p>
-                          )}
-                        </div>
-                      )}
                     </div>
                   ))}
                 </CardContent>
               </Card>
             )}
+
 
             {/* System Information */}
             <Card className="border-0 shadow-sm bg-gradient-to-br from-background to-muted/30">
@@ -666,46 +316,32 @@ export function OrderDetailModal({
               <CardContent className="space-y-4">
                 <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <DisplayField
-                    label="Order ID"
-                    value={
-                      <span className="text-xs font-mono break-all">
-                        {orderData.id}
-                      </span>
-                    }
-                  />
-                  <DisplayField
-                    label="Business ID"
-                    value={
-                      <span className="text-xs font-mono break-all">
-                        {orderData.businessId}
-                      </span>
-                    }
-                  />
-                  {orderData.customerId && (
                     <DisplayField
-                      label="Customer ID"
+                      label="Order ID"
                       value={
                         <span className="text-xs font-mono break-all">
-                          {orderData.customerId}
+                          {orderData.id}
                         </span>
                       }
                     />
-                  )}
-                  <DisplayField
-                    label="Created By"
-                    value={orderData.createdBy || "---"}
-                  />
-                  <DisplayField
-                    label="Updated By"
-                    value={orderData.updatedBy || "---"}
-                  />
-                  {orderData.businessNote && (
+                    {orderData.customerId && (
+                      <DisplayField
+                        label="Customer ID"
+                        value={
+                          <span className="text-xs font-mono break-all">
+                            {orderData.customerId}
+                          </span>
+                        }
+                      />
+                    )}
                     <DisplayField
-                      label="Business Note"
-                      value={orderData.businessNote}
+                      label="Created At"
+                      value={dateTimeFormat(orderData.createdAt)}
                     />
-                  )}
+                    <DisplayField
+                      label="Updated At"
+                      value={dateTimeFormat(orderData.updatedAt)}
+                    />
                   </div>
                 </div>
               </CardContent>
