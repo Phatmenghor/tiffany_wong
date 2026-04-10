@@ -56,19 +56,7 @@ const STATUS_COLORS: Record<
     text: "text-blue-700 dark:text-blue-400",
     icon: <CheckCircle2 className="h-4 w-4" />,
   },
-  PROCESSING: {
-    bg: "bg-purple-100 dark:bg-purple-900/30",
-    lightBg: "bg-purple-50 dark:bg-purple-950/30",
-    text: "text-purple-700 dark:text-purple-400",
-    icon: <Package className="h-4 w-4" />,
-  },
-  SHIPPED: {
-    bg: "bg-cyan-100 dark:bg-cyan-900/30",
-    lightBg: "bg-cyan-50 dark:bg-cyan-950/30",
-    text: "text-cyan-700 dark:text-cyan-400",
-    icon: <Truck className="h-4 w-4" />,
-  },
-  DELIVERED: {
+  COMPLETED: {
     bg: "bg-green-100 dark:bg-green-900/30",
     lightBg: "bg-green-50 dark:bg-green-950/30",
     text: "text-green-700 dark:text-green-400",
