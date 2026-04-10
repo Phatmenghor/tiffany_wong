@@ -42,19 +42,42 @@ public interface CartMapper {
         if (cartItem.getProductSize() != null && cartItem.getProductSize().isPromotionActive()) {
             response.setDisplayPromotionType(cartItem.getProductSize().getPromotionType() != null ?
                     cartItem.getProductSize().getPromotionType().toString() : null);
-            response.setDisplayPromotionValue(cartItem.getProductSize().getPromotionValue());
             response.setDisplayPromotionFromDate(cartItem.getProductSize().getPromotionFromDate());
             response.setDisplayPromotionToDate(cartItem.getProductSize().getPromotionToDate());
             response.setHasActivePromotion(true);
+            // Calculate actual discount value (per item)
+            calculateDisplayPromotionValue(response);
         } else if (cartItem.getProduct() != null && cartItem.getProduct().isPromotionActive()) {
             response.setDisplayPromotionType(cartItem.getProduct().getPromotionType() != null ?
                     cartItem.getProduct().getPromotionType().toString() : null);
-            response.setDisplayPromotionValue(cartItem.getProduct().getPromotionValue());
             response.setDisplayPromotionFromDate(cartItem.getProduct().getPromotionFromDate());
             response.setDisplayPromotionToDate(cartItem.getProduct().getPromotionToDate());
             response.setHasActivePromotion(true);
+            // Calculate actual discount value (per item)
+            calculateDisplayPromotionValue(response);
         } else {
             response.setHasActivePromotion(false);
+        }
+    }
+
+    private void calculateDisplayPromotionValue(CartItemResponse response) {
+        if (response.getDisplayOriginPrice() != null && response.getDisplayPrice() != null) {
+            BigDecimal discountPerItem = response.getDisplayOriginPrice().subtract(response.getDisplayPrice());
+
+            if (discountPerItem.compareTo(BigDecimal.ZERO) > 0) {
+                // If PERCENTAGE type, calculate the percentage discount
+                if ("PERCENTAGE".equals(response.getDisplayPromotionType()) &&
+                    response.getDisplayOriginPrice().compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal percentage = discountPerItem
+                            .divide(response.getDisplayOriginPrice(), 4, java.math.RoundingMode.HALF_UP)
+                            .multiply(new BigDecimal(100))
+                            .setScale(2, java.math.RoundingMode.HALF_UP);
+                    response.setDisplayPromotionValue(percentage);
+                } else {
+                    // For FIXED_AMOUNT, use the discount amount directly
+                    response.setDisplayPromotionValue(discountPerItem.setScale(2, java.math.RoundingMode.HALF_UP));
+                }
+            }
         }
     }
 
