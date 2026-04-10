@@ -73,6 +73,7 @@ export function ProductListPage({
   const sortBy = searchParams.get("sortBy");
   const minPrice = searchParams.get("minPrice");
   const maxPrice = searchParams.get("maxPrice");
+  const hasSizesParam = searchParams.get("hasSizes");
 
   // Memoize currentFilters to prevent effect re-runs on every render
   const currentFilters = useMemo(
@@ -88,6 +89,7 @@ export function ProductListPage({
         sortBy,
         minPrice,
         maxPrice,
+        hasSizes: hasSizesParam,
         _page: basePath,
       }),
     [
@@ -100,6 +102,7 @@ export function ProductListPage({
       sortBy,
       minPrice,
       maxPrice,
+      hasSizesParam,
       basePath,
     ]
   );
@@ -131,6 +134,7 @@ export function ProductListPage({
           ...(sortBy && { sortBy }),
           ...(minPrice && { minPrice: Number(minPrice) }),
           ...(maxPrice && { maxPrice: Number(maxPrice) }),
+          ...(hasSizesParam && { hasSize: hasSizesParam === "true" }),
         }),
       );
     },
@@ -146,6 +150,7 @@ export function ProductListPage({
       sortBy,
       minPrice,
       maxPrice,
+      hasSizesParam,
       getPageSize,
     ],
   );

@@ -13,10 +13,12 @@ import { Status } from "@/constants/status/status";
 export const fetchPublicProducts = createApiThunk<any, AllProductRequest>(
   "publicProducts/fetchList",
   async (params) => {
-    const response = await axiosClient.post("/api/v1/public/products/all", {
-      status: Status.ACTIVE,
+    // Only add default ACTIVE status if no statuses filter is provided
+    const requestBody = {
+      ...((!params.statuses || params.statuses.length === 0) && { status: Status.ACTIVE }),
       ...params,
-    });
+    };
+    const response = await axiosClient.post("/api/v1/public/products/all", requestBody);
     return response.data.data;
   }
 );
