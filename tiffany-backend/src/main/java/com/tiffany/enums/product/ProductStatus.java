@@ -5,8 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ProductStatus {
     ACTIVE("Active - Available for customers"),
-    INACTIVE("Inactive - Hidden from customers"),
-    OUT_OF_STOCK("Out of Stock - Temporarily unavailable");
+    INACTIVE("Inactive - Hidden from customers");
 
     private final String description;
 
@@ -19,6 +18,6 @@ public enum ProductStatus {
     }
 
     public boolean isAvailable() {
-        return this == ACTIVE || this == OUT_OF_STOCK;
+        return this == ACTIVE;
     }
 }

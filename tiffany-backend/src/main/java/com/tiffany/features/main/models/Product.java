@@ -155,6 +155,6 @@ public class Product extends BaseUUIDEntity {
     }
 
     public boolean isAvailable() {
-        return ProductStatus.ACTIVE.equals(status) || ProductStatus.OUT_OF_STOCK.equals(status);
+        return ProductStatus.ACTIVE.equals(status);
     }
 }
