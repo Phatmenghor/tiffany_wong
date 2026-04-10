@@ -13,7 +13,7 @@ export const metadata = {
     template: "%s | Dashboard",
     default: "Dashboard",
   },
-  description: "Menu Scanner Dashboard - Manage your restaurant operations",
+  description: "Tiffany Furniture Cambodia - Admin Dashboard",
 };
 
 export default function DashboardGroupLayout({

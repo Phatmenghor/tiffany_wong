@@ -19,8 +19,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Menu Scanner Admin",
-  description: "Admin panel for Menu Scanner application",
+  title: "Tiffany Furniture Cambodia",
+  description: "Tiffany Furniture Cambodia - E-commerce Platform",
 };
 
 export default async function RootLayout({

@@ -186,7 +186,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <div className="w-3 h-3 rounded-full bg-primary/60 animate-pulse" />
               <p className="text-base lg:text-lg font-bold text-foreground">
-                Menu Scanner Platform
+                Tiffany Furniture Cambodia
               </p>
               <div className="w-3 h-3 rounded-full bg-primary/60 animate-pulse" />
             </div>
