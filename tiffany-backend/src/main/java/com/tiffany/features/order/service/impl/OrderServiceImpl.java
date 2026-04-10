@@ -180,96 +180,15 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        // Update delivery address snapshot if provided
-        if (request.getDeliveryAddress() != null) {
-            OrderDeliveryAddress deliveryAddress = orderDeliveryAddressRepository.findByOrderId(orderId)
-                    .orElse(new OrderDeliveryAddress());
-            deliveryAddress.setOrderId(orderId);
-            deliveryAddress.setVillage(request.getDeliveryAddress().getVillage());
-            deliveryAddress.setCommune(request.getDeliveryAddress().getCommune());
-            deliveryAddress.setDistrict(request.getDeliveryAddress().getDistrict());
-            deliveryAddress.setProvince(request.getDeliveryAddress().getProvince());
-            deliveryAddress.setStreetNumber(request.getDeliveryAddress().getStreetNumber());
-            deliveryAddress.setHouseNumber(request.getDeliveryAddress().getHouseNumber());
-            deliveryAddress.setNote(request.getDeliveryAddress().getNote());
-            deliveryAddress.setLatitude(request.getDeliveryAddress().getLatitude());
-            deliveryAddress.setLongitude(request.getDeliveryAddress().getLongitude());
-            orderDeliveryAddressRepository.save(deliveryAddress);
+        if (request.getPaymentStatus() != null) {
+            order.setPaymentStatus(request.getPaymentStatus());
         }
 
         if (request.getCustomerNote() != null) {
             order.setCustomerNote(request.getCustomerNote());
         }
 
-        // Update order items if provided
-        if (request.getItems() != null && !request.getItems().isEmpty()) {
-            log.info("Updating order items for order: {}", orderId);
-            // Clear existing items - cascade delete will handle cleanup
-            order.getItems().clear();
-
-            // Create new items from the request
-            for (com.tiffany.features.order.dto.request.OrderItemUpdateRequest itemRequest : request.getItems()) {
-                OrderItem item = new OrderItem();
-                item.setOrderId(orderId);
-                item.setProductId(itemRequest.getProductId());
-                item.setProductSizeId(itemRequest.getProductSizeId());
-                item.setProductName(itemRequest.getProductName());
-                item.setProductImageUrl(itemRequest.getProductImageUrl());
-                item.setSizeName(itemRequest.getSizeName());
-
-                // Set SKU and barcode: prefer product master data, fallback to request data
-                Product product = productRepository.findById(itemRequest.getProductId()).orElse(null);
-                item.setSku(product != null && product.getSku() != null ? product.getSku() : itemRequest.getSku());
-                item.setBarcode(product != null && product.getBarcode() != null ? product.getBarcode() : itemRequest.getBarcode());
-
-                item.setCurrentPrice(itemRequest.getCurrentPrice());
-                item.setFinalPrice(itemRequest.getFinalPrice());
-                item.setUnitPrice(itemRequest.getUnitPrice());
-                item.setQuantity(itemRequest.getQuantity());
-                item.setTotalPrice(itemRequest.getFinalPrice().multiply(new BigDecimal(itemRequest.getQuantity())));
-                item.setHasPromotion(itemRequest.getHasPromotion());
-                item.setPromotionType(itemRequest.getPromotionType());
-                item.setPromotionValue(itemRequest.getPromotionValue());
-                item.setPromotionFromDate(itemRequest.getPromotionFromDate());
-                item.setPromotionToDate(itemRequest.getPromotionToDate());
-                item.setOrder(order);
-
-                order.getItems().add(item);
-            }
-
-            // Recalculate subtotal from items
-            BigDecimal newSubtotal = order.getItems().stream()
-                    .map(OrderItem::getTotalPrice)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            order.setSubtotal(newSubtotal);
-        }
-
-        // Pricing is updated from request fields directly
-        if (request.getPricing() != null) {
-            // Update discount type and reason if provided
-            if (request.getPricing().getDiscountType() != null) {
-                order.setDiscountType(request.getPricing().getDiscountType());
-            }
-            if (request.getPricing().getOrderLevelChangeReason() != null) {
-                order.setOrderLevelChangeReason(request.getPricing().getOrderLevelChangeReason());
-            }
-        }
-
-        // Recalculate total amount if any pricing fields are updated or items changed
-        if (request.getItems() != null ||
-            (request.getPricing() != null && request.getPricing().getAfter() != null &&
-             (request.getPricing().getAfter().getDiscountAmount() != null ||
-              request.getPricing().getAfter().getTaxAmount() != null ||
-              request.getPricing().getAfter().getDeliveryFee() != null))) {
-            BigDecimal subtotal = order.getSubtotal() != null ? order.getSubtotal() : BigDecimal.ZERO;
-            BigDecimal discount = order.getDiscountAmount() != null ? order.getDiscountAmount() : BigDecimal.ZERO;
-            BigDecimal delivery = order.getDeliveryFee() != null ? order.getDeliveryFee() : BigDecimal.ZERO;
-            BigDecimal tax = order.getTaxAmount() != null ? order.getTaxAmount() : BigDecimal.ZERO;
-            order.setTotalAmount(subtotal.subtract(discount).add(delivery).add(tax));
-        }
-
         Order updatedOrder = orderRepository.save(order);
-
         log.info("Order updated: {}", orderId);
         return orderMapper.toResponse(updatedOrder);
     }

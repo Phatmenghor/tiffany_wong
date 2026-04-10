@@ -35,7 +35,8 @@ public interface OrderMapper {
     @Mapping(source = "customerId", target = "customerId", numberFormat = "")
     @Mapping(source = "customerName", target = "customerName")
     @Mapping(source = "orderStatus", target = "orderStatus")
-    @Mapping(target = "statusHistory", expression = "java(mapStatusHistory(order))")
+    @Mapping(source = "paymentMethod", target = "paymentMethod")
+    @Mapping(source = "paymentStatus", target = "paymentStatus")
     OrderResponse toResponse(Order order);
 
     List<OrderResponse> toResponseList(List<Order> orders);
@@ -121,38 +122,6 @@ public interface OrderMapper {
                 .sum();
     }
 
-    /**
-     * Map order status history to response DTOs
-     * Returns empty list if no history exists (order just created)
-     */
-    default List<OrderStatusHistoryResponse> mapStatusHistory(Order order) {
-        if (order.getStatusHistory() == null || order.getStatusHistory().isEmpty()) {
-            // Return empty list instead of null for consistency with client expectations
-            return List.of();
-        }
-
-        return order.getStatusHistory().stream()
-                .map(history -> {
-                    String changedByUserName = null;
-                    UUID changedByUserId = null;
-                    if (history.getChangedByUser() != null) {
-                        changedByUserId = history.getChangedByUserId();
-                        changedByUserName = history.getChangedByUser().getUserIdentifier();
-                    }
-                    return OrderStatusHistoryResponse.builder()
-                            .id(history.getId())
-                            .statusName(history.getOrderStatus() != null ?
-                                    history.getOrderStatus().getDisplayName() : null)
-                            .statusDescription(history.getOrderStatus() != null ?
-                                    history.getOrderStatus().getDescription() : null)
-                            .note(history.getNote())
-                            .changedByUserId(changedByUserId)
-                            .changedByUserName(changedByUserName)
-                            .changedAt(history.getCreatedAt())
-                            .build();
-                })
-                .collect(Collectors.toList());
-    }
 
     /**
      * Check if promotion is active for a product

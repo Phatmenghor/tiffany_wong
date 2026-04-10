@@ -4,7 +4,6 @@ import com.tiffany.enums.order.OrderStatus;
 import com.tiffany.enums.payment.PaymentMethod;
 import com.tiffany.enums.payment.PaymentStatus;
 import com.tiffany.features.auth.models.User;
-import com.tiffany.features.order.enums.OrderFromEnum;
 import com.tiffany.shared.domain.BaseUUIDEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -45,13 +44,6 @@ public class Order extends BaseUUIDEntity {
     @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus = OrderStatus.PENDING;
 
-    @Column(name = "source", nullable = false, length = 50)
-    private String source = "PUBLIC"; // PUBLIC or POS
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "order_from", nullable = false, length = 20)
-    private OrderFromEnum orderFrom = OrderFromEnum.CUSTOMER;
-
     // Customer contact info - captured at checkout time
     @Column(name = "customer_name")
     private String customerName;
@@ -65,27 +57,12 @@ public class Order extends BaseUUIDEntity {
     @Column(name = "customer_note", columnDefinition = "TEXT")
     private String customerNote;
 
-    @Column(name = "business_note", columnDefinition = "TEXT")
-    private String businessNote;
-
-    // ===== AUDIT TRAIL: Order-level changes =====
-    // Was the order total modified from POS?
-    @Column(name = "had_order_level_change_from_pos")
-    private Boolean hadOrderLevelChangeFromPOS = false;
-
-    // Reason for order-level change (if any)
-    @Column(name = "order_level_change_reason", columnDefinition = "TEXT")
-    private String orderLevelChangeReason;
-
     // Pricing
     @Column(name = "subtotal", nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;           // Items total before discounts
 
     @Column(name = "discount_amount", precision = 10, scale = 2)
     private BigDecimal discountAmount = BigDecimal.ZERO; // Total discount applied
-
-    @Column(name = "discount_type", length = 20)
-    private String discountType; // PERCENTAGE or FIXED_AMOUNT (null if no discount)
 
     @Column(name = "delivery_fee", precision = 10, scale = 2)
     private BigDecimal deliveryFee = BigDecimal.ZERO;
