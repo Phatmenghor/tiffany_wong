@@ -46,22 +46,6 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-const getStatusColor = (status: string, isActive: boolean) => {
-  if (!isActive) {
-    return "bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-600";
-  }
-  switch (status) {
-    case "COMPLETED":
-      return "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300";
-    case "CONFIRMED":
-      return "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300";
-    case "PENDING":
-      return "bg-yellow-100 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300";
-    default:
-      return "bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300";
-  }
-};
-
 export function CustomerOrderDetailModal({
   orderId,
   isOpen,
@@ -143,19 +127,19 @@ export function CustomerOrderDetailModal({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogTitle className="sr-only">Order Details - {orderData.orderNumber}</DialogTitle>
-      <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+      <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden bg-white">
         {/* Header with Order Number */}
         <div className="px-6 py-4 border-b bg-gradient-to-r from-primary/5 to-primary/10 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-foreground">Order Details</h2>
-              <p className="text-sm text-muted-foreground mt-1 font-mono font-semibold">
+              <h2 className="text-xl font-bold text-slate-900">Order Details</h2>
+              <p className="text-sm text-slate-600 mt-1 font-mono font-semibold">
                 {orderData.orderNumber}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-muted-foreground">Order Date</p>
-              <p className="text-sm font-semibold">{dateTimeFormat(orderData.createdAt)}</p>
+              <p className="text-xs text-slate-600">Order Date</p>
+              <p className="text-sm font-semibold text-slate-900">{dateTimeFormat(orderData.createdAt)}</p>
             </div>
           </div>
         </div>
@@ -165,11 +149,11 @@ export function CustomerOrderDetailModal({
           <div className="p-6 space-y-6">
             {/* Order Status Timeline */}
             {!isCancelled ? (
-              <Card className="border-0 shadow-sm bg-gradient-to-br from-background to-muted/20">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-bold">📍 Order Status</CardTitle>
+              <Card className="border border-slate-200 shadow-sm bg-gradient-to-br from-slate-50 to-white">
+                <CardHeader className="pb-4 border-b border-slate-200">
+                  <CardTitle className="text-lg font-bold text-slate-900">📍 Order Status</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   <div className="flex justify-between items-start gap-4">
                     {ORDER_STATUS_STEPS.map((step, index) => {
                       const isCompleted = index < currentStepIndex;
@@ -183,10 +167,14 @@ export function CustomerOrderDetailModal({
                                 className={cn(
                                   "w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg border-2 transition-all",
                                   isCompleted
-                                    ? "bg-green-100 dark:bg-green-950 border-green-400 text-green-700 dark:text-green-300"
+                                    ? "bg-green-100 border-green-400 text-green-700"
                                     : isActive
-                                    ? `${getStatusColor(step.status, true)} border-current`
-                                    : "bg-gray-100 dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-400"
+                                    ? step.status === "COMPLETED"
+                                      ? "bg-green-100 border-green-400 text-green-700"
+                                      : step.status === "CONFIRMED"
+                                      ? "bg-blue-100 border-blue-400 text-blue-700"
+                                      : "bg-yellow-100 border-yellow-400 text-yellow-700"
+                                    : "bg-gray-100 border-gray-300 text-gray-400"
                                 )}
                               >
                                 {isCompleted ? (
@@ -200,10 +188,10 @@ export function CustomerOrderDetailModal({
                               {index < ORDER_STATUS_STEPS.length - 1 && (
                                 <div
                                   className={cn(
-                                    "absolute top-7 left-1/2 h-1",
+                                    "absolute top-7 left-1/2 h-1 transition-colors",
                                     isCompleted || isActive
-                                      ? "bg-green-400 dark:bg-green-600"
-                                      : "bg-gray-200 dark:bg-gray-700"
+                                      ? "bg-green-400"
+                                      : "bg-gray-200"
                                   )}
                                   style={{
                                     width: "100%",
@@ -215,17 +203,13 @@ export function CustomerOrderDetailModal({
 
                             {/* Step Label */}
                             <div className="text-center">
-                              <p
-                                className={cn(
-                                  "text-sm font-bold transition-colors",
-                                  isCompleted || isActive
-                                    ? "text-foreground"
-                                    : "text-muted-foreground"
-                                )}
-                              >
+                              <p className={cn(
+                                "text-sm font-bold transition-colors",
+                                isCompleted || isActive ? "text-slate-900" : "text-slate-500"
+                              )}>
                                 {step.label}
                               </p>
-                              <p className="text-xs text-muted-foreground mt-1 max-w-[120px]">
+                              <p className="text-xs text-slate-600 mt-1 max-w-[120px]">
                                 {step.description}
                               </p>
                             </div>
@@ -238,12 +222,12 @@ export function CustomerOrderDetailModal({
               </Card>
             ) : (
               /* Cancelled State */
-              <div className="bg-red-50 dark:bg-red-950/30 border-2 border-red-300 dark:border-red-800 rounded-lg p-4">
+              <div className="bg-red-50 border-2 border-red-300 rounded-lg p-4">
                 <div className="flex items-center gap-3">
-                  <AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400 flex-shrink-0" />
+                  <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0" />
                   <div>
-                    <h3 className="font-bold text-red-700 dark:text-red-300">Order Cancelled</h3>
-                    <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    <h3 className="font-bold text-red-700">Order Cancelled</h3>
+                    <p className="text-sm text-red-600 mt-1">
                       This order has been cancelled
                     </p>
                   </div>
@@ -254,21 +238,21 @@ export function CustomerOrderDetailModal({
             {/* Order Information Cards */}
             <div className="grid md:grid-cols-2 gap-4">
               {/* Customer Information */}
-              <Card className="border-0 shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base font-bold">👤 Customer Info</CardTitle>
+              <Card className="border border-slate-200 shadow-sm bg-white">
+                <CardHeader className="pb-3 border-b border-slate-200">
+                  <CardTitle className="text-base font-bold text-slate-900">👤 Customer Info</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3 text-sm">
+                <CardContent className="space-y-3 text-sm pt-4">
                   <div className="flex justify-between items-start">
-                    <span className="text-muted-foreground">Name</span>
-                    <span className="font-semibold text-right">{orderData.customerName || "---"}</span>
+                    <span className="text-slate-600">Name</span>
+                    <span className="font-semibold text-slate-900 text-right">{orderData.customerName || "---"}</span>
                   </div>
                   {orderData.customerPhone && (
                     <div className="flex justify-between items-start">
-                      <span className="text-muted-foreground">Phone</span>
+                      <span className="text-slate-600">Phone</span>
                       <a
                         href={`tel:${orderData.customerPhone}`}
-                        className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                        className="text-blue-600 hover:text-blue-700 hover:underline font-medium"
                       >
                         {orderData.customerPhone}
                       </a>
@@ -276,10 +260,10 @@ export function CustomerOrderDetailModal({
                   )}
                   {orderData.customerEmail && (
                     <div className="flex justify-between items-start">
-                      <span className="text-muted-foreground">Email</span>
+                      <span className="text-slate-600">Email</span>
                       <a
                         href={`mailto:${orderData.customerEmail}`}
-                        className="text-blue-600 dark:text-blue-400 hover:underline font-medium break-all text-right max-w-xs"
+                        className="text-blue-600 hover:text-blue-700 hover:underline font-medium break-all text-right max-w-xs"
                       >
                         {orderData.customerEmail}
                       </a>
@@ -289,34 +273,34 @@ export function CustomerOrderDetailModal({
               </Card>
 
               {/* Payment Information */}
-              <Card className="border-0 shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base font-bold">💳 Payment</CardTitle>
+              <Card className="border border-slate-200 shadow-sm bg-white">
+                <CardHeader className="pb-3 border-b border-slate-200">
+                  <CardTitle className="text-base font-bold text-slate-900">💳 Payment</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3 text-sm">
+                <CardContent className="space-y-3 text-sm pt-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Method</span>
+                    <span className="text-slate-600">Method</span>
                     <span
                       className={cn(
                         "px-3 py-1 rounded-full font-semibold text-xs",
                         orderData.paymentMethod === "CASH"
-                          ? "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300"
-                          : "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-blue-100 text-blue-700"
                       )}
                     >
                       {orderData.paymentMethod || "---"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Status</span>
+                    <span className="text-slate-600">Status</span>
                     <span
                       className={cn(
                         "px-3 py-1 rounded-full font-semibold text-xs",
                         orderData.paymentStatus === "PAID"
-                          ? "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300"
+                          ? "bg-green-100 text-green-700"
                           : orderData.paymentStatus === "PENDING"
-                          ? "bg-yellow-100 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300"
-                          : "bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-red-100 text-red-700"
                       )}
                     >
                       {orderData.paymentStatus || "---"}
@@ -327,25 +311,25 @@ export function CustomerOrderDetailModal({
             </div>
 
             {/* Price Summary */}
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-primary/5 to-primary/10">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base font-bold">💰 Order Summary</CardTitle>
+            <Card className="border border-slate-200 shadow-sm bg-gradient-to-br from-primary/5 to-primary/10">
+              <CardHeader className="pb-3 border-b border-slate-200">
+                <CardTitle className="text-base font-bold text-slate-900">💰 Order Summary</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-4">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">{orderData.items?.length || 0} Items</span>
-                    <span className="font-semibold">{formatCurrency(orderData.subtotal || 0)}</span>
+                    <span className="text-slate-600">{orderData.items?.length || 0} Items</span>
+                    <span className="font-semibold text-slate-900">{formatCurrency(orderData.subtotal || 0)}</span>
                   </div>
                   {(orderData.discountAmount ?? 0) > 0 && (
-                    <div className="flex justify-between items-center text-red-600 dark:text-red-400">
+                    <div className="flex justify-between items-center text-red-600">
                       <span>Discount</span>
                       <span className="font-semibold">-{formatCurrency(orderData.discountAmount)}</span>
                     </div>
                   )}
-                  <div className="border-t pt-3 flex justify-between items-center">
-                    <span className="font-bold">Total Amount</span>
-                    <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  <div className="border-t border-slate-200 pt-3 flex justify-between items-center">
+                    <span className="font-bold text-slate-900">Total Amount</span>
+                    <span className="text-2xl font-bold text-green-600">
                       {formatCurrency(orderData.totalAmount || 0)}
                     </span>
                   </div>
@@ -355,22 +339,22 @@ export function CustomerOrderDetailModal({
 
             {/* Order Items */}
             {orderData.items && orderData.items.length > 0 && (
-              <Card className="border-0 shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base font-bold">
+              <Card className="border border-slate-200 shadow-sm bg-white">
+                <CardHeader className="pb-3 border-b border-slate-200">
+                  <CardTitle className="text-base font-bold text-slate-900">
                     🛒 Order Items ({orderData.items.length})
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-3 pt-4">
                   {orderData.items.map((item) => (
                     <div
                       key={item.id}
-                      className="border border-border/50 rounded-xl p-4 hover:shadow-md transition-all bg-card/50"
+                      className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-all bg-slate-50"
                     >
                       <div className="flex gap-4">
                         {/* Product Image */}
                         {item.productImageUrl && (
-                          <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-muted border border-border flex-shrink-0">
+                          <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-slate-200 border border-slate-300 flex-shrink-0">
                             <img
                               src={item.productImageUrl}
                               alt={item.productName}
@@ -383,11 +367,11 @@ export function CustomerOrderDetailModal({
                         <div className="flex-1 min-w-0 flex flex-col justify-between">
                           {/* Name and Badge */}
                           <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-semibold text-sm line-clamp-1">
+                            <h4 className="font-semibold text-sm text-slate-900 line-clamp-1">
                               {item.productName}
                             </h4>
                             {item.hasActivePromotion && item.displayPromotionValue != null && (
-                              <span className="text-xs px-2 py-0.5 bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-300 rounded font-semibold flex-shrink-0 whitespace-nowrap">
+                              <span className="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded font-semibold flex-shrink-0 whitespace-nowrap">
                                 {item.displayPromotionType === "PERCENTAGE"
                                   ? `-${item.displayPromotionValue}%`
                                   : `-${formatCurrency(item.displayPromotionValue)}`}
@@ -398,7 +382,7 @@ export function CustomerOrderDetailModal({
                           {/* Size */}
                           {item.sizeName && (
                             <div className="mb-2">
-                              <span className="text-xs font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full whitespace-nowrap inline-block border border-primary/20">
+                              <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full whitespace-nowrap inline-block border border-blue-200">
                                 {item.sizeName}
                               </span>
                             </div>
@@ -407,16 +391,16 @@ export function CustomerOrderDetailModal({
                           {/* Pricing */}
                           <div className="flex items-baseline justify-between gap-2">
                             <div className="flex items-baseline gap-2">
-                              <span className="font-bold text-sm text-foreground">
+                              <span className="font-bold text-sm text-slate-900">
                                 {formatCurrency(item.displayPrice)} × {item.quantity}
                               </span>
                               {item.hasActivePromotion && item.displayOriginPrice > item.displayPrice && (
-                                <span className="text-xs text-muted-foreground line-through">
+                                <span className="text-xs text-slate-500 line-through">
                                   {formatCurrency(item.displayOriginPrice)}
                                 </span>
                               )}
                             </div>
-                            <span className="font-bold text-green-600 dark:text-green-400 text-sm">
+                            <span className="font-bold text-green-600 text-sm">
                               {formatCurrency(item.subtotalAfterDiscount || 0)}
                             </span>
                           </div>
@@ -430,12 +414,12 @@ export function CustomerOrderDetailModal({
 
             {/* Customer Note */}
             {orderData.customerNote && (
-              <Card className="border-0 shadow-sm bg-blue-50 dark:bg-blue-950/20">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base font-bold">📝 Customer Note</CardTitle>
+              <Card className="border border-slate-200 shadow-sm bg-blue-50">
+                <CardHeader className="pb-3 border-b border-slate-200">
+                  <CardTitle className="text-base font-bold text-slate-900">📝 Customer Note</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-foreground">{orderData.customerNote}</p>
+                <CardContent className="pt-4">
+                  <p className="text-sm text-slate-700">{orderData.customerNote}</p>
                 </CardContent>
               </Card>
             )}
