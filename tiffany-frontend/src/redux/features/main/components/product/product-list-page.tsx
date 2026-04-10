@@ -68,8 +68,6 @@ export function ProductListPage({
   const search = searchParams.get("q");
   const categoryId = searchParams.get("categoryId");
   const brandId = searchParams.get("brandId");
-  const statusParam = searchParams.get("status");
-  const statuses = statusParam?.split(",").filter(Boolean) ?? [];
   const sortBy = searchParams.get("sortBy");
   const minPrice = searchParams.get("minPrice");
   const maxPrice = searchParams.get("maxPrice");
@@ -84,7 +82,7 @@ export function ProductListPage({
         hasPromotion: lockedPromotion ? true : hasPromotionParam,
         categoryId,
         brandId,
-        statuses,
+        status: "ACTIVE", // Always show ACTIVE products only
         sortBy,
         minPrice,
         maxPrice,
@@ -97,7 +95,6 @@ export function ProductListPage({
       hasPromotionParam,
       categoryId,
       brandId,
-      statuses,
       sortBy,
       minPrice,
       maxPrice,
@@ -122,13 +119,13 @@ export function ProductListPage({
       const requestParams: any = {
         pageNo,
         pageSize: getPageSize(),
+        status: "ACTIVE", // Always fetch ACTIVE products only
       };
 
       if (search) requestParams.search = search;
       if (finalHasPromotion) requestParams.hasPromotion = true;
       if (categoryId) requestParams.categoryId = categoryId;
       if (brandId) requestParams.brandId = brandId;
-      if (statuses.length > 0) requestParams.statuses = statuses;
       if (sortBy) requestParams.sortBy = sortBy;
       if (minPrice) requestParams.minPrice = Number(minPrice);
       if (maxPrice) requestParams.maxPrice = Number(maxPrice);
@@ -143,7 +140,6 @@ export function ProductListPage({
       hasPromotionParam,
       categoryId,
       brandId,
-      statuses,
       sortBy,
       minPrice,
       maxPrice,

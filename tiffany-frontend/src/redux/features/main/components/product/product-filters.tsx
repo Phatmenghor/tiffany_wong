@@ -29,10 +29,6 @@ import { usePublicCategoriesState } from "@/redux/features/main/store/state/publ
 import { usePublicBrandsState } from "@/redux/features/main/store/state/public-brands-state";
 import { ComboboxSelectCategoriesPublic } from "@/components/shared/combobox/combobox_select_categories_public";
 
-const PRODUCT_STATUSES = [
-  { value: "ACTIVE", label: "Active" },
-  { value: "OUT_OF_STOCK", label: "Out of Stock" },
-];
 
 interface ProductFiltersProps {
   totalResults: number;
@@ -50,7 +46,6 @@ function ProductFiltersComponent({
 
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [hasPromotion, setHasPromotion] = useState<boolean>(false);
   const [hasSizes, setHasSizes] = useState<boolean | null>(null);
   const [minPrice, setMinPrice] = useState<string>("");
@@ -58,7 +53,6 @@ function ProductFiltersComponent({
 
   // Extract all params from URL at the top level
   const categoryIdParam = searchParams.get("categoryId") || "";
-  const statusParam = searchParams.get("status") || "";
   const hasPomParam = searchParams.get("hasPromotion") || "";
   const hasSizesParam = searchParams.get("hasSizes") || "";
   const minPriceParam = searchParams.get("minPrice") || "";
@@ -67,12 +61,11 @@ function ProductFiltersComponent({
   // Sync from URL - depends on parsed string values, not searchParams object
   useEffect(() => {
     setSelectedCategory(categoryIdParam);
-    setSelectedStatuses(statusParam ? statusParam.split(",").filter(Boolean) : []);
     setHasPromotion(hasPomParam === "true");
     setHasSizes(hasSizesParam === "true" ? true : hasSizesParam === "false" ? false : null);
     setMinPrice(minPriceParam);
     setMaxPrice(maxPriceParam);
-  }, [categoryIdParam, statusParam, hasPomParam, hasSizesParam, minPriceParam, maxPriceParam]);
+  }, [categoryIdParam, hasPomParam, hasSizesParam, minPriceParam, maxPriceParam]);
 
   const pushParams = useCallback(
     (params: URLSearchParams) => {
@@ -92,20 +85,6 @@ function ProductFiltersComponent({
     [searchParams, pushParams],
   );
 
-  const toggleStatus = useCallback(
-    (status: string) => {
-      const current =
-        searchParams.get("status")?.split(",").filter(Boolean) || [];
-      const next = current.includes(status)
-        ? current.filter((s) => s !== status)
-        : [...current, status];
-      const params = new URLSearchParams(searchParams.toString());
-      if (next.length > 0) params.set("status", next.join(","));
-      else params.delete("status");
-      pushParams(params);
-    },
-    [searchParams, pushParams],
-  );
 
   const applyPrice = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -137,7 +116,6 @@ function ProductFiltersComponent({
 
   const activeFiltersCount =
     (selectedCategory ? 1 : 0) +
-    selectedStatuses.length +
     (!lockedPromotion && hasPromotion ? 1 : 0) +
     (hasSizes !== null ? 1 : 0) +
     (hasPriceFilter ? 1 : 0);
@@ -206,43 +184,6 @@ function ProductFiltersComponent({
         size="md"
         placeholder="All Categories"
       />
-
-      <Separator />
-
-      {/* Status - Multi-select checkboxes */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-green-500/10">
-            <ListChecks className="h-3.5 w-3.5 text-green-600" />
-          </div>
-          <label className="text-sm font-semibold">Status</label>
-          {selectedStatuses.length > 0 && (
-            <Badge
-              variant="secondary"
-              className="rounded-full h-5 w-5 p-0 flex items-center justify-center text-[10px] font-bold ml-auto"
-            >
-              {selectedStatuses.length}
-            </Badge>
-          )}
-        </div>
-        <div className="space-y-2.5">
-          {PRODUCT_STATUSES.map((status) => (
-            <label
-              key={status.value}
-              className="flex items-center gap-3 cursor-pointer group"
-            >
-              <Checkbox
-                id={`status-${status.value}`}
-                checked={selectedStatuses.includes(status.value)}
-                onCheckedChange={() => toggleStatus(status.value)}
-              />
-              <span className="text-sm group-hover:text-primary transition-colors select-none">
-                {status.label}
-              </span>
-            </label>
-          ))}
-        </div>
-      </div>
 
       <Separator />
 
