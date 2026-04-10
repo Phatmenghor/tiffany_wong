@@ -5,7 +5,6 @@ import {
   Menu,
   ChevronRight,
   UserCircle,
-  Maximize2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -107,19 +106,6 @@ export function TopBar({ onMenuClick, onFullscreenClick }: TopBarProps) {
 
         {/* Right: actions + user */}
         <div className="flex items-center gap-2 shrink-0">
-          {/* Fullscreen toggle */}
-          {onFullscreenClick && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onFullscreenClick}
-              title="Fullscreen (F11)"
-              className="h-9 w-9 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors"
-            >
-              <Maximize2 className="h-4 w-4" />
-            </Button>
-          )}
-
           {/* Profile Dropdown Menu */}
           {profile && (
             <CustomDropdownMenu
