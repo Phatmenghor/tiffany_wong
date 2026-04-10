@@ -15,70 +15,31 @@ import java.util.List;
 public interface OrderItemMapper {
 
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "productId", source = "productId")
+    @Mapping(target = "productName", source = "productName")
+    @Mapping(target = "productImageUrl", source = "productImageUrl")
+    @Mapping(target = "productSizeId", source = "productSizeId")
+    @Mapping(target = "sizeName", source = "sizeName")
+    @Mapping(target = "sku", source = "sku")
     @Mapping(target = "quantity", source = "quantity")
-    @Mapping(target = "currentPriceBeforeDiscount", source = "currentPrice")
-    @Mapping(target = "currentPriceAfterDiscount", source = "finalPrice")
-    @Mapping(target = "hasDiscount", source = "hasPromotion")
-    @Mapping(target = "discountType", source = "promotionType")
-    @Mapping(target = "product", expression = "java(mapProductInfo(orderItem))")
+    @Mapping(target = "displayPrice", source = "finalPrice")
+    @Mapping(target = "displayOriginPrice", source = "currentPrice")
+    @Mapping(target = "displayPromotionType", source = "promotionType")
+    @Mapping(target = "displayPromotionValue", source = "promotionValue")
+    @Mapping(target = "displayPromotionFromDate", source = "promotionFromDate")
+    @Mapping(target = "displayPromotionToDate", source = "promotionToDate")
+    @Mapping(target = "hasActivePromotion", source = "hasPromotion")
     OrderItemResponse toResponse(OrderItem orderItem);
 
-    List<OrderItemResponse> toResponseList(List<OrderItem> orderItems);
-
     @AfterMapping
-    default void calculatePricing(@MappingTarget OrderItemResponse response, OrderItem orderItem) {
-        if (response.getCurrentPriceBeforeDiscount() != null && response.getQuantity() != null) {
-            BigDecimal subtotalBeforeDiscount = response.getCurrentPriceBeforeDiscount()
-                    .multiply(new BigDecimal(response.getQuantity()));
-            response.setSubtotalBeforeDiscount(subtotalBeforeDiscount);
-
-            if (response.getCurrentPriceAfterDiscount() != null) {
-                BigDecimal subtotalAfterDiscount = response.getCurrentPriceAfterDiscount()
-                        .multiply(new BigDecimal(response.getQuantity()));
-                response.setSubtotalAfterDiscount(subtotalAfterDiscount);
-
-                BigDecimal subtotalDiscountAmount = subtotalBeforeDiscount.subtract(subtotalAfterDiscount);
-                response.setSubtotalDiscountAmount(subtotalDiscountAmount);
-
-                if (response.getHasDiscount() != null && response.getHasDiscount()) {
-                    BigDecimal discountAmountPerItem = response.getCurrentPriceBeforeDiscount()
-                            .subtract(response.getCurrentPriceAfterDiscount());
-                    response.setDiscountAmountPerItem(discountAmountPerItem);
-
-                    if ("PERCENTAGE".equals(response.getDiscountType()) && response.getCurrentPriceBeforeDiscount().compareTo(BigDecimal.ZERO) > 0) {
-                        BigDecimal discountPercent = discountAmountPerItem
-                                .divide(response.getCurrentPriceBeforeDiscount(), 2, java.math.RoundingMode.HALF_UP)
-                                .multiply(new BigDecimal(100));
-                        response.setDiscountPercentage(discountPercent);
-                    }
-                }
-            }
+    default void calculateSubtotals(OrderItem orderItem, @MappingTarget OrderItemResponse response) {
+        if (orderItem.getCurrentPrice() != null && orderItem.getFinalPrice() != null && orderItem.getQuantity() != null) {
+            BigDecimal quantity = BigDecimal.valueOf(orderItem.getQuantity());
+            response.setSubtotalBeforeDiscount(orderItem.getCurrentPrice().multiply(quantity));
+            response.setSubtotalDiscountAmount(orderItem.getCurrentPrice().subtract(orderItem.getFinalPrice()).multiply(quantity));
+            response.setSubtotalAfterDiscount(orderItem.getFinalPrice().multiply(quantity));
         }
     }
 
-    default OrderItemResponse.OrderItemProductInfo mapProductInfo(OrderItem orderItem) {
-        if (orderItem.getProduct() == null) {
-            return null;
-        }
-
-        OrderItemResponse.OrderItemProductInfo info = new OrderItemResponse.OrderItemProductInfo();
-
-        info.setId(orderItem.getProduct().getId());
-        info.setName(orderItem.getProductName());
-        info.setImageUrl(orderItem.getProductImageUrl());
-        info.setSku(orderItem.getSku());
-        info.setBarcode(orderItem.getBarcode());
-        info.setSizeId(orderItem.getProductSizeId());
-        info.setSizeName(orderItem.getSizeName());
-
-        if (orderItem.getProduct().getStatus() != null) {
-            info.setStatus(orderItem.getProduct().getStatus().toString());
-        }
-
-        if (orderItem.getHasPromotion() != null && orderItem.getHasPromotion()) {
-            info.setPromotionName(orderItem.getPromotionType() + " - " + orderItem.getPromotionValue());
-        }
-
-        return info;
-    }
+    List<OrderItemResponse> toResponseList(List<OrderItem> orderItems);
 }
