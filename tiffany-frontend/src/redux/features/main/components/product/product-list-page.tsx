@@ -74,15 +74,14 @@ export function ProductListPage({
   const minPrice = searchParams.get("minPrice");
   const maxPrice = searchParams.get("maxPrice");
   const hasSizesParam = searchParams.get("hasSizes");
+  const hasPromotionParam = searchParams.get("hasPromotion") === "true";
 
   // Memoize currentFilters to prevent effect re-runs on every render
   const currentFilters = useMemo(
     () =>
       JSON.stringify({
         search,
-        hasPromotion: lockedPromotion
-          ? true
-          : searchParams.get("hasPromotion") === "true",
+        hasPromotion: lockedPromotion ? true : hasPromotionParam,
         categoryId,
         brandId,
         statuses,
@@ -95,7 +94,7 @@ export function ProductListPage({
     [
       search,
       lockedPromotion,
-      searchParams,
+      hasPromotionParam,
       categoryId,
       brandId,
       statuses,
@@ -118,9 +117,7 @@ export function ProductListPage({
 
   const loadProducts = useCallback(
     async (pageNo: number) => {
-      const hasPromotion = lockedPromotion
-        ? true
-        : searchParams.get("hasPromotion") === "true" || undefined;
+      const finalHasPromotion = lockedPromotion ? true : hasPromotionParam || undefined;
 
       const requestParams: any = {
         pageNo,
@@ -128,7 +125,7 @@ export function ProductListPage({
       };
 
       if (search) requestParams.search = search;
-      if (hasPromotion) requestParams.hasPromotion = true;
+      if (finalHasPromotion) requestParams.hasPromotion = true;
       if (categoryId) requestParams.categoryId = categoryId;
       if (brandId) requestParams.brandId = brandId;
       if (statuses.length > 0) requestParams.statuses = statuses;
@@ -143,6 +140,7 @@ export function ProductListPage({
       dispatch,
       search,
       lockedPromotion,
+      hasPromotionParam,
       categoryId,
       brandId,
       statuses,
