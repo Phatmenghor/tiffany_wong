@@ -503,7 +503,7 @@ export default function OrdersPage() {
           onPageChange={handlePageChange}
           pageSize={15}
           pageSizeOptions={[15]}
-          hidePageSizeSelector={true}
+          showPageSizeSelector={false}
           hideEllipsis={true}
         />
       )}
