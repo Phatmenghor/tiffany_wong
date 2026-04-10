@@ -38,7 +38,7 @@ export function CategoryCard({ category, className }: CategoryCardProps) {
       <Card
         className={cn(
           "overflow-hidden border border-border/50 hover:border-primary/50 transition-all duration-300 cursor-pointer h-full bg-card hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 hover-scale-102",
-          className
+          className,
         )}
       >
         <CardContent className="p-4 sm:p-5 flex flex-col items-center justify-center gap-3">
@@ -56,7 +56,7 @@ export function CategoryCard({ category, className }: CategoryCardProps) {
                   height={80}
                   className={cn(
                     "w-full h-full object-cover transition-all duration-300 group-hover:scale-105",
-                    imageLoaded ? "opacity-100" : "opacity-0"
+                    imageLoaded ? "opacity-100" : "opacity-0",
                   )}
                   onLoad={() => setImageLoaded(true)}
                   onError={() => setImageError(true)}
@@ -80,17 +80,6 @@ export function CategoryCard({ category, className }: CategoryCardProps) {
               {category.name}
             </h3>
           </div>
-
-          {/* Product Count Badge - Cleaner design */}
-          {category.activeProducts > 0 && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground group-hover:text-primary/80 transition-colors">
-              <ShoppingBag className="h-3 w-3" />
-              <span className="font-medium">
-                {category.activeProducts} {category.activeProducts === 1 ? 'item' : 'items'}
-              </span>
-              <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-            </div>
-          )}
         </CardContent>
       </Card>
     </Link>
