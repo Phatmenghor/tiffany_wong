@@ -47,7 +47,7 @@ export default function CheckoutPage() {
         const response = await fetch("/api/v1/locations/my-addresses/all");
         if (response.ok) {
           const data = await response.json();
-          const locationList = data.data || [];
+          const locationList = data.data?.content || [];
           setAddresses(locationList);
 
           // Auto-select default address
