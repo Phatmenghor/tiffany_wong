@@ -117,7 +117,6 @@ export const PRODUCT_STATUS_FILTER = [
   { value: ProductStatus.ALL, label: "All Status" },
   { value: ProductStatus.ACTIVE, label: "Active" },
   { value: ProductStatus.INACTIVE, label: "Draft" },
-  { value: ProductStatus.OUT_OF_STOCK, label: "Out of Stock" },
 ];
 
 export const PRODUCT_SIZE_FILTER = [

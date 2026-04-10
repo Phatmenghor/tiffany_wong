@@ -128,7 +128,6 @@ export enum ProductStatus {
   ALL = "ALL",
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
-  OUT_OF_STOCK = "OUT_OF_STOCK",
 }
 
 // ProductStatus configuration with labels
@@ -138,9 +137,6 @@ export const ProductStatusConfig = {
   },
   [ProductStatus.INACTIVE]: {
     label: "Inactive",
-  },
-  [ProductStatus.OUT_OF_STOCK]: {
-    label: "Out of Stock",
   },
 };
 
