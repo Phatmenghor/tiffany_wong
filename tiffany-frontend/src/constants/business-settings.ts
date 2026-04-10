@@ -5,7 +5,7 @@
 
 export const BUSINESS_SETTINGS_DEFAULTS = {
   // Default business name
-  BUSINESS_NAME: "Emenu Scanner",
+  BUSINESS_NAME: "Tiffany Furniture Cambodia",
 
   // Default brand color (hex format)
   // Primary: Green #57823D - brand color
