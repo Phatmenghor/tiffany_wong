@@ -72,7 +72,7 @@ export function OrderDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">Order Details Loading</DialogTitle>
-        <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full sm:max-w-5xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
           <div className="flex items-center justify-center h-full">
             <Loading />
           </div>
@@ -85,7 +85,7 @@ export function OrderDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">Order Details</DialogTitle>
-        <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full sm:max-w-5xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <p className="text-muted-foreground">
@@ -106,7 +106,7 @@ export function OrderDetailModal({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogTitle className="sr-only">Order Details - {orderData.orderNumber}</DialogTitle>
-      <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+      <DialogContent className="w-full sm:max-w-5xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
         {/* Header */}
         <div className="px-6 py-4 border-b bg-muted/30 flex-shrink-0">
           <div>
