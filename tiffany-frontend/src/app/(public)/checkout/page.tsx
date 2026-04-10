@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { MapPin, MessageSquare, CreditCard, ArrowRight, Loader2 } from "lucide-react";
+import { MapPin, MessageSquare, CreditCard, ArrowRight, Loader2, Plus } from "lucide-react";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
-import { useLocationState } from "@/redux/features/location/store/state/location-state";
 import { useAppDispatch } from "@/redux/store";
 import { createOrderService } from "@/redux/features/main/store/thunks/order-thunks";
 import { CustomButton } from "@/components/shared/button/custom-button";
@@ -15,22 +14,61 @@ import { PageHeader } from "@/components/shared/common/page-header";
 import { formatCurrency } from "@/utils/common/currency-format";
 import { CartItemCard } from "@/components/shared/cart-item-card/cart-item-card";
 
+interface LocationResponse {
+  id: string;
+  fullAddress: string;
+  isDefault: boolean;
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isAuthenticated, authReady } = useAuthState();
   const { items, totalItems, totalQuantity, subtotal, discountAmount, finalTotal } = useCartState();
-  const { locations } = useLocationState();
 
   const [mounted, setMounted] = useState(false);
+  const [addresses, setAddresses] = useState<LocationResponse[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [customerNote, setCustomerNote] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Fetch addresses on mount
+  useEffect(() => {
+    if (!mounted || !authReady || !isAuthenticated) return;
+
+    const fetchAddresses = async () => {
+      setLoadingAddresses(true);
+      try {
+        const response = await fetch("/api/v1/locations/my-addresses/all");
+        if (response.ok) {
+          const data = await response.json();
+          const locationList = data.data || [];
+          setAddresses(locationList);
+
+          // Auto-select default address
+          const defaultAddr = locationList.find((addr: LocationResponse) => addr.isDefault);
+          if (defaultAddr) {
+            setSelectedAddressId(defaultAddr.id);
+          } else if (locationList.length > 0) {
+            setSelectedAddressId(locationList[0].id);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch addresses:", error);
+      } finally {
+        setLoadingAddresses(false);
+      }
+    };
+
+    fetchAddresses();
+  }, [mounted, authReady, isAuthenticated]);
+
+  // Redirect if not authenticated or cart empty
   useEffect(() => {
     if (!mounted || !authReady) return;
     if (!isAuthenticated) {
@@ -41,12 +79,7 @@ export default function CheckoutPage() {
       router.push("/cart");
       return;
     }
-    // Set first address as default
-    if (locations && locations.length > 0 && !selectedAddressId) {
-      const defaultAddr = locations.find((loc: any) => loc.isDefault) || locations[0];
-      setSelectedAddressId(defaultAddr.id);
-    }
-  }, [mounted, authReady, isAuthenticated, items.length, locations, selectedAddressId, router]);
+  }, [mounted, authReady, isAuthenticated, items.length, router]);
 
   const handleCheckout = async () => {
     if (!selectedAddressId) {
@@ -76,7 +109,7 @@ export default function CheckoutPage() {
     return null;
   }
 
-  const selectedAddress = locations?.find((loc: any) => loc.id === selectedAddressId);
+  const selectedAddress = addresses.find((addr) => addr.id === selectedAddressId);
 
   return (
     <>
@@ -89,61 +122,108 @@ export default function CheckoutPage() {
         />
 
         <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 mt-6">
-          {/* Cart Items */}
+          {/* Main Content */}
           <div className="lg:col-span-2 space-y-3">
-            <div className="text-xs text-muted-foreground mb-4">
-              Review your items before placing order
-            </div>
-            {items.map((item, index) => {
-              const uniqueKey = `checkout-${item.id}-${index}`;
-              return (
-                <CartItemCard
-                  key={uniqueKey}
-                  id={item.id}
-                  productId={item.productId}
-                  productName={item.productName}
-                  productImageUrl={item.productImageUrl}
-                  productSizeId={item.productSizeId}
-                  sizeName={item.sizeName}
-                  quantity={item.quantity}
-                  displayPrice={item.displayPrice}
-                  displayOriginPrice={item.displayOriginPrice}
-                  displayPromotionType={item.displayPromotionType}
-                  displayPromotionValue={item.displayPromotionValue}
-                  hasActivePromotion={item.hasActivePromotion}
-                  onQuantityChange={() => {}}
-                  onRemove={() => {}}
-                  showLink={true}
-                  showControls={false}
-                />
-              );
-            })}
-
-            {/* Delivery Address */}
-            <div className="bg-card border rounded-2xl p-4 sm:p-5 mt-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
-                Delivery Address
-              </h2>
-              <select
-                value={selectedAddressId || ""}
-                onChange={(e) => setSelectedAddressId(e.target.value)}
-                className="w-full border rounded-xl p-3 bg-background text-foreground mb-4 text-sm"
-              >
-                <option value="">Select an address</option>
-                {locations?.map((loc: any) => (
-                  <option key={loc.id} value={loc.id}>
-                    {loc.fullAddress || `${loc.streetNumber}, ${loc.village}, ${loc.commune}`}
-                  </option>
-                ))}
-              </select>
-              {selectedAddress && (
-                <div className="text-sm text-muted-foreground space-y-1 bg-muted/50 rounded-lg p-3">
-                  <p>{(selectedAddress as any).fullAddress}</p>
-                  {(selectedAddress as any).note && <p>Note: {(selectedAddress as any).note}</p>}
+            {/* Delivery Address - Top */}
+            {loadingAddresses ? (
+              <div className="bg-card border rounded-2xl p-4 sm:p-5">
+                <div className="h-20 bg-muted rounded animate-pulse" />
+              </div>
+            ) : addresses.length === 0 ? (
+              <div className="bg-card border rounded-2xl p-4 sm:p-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
+                      <MapPin className="h-5 w-5" />
+                      Delivery Address
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      No addresses yet. Create one to continue.
+                    </p>
+                  </div>
+                  <CustomButton
+                    onClick={() => router.push("/location")}
+                    className="gap-2 h-10 rounded-lg"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span className="hidden sm:inline">Create Address</span>
+                  </CustomButton>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="bg-card border rounded-2xl p-4 sm:p-5">
+                <h2 className="text-lg font-bold mb-4 flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <MapPin className="h-5 w-5" />
+                    Delivery Address
+                  </span>
+                  <CustomButton
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push("/location")}
+                    className="gap-1.5 h-8 rounded-lg"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline text-xs">Add</span>
+                  </CustomButton>
+                </h2>
+
+                <select
+                  value={selectedAddressId || ""}
+                  onChange={(e) => setSelectedAddressId(e.target.value)}
+                  className="w-full border rounded-xl p-3 bg-background text-foreground mb-3 text-sm"
+                >
+                  <option value="">Select an address</option>
+                  {addresses.map((addr) => (
+                    <option key={addr.id} value={addr.id}>
+                      {addr.fullAddress} {addr.isDefault ? "(Default)" : ""}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedAddress && (
+                  <div className="text-sm text-muted-foreground space-y-1 bg-muted/50 rounded-lg p-3">
+                    <p className="font-medium text-foreground">{selectedAddress.fullAddress}</p>
+                    {selectedAddress.isDefault && (
+                      <p className="text-xs">✓ Default Address</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Cart Items */}
+            {items.length > 0 && (
+              <>
+                <div className="text-xs text-muted-foreground mt-6 mb-2">
+                  Review your items before placing order
+                </div>
+                {items.map((item, index) => {
+                  const uniqueKey = `checkout-${item.id}-${index}`;
+                  return (
+                    <CartItemCard
+                      key={uniqueKey}
+                      id={item.id}
+                      productId={item.productId}
+                      productName={item.productName}
+                      productImageUrl={item.productImageUrl}
+                      productSizeId={item.productSizeId}
+                      sizeName={item.sizeName}
+                      quantity={item.quantity}
+                      displayPrice={item.displayPrice}
+                      displayOriginPrice={item.displayOriginPrice}
+                      displayPromotionType={item.displayPromotionType}
+                      displayPromotionValue={item.displayPromotionValue}
+                      hasActivePromotion={item.hasActivePromotion}
+                      onQuantityChange={() => {}}
+                      onRemove={() => {}}
+                      showLink={true}
+                      showControls={false}
+                    />
+                  );
+                })}
+              </>
+            )}
 
             {/* Customer Note */}
             <div className="bg-card border rounded-2xl p-4 sm:p-5">
@@ -223,7 +303,7 @@ export default function CheckoutPage() {
               <CustomButton
                 className="w-full mb-2.5 gap-2 h-11 rounded-xl"
                 onClick={handleCheckout}
-                disabled={isProcessing || !selectedAddressId}
+                disabled={isProcessing || !selectedAddressId || addresses.length === 0}
               >
                 {isProcessing ? (
                   <>
@@ -263,7 +343,7 @@ export default function CheckoutPage() {
         <CustomButton
           className="w-full gap-2 h-11 rounded-xl"
           onClick={handleCheckout}
-          disabled={isProcessing || !selectedAddressId}
+          disabled={isProcessing || !selectedAddressId || addresses.length === 0}
         >
           {isProcessing ? (
             <>
