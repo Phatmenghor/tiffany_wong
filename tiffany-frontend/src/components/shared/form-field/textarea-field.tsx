@@ -4,10 +4,10 @@ import React from "react";
 import { Controller, FieldError, Control, FieldValues, Path } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 
-interface TextAreaFieldProps<T extends FieldValues> {
-  name: Path<T>;
+interface TextAreaFieldProps {
+  name: string;
   label: string;
-  control: Control<T>;
+  control: Control<any>;
   error?: FieldError;
   disabled?: boolean;
   placeholder?: string;
@@ -15,7 +15,7 @@ interface TextAreaFieldProps<T extends FieldValues> {
   rows?: number;
 }
 
-export function TextAreaField<T extends FieldValues>({
+export function TextAreaField({
   name,
   label,
   control,
@@ -24,7 +24,7 @@ export function TextAreaField<T extends FieldValues>({
   placeholder = "",
   className = "",
   rows = 3,
-}: TextAreaFieldProps<T>) {
+}: TextAreaFieldProps) {
   return (
     <div className={`space-y-2 ${className}`}>
       <Label htmlFor={name as string} className="text-sm font-medium text-foreground">
