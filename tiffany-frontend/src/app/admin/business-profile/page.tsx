@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Save,
@@ -16,17 +16,124 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { showToast } from "@/components/shared/common/show-toast";
-import { demoBusinessProfile } from "@/data/business-profile-template";
 import {
   SystemAdminSettings,
   BusinessType,
   DayOfWeek,
 } from "@/types/system-admin";
 import Link from "next/link";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { fetchBusinessSettingsThunk } from "@/redux/features/business/store/thunks/business-settings-thunks";
 
 export default function BusinessProfileEditorPage() {
-  const [profile, setProfile] = useState<SystemAdminSettings>(demoBusinessProfile);
+  const dispatch = useAppDispatch();
+  const businessSettings = useAppSelector((state) => state.businessSettings.data);
+  const isLoading = useAppSelector((state) => state.businessSettings.isLoading);
+  const error = useAppSelector((state) => state.businessSettings.error);
+
+  // Fetch business settings on mount
+  useEffect(() => {
+    if (!businessSettings) {
+      dispatch(fetchBusinessSettingsThunk());
+    }
+  }, [dispatch, businessSettings]);
+
+  // Show error if fetch fails
+  useEffect(() => {
+    if (error) {
+      showToast.error(error);
+    }
+  }, [error]);
+
+  const [profile, setProfile] = useState<SystemAdminSettings | null>(null);
+
+  // Update profile when businessSettings is loaded
+  useEffect(() => {
+    if (businessSettings) {
+      const mappedProfile: SystemAdminSettings = {
+        id: businessSettings.id,
+        businessName: businessSettings.systemName,
+        tagline: "",
+        description: businessSettings.description || "",
+        logo: businessSettings.logoSystemUrl || "",
+        coverImage: "",
+        businessType: BusinessType.POS,
+        industry: "",
+        contact: {
+          email: businessSettings.contactEmail,
+          phone: businessSettings.contactPhone,
+          whatsapp: businessSettings.contactPhone,
+          address: {
+            street: businessSettings.contactAddress,
+            city: "",
+            state: "",
+            country: "",
+            postalCode: "",
+          },
+          mapLink: "",
+        },
+        socialMedia: businessSettings.socialMedia.reduce(
+          (acc, sm) => ({
+            ...acc,
+            [sm.name.toLowerCase()]: sm.linkUrl,
+          }),
+          {}
+        ),
+        businessHours: businessSettings.businessHours.map((bh) => ({
+          day: bh.day as DayOfWeek,
+          isOpen: true,
+          openTime: bh.openingTime,
+          closeTime: bh.closingTime,
+        })),
+        gallery: [],
+        features: [],
+        services: [],
+        team: [],
+        reviews: [],
+        stats: {
+          yearsInBusiness: 0,
+          customersServed: 0,
+          projectsCompleted: 0,
+          productsAvailable: 0,
+        },
+        theme: {
+          primaryColor: businessSettings.primaryColor || "#FF6B6B",
+          fontFamily: "Inter",
+          layout: "modern",
+        },
+        isPublished: true,
+        createdAt: businessSettings.createdAt,
+        updatedAt: businessSettings.updatedAt,
+        slug: "",
+        createdBy: businessSettings.createdBy,
+        updatedBy: businessSettings.updatedBy,
+      };
+      setProfile(mappedProfile);
+    }
+  }, [businessSettings]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8">
+        <Skeleton className="h-32 w-full mb-4" />
+        <Skeleton className="h-96 w-full" />
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="container mx-auto py-8">
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-red-600">Failed to load business settings. Please try again.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   const [activeTab, setActiveTab] = useState<string>("basic");
 
   const {

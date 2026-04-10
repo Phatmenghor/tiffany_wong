@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   MapPin,
@@ -20,17 +20,107 @@ import {
   BadgeCheck,
   Calendar,
   MessageSquare,
+  Loader,
 } from "lucide-react";
-import { demoBusinessProfile } from "@/data/business-profile-template";
 import { SystemAdminSettings, DayOfWeek, CustomerReview } from "@/types/system-admin";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ReviewSubmissionModal } from "@/components/business-profile/review-submission-modal";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { fetchBusinessSettingsThunk } from "@/redux/features/business/store/thunks/business-settings-thunks";
 
 export default function BusinessProfilePage() {
-  const [profile] = useState<SystemAdminSettings>(demoBusinessProfile);
+  const dispatch = useAppDispatch();
+  const businessSettings = useAppSelector((state) => state.businessSettings.data);
+  const isLoading = useAppSelector((state) => state.businessSettings.isLoading);
+
+  const [profile, setProfile] = useState<SystemAdminSettings | null>(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
+  // Fetch business settings on mount
+  useEffect(() => {
+    if (!businessSettings) {
+      dispatch(fetchBusinessSettingsThunk());
+    }
+  }, [dispatch, businessSettings]);
+
+  // Map API response to SystemAdminSettings
+  useEffect(() => {
+    if (businessSettings) {
+      const mappedProfile: SystemAdminSettings = {
+        id: businessSettings.id,
+        businessName: businessSettings.systemName,
+        tagline: "",
+        description: businessSettings.description || "",
+        logo: businessSettings.logoSystemUrl || "",
+        coverImage: "",
+        businessType: null as any,
+        industry: "",
+        contact: {
+          email: businessSettings.contactEmail,
+          phone: businessSettings.contactPhone,
+          whatsapp: businessSettings.contactPhone,
+          address: {
+            street: businessSettings.contactAddress,
+            city: "",
+            state: "",
+            country: "",
+            postalCode: "",
+          },
+          mapLink: "",
+        },
+        socialMedia: businessSettings.socialMedia.reduce(
+          (acc, sm) => ({
+            ...acc,
+            [sm.name.toLowerCase()]: sm.linkUrl,
+          }),
+          {}
+        ),
+        businessHours: businessSettings.businessHours.map((bh) => ({
+          day: bh.day as DayOfWeek,
+          isOpen: true,
+          openTime: bh.openingTime,
+          closeTime: bh.closingTime,
+        })),
+        gallery: [],
+        features: [],
+        services: [],
+        team: [],
+        reviews: [],
+        stats: {
+          yearsInBusiness: 0,
+          customersServed: 0,
+          projectsCompleted: 0,
+          productsAvailable: 0,
+        },
+        theme: {
+          primaryColor: businessSettings.primaryColor || "#FF6B6B",
+          fontFamily: "Inter",
+          layout: "modern",
+        },
+        isPublished: true,
+        createdAt: businessSettings.createdAt,
+        updatedAt: businessSettings.updatedAt,
+        slug: "",
+        createdBy: businessSettings.createdBy,
+        updatedBy: businessSettings.updatedBy,
+      };
+      setProfile(mappedProfile);
+    }
+  }, [businessSettings]);
+
+  if (isLoading || !profile) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="container mx-auto px-4 py-12">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <Loader className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const getDayLabel = (day: DayOfWeek): string => {
     return day.charAt(0) + day.slice(1).toLowerCase();
