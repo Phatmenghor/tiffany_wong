@@ -145,7 +145,7 @@ export function CustomerOrderDetailModal({
                 <h3 className="text-base font-bold text-slate-900 mb-10">Order Progress</h3>
 
                 {/* Progress Steps with Icons and Labels */}
-                <div className="flex items-center gap-0">
+                <div className="flex items-center justify-between gap-4 px-2">
                   {ORDER_STATUS_STEPS.map((step, index) => {
                     const isCompleted = index < currentStepIndex;
                     const isActive = step.status === orderData.orderStatus;
