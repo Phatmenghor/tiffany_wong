@@ -610,7 +610,7 @@ export default function AdminProfilePage() {
           onOpenChange={setIsProfilePictureModalOpen}
           onImageCapture={handleAutoUploadProfilePicture}
           onImageRemove={handleRemoveProfilePicture}
-          currentImageUrl={userProfile?.profileImageUrl}
+          currentImageUrl={userProfile?.profileImageUrl || undefined}
           userName={userProfile?.fullName}
           isLoading={isUploadingImage}
         />

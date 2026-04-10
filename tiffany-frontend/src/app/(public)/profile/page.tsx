@@ -590,7 +590,7 @@ export default function PublicProfilePage() {
             onImageSelect={handleAutoUploadProfilePicture}
             onImageRemove={() => setValue("profileImageUrl", "")}
             isLoading={isUploadingImage}
-            currentImageUrl={watch("profileImageUrl") || userProfile?.profileImageUrl}
+            currentImageUrl={(watch("profileImageUrl") || userProfile?.profileImageUrl) || undefined}
             userName={userProfile?.fullName}
           />
         </div>
