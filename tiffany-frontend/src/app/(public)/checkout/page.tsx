@@ -6,9 +6,10 @@ import { MapPin, MessageSquare, CreditCard, ArrowRight, Loader2, Plus } from "lu
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
 import { useAppDispatch } from "@/redux/store";
-import { createOrderService } from "@/redux/features/main/store/thunks/order-thunks";
+import { createOrderService, CheckoutPayload } from "@/redux/features/main/store/thunks/order-thunks";
 import { fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
 import { fetchAllLocationsService } from "@/redux/features/location/store/thunks/location-thunks";
+import { OrderFromEnum, PaymentMethodEnum } from "@/enums/order.enum";
 import { CustomButton } from "@/components/shared/button/custom-button";
 import { showToast } from "@/components/shared/common/show-toast";
 import { PageContainer } from "@/components/shared/common/page-container";
@@ -99,16 +100,59 @@ export default function CheckoutPage() {
 
     setIsProcessing(true);
     try {
-      const payload = {
+      // Build the full checkout payload
+      const payload: CheckoutPayload = {
+        businessId: "1", // Default business ID
         addressId: selectedAddress.id,
+        deliveryOption: {
+          name: "Standard Delivery",
+          description: "Standard delivery option",
+          imageUrl: "",
+          price: 0, // Free shipping
+        },
+        cart: {
+          businessId: "1",
+          businessName: "Store",
+          items: items.map((item) => ({
+            id: item.id,
+            productId: item.productId,
+            productName: item.productName,
+            productImageUrl: item.productImageUrl,
+            productSizeId: item.productSizeId || "",
+            sizeName: item.sizeName || "",
+            status: "ACTIVE",
+            currentPrice: item.displayOriginPrice,
+            finalPrice: item.displayPrice,
+            hasActivePromotion: item.hasActivePromotion || false,
+            quantity: item.quantity,
+            totalBeforeDiscount: item.displayOriginPrice * item.quantity,
+            discountAmount: (item.displayOriginPrice - item.displayPrice) * item.quantity,
+            totalPrice: item.displayPrice * item.quantity,
+            promotionType: item.displayPromotionType || "",
+            promotionValue: item.displayPromotionValue || 0,
+            promotionFromDate: item.displayPromotionFromDate || "",
+            promotionToDate: item.displayPromotionToDate || "",
+          })),
+          totalItems,
+          totalQuantity,
+          subtotalBeforeDiscount: subtotal + discountAmount,
+          subtotal,
+          discountAmount,
+          finalTotal,
+        },
+        payment: {
+          paymentMethod: PaymentMethodEnum.CASH as any,
+          paymentStatus: "PENDING",
+        },
         customerNote: customerNote || "",
-        orderStatus: "PENDING",
+        orderFrom: OrderFromEnum.WEB,
       };
 
       await dispatch(createOrderService(payload) as any).unwrap();
       showToast.success("Order created successfully!");
       router.push("/orders");
     } catch (error: any) {
+      console.error("Checkout error:", error);
       showToast.error(error?.message || "Failed to create order");
     } finally {
       setIsProcessing(false);
