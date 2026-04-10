@@ -1,6 +1,7 @@
 package com.tiffany.features.order.dto.request;
 
 import com.tiffany.enums.order.OrderStatus;
+import com.tiffany.enums.payment.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,4 +19,7 @@ public class OrderCreateRequest {
 
     private String customerNote;
     private OrderStatus orderStatus = OrderStatus.PENDING;
+
+    @NotNull(message = "Payment method is required")
+    private PaymentMethod PaymentBy = PaymentMethod.CASH;
 }

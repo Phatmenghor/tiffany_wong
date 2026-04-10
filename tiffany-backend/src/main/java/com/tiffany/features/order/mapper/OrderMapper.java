@@ -62,6 +62,8 @@ public interface OrderMapper {
                 .orderNumber(orderNumber)
                 .customerId(customerId)
                 .customerNote(request.getCustomerNote())
+                .orderStatus(request.getOrderStatus())
+                .paymentMethod(request.getPaymentBy())
                 .subtotal(BigDecimal.ZERO)
                 .totalAmount(BigDecimal.ZERO)
                 .build();

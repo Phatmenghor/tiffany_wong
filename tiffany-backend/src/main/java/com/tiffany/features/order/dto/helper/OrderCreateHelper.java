@@ -1,5 +1,7 @@
 package com.tiffany.features.order.dto.helper;
 
+import com.tiffany.enums.order.OrderStatus;
+import com.tiffany.enums.payment.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +18,8 @@ public class OrderCreateHelper {
     private String orderNumber;
     private UUID customerId;
     private String customerNote;
+    private OrderStatus orderStatus;
+    private PaymentMethod paymentMethod;
 
     // ===== Delivery Address Fields =====
     private BigDecimal deliveryLatitude;
