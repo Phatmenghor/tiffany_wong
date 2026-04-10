@@ -118,7 +118,7 @@ export function CartItemCard({
           {/* Price Info + Qty controls */}
           {showControls && (
             <div className="flex items-center justify-between gap-3">
-              {/* Price Display - Left Side */}
+              {/* Price Display */}
               <div className="flex flex-col gap-1">
                 <div className="flex items-baseline gap-2">
                   <span className="font-bold text-base text-slate-900">{formatCurrency(displayPrice)}</span>
@@ -126,39 +126,29 @@ export function CartItemCard({
                     <span className="text-xs text-slate-500 line-through font-medium">{formatCurrency(displayOriginPrice)}</span>
                   )}
                 </div>
-                {hasActivePromotion && displayOriginPrice > displayPrice && (
-                  <span className="text-xs text-red-600 font-semibold">
-                    {displayPromotionType === "PERCENTAGE" ? (
-                      <>Save {displayPromotionValue}%</>
-                    ) : (
-                      <>Save {formatCurrency((displayOriginPrice - displayPrice) * quantity)}</>
-                    )}
-                  </span>
-                )}
               </div>
 
-              {/* Quantity Controls - Right Side */}
+              {/* Quantity Controls */}
               <div className="flex items-center gap-1">
-                  <CustomButton
-                    size="icon"
-                    variant="outline"
-                    className="h-8 w-8 shrink-0 hover:bg-destructive hover:text-destructive-foreground"
-                    onClick={() => onQuantityChange(Math.max(0, quantity - 1))}
-                  >
-                    <Minus className="h-3 w-3" />
-                  </CustomButton>
-                  <div className="flex-1 text-center h-8 bg-primary/10 text-primary font-semibold text-sm rounded-lg border border-primary/20 flex items-center justify-center w-10">
-                    {quantity}
-                  </div>
-                  <CustomButton
-                    size="icon"
-                    variant="outline"
-                    className="h-8 w-8 shrink-0 hover:bg-primary hover:text-primary-foreground"
-                    onClick={() => onQuantityChange(quantity + 1)}
-                  >
-                    <Plus className="h-3 w-3" />
-                  </CustomButton>
+                <CustomButton
+                  size="icon"
+                  variant="outline"
+                  className="h-8 w-8 shrink-0 hover:bg-destructive hover:text-destructive-foreground"
+                  onClick={() => onQuantityChange(Math.max(0, quantity - 1))}
+                >
+                  <Minus className="h-3 w-3" />
+                </CustomButton>
+                <div className="flex-1 text-center h-8 bg-primary/10 text-primary font-semibold text-sm rounded-lg border border-primary/20 flex items-center justify-center w-10">
+                  {quantity}
                 </div>
+                <CustomButton
+                  size="icon"
+                  variant="outline"
+                  className="h-8 w-8 shrink-0 hover:bg-primary hover:text-primary-foreground"
+                  onClick={() => onQuantityChange(quantity + 1)}
+                >
+                  <Plus className="h-3 w-3" />
+                </CustomButton>
               </div>
             </div>
           )}
