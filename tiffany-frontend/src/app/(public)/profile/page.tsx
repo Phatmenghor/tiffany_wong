@@ -60,7 +60,6 @@ export default function PublicProfilePage() {
   const userProfile = useAppSelector(selectProfile);
   const isProfileLoading = useAppSelector(selectIsProfileLoading);
   const reduxError = useAppSelector(selectError);
-  const socialSync = useAppSelector((state) => state.auth.socialSync);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
