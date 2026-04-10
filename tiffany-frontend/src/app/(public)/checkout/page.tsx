@@ -16,6 +16,7 @@ import { PageHeader } from "@/components/shared/common/page-header";
 import { formatCurrency } from "@/utils/common/currency-format";
 import { CartItemCard } from "@/components/shared/cart-item-card/cart-item-card";
 import { ComboboxSelectLocation } from "@/components/shared/combobox/combobox-select-location";
+import { OrderSuccessModal } from "@/components/shared/modal/order-success-modal";
 import { Button } from "@/components/ui/button";
 
 interface LocationResponse {
@@ -35,6 +36,10 @@ export default function CheckoutPage() {
   const [customerNote, setCustomerNote] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"CASH" | "BANK">("CASH");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [successModalState, setSuccessModalState] = useState({
+    isOpen: false,
+    orderNumber: "",
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -108,15 +113,24 @@ export default function CheckoutPage() {
         PaymentBy: paymentMethod,
       };
 
-      await dispatch(createOrderService(payload) as any).unwrap();
-      showToast.success("Order created successfully!");
-      router.push("/orders");
+      const result = await dispatch(createOrderService(payload) as any).unwrap();
+
+      // Show success modal with order number
+      setSuccessModalState({
+        isOpen: true,
+        orderNumber: result?.orderNumber || "",
+      });
     } catch (error: any) {
       console.error("Checkout error:", error);
       showToast.error(error?.message || "Failed to create order");
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handleSuccessModalClose = () => {
+    setSuccessModalState({ isOpen: false, orderNumber: "" });
+    router.push("/orders");
   };
 
   const handleAddLocation = () => {
@@ -366,6 +380,13 @@ export default function CheckoutPage() {
           )}
         </CustomButton>
       </div>
+
+      {/* Success Modal */}
+      <OrderSuccessModal
+        isOpen={successModalState.isOpen}
+        onClose={handleSuccessModalClose}
+        orderNumber={successModalState.orderNumber}
+      />
     </>
   );
 }
