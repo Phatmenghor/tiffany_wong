@@ -366,10 +366,11 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
   // Handle map resize on mount
   useEffect(() => {
     if (googleMapRef.current) {
+      const map = googleMapRef.current;
       const t = setTimeout(() => {
-        google.maps.event.trigger(googleMapRef.current, "resize");
-        const center = googleMapRef.current.getCenter();
-        if (center) googleMapRef.current.setCenter(center);
+        google.maps.event.trigger(map, "resize");
+        const center = map.getCenter();
+        if (center) map.setCenter(center);
       }, 50);
       return () => clearTimeout(t);
     }
