@@ -7,6 +7,7 @@ import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
 import { useAppDispatch } from "@/redux/store";
 import { createOrderService } from "@/redux/features/main/store/thunks/order-thunks";
+import { fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
 import { CustomButton } from "@/components/shared/button/custom-button";
 import { showToast } from "@/components/shared/common/show-toast";
 import { PageContainer } from "@/components/shared/common/page-container";
@@ -36,6 +37,12 @@ export default function CheckoutPage() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Fetch cart to restore state after page refresh
+  useEffect(() => {
+    if (!mounted || !authReady || !isAuthenticated) return;
+    dispatch(fetchCart());
+  }, [mounted, authReady, isAuthenticated, dispatch]);
 
   // Fetch addresses on mount
   useEffect(() => {
