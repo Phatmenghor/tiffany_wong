@@ -6,12 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -59,10 +55,4 @@ public class OrderDeliveryAddress extends BaseUUIDEntity {
     // Reference to original Location entity ID
     @Column(name = "location_id")
     private UUID locationId;
-
-    // Snapshot of location images at time of order - preserves history
-    // If location images are updated later, orders still show the original images from checkout
-    @Column(name = "location_images", columnDefinition = "jsonb")
-    @JdbcTypeCode(SqlTypes.JSON)
-    private List<String> locationImages = new ArrayList<>();
 }
