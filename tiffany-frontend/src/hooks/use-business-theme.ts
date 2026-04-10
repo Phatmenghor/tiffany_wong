@@ -108,55 +108,58 @@ export function initializeBusinessThemeFromCache() {
  * Fetches system settings on app startup (BEFORE auth)
  * System settings are global and used across ALL routes
  *
- * Note: Theme colors are applied synchronously in initializeBusinessThemeFromCache
- * This hook fetches fresh data and updates Redux for navbar/footer to use
+ * NOTE: This hook now handles browser navigation/back button by:
+ * - Fetching data on every mount
+ * - Setting up a popstate listener to refetch on back button
+ * - Caching data to localStorage for instant recovery
  */
 export function useBusinessTheme() {
   const dispatch = useAppDispatch();
   const businessSettings = useAppSelector(selectBusinessSettings);
-  const SYSTEM_ID = "system-settings"; // Fixed ID for system-level settings
+  const SYSTEM_ID = "system-settings";
 
-  useEffect(() => {
-    // ALWAYS fetch fresh business settings from API on app startup
-    // This ensures cache is always updated with latest data from server
-    // Will fail with 401 on login page (before auth) - that's OK, use cache/defaults
-    console.log("## [THEME] Fetching fresh business settings from API in background...");
+  // Fetch business settings on component mount
+  const fetchSettings = () => {
+    console.log("## [THEME] Fetching business settings...");
     dispatch(fetchBusinessSettingsThunk()).then((action) => {
-      // Check if action was fulfilled and has payload
       if (action.meta.requestStatus === "fulfilled" && action.payload) {
         const payload = action.payload as BusinessSettingsResponse;
 
-        // Load cached data to compare
-        const cachedSettings = getCachedBusinessSettings();
+        // Cache the settings
+        cacheBusinessSettings(payload);
 
-        // Compare with cached data
-        const cacheOutdated = !cachedSettings ||
-          JSON.stringify(cachedSettings) !== JSON.stringify(payload);
-
-        if (cacheOutdated) {
-          console.log("## [THEME] Cache is outdated, updating with fresh data from API");
-          cacheBusinessSettings(payload);
-        } else {
-          console.log("## [THEME] Cache is up-to-date with API data");
-        }
-
-        // Cache the colors for instant loading on next visit
+        // Cache the colors
         const colors = {
           primaryColor: payload.primaryColor || "",
         };
         cacheThemeColors(SYSTEM_ID, colors);
 
-        // Apply colors from API if different
-        const currentColor = getCachedThemeColors(SYSTEM_ID)?.primaryColor;
-        if (payload.primaryColor && payload.primaryColor !== currentColor) {
+        // Apply colors
+        if (payload.primaryColor) {
           applyColors(payload.primaryColor);
-          console.log("## [THEME] Updated colors from fresh API data");
+          console.log("## [THEME] Colors updated from API");
         }
       } else {
-        // Request failed (likely 401 on login page) - use cache or defaults
-        console.log("## [THEME] Failed to fetch business settings from API, keeping cache/defaults");
+        console.log("## [THEME] Failed to fetch, using cache");
       }
     });
+  };
+
+  useEffect(() => {
+    // Fetch on initial mount
+    fetchSettings();
+
+    // Add listener for browser back/forward buttons
+    const handlePopState = () => {
+      console.log("## [THEME] Browser navigation detected, restoring settings...");
+      fetchSettings();
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
   }, [dispatch]);
 }
 
