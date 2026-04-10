@@ -12,7 +12,7 @@ export interface FetchPublicCategoriesParams {
 }
 
 export const fetchPublicCategories = createAsyncThunk<
-  CategoriesResponseModel[],
+  any,
   FetchPublicCategoriesParams,
   { rejectValue: string }
 >("publicCategories/fetchAll", async (params, { rejectWithValue }) => {
@@ -24,7 +24,7 @@ export const fetchPublicCategories = createAsyncThunk<
         search: params.search || undefined,
       }
     );
-    return response.data.data || [];
+    return response.data;
   } catch (error: any) {
     return rejectWithValue(
       error.response?.data?.message || "Failed to fetch categories"
