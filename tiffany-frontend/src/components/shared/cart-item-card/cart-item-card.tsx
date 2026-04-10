@@ -128,7 +128,8 @@ export function CartItemCard({
                 </div>
                 {hasActivePromotion && displayOriginPrice > displayPrice && (
                   <span className="text-xs text-red-600 font-semibold">
-                    Save {displayPromotionType === "PERCENTAGE"
+                    Save{" "}
+                    {displayPromotionType === "PERCENTAGE"
                       ? `${displayPromotionValue}%`
                       : formatCurrency((displayOriginPrice - displayPrice) * quantity)}
                   </span>
