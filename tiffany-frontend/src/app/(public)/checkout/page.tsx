@@ -120,7 +120,7 @@ export default function CheckoutPage() {
   };
 
   const handleAddLocation = () => {
-    router.push("/account/addresses");
+    router.push("/location");
   };
 
   if (!mounted || !authReady) {
