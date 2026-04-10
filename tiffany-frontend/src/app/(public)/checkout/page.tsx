@@ -113,7 +113,7 @@ export default function CheckoutPage() {
         PaymentBy: paymentMethod,
       };
 
-      const result = await dispatch(createOrderService(payload) as any).unwrap();
+      const result = await dispatch(createOrderService(payload as any) as any).unwrap();
 
       // Show success modal with order number
       setSuccessModalState({
