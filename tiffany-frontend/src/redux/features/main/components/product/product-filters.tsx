@@ -56,19 +56,23 @@ function ProductFiltersComponent({
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
 
+  // Extract all params from URL at the top level
+  const categoryIdParam = searchParams.get("categoryId") || "";
+  const statusParam = searchParams.get("status") || "";
+  const hasPomParam = searchParams.get("hasPromotion") || "";
+  const hasSizesParam = searchParams.get("hasSizes") || "";
+  const minPriceParam = searchParams.get("minPrice") || "";
+  const maxPriceParam = searchParams.get("maxPrice") || "";
 
-  // Sync from URL
+  // Sync from URL - depends on parsed string values, not searchParams object
   useEffect(() => {
-    setSelectedCategory(searchParams.get("categoryId") || "");
-    setSelectedStatuses(
-      searchParams.get("status")?.split(",").filter(Boolean) || [],
-    );
-    setHasPromotion(!!searchParams.get("hasPromotion"));
-    const hasSizesParam = searchParams.get("hasSizes");
+    setSelectedCategory(categoryIdParam);
+    setSelectedStatuses(statusParam ? statusParam.split(",").filter(Boolean) : []);
+    setHasPromotion(hasPomParam === "true");
     setHasSizes(hasSizesParam === "true" ? true : hasSizesParam === "false" ? false : null);
-    setMinPrice(searchParams.get("minPrice") || "");
-    setMaxPrice(searchParams.get("maxPrice") || "");
-  }, [searchParams]);
+    setMinPrice(minPriceParam);
+    setMaxPrice(maxPriceParam);
+  }, [categoryIdParam, statusParam, hasPomParam, hasSizesParam, minPriceParam, maxPriceParam]);
 
   const pushParams = useCallback(
     (params: URLSearchParams) => {
