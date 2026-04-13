@@ -15,14 +15,13 @@ interface ClientProvidersProps {
   children: ReactNode;
 }
 
-// Initialize theme colors from cache SYNCHRONOUSLY before rendering
-// This ensures colors are applied instantly without waiting for API
-if (typeof window !== "undefined") {
-  initializeBusinessThemeFromCache();
-}
-
-// Theme provider component - fetches fresh data in background
+// Theme provider component - initializes from cache then fetches fresh data in background
 function ThemeInitializer() {
+  useEffect(() => {
+    // Initialize theme from cache on client side only
+    initializeBusinessThemeFromCache();
+  }, []);
+
   useBusinessTheme();
   return null;
 }
