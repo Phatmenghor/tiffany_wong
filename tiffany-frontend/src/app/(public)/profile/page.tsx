@@ -34,7 +34,7 @@ import { CustomAvatar } from "@/components/shared/avator/custom-avator";
 import { isBase64Image, uploadImage } from "@/utils/common/upload-image";
 import { clearToken } from "@/utils/local-storage/token";
 import { clearUserInfo } from "@/utils/local-storage/userInfo";
-import { Loading } from "@/components/shared/common/loading";
+import { ProfilePageSkeleton } from "./components/profile-page-skeleton";
 import { PageContainer } from "@/components/shared/common/page-container";
 import { GENDER_OPTIONS } from "@/constants/form-options";
 import { ROUTES } from "@/constants/app-routes/routes";
@@ -238,7 +238,7 @@ export default function PublicProfilePage() {
   };
 
   if (isProfileLoading && !userProfile) {
-    return <Loading />;
+    return <PageContainer><ProfilePageSkeleton /></PageContainer>;
   }
 
   return (

@@ -20,6 +20,7 @@ import { OrderNoteSection } from "./components/order-note-section";
 import { OrderSummary } from "./components/order-summary";
 import { MobileCheckoutBar } from "./components/mobile-checkout-bar";
 
+import { CheckoutPageSkeleton } from "./components/checkout-page-skeleton";
 export default function CheckoutPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -133,7 +134,7 @@ export default function CheckoutPage() {
   };
 
   if (!mounted || !authReady) {
-    return null;
+    return <PageContainer><CheckoutPageSkeleton /></PageContainer>;
   }
 
   return (
