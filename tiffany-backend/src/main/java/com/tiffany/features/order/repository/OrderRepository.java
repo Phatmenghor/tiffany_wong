@@ -134,4 +134,28 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
            "WHERE o.isDeleted = false " +
            "ORDER BY o.createdAt DESC")
     List<Order> findAllByIsDeletedFalse();
+
+    /**
+     * Counts non-deleted orders by payment status (optimized for dashboard)
+     */
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.paymentStatus = :paymentStatus AND o.isDeleted = false")
+    long countByPaymentStatus(@Param("paymentStatus") com.tiffany.enums.payment.PaymentStatus paymentStatus);
+
+    /**
+     * Sum total amount of non-deleted orders by payment status (optimized for dashboard)
+     */
+    @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o WHERE o.paymentStatus = :paymentStatus AND o.isDeleted = false")
+    java.math.BigDecimal sumTotalAmountByPaymentStatus(@Param("paymentStatus") com.tiffany.enums.payment.PaymentStatus paymentStatus);
+
+    /**
+     * Sum total amount of all non-deleted orders (optimized for dashboard)
+     */
+    @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o WHERE o.isDeleted = false")
+    java.math.BigDecimal sumTotalAmount();
+
+    /**
+     * Count all non-deleted orders (optimized for dashboard)
+     */
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.isDeleted = false")
+    long countAllOrders();
 }

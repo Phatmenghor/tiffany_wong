@@ -316,4 +316,16 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Transactional
     @Query("UPDATE Product p SET p.status = :status WHERE p.categoryId = :categoryId AND p.isDeleted = false")
     int updateProductsStatusByCategory(@Param("categoryId") UUID categoryId, @Param("status") ProductStatus status);
+
+    /**
+     * Count all non-deleted products (optimized for dashboard)
+     */
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.isDeleted = false")
+    long countAllProducts();
+
+    /**
+     * Count active products (optimized for dashboard)
+     */
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.isDeleted = false AND p.status = 'ACTIVE'")
+    long countActiveProducts();
 }

@@ -58,4 +58,18 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u FROM User u WHERE u.isDeleted = false")
     List<User> findAllByIsDeletedFalse();
+
+    /**
+     * Count all non-deleted users (optimized for dashboard)
+     */
+    @Query("SELECT COUNT(u) FROM User u WHERE u.isDeleted = false")
+    long countAllByIsDeletedFalse();
+
+    /**
+     * Count users created in current month (optimized for dashboard)
+     */
+    @Query("SELECT COUNT(u) FROM User u WHERE u.isDeleted = false " +
+           "AND YEAR(u.createdAt) = YEAR(CURRENT_DATE) " +
+           "AND MONTH(u.createdAt) = MONTH(CURRENT_DATE)")
+    long countNewCustomersThisMonth();
 }
