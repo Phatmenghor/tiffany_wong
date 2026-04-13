@@ -123,4 +123,15 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             @Param("paymentMethod") com.tiffany.enums.payment.PaymentMethod paymentMethod,
             @Param("paymentStatus") com.tiffany.enums.payment.PaymentStatus paymentStatus,
             Pageable pageable);
+
+    /**
+     * Finds all non-deleted orders with items and customer info eager loaded
+     * Used for dashboard analytics
+     */
+    @Query("SELECT DISTINCT o FROM Order o " +
+           "LEFT JOIN FETCH o.items " +
+           "LEFT JOIN FETCH o.customer " +
+           "WHERE o.isDeleted = false " +
+           "ORDER BY o.createdAt DESC")
+    List<Order> findAllByIsDeletedFalse();
 }

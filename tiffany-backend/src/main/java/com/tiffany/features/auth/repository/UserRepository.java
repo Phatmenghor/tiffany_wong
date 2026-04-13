@@ -55,4 +55,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u FROM User u WHERE u.accountStatus = 'ACTIVE' AND u.isDeleted = false")
     List<User> findAllActiveUsers();
+
+    @Query("SELECT u FROM User u WHERE u.isDeleted = false")
+    List<User> findAllByIsDeletedFalse();
 }
