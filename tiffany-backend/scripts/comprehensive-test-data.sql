@@ -337,7 +337,7 @@ END $$;
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[82 PERCENT] Inserting product sizes (5-10 per product for 40% of products)...';
+    RAISE NOTICE '[82 PERCENT] Inserting product sizes (5-10 per product for 40 PERCENT of products)...';
 END $$;
 
 INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, name, price, sku, barcode, promotion_type, promotion_value, promotion_from_date, promotion_to_date)
@@ -737,8 +737,8 @@ BEGIN
     RAISE NOTICE '  - Kitchen, Outdoor, Storage, Lighting';
     RAISE NOTICE '  - Upholstered, Wood, Metal & Glass, Accessories';
     RAISE NOTICE '';
-    RAISE NOTICE 'Promotions: 30% of products with special offers';
-    RAISE NOTICE 'Sizes: 40% of products with variant sizes';
+    RAISE NOTICE 'Promotions: 30 PERCENT of products with special offers';
+    RAISE NOTICE 'Sizes: 40 PERCENT of products with variant sizes';
     RAISE NOTICE 'Images: Random professional furniture images';
     RAISE NOTICE '';
     RAISE NOTICE '================================================';
