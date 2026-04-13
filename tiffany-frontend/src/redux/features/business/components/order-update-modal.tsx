@@ -190,7 +190,13 @@ export function OrderUpdateModal({
             isCreate={false}
             updateMessage={isSaving ? "Updating..." : "Updating order..."}
           >
-            <CancelButton onClick={handleClose} disabled={isSaving} />
+            <CancelButton
+              onClick={handleClose}
+              disabled={isSaving}
+              variant="outline"
+            >
+              Cancel
+            </CancelButton>
             <SubmitButton
               isSubmitting={isSaving}
               isDirty={isDirty}
