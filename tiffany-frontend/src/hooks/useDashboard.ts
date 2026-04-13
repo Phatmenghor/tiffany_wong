@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+import { useState } from 'react';
+import { axiosClientWithAuth } from '@/utils/axios/axios-client';
 
 export interface SalesMetrics {
   totalRevenue: number;
@@ -149,11 +147,10 @@ export const useDashboard = () => {
   const fetchSalesMetrics = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/api/v1/dashboard/sales`);
+      const response = await axiosClientWithAuth.get('/api/v1/dashboard/sales');
       setSalesMetrics(response.data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch sales metrics');
-      console.error('Error fetching sales metrics:', err);
     } finally {
       setLoading(false);
     }
@@ -162,11 +159,10 @@ export const useDashboard = () => {
   const fetchOrderMetrics = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/api/v1/dashboard/orders`);
+      const response = await axiosClientWithAuth.get('/api/v1/dashboard/orders');
       setOrderMetrics(response.data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch order metrics');
-      console.error('Error fetching order metrics:', err);
     } finally {
       setLoading(false);
     }
@@ -175,11 +171,10 @@ export const useDashboard = () => {
   const fetchProductMetrics = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/api/v1/dashboard/products`);
+      const response = await axiosClientWithAuth.get('/api/v1/dashboard/products');
       setProductMetrics(response.data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch product metrics');
-      console.error('Error fetching product metrics:', err);
     } finally {
       setLoading(false);
     }
@@ -188,11 +183,10 @@ export const useDashboard = () => {
   const fetchCustomerMetrics = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/api/v1/dashboard/customers`);
+      const response = await axiosClientWithAuth.get('/api/v1/dashboard/customers');
       setCustomerMetrics(response.data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch customer metrics');
-      console.error('Error fetching customer metrics:', err);
     } finally {
       setLoading(false);
     }
@@ -201,11 +195,10 @@ export const useDashboard = () => {
   const fetchPaymentMetrics = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/api/v1/dashboard/payments`);
+      const response = await axiosClientWithAuth.get('/api/v1/dashboard/payments');
       setPaymentMetrics(response.data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch payment metrics');
-      console.error('Error fetching payment metrics:', err);
     } finally {
       setLoading(false);
     }
