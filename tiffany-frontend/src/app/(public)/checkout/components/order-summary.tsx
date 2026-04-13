@@ -13,8 +13,10 @@ interface OrderSummaryProps {
   onCheckout: () => void;
   isProcessing: boolean;
   selectedAddressId?: string;
-  customerName?: string;
-  customerPhone?: string;
+  customerName: string;
+  onCustomerNameChange: (name: string) => void;
+  customerPhone: string;
+  onCustomerPhoneChange: (phone: string) => void;
 }
 
 export function OrderSummary({
@@ -29,7 +31,9 @@ export function OrderSummary({
   isProcessing,
   selectedAddressId,
   customerName,
+  onCustomerNameChange,
   customerPhone,
+  onCustomerPhoneChange,
 }: OrderSummaryProps) {
   return (
     <div className="hidden lg:block lg:col-span-1">
@@ -41,22 +45,34 @@ export function OrderSummary({
           </span>
         </h2>
 
-        {/* Customer Info - Top */}
-        {(customerName || customerPhone) && (
-          <div className="bg-blue-50/50 rounded-lg p-3 mb-4 border border-blue-200/50">
-            <div className="text-xs text-muted-foreground mb-2">Delivery Information</div>
-            {customerName && (
-              <div className="text-sm font-medium text-foreground mb-1">
-                {customerName}
-              </div>
-            )}
-            {customerPhone && (
-              <div className="text-xs text-muted-foreground">
-                📱 {customerPhone}
-              </div>
-            )}
+        {/* Customer Information - Input Fields */}
+        <div className="mb-5 p-4 bg-muted/30 rounded-xl border space-y-3">
+          <h3 className="text-sm font-bold">Customer Information</h3>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground">Full Name *</label>
+              <input
+                type="text"
+                placeholder="Enter your full name"
+                value={customerName}
+                onChange={(e) => onCustomerNameChange(e.target.value)}
+                className="w-full px-2.5 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                disabled={isProcessing}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground">Phone Number *</label>
+              <input
+                type="tel"
+                placeholder="Enter your phone number"
+                value={customerPhone}
+                onChange={(e) => onCustomerPhoneChange(e.target.value)}
+                className="w-full px-2.5 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                disabled={isProcessing}
+              />
+            </div>
           </div>
-        )}
+        </div>
 
         <div className="space-y-3 mb-5">
           {/* Items count with quantity */}
