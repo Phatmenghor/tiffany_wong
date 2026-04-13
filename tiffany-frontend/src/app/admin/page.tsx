@@ -6,6 +6,7 @@ import { axiosClientWithAuth } from '@/utils/axios/axios-client';
 import { DollarSign, ShoppingCart, Users, TrendingUp, CheckCircle, Clock, Package } from 'lucide-react';
 import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { DailyTrendsChart } from '@/components/shared/common/daily-trends-chart';
+import { DashboardSkeleton } from '@/components/shared/common/skeleton-loaders';
 
 interface SimpleDashboardData {
   totalRevenue: number;
@@ -80,11 +81,7 @@ export default function AdminPage() {
   };
 
   if (loading) {
-    return (
-      <div className="p-8 text-center">
-        <p className="text-gray-600">Loading dashboard...</p>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (error) {
@@ -102,7 +99,7 @@ export default function AdminPage() {
   }
 
   if (!data) {
-    return <div className="p-8 text-center">No data available</div>;
+    return <DashboardSkeleton />;
   }
 
   return (

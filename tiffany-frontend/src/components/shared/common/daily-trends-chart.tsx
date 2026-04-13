@@ -15,6 +15,7 @@ import {
   Bar,
 } from 'recharts';
 import { axiosClientWithAuth } from '@/utils/axios/axios-client';
+import { ChartSkeleton } from './skeleton-loaders';
 
 interface DailyData {
   date: string;
@@ -80,14 +81,7 @@ export function DailyTrendsChart() {
   if (loading) {
     return (
       <Card className="border-2 border-blue-200 shadow-lg bg-white mb-8">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Daily Trends</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center h-80">
-            <p className="text-gray-600">Loading trends...</p>
-          </div>
-        </CardContent>
+        <ChartSkeleton />
       </Card>
     );
   }
