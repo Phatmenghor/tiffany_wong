@@ -12,6 +12,7 @@ import com.tiffany.features.auth.mapper.UserMapper;
 import com.tiffany.features.auth.models.*;
 import com.tiffany.features.auth.repository.UserRepository;
 import com.tiffany.features.auth.service.UserService;
+import com.tiffany.features.notification.service.TelegramService;
 import com.tiffany.security.SecurityUtils;
 import com.tiffany.shared.dto.PaginationResponse;
 import com.tiffany.shared.mapper.PaginationMapper;
@@ -37,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtils securityUtils;
     private final PaginationMapper paginationMapper;
+    private final TelegramService telegramService;
 
     @Override
     public UserResponse createUser(UserCreateRequest req) {
@@ -65,6 +67,10 @@ public class UserServiceImpl implements UserService {
         saved = userRepository.save(saved);
 
         log.info("User created: userId={}, identifier={}, userType={}", saved.getId(), saved.getUserIdentifier(), saved.getUserType());
+
+        // Send Telegram notification
+        telegramService.notifyUserCreated(saved);
+
         return userMapper.toResponse(saved);
     }
 

@@ -6,6 +6,7 @@ import com.tiffany.exception.custom.ValidationException;
 import com.tiffany.features.auth.models.User;
 import com.tiffany.features.main.models.Product;
 import com.tiffany.features.main.repository.ProductRepository;
+import com.tiffany.features.notification.service.TelegramService;
 import com.tiffany.features.order.dto.filter.OrderFilterRequest;
 import com.tiffany.features.order.dto.helper.OrderCreateHelper;
 import com.tiffany.features.order.dto.helper.OrderItemCreateHelper;
@@ -51,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
     private final SecurityUtils securityUtils;
     private final OrderNumberGenerator orderNumberGenerator;
     private final PaginationMapper paginationMapper;
+    private final TelegramService telegramService;
 
     @Override
     public OrderResponse createOrderFromCart(OrderCreateRequest request) {
@@ -87,6 +89,13 @@ public class OrderServiceImpl implements OrderService {
 
             OrderResponse response = getOrderById(savedOrder.getId());
             log.info("Order created successfully - orderNumber: {}, itemCount: {}", response.getOrderNumber(), response.getItems().size());
+
+            // Send Telegram notification
+            Order fullOrder = orderRepository.findByIdWithDetails(savedOrder.getId()).orElse(null);
+            if (fullOrder != null) {
+                telegramService.notifyOrderCreated(fullOrder);
+            }
+
             return response;
         } catch (Exception e) {
             log.error("Failed to create order - error: {}", e.getMessage(), e);
@@ -169,6 +178,12 @@ public class OrderServiceImpl implements OrderService {
 
         Order updatedOrder = orderRepository.save(order);
         log.info("Order updated: {}", orderId);
+
+        // Send Telegram notification for status change
+        if (request.getOrderStatus() != null) {
+            telegramService.notifyOrderStatusChanged(updatedOrder);
+        }
+
         return orderMapper.toResponse(updatedOrder);
     }
 
