@@ -17,6 +17,7 @@ interface ToastParams {
   message: string;
   details?: Record<string, any>;
   duration?: number;
+  id?: string;
 }
 
 interface ValidationParams {
@@ -124,14 +125,14 @@ export const showToast = {
   },
 
   order: (params: ToastParams) => {
-    const { message, title, details, duration } = params;
+    const { message, title, details, duration, id } = params;
 
     toast.info(
       <ModernToastContent
         type="order"
         title={title || getToastTitle('order')}
         message={message}
-        id={uuidv4()}
+        id={id || uuidv4()}
         details={details}
       />,
       { ...defaultOptions, autoClose: duration || 5000 }
@@ -139,14 +140,14 @@ export const showToast = {
   },
 
   payment: (params: ToastParams) => {
-    const { message, title, details, duration } = params;
+    const { message, title, details, duration, id } = params;
 
     toast.info(
       <ModernToastContent
         type="payment"
         title={title || getToastTitle('payment')}
         message={message}
-        id={uuidv4()}
+        id={id || uuidv4()}
         details={details}
       />,
       { ...defaultOptions, autoClose: duration || 5000 }
@@ -154,14 +155,14 @@ export const showToast = {
   },
 
   user: (params: ToastParams) => {
-    const { message, title, details, duration } = params;
+    const { message, title, details, duration, id } = params;
 
     toast.info(
       <ModernToastContent
         type="user"
         title={title || getToastTitle('user')}
         message={message}
-        id={uuidv4()}
+        id={id || uuidv4()}
         details={details}
       />,
       { ...defaultOptions, autoClose: duration || 5000 }
