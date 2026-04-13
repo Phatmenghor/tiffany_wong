@@ -89,39 +89,34 @@ public class TelegramServiceImpl implements TelegramService {
         UserProfile profile = user.getProfile();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("═══════════════════════════════════════════════\n");
-        sb.append("NEW USER REGISTRATION ALERT\n");
-        sb.append("═══════════════════════════════════════════════\n\n");
+        sb.append("NEW USER REGISTRATION\n");
+        sb.append("--------------------\n\n");
 
-        sb.append("STATUS: SUCCESS\n");
-        sb.append("A new user account has been successfully registered and is active.\n\n");
+        sb.append("Status: SUCCESS\n");
+        sb.append("A new user account has been successfully registered.\n\n");
 
-        sb.append("───────────────────────────────────────────────\n");
-        sb.append("USER INFORMATION\n");
-        sb.append("───────────────────────────────────────────────\n");
-        sb.append("User ID: ").append(formatId(user.getId())).append("\n");
+        sb.append("USER DETAILS\n");
+        sb.append("--------------------\n");
+        sb.append("ID: ").append(formatId(user.getId())).append("\n");
         sb.append("Name: ").append(getDisplayName(user, profile)).append("\n");
 
         if (profile != null && profile.getEmail() != null) {
             sb.append("Email: ").append(profile.getEmail()).append("\n");
         }
 
-        sb.append("User Type: ").append(user.getUserType()).append("\n");
-        sb.append("Account Status: ACTIVE\n");
-
         if (profile != null && profile.getPhoneNumber() != null) {
-            sb.append("Phone Number: ").append(profile.getPhoneNumber()).append("\n");
+            sb.append("Phone: ").append(profile.getPhoneNumber()).append("\n");
         }
 
-        sb.append("\n───────────────────────────────────────────────\n");
-        sb.append("REGISTRATION DETAILS\n");
-        sb.append("───────────────────────────────────────────────\n");
-        sb.append("Registered Date: ").append(formatDateTime(user.getCreatedAt())).append("\n");
+        sb.append("Type: ").append(user.getUserType()).append("\n");
+        sb.append("Status: ACTIVE\n");
+
+        sb.append("\nREGISTRATION INFO\n");
+        sb.append("--------------------\n");
+        sb.append("Date: ").append(formatDateTime(user.getCreatedAt())).append("\n");
         sb.append("Location: Cambodia\n");
 
-        sb.append("\n═══════════════════════════════════════════════\n");
-        sb.append("Time: ").append(formatDateTime(LocalDateTime.now())).append("\n");
-        sb.append("═══════════════════════════════════════════════\n");
+        sb.append("\n").append(formatDateTime(LocalDateTime.now())).append("\n");
 
         return sb.toString();
     }
@@ -129,50 +124,41 @@ public class TelegramServiceImpl implements TelegramService {
     private String buildOrderSuccessMessage(Order order) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("═══════════════════════════════════════════════\n");
-        sb.append("ORDER SUCCESS NOTIFICATION\n");
-        sb.append("═══════════════════════════════════════════════\n\n");
+        sb.append("NEW ORDER PLACED\n");
+        sb.append("--------------------\n\n");
 
-        sb.append("STATUS: SUCCESS\n");
-        sb.append("New order has been placed and confirmed successfully.\n\n");
+        sb.append("Status: SUCCESS\n");
+        sb.append("Order has been placed and confirmed.\n\n");
 
-        sb.append("───────────────────────────────────────────────\n");
-        sb.append("ORDER INFORMATION\n");
-        sb.append("───────────────────────────────────────────────\n");
+        sb.append("ORDER DETAILS\n");
+        sb.append("--------------------\n");
         sb.append("Order ID: ").append(formatId(order.getId())).append("\n");
-        sb.append("Order Number: ").append(order.getOrderNumber()).append("\n");
-        sb.append("Customer Name: ").append(order.getCustomerName() != null ? order.getCustomerName() : "Guest").append("\n");
+        sb.append("Order #: ").append(order.getOrderNumber()).append("\n");
+        sb.append("Customer: ").append(order.getCustomerName() != null ? order.getCustomerName() : "Guest").append("\n");
         sb.append("Total Amount: $").append(order.getTotalAmount()).append("\n");
-        sb.append("Total Items: ").append(order.getItems() != null ? order.getItems().size() : 0).append("\n");
-
-        sb.append("\n───────────────────────────────────────────────\n");
-        sb.append("ITEMS ORDERED\n");
-        sb.append("───────────────────────────────────────────────\n");
+        sb.append("Items Count: ").append(order.getItems() != null ? order.getItems().size() : 0).append("\n");
 
         if (order.getItems() != null && !order.getItems().isEmpty()) {
+            sb.append("\nITEM LIST\n");
+            sb.append("--------------------\n");
             int itemNumber = 1;
             for (OrderItem item : order.getItems()) {
                 sb.append(itemNumber).append(". ").append(item.getProductName());
-                sb.append(" (Qty: ").append(item.getQuantity()).append(") ");
-                sb.append("- $").append(item.getTotalPrice()).append("\n");
+                sb.append(" | Qty: ").append(item.getQuantity());
+                sb.append(" | $").append(item.getTotalPrice()).append("\n");
                 itemNumber++;
             }
-        } else {
-            sb.append("No items in order.\n");
         }
 
-        sb.append("\n───────────────────────────────────────────────\n");
-        sb.append("ORDER STATUS\n");
-        sb.append("───────────────────────────────────────────────\n");
+        sb.append("\nORDER INFO\n");
+        sb.append("--------------------\n");
         sb.append("Order Status: CONFIRMED\n");
-        sb.append("Payment Status: ").append(order.getPaymentStatus()).append("\n");
-        sb.append("Shipping Location: Phnom Penh, Cambodia\n");
-        sb.append("Order Date: ").append(formatDateTime(order.getCreatedAt())).append("\n");
-        sb.append("Estimated Delivery: ").append(formatEstimatedDelivery(order.getCreatedAt())).append("\n");
+        sb.append("Payment: ").append(order.getPaymentStatus()).append("\n");
+        sb.append("Location: Phnom Penh, Cambodia\n");
+        sb.append("Date: ").append(formatDateTime(order.getCreatedAt())).append("\n");
+        sb.append("Est. Delivery: ").append(formatEstimatedDelivery(order.getCreatedAt())).append("\n");
 
-        sb.append("\n═══════════════════════════════════════════════\n");
-        sb.append("Time: ").append(formatDateTime(LocalDateTime.now())).append("\n");
-        sb.append("═══════════════════════════════════════════════\n");
+        sb.append("\n").append(formatDateTime(LocalDateTime.now())).append("\n");
 
         return sb.toString();
     }
@@ -180,31 +166,26 @@ public class TelegramServiceImpl implements TelegramService {
     private String buildOrderStatusChangeMessage(Order order) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("═══════════════════════════════════════════════\n");
-        sb.append("ORDER STATUS UPDATE NOTIFICATION\n");
-        sb.append("═══════════════════════════════════════════════\n\n");
+        sb.append("ORDER STATUS UPDATE\n");
+        sb.append("--------------------\n\n");
 
-        sb.append("STATUS: UPDATED\n");
-        sb.append("Order status has been changed and updated in the system.\n\n");
+        sb.append("Status: UPDATED\n");
+        sb.append("Order status has been updated.\n\n");
 
-        sb.append("───────────────────────────────────────────────\n");
-        sb.append("ORDER INFORMATION\n");
-        sb.append("───────────────────────────────────────────────\n");
+        sb.append("ORDER DETAILS\n");
+        sb.append("--------------------\n");
         sb.append("Order ID: ").append(formatId(order.getId())).append("\n");
-        sb.append("Order Number: ").append(order.getOrderNumber()).append("\n");
-        sb.append("Customer Name: ").append(order.getCustomerName() != null ? order.getCustomerName() : "Guest").append("\n");
-        sb.append("Total Amount: $").append(order.getTotalAmount()).append("\n");
+        sb.append("Order #: ").append(order.getOrderNumber()).append("\n");
+        sb.append("Customer: ").append(order.getCustomerName() != null ? order.getCustomerName() : "Guest").append("\n");
+        sb.append("Total: $").append(order.getTotalAmount()).append("\n");
 
-        sb.append("\n───────────────────────────────────────────────\n");
-        sb.append("UPDATED STATUS\n");
-        sb.append("───────────────────────────────────────────────\n");
-        sb.append("Order Status: ").append(order.getOrderStatus()).append("\n");
-        sb.append("Payment Status: ").append(order.getPaymentStatus()).append("\n");
-        sb.append("Last Updated: ").append(formatDateTime(order.getUpdatedAt())).append("\n");
+        sb.append("\nCURRENT STATUS\n");
+        sb.append("--------------------\n");
+        sb.append("Order: ").append(order.getOrderStatus()).append("\n");
+        sb.append("Payment: ").append(order.getPaymentStatus()).append("\n");
+        sb.append("Updated: ").append(formatDateTime(order.getUpdatedAt())).append("\n");
 
-        sb.append("\n═══════════════════════════════════════════════\n");
-        sb.append("Time: ").append(formatDateTime(LocalDateTime.now())).append("\n");
-        sb.append("═══════════════════════════════════════════════\n");
+        sb.append("\n").append(formatDateTime(LocalDateTime.now())).append("\n");
 
         return sb.toString();
     }
