@@ -105,19 +105,46 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 space-y-8 bg-gradient-to-b from-gray-50 to-white min-h-screen">
       <div>
         <h1 className="text-4xl font-bold">Dashboard</h1>
-        <p className="text-gray-600 mt-2">Business Overview</p>
+        <p className="text-gray-600 mt-2">Business Overview & Analysis</p>
       </div>
 
-      {/* Revenue Section */}
+      {/* PRIMARY: Revenue Comparison Chart (Bar Chart) - MAIN ANALYSIS */}
+      <Card className="border-2 border-blue-300 shadow-lg bg-white">
+        <CardHeader className="pb-2 border-b-2 border-blue-200">
+          <CardTitle className="text-2xl font-bold text-blue-900">💰 Revenue Analysis</CardTitle>
+          <p className="text-sm text-gray-600 mt-1">Paid vs Unpaid Revenue Overview</p>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={[
+              {
+                name: 'Revenue',
+                'Paid': parseFloat(data.totalPaid.toString()),
+                'Unpaid': parseFloat(data.totalUnpaid.toString()),
+              }
+            ]} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip formatter={(value) => (typeof value === 'number' ? formatCurrency(value) : value)} />
+              <Legend />
+              <Bar dataKey="Paid" fill="#059669" name="Paid Revenue" />
+              <Bar dataKey="Unpaid" fill="#dc2626" name="Unpaid Revenue" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Top Summary Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-8">
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-8 shadow">
           <p className="text-green-700 text-sm font-semibold mb-2">TOTAL REVENUE</p>
           <p className="text-4xl font-bold text-green-900">{formatCurrency(data.totalRevenue)}</p>
         </div>
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-lg p-8">
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-lg p-8 shadow">
           <p className="text-blue-700 text-sm font-semibold mb-2">AVERAGE ORDER VALUE</p>
           <p className="text-4xl font-bold text-blue-900">{formatCurrency(data.averageOrderValue)}</p>
         </div>
@@ -199,12 +226,38 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* Charts Section */}
+      {/* Key Performance Indicators */}
+      <Card className="border border-gray-200 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg">📊 Key Performance Indicators</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="border-l-4 border-blue-500 pl-4 py-2">
+              <p className="text-gray-600 text-sm">Fulfillment Rate</p>
+              <p className="text-3xl font-bold text-blue-600 mt-1">{data.fulfillmentRate.toFixed(1)}%</p>
+              <p className="text-xs text-gray-500 mt-1">Completion rate</p>
+            </div>
+            <div className="border-l-4 border-green-500 pl-4 py-2">
+              <p className="text-gray-600 text-sm">Payment Rate</p>
+              <p className="text-3xl font-bold text-green-600 mt-1">{data.paymentRate.toFixed(1)}%</p>
+              <p className="text-xs text-gray-500 mt-1">Collection rate</p>
+            </div>
+            <div className="border-l-4 border-purple-500 pl-4 py-2">
+              <p className="text-gray-600 text-sm">Avg Order Value</p>
+              <p className="text-3xl font-bold text-purple-600 mt-1">{formatCurrency(data.averageOrderValue)}</p>
+              <p className="text-xs text-gray-500 mt-1">Per order</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* SECONDARY: Distribution Charts (Pie Charts) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Order Status Distribution */}
         <Card className="border border-gray-200 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Order Status Distribution</CardTitle>
+            <CardTitle className="text-lg">📦 Order Status Distribution</CardTitle>
           </CardHeader>
           <CardContent className="flex justify-center">
             <ResponsiveContainer width="100%" height={300}>
@@ -234,7 +287,7 @@ export default function AdminPage() {
         {/* Payment Status Distribution */}
         <Card className="border border-gray-200 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Payment Status Distribution</CardTitle>
+            <CardTitle className="text-lg">💳 Payment Status Distribution</CardTitle>
           </CardHeader>
           <CardContent className="flex justify-center">
             <ResponsiveContainer width="100%" height={300}>
@@ -261,58 +314,6 @@ export default function AdminPage() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Revenue Comparison Chart */}
-      <Card className="border border-gray-200 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">Revenue Overview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={[
-              {
-                name: 'Revenue',
-                'Paid': parseFloat(data.totalPaid.toString()),
-                'Unpaid': parseFloat(data.totalUnpaid.toString()),
-              }
-            ]}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip formatter={(value) => (typeof value === 'number' ? formatCurrency(value) : value)} />
-              <Legend />
-              <Bar dataKey="Paid" fill="#059669" name="Paid" />
-              <Bar dataKey="Unpaid" fill="#dc2626" name="Unpaid" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      {/* Metrics Summary Cards */}
-      <Card className="border border-gray-200 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">Key Performance Indicators</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="border-l-4 border-blue-500 pl-4 py-2">
-              <p className="text-gray-600 text-sm">Fulfillment Rate</p>
-              <p className="text-3xl font-bold text-blue-600 mt-1">{data.fulfillmentRate.toFixed(1)}%</p>
-              <p className="text-xs text-gray-500 mt-1">Completion rate</p>
-            </div>
-            <div className="border-l-4 border-green-500 pl-4 py-2">
-              <p className="text-gray-600 text-sm">Payment Rate</p>
-              <p className="text-3xl font-bold text-green-600 mt-1">{data.paymentRate.toFixed(1)}%</p>
-              <p className="text-xs text-gray-500 mt-1">Collection rate</p>
-            </div>
-            <div className="border-l-4 border-purple-500 pl-4 py-2">
-              <p className="text-gray-600 text-sm">Avg Order Value</p>
-              <p className="text-3xl font-bold text-purple-600 mt-1">{formatCurrency(data.averageOrderValue)}</p>
-              <p className="text-xs text-gray-500 mt-1">Per order</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
