@@ -125,20 +125,18 @@ public class TelegramServiceImpl implements TelegramService {
 
     private String buildOrderSuccessMessage(Order order) {
         LocalDateTime now = LocalDateTime.now();
-        String messageId = formatId(order.getId());
 
         StringBuilder sb = new StringBuilder();
 
         sb.append("🛍️  NEW ORDER PLACED\n");
         sb.append("━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
 
-        sb.append("ID: ").append(messageId).append("\n");
+        sb.append("Order: ").append(order.getOrderNumber()).append("\n");
         sb.append("Time: ").append(formatDateTime(now)).append("\n");
         sb.append("Status: ✅ SUCCESS\n\n");
 
         sb.append("📦 ORDER INFORMATION\n");
         sb.append("──────────────────\n");
-        sb.append("Order ID: ").append(order.getId()).append("\n");
         sb.append("Order Number: ").append(order.getOrderNumber()).append("\n");
         sb.append("Customer: ").append(order.getCustomerName() != null ? order.getCustomerName() : "Guest").append("\n");
         sb.append("Total: $").append(order.getTotalAmount()).append("\n");
@@ -168,20 +166,18 @@ public class TelegramServiceImpl implements TelegramService {
 
     private String buildOrderStatusChangeMessage(Order order) {
         LocalDateTime now = LocalDateTime.now();
-        String messageId = formatId(order.getId());
 
         StringBuilder sb = new StringBuilder();
 
         sb.append("📍 ORDER STATUS UPDATE\n");
         sb.append("━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
 
-        sb.append("ID: ").append(messageId).append("\n");
+        sb.append("Order: ").append(order.getOrderNumber()).append("\n");
         sb.append("Time: ").append(formatDateTime(now)).append("\n");
         sb.append("Status: 🔄 UPDATED\n\n");
 
         sb.append("📦 ORDER INFORMATION\n");
         sb.append("──────────────────\n");
-        sb.append("Order ID: ").append(order.getId()).append("\n");
         sb.append("Order Number: ").append(order.getOrderNumber()).append("\n");
         sb.append("Customer: ").append(order.getCustomerName() != null ? order.getCustomerName() : "Guest").append("\n");
         sb.append("Total Amount: $").append(order.getTotalAmount()).append("\n\n");
