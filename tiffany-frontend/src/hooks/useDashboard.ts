@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { axiosClientWithAuth } from '@/utils/axios/axios-client';
 
 export interface SalesMetrics {
@@ -141,68 +141,123 @@ export const useDashboard = () => {
   const [productMetrics, setProductMetrics] = useState<ProductMetrics | null>(null);
   const [customerMetrics, setCustomerMetrics] = useState<CustomerMetrics | null>(null);
   const [paymentMetrics, setPaymentMetrics] = useState<PaymentMetrics | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  // Separate loading states for each endpoint
+  const [salesLoading, setSalesLoading] = useState(false);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [customersLoading, setCustomersLoading] = useState(false);
+  const [paymentsLoading, setPaymentsLoading] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSalesMetrics = async () => {
+  // Abort controllers for request cancellation
+  const abortControllersRef = useRef({
+    sales: new AbortController(),
+    orders: new AbortController(),
+    products: new AbortController(),
+    customers: new AbortController(),
+    payments: new AbortController(),
+  });
+
+  const fetchSalesMetrics = useCallback(async () => {
     try {
-      setLoading(true);
-      const response = await axiosClientWithAuth.get('/api/v1/dashboard/sales');
+      setSalesLoading(true);
+      setError(null);
+      const response = await axiosClientWithAuth.get('/api/v1/dashboard/sales', {
+        signal: abortControllersRef.current.sales.signal,
+      });
       setSalesMetrics(response.data.data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch sales metrics');
+    } catch (err: any) {
+      if (err.name !== 'CanceledError') {
+        setError(err instanceof Error ? err.message : 'Failed to fetch sales metrics');
+      }
     } finally {
-      setLoading(false);
+      setSalesLoading(false);
     }
-  };
+  }, []);
 
-  const fetchOrderMetrics = async () => {
+  const fetchOrderMetrics = useCallback(async () => {
     try {
-      setLoading(true);
-      const response = await axiosClientWithAuth.get('/api/v1/dashboard/orders');
+      setOrdersLoading(true);
+      setError(null);
+      const response = await axiosClientWithAuth.get('/api/v1/dashboard/orders', {
+        signal: abortControllersRef.current.orders.signal,
+      });
       setOrderMetrics(response.data.data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch order metrics');
+    } catch (err: any) {
+      if (err.name !== 'CanceledError') {
+        setError(err instanceof Error ? err.message : 'Failed to fetch order metrics');
+      }
     } finally {
-      setLoading(false);
+      setOrdersLoading(false);
     }
-  };
+  }, []);
 
-  const fetchProductMetrics = async () => {
+  const fetchProductMetrics = useCallback(async () => {
     try {
-      setLoading(true);
-      const response = await axiosClientWithAuth.get('/api/v1/dashboard/products');
+      setProductsLoading(true);
+      setError(null);
+      const response = await axiosClientWithAuth.get('/api/v1/dashboard/products', {
+        signal: abortControllersRef.current.products.signal,
+      });
       setProductMetrics(response.data.data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch product metrics');
+    } catch (err: any) {
+      if (err.name !== 'CanceledError') {
+        setError(err instanceof Error ? err.message : 'Failed to fetch product metrics');
+      }
     } finally {
-      setLoading(false);
+      setProductsLoading(false);
     }
-  };
+  }, []);
 
-  const fetchCustomerMetrics = async () => {
+  const fetchCustomerMetrics = useCallback(async () => {
     try {
-      setLoading(true);
-      const response = await axiosClientWithAuth.get('/api/v1/dashboard/customers');
+      setCustomersLoading(true);
+      setError(null);
+      const response = await axiosClientWithAuth.get('/api/v1/dashboard/customers', {
+        signal: abortControllersRef.current.customers.signal,
+      });
       setCustomerMetrics(response.data.data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch customer metrics');
+    } catch (err: any) {
+      if (err.name !== 'CanceledError') {
+        setError(err instanceof Error ? err.message : 'Failed to fetch customer metrics');
+      }
     } finally {
-      setLoading(false);
+      setCustomersLoading(false);
     }
-  };
+  }, []);
 
-  const fetchPaymentMetrics = async () => {
+  const fetchPaymentMetrics = useCallback(async () => {
     try {
-      setLoading(true);
-      const response = await axiosClientWithAuth.get('/api/v1/dashboard/payments');
+      setPaymentsLoading(true);
+      setError(null);
+      const response = await axiosClientWithAuth.get('/api/v1/dashboard/payments', {
+        signal: abortControllersRef.current.payments.signal,
+      });
       setPaymentMetrics(response.data.data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch payment metrics');
+    } catch (err: any) {
+      if (err.name !== 'CanceledError') {
+        setError(err instanceof Error ? err.message : 'Failed to fetch payment metrics');
+      }
     } finally {
-      setLoading(false);
+      setPaymentsLoading(false);
     }
-  };
+  }, []);
+
+  // Cleanup on unmount - abort all pending requests
+  useEffect(() => {
+    return () => {
+      abortControllersRef.current.sales.abort();
+      abortControllersRef.current.orders.abort();
+      abortControllersRef.current.products.abort();
+      abortControllersRef.current.customers.abort();
+      abortControllersRef.current.payments.abort();
+    };
+  }, []);
+
+  // Combined loading state for backwards compatibility
+  const loading = salesLoading || ordersLoading || productsLoading || customersLoading || paymentsLoading;
 
   return {
     salesMetrics,
@@ -211,6 +266,11 @@ export const useDashboard = () => {
     customerMetrics,
     paymentMetrics,
     loading,
+    salesLoading,
+    ordersLoading,
+    productsLoading,
+    customersLoading,
+    paymentsLoading,
     error,
     fetchSalesMetrics,
     fetchOrderMetrics,
