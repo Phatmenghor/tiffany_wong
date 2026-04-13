@@ -142,7 +142,6 @@ CREATE INDEX IF NOT EXISTS idx_orders_customer_id ON orders(customer_id);
 CREATE INDEX IF NOT EXISTS idx_orders_order_status ON orders(order_status);
 CREATE INDEX IF NOT EXISTS idx_orders_payment_status ON orders(payment_status);
 CREATE INDEX IF NOT EXISTS idx_orders_payment_method ON orders(payment_method);
-CREATE INDEX IF NOT EXISTS idx_orders_order_from ON orders(order_from);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_orders_updated_at ON orders(updated_at DESC);
 CREATE INDEX IF NOT EXISTS idx_orders_total_amount ON orders(total_amount);
