@@ -45,10 +45,9 @@ public class DashboardServiceImpl implements DashboardService {
 
         Integer totalOrders = allOrders.size();
 
-        Set<Long> uniqueCustomers = allOrders.stream()
+        Set<UUID> uniqueCustomers = allOrders.stream()
                 .map(Order::getCustomerId)
                 .filter(Objects::nonNull)
-                .map(Object::hashCode)
                 .collect(Collectors.toSet());
         Integer activeCustomers = uniqueCustomers.size();
 
@@ -425,26 +424,26 @@ public class DashboardServiceImpl implements DashboardService {
 
     private List<ProductMetricsResponse.ProductPerformanceDTO> buildTopProductsByViews(int limit) {
         return productRepository.findAll().stream()
-                .sorted(Comparator.comparing(p -> p.getViewCount() != null ? p.getViewCount() : 0, Comparator.reverseOrder()))
+                .sorted(Comparator.comparing(p -> p.getViewCount() != null ? p.getViewCount() : 0L, Comparator.reverseOrder()))
                 .limit(limit)
                 .map(p -> ProductMetricsResponse.ProductPerformanceDTO.builder()
                         .productId(p.getId().toString())
                         .productName(p.getName())
                         .price(p.getPrice())
-                        .viewCount(p.getViewCount() != null ? p.getViewCount() : 0)
+                        .viewCount(p.getViewCount() != null ? p.getViewCount().intValue() : 0)
                         .build())
                 .collect(Collectors.toList());
     }
 
     private List<ProductMetricsResponse.ProductPerformanceDTO> buildTopProductsByFavorites(int limit) {
         return productRepository.findAll().stream()
-                .sorted(Comparator.comparing(p -> p.getFavoriteCount() != null ? p.getFavoriteCount() : 0, Comparator.reverseOrder()))
+                .sorted(Comparator.comparing(p -> p.getFavoriteCount() != null ? p.getFavoriteCount() : 0L, Comparator.reverseOrder()))
                 .limit(limit)
                 .map(p -> ProductMetricsResponse.ProductPerformanceDTO.builder()
                         .productId(p.getId().toString())
                         .productName(p.getName())
                         .price(p.getPrice())
-                        .favoriteCount(p.getFavoriteCount() != null ? p.getFavoriteCount() : 0)
+                        .favoriteCount(p.getFavoriteCount() != null ? p.getFavoriteCount().intValue() : 0)
                         .build())
                 .collect(Collectors.toList());
     }

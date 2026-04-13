@@ -22,34 +22,34 @@ public class DashboardController {
     public ResponseEntity<ApiResponse<SalesMetricsResponse>> getSalesMetrics() {
         log.info("Fetching sales metrics");
         SalesMetricsResponse metrics = dashboardService.getSalesMetrics();
-        return ResponseEntity.ok(ApiResponse.success(metrics, "Sales metrics retrieved successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Sales metrics retrieved successfully", metrics));
     }
 
     @GetMapping("/orders")
     public ResponseEntity<ApiResponse<OrderMetricsResponse>> getOrderMetrics() {
         log.info("Fetching order metrics");
         OrderMetricsResponse metrics = dashboardService.getOrderMetrics();
-        return ResponseEntity.ok(ApiResponse.success(metrics, "Order metrics retrieved successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Order metrics retrieved successfully", metrics));
     }
 
     @GetMapping("/products")
     public ResponseEntity<ApiResponse<ProductMetricsResponse>> getProductMetrics() {
         log.info("Fetching product metrics");
         ProductMetricsResponse metrics = dashboardService.getProductMetrics();
-        return ResponseEntity.ok(ApiResponse.success(metrics, "Product metrics retrieved successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Product metrics retrieved successfully", metrics));
     }
 
     @GetMapping("/customers")
     public ResponseEntity<ApiResponse<CustomerMetricsResponse>> getCustomerMetrics() {
         log.info("Fetching customer metrics");
         CustomerMetricsResponse metrics = dashboardService.getCustomerMetrics();
-        return ResponseEntity.ok(ApiResponse.success(metrics, "Customer metrics retrieved successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Customer metrics retrieved successfully", metrics));
     }
 
     @GetMapping("/payments")
     public ResponseEntity<ApiResponse<PaymentMetricsResponse>> getPaymentMetrics() {
         log.info("Fetching payment metrics");
         PaymentMetricsResponse metrics = dashboardService.getPaymentMetrics();
-        return ResponseEntity.ok(ApiResponse.success(metrics, "Payment metrics retrieved successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Payment metrics retrieved successfully", metrics));
     }
 }
