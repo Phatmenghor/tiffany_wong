@@ -186,7 +186,7 @@ BEGIN
     RAISE NOTICE '[52 percent] Inserting complete user profile for phatmenghor21@gmail.com...';
 END $$;
 
-INSERT INTO user_profiles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, first_name, last_name, email, phone_number, profile_image_url, gender, date_of_birth, nationality, identification_type, identification_number, address, city, state_province, postal_code, country)
+INSERT INTO user_profiles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, first_name, last_name, email, phone_number, profile_image_url, gender, date_of_birth, nickname)
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     u.id,
@@ -195,16 +195,9 @@ SELECT
     'phatmenghor21@gmail.com',
     '+855 98 777 8888',
     'https://picsum.photos/150/150?random=100',
-    'Male',
-    '1990-06-15',
-    'Cambodian',
-    'PASSPORT',
-    'K1234567890',
-    'No. 888, Sihanouk Boulevard, Sangkat Phnom Penh',
-    'Phnom Penh',
-    'Phnom Penh',
-    '12300',
-    'Cambodia'
+    'MALE',
+    '1990-06-15'::date,
+    'Phat'
 FROM users u WHERE u.user_identifier = 'phatmenghor21@gmail.com';
 
 DO $$
