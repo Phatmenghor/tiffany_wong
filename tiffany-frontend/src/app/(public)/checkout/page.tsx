@@ -171,6 +171,36 @@ export default function CheckoutPage() {
               onAddLocation={handleAddLocation}
             />
 
+            {/* Customer Information */}
+            <div className="bg-card border rounded-2xl p-5">
+              <h3 className="text-base font-bold mb-4">Customer Information</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Full Name *</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    disabled={isProcessing}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Phone Number *</label>
+                  <input
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    disabled={isProcessing}
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Cart Items */}
             {items.length > 0 && (
               <>
@@ -225,9 +255,7 @@ export default function CheckoutPage() {
             isProcessing={isProcessing}
             selectedAddressId={selectedAddress?.id}
             customerName={customerName}
-            onCustomerNameChange={setCustomerName}
             customerPhone={customerPhone}
-            onCustomerPhoneChange={setCustomerPhone}
           />
         </div>
       </PageContainer>
