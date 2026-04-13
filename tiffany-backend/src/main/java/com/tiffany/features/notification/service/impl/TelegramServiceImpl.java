@@ -93,14 +93,14 @@ public class TelegramServiceImpl implements TelegramService {
         StringBuilder sb = new StringBuilder();
 
         sb.append("NEW USER REGISTRATION\n");
-        sb.append("━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        sb.append("━━━━━━━━━━━━━━━━━━━\n\n");
 
         sb.append("ID: ").append(messageId).append("\n");
         sb.append("Time: ").append(formatDateTime(now)).append("\n");
         sb.append("Status: SUCCESS\n\n");
 
         sb.append("USER INFORMATION\n");
-        sb.append("──────────────────\n");
+        sb.append("────────────────\n");
         sb.append("User ID: ").append(user.getId()).append("\n");
         sb.append("Name: ").append(getDisplayName(user, profile)).append("\n");
 
@@ -116,7 +116,7 @@ public class TelegramServiceImpl implements TelegramService {
         sb.append("Account: ACTIVE\n\n");
 
         sb.append("LOCATION\n");
-        sb.append("──────────────────\n");
+        sb.append("────────────────\n");
         sb.append("Country: Cambodia\n");
         sb.append("Registered: ").append(formatDateTime(user.getCreatedAt())).append("\n");
 
@@ -129,14 +129,14 @@ public class TelegramServiceImpl implements TelegramService {
         StringBuilder sb = new StringBuilder();
 
         sb.append("NEW ORDER PLACED\n");
-        sb.append("━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        sb.append("━━━━━━━━━━━━━━━━\n\n");
 
         sb.append("Order: ").append(order.getOrderNumber()).append("\n");
         sb.append("Time: ").append(formatDateTime(now)).append("\n");
         sb.append("Status: SUCCESS\n\n");
 
         sb.append("ORDER INFORMATION\n");
-        sb.append("──────────────────\n");
+        sb.append("────────────────\n");
         sb.append("Order Number: ").append(order.getOrderNumber()).append("\n");
         sb.append("Customer: ").append(order.getCustomerName() != null ? order.getCustomerName() : "Guest").append("\n");
         sb.append("Total: $").append(order.getTotalAmount()).append("\n");
@@ -144,7 +144,7 @@ public class TelegramServiceImpl implements TelegramService {
 
         if (order.getItems() != null && !order.getItems().isEmpty()) {
             sb.append("\nITEMS ORDERED\n");
-            sb.append("──────────────────\n");
+            sb.append("────────────────\n");
             int itemNumber = 1;
             for (OrderItem item : order.getItems()) {
                 sb.append(itemNumber).append(". ").append(item.getProductName()).append("\n");
@@ -154,7 +154,7 @@ public class TelegramServiceImpl implements TelegramService {
         }
 
         sb.append("\nORDER STATUS\n");
-        sb.append("──────────────────\n");
+        sb.append("────────────────\n");
         sb.append("Status: CONFIRMED\n");
         sb.append("Payment: ").append(order.getPaymentStatus()).append("\n");
         sb.append("Location: Phnom Penh, Cambodia\n");
@@ -170,21 +170,21 @@ public class TelegramServiceImpl implements TelegramService {
         StringBuilder sb = new StringBuilder();
 
         sb.append("ORDER STATUS UPDATE\n");
-        sb.append("━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        sb.append("━━━━━━━━━━━━━━━━━━\n\n");
 
         sb.append("Order: ").append(order.getOrderNumber()).append("\n");
         sb.append("Time: ").append(formatDateTime(now)).append("\n");
         sb.append("Status: UPDATED\n\n");
 
         sb.append("ORDER INFORMATION\n");
-        sb.append("──────────────────\n");
+        sb.append("────────────────\n");
         sb.append("Order Number: ").append(order.getOrderNumber()).append("\n");
         sb.append("Customer: ").append(order.getCustomerName() != null ? order.getCustomerName() : "Guest").append("\n");
         sb.append("Total: $").append(order.getTotalAmount()).append("\n\n");
 
         if (order.getItems() != null && !order.getItems().isEmpty()) {
             sb.append("ITEMS ORDERED\n");
-            sb.append("──────────────────\n");
+            sb.append("────────────────\n");
             int itemNumber = 1;
             for (OrderItem item : order.getItems()) {
                 sb.append(itemNumber).append(". ").append(item.getProductName()).append("\n");
@@ -195,7 +195,7 @@ public class TelegramServiceImpl implements TelegramService {
         }
 
         sb.append("CURRENT STATUS\n");
-        sb.append("──────────────────\n");
+        sb.append("────────────────\n");
         sb.append("Order: ").append(order.getOrderStatus()).append("\n");
         sb.append("Payment: ").append(order.getPaymentStatus()).append("\n");
 
