@@ -3,12 +3,14 @@ package com.tiffany.features.dashboard.controller;
 import com.tiffany.features.dashboard.dto.*;
 import com.tiffany.features.dashboard.service.DashboardService;
 import com.tiffany.features.dashboard.service.SimpleDashboardService;
+import com.tiffany.features.dashboard.service.DailyTrendService;
 import com.tiffany.shared.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -19,6 +21,7 @@ public class DashboardController {
 
     private final DashboardService dashboardService;
     private final SimpleDashboardService simpleDashboardService;
+    private final DailyTrendService dailyTrendService;
 
     @GetMapping("/sales")
     public ResponseEntity<ApiResponse<SalesMetricsResponse>> getSalesMetrics() {
@@ -60,5 +63,13 @@ public class DashboardController {
         log.info("Fetching simple dashboard metrics");
         SimpleDashboardResponse metrics = simpleDashboardService.getSimpleDashboard();
         return ResponseEntity.ok(ApiResponse.success("Dashboard metrics retrieved successfully", metrics));
+    }
+
+    @GetMapping("/daily-trends")
+    public ResponseEntity<ApiResponse<DailyTrendResponse>> getDailyTrends(
+            @RequestParam(defaultValue = "30") int days) {
+        log.info("Fetching daily trends for {} days", days);
+        DailyTrendResponse trends = dailyTrendService.getDailyTrends(days);
+        return ResponseEntity.ok(ApiResponse.success("Daily trends retrieved successfully", trends));
     }
 }

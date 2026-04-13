@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { axiosClientWithAuth } from '@/utils/axios/axios-client';
 import { DollarSign, ShoppingCart, Users, TrendingUp, CheckCircle, Clock, Package } from 'lucide-react';
 import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import { DailyTrendsChart } from '@/components/shared/common/daily-trends-chart';
 
 interface SimpleDashboardData {
   totalRevenue: number;
@@ -110,6 +111,9 @@ export default function AdminPage() {
         <h1 className="text-4xl font-bold">Dashboard</h1>
         <p className="text-gray-600 mt-2">Business Overview & Analysis</p>
       </div>
+
+      {/* DAILY TRENDS CHART - TOP */}
+      <DailyTrendsChart />
 
       {/* PRIMARY: Revenue Comparison Chart (Bar Chart) - MAIN ANALYSIS */}
       <Card className="border-2 border-blue-300 shadow-lg bg-white">
