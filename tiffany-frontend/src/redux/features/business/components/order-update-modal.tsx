@@ -116,27 +116,18 @@ export function OrderUpdateModal({
       );
 
       if (response.status === 200 || response.status === 204) {
-        // Build details object with items
+        // Simple toast message (short details only)
         const details: Record<string, any> = {
-          'Order ID': orderId.substring(0, 8),
+          'Order': orderId.substring(0, 8),
           'Status': data.orderStatus,
           'Payment': data.paymentStatus,
-          'Updated At': new Date().toLocaleString(),
         };
 
-        // Add items information if available
-        if (orderData?.items && orderData.items.length > 0) {
-          const itemsInfo = orderData.items.map((item: any, index: number) =>
-            `${index + 1}. ${item.productName} | Qty: ${item.quantity} | $${item.totalPrice}`
-          ).join('\n');
-          details['Items'] = itemsInfo;
-        }
-
         showToast.order({
-          title: 'Order Updated Successfully',
-          message: 'The order has been updated with the new status and payment information.',
+          title: 'Order Updated',
+          message: 'Status and payment information updated.',
           details,
-          duration: 6000,
+          duration: 5000,
         });
         if (onOrderUpdated) {
           onOrderUpdated();
