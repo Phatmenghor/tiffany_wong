@@ -41,24 +41,24 @@ export function OrderSummary({
           </span>
         </h2>
 
-        <div className="space-y-3 mb-5">
-          {/* Customer Info */}
-          {(customerName || customerPhone) && (
-            <div className="bg-blue-50/50 rounded-lg p-3 mb-4 border border-blue-200/50">
-              <div className="text-xs text-muted-foreground mb-2">Delivery Information</div>
-              {customerName && (
-                <div className="text-sm font-medium text-foreground mb-1">
-                  {customerName}
-                </div>
-              )}
-              {customerPhone && (
-                <div className="text-xs text-muted-foreground">
-                  📱 {customerPhone}
-                </div>
-              )}
-            </div>
-          )}
+        {/* Customer Info - Top */}
+        {(customerName || customerPhone) && (
+          <div className="bg-blue-50/50 rounded-lg p-3 mb-4 border border-blue-200/50">
+            <div className="text-xs text-muted-foreground mb-2">Delivery Information</div>
+            {customerName && (
+              <div className="text-sm font-medium text-foreground mb-1">
+                {customerName}
+              </div>
+            )}
+            {customerPhone && (
+              <div className="text-xs text-muted-foreground">
+                📱 {customerPhone}
+              </div>
+            )}
+          </div>
+        )}
 
+        <div className="space-y-3 mb-5">
           {/* Items count with quantity */}
           <div className="bg-muted/50 rounded-lg p-3 mb-4">
             <div className="text-xs text-muted-foreground mb-2">Items Breakdown</div>
