@@ -547,18 +547,22 @@ FROM order_data od;
 -- 11. ORDER ITEMS (5-8 items per order with random created_at for 1 year)
 -- ============================================================================
 INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_name, product_image_url, product_size_id, size_name, sku, barcode, quantity, current_price, final_price, unit_price, has_promotion, promotion_type, promotion_value, promotion_from_date, promotion_to_date, total_price)
-WITH order_products AS (
+WITH order_product_nums AS (
     SELECT
         o.id as order_id,
         o.created_at as order_created_at,
         p.id, p.name, p.price, p.main_image_url, p.sku,
         ps.id as size_id, ps.name as size_name,
-        ROW_NUMBER() OVER (PARTITION BY o.id ORDER BY p.id) as item_num,
-        ROW_NUMBER() OVER (ORDER BY o.id, p.id) as global_num
+        ROW_NUMBER() OVER (PARTITION BY o.id ORDER BY p.id) as item_num
     FROM orders o
     CROSS JOIN products p
     LEFT JOIN product_sizes ps ON p.id = ps.product_id
-    WHERE (ROW_NUMBER() OVER (PARTITION BY o.id ORDER BY p.id) <= CASE WHEN ABS(hashtext(o.id::text))::int % 2 = 0 THEN 8 ELSE 5 END)
+),
+order_products AS (
+    SELECT *,
+        CASE WHEN ABS(hashtext(order_id::text))::int % 2 = 0 THEN 8 ELSE 5 END as max_items
+    FROM order_product_nums
+    WHERE item_num <= (CASE WHEN ABS(hashtext(order_id::text))::int % 2 = 0 THEN 8 ELSE 5 END)
 )
 SELECT
     gen_random_uuid(), 0,
