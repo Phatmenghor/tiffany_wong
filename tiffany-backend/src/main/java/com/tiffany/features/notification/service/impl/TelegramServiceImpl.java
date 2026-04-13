@@ -8,6 +8,7 @@ import com.tiffany.features.order.models.OrderItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -38,6 +39,7 @@ public class TelegramServiceImpl implements TelegramService {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
+    @Async
     public void notifyUserCreated(User user) {
         if (!telegramEnabled) {
             log.debug("Telegram notifications disabled");
@@ -54,6 +56,7 @@ public class TelegramServiceImpl implements TelegramService {
     }
 
     @Override
+    @Async
     public void notifyOrderCreated(Order order) {
         if (!telegramEnabled) {
             log.debug("Telegram notifications disabled");
@@ -70,6 +73,7 @@ public class TelegramServiceImpl implements TelegramService {
     }
 
     @Override
+    @Async
     public void notifyOrderStatusChanged(Order order) {
         if (!telegramEnabled) {
             log.debug("Telegram notifications disabled");
@@ -202,6 +206,7 @@ public class TelegramServiceImpl implements TelegramService {
         return sb.toString();
     }
 
+    @Async
     private void sendMessage(String message) {
         try {
             String url = TELEGRAM_API_URL.replace("{token}", botToken);
@@ -215,7 +220,6 @@ public class TelegramServiceImpl implements TelegramService {
             log.debug("Message sent to Telegram group");
         } catch (Exception e) {
             log.error("Error sending message to Telegram: {}", e.getMessage(), e);
-            throw e;
         }
     }
 
