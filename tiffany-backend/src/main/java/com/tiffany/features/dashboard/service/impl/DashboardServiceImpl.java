@@ -450,8 +450,20 @@ public class DashboardServiceImpl implements DashboardService {
 
     private List<ProductMetricsResponse.CategoryCountDTO> buildProductsByCategory(List<Order> orders) {
         return productRepository.findAll().stream()
-                .filter(p -> p.getCategory() != null)
-                .collect(Collectors.groupingBy(p -> p.getCategory().getName()))
+                .filter(p -> {
+                    try {
+                        return p.getCategory() != null && p.getCategory().getName() != null;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
+                .collect(Collectors.groupingBy(p -> {
+                    try {
+                        return p.getCategory().getName();
+                    } catch (Exception e) {
+                        return "Unknown";
+                    }
+                }))
                 .entrySet().stream()
                 .map(entry -> {
                     BigDecimal revenue = orders.stream()
@@ -474,7 +486,13 @@ public class DashboardServiceImpl implements DashboardService {
 
     private List<ProductMetricsResponse.ProductPerformanceDTO> buildLowestPerformanceProducts(List<Order> orders, int limit) {
         Set<String> soldProductIds = orders.stream()
-                .flatMap(o -> o.getItems().stream())
+                .flatMap(o -> {
+                    try {
+                        return o.getItems() != null ? o.getItems().stream() : java.util.stream.Stream.empty();
+                    } catch (Exception e) {
+                        return java.util.stream.Stream.empty();
+                    }
+                })
                 .map(item -> item.getProductId().toString())
                 .collect(Collectors.toSet());
 
@@ -483,8 +501,8 @@ public class DashboardServiceImpl implements DashboardService {
                 .limit(limit)
                 .map(p -> ProductMetricsResponse.ProductPerformanceDTO.builder()
                         .productId(p.getId().toString())
-                        .productName(p.getName())
-                        .price(p.getPrice())
+                        .productName(p.getName() != null ? p.getName() : "Unknown")
+                        .price(p.getPrice() != null ? p.getPrice() : BigDecimal.ZERO)
                         .quantity(0)
                         .revenue(BigDecimal.ZERO)
                         .build())
