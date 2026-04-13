@@ -45,9 +45,13 @@ export function DailyTrendsChart() {
     try {
       setLoading(true);
       setError(null);
+      console.log('Fetching daily trends from /api/v1/dashboard/daily-trends');
+
       const response = await axiosClientWithAuth.get<any>('/api/v1/dashboard/daily-trends?days=30');
 
-      if (response.data?.data?.dailyData) {
+      console.log('Daily trends response:', response.data);
+
+      if (response.data?.data?.dailyData && Array.isArray(response.data.data.dailyData)) {
         const chartData = response.data.data.dailyData.map((item: any) => ({
           date: item.date,
           ordersCount: item.ordersCount || 0,
@@ -56,11 +60,21 @@ export function DailyTrendsChart() {
           newCustomers: item.newCustomers || 0,
           totalAmount: typeof item.totalAmount === 'string' ? parseFloat(item.totalAmount) : item.totalAmount || 0,
         }));
+        console.log('Chart data prepared:', chartData);
         setData(chartData);
+      } else {
+        console.warn('No daily data received or invalid format');
+        setError('No data available for daily trends');
       }
     } catch (err: any) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch daily trends');
-      console.error('Daily trends error:', err);
+      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to fetch daily trends';
+      setError(errorMessage);
+      console.error('Daily trends error:', {
+        message: errorMessage,
+        status: err?.response?.status,
+        data: err?.response?.data,
+        fullError: err
+      });
     } finally {
       setLoading(false);
     }
@@ -93,8 +107,15 @@ export function DailyTrendsChart() {
           <CardTitle className="text-lg">Daily Trends</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center h-80">
-            <p className="text-red-600">Error loading trends</p>
+          <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-800 font-semibold mb-2">Error Loading Daily Trends</p>
+            <p className="text-red-700 text-sm mb-4">{error}</p>
+            <button
+              onClick={fetchDailyTrends}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+            >
+              Try Again
+            </button>
           </div>
         </CardContent>
       </Card>
