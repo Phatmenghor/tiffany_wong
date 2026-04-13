@@ -15,6 +15,7 @@ import { FormBody } from "@/components/shared/form-field/form-body";
 import { FormFooter } from "@/components/shared/form-field/form-footer";
 import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { showToast } from "@/components/shared/common/show-toast";
+import { axiosClientWithAuth } from "@/utils/axios/axios-client";
 import {
   selectSelectedOrder,
   selectOrderAdminIsFetchingDetail,
@@ -109,27 +110,25 @@ export function OrderUpdateModal({
         customerNote: data.customerNote,
       };
 
-      const response = await fetch(`/api/v1/orders/${orderId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatePayload),
-      });
+      const response = await axiosClientWithAuth.put(
+        `/api/v1/orders/${orderId}`,
+        updatePayload
+      );
 
-      if (response.ok) {
+      if (response.status === 200 || response.status === 204) {
         showToast.success("✅ Order updated successfully!");
         if (onOrderUpdated) {
           onOrderUpdated();
         }
         handleClose();
-      } else {
-        const error = await response.json();
-        showToast.error(error.message || "Failed to update order");
       }
     } catch (error: any) {
-      showToast.error(error?.message || "Error updating order");
-      console.error(error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Error updating order";
+      showToast.error(errorMessage);
+      console.error("Order update error:", error);
     } finally {
       setIsSaving(false);
     }
