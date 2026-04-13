@@ -19,6 +19,23 @@ interface ToastParams {
   duration?: number;
 }
 
+interface ValidationParams {
+  title?: string;
+  message?: string;
+  nid: string;
+  score: number;
+  status: 'SUCCESS' | 'FAILURE';
+  incorrectFields?: string[];
+  nameKH?: string;
+  nameEN?: string;
+  dob?: string;
+  gender?: string;
+  issued?: string;
+  expired?: string;
+  phoneNumber?: string;
+  duration?: number;
+}
+
 const getToastTitle = (type: string, customTitle?: string) => {
   if (customTitle) return customTitle;
   switch (type) {
@@ -148,6 +165,58 @@ export const showToast = {
         details={details}
       />,
       { ...defaultOptions, autoClose: duration || 5000 }
+    );
+  },
+
+  validation: (params: ValidationParams) => {
+    const {
+      title,
+      message,
+      nid,
+      score,
+      status,
+      incorrectFields,
+      nameKH,
+      nameEN,
+      dob,
+      gender,
+      issued,
+      expired,
+      phoneNumber,
+      duration,
+    } = params;
+
+    const defaultTitle =
+      status === 'SUCCESS'
+        ? 'NID Validation Successful'
+        : 'NID Validation Failed';
+
+    const defaultMessage =
+      status === 'SUCCESS'
+        ? 'National ID has been validated successfully.'
+        : 'National ID validation failed. Please recheck the information.';
+
+    toast[status === 'SUCCESS' ? 'success' : 'warning'](
+      <ModernToastContent
+        type="validation"
+        title={title || defaultTitle}
+        message={message || defaultMessage}
+        id={uuidv4()}
+        validationData={{
+          nid,
+          score,
+          status,
+          incorrectFields,
+          nameKH,
+          nameEN,
+          dob,
+          gender,
+          issued,
+          expired,
+          phoneNumber,
+        }}
+      />,
+      { ...defaultOptions, autoClose: duration || 6000 }
     );
   },
 };
