@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { axiosClientWithAuth } from '@/utils/axios/axios-client';
 import { DollarSign, ShoppingCart, Users, TrendingUp, CheckCircle, Clock, Package } from 'lucide-react';
-import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
-import { DailyTrendsChart } from '@/components/shared/common/daily-trends-chart';
+import { PieChart, Pie, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { DashboardSkeleton } from '@/components/shared/common/skeleton-loaders';
 
 interface SimpleDashboardData {
@@ -108,35 +107,6 @@ export default function AdminPage() {
         <h1 className="text-4xl font-bold">Dashboard</h1>
         <p className="text-gray-600 mt-2">Business Overview & Analysis</p>
       </div>
-
-      {/* DAILY TRENDS CHART - TOP */}
-      <DailyTrendsChart />
-
-      {/* PRIMARY: Revenue Comparison Chart (Bar Chart) - MAIN ANALYSIS */}
-      <Card className="border-2 border-blue-300 shadow-lg bg-white">
-        <CardHeader className="pb-2 border-b-2 border-blue-200">
-          <CardTitle className="text-2xl font-bold text-blue-900">💰 Revenue Analysis</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={[
-              {
-                name: 'Revenue',
-                'Paid': parseFloat(data.totalPaid.toString()),
-                'Unpaid': parseFloat(data.totalUnpaid.toString()),
-              }
-            ]} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip formatter={(value) => (typeof value === 'number' ? formatCurrency(value) : value)} />
-              <Legend />
-              <Bar dataKey="Paid" fill="#059669" name="Paid Revenue" />
-              <Bar dataKey="Unpaid" fill="#dc2626" name="Unpaid Revenue" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
 
       {/* Top Summary Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
