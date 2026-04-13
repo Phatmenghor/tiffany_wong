@@ -222,19 +222,26 @@ BEGIN
 END $$;
 
 INSERT INTO categories (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, image_url, status)
-VALUES
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Living Room Furniture', 'https://picsum.photos/400/300?random=10', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Bedroom Furniture', 'https://picsum.photos/400/300?random=11', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Dining Room Furniture', 'https://picsum.photos/400/300?random=12', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Office Furniture', 'https://picsum.photos/400/300?random=13', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Kitchen Furniture', 'https://picsum.photos/400/300?random=14', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Outdoor Furniture', 'https://picsum.photos/400/300?random=15', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Accent & Storage', 'https://picsum.photos/400/300?random=16', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Lighting & Décor', 'https://picsum.photos/400/300?random=17', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Upholstered Furniture', 'https://picsum.photos/400/300?random=18', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Wood Furniture', 'https://picsum.photos/400/300?random=19', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Metal & Glass Furniture', 'https://picsum.photos/400/300?random=20', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Home Accessories', 'https://picsum.photos/400/300?random=21', 'ACTIVE');
+SELECT
+    gen_random_uuid(), 0,
+    NOW() - (random() * INTERVAL '365 days') as created_at,
+    NOW() - (random() * INTERVAL '365 days') as updated_at,
+    'system', 'system', false, NULL, NULL,
+    cat_name, 'https://picsum.photos/400/300?random=' || (9 + i)::text, 'ACTIVE'
+FROM (
+    SELECT 1 as i, 'Living Room Furniture' as cat_name UNION ALL
+    SELECT 2, 'Bedroom Furniture' UNION ALL
+    SELECT 3, 'Dining Room Furniture' UNION ALL
+    SELECT 4, 'Office Furniture' UNION ALL
+    SELECT 5, 'Kitchen Furniture' UNION ALL
+    SELECT 6, 'Outdoor Furniture' UNION ALL
+    SELECT 7, 'Accent & Storage' UNION ALL
+    SELECT 8, 'Lighting & Décor' UNION ALL
+    SELECT 9, 'Upholstered Furniture' UNION ALL
+    SELECT 10, 'Wood Furniture' UNION ALL
+    SELECT 11, 'Metal & Glass Furniture' UNION ALL
+    SELECT 12, 'Home Accessories'
+) categories_list;
 
 DO $$
 BEGIN
@@ -289,11 +296,14 @@ Transform your living space with this innovative furniture. Combines smart desig
 promo_data AS (
     SELECT
         i,
-        random() as promo_rand
+        random() as promo_rand,
+        NOW() - (random() * INTERVAL '365 days') as random_created_at,
+        NOW() - (random() * INTERVAL '365 days') + (random() * INTERVAL '180 days') as promo_from_date_calc,
+        NOW() - (random() * INTERVAL '365 days') + ((random() + 0.5) * INTERVAL '180 days') as promo_to_date_calc
     FROM generate_series(1, 9600) AS t(i)
 )
 SELECT
-    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    gen_random_uuid(), 0, pd.random_created_at, pd.random_created_at, 'system', 'system', false, NULL, NULL,
     (SELECT pname FROM product_names WHERE name_id = ((pd.i - 1) % 10) + 1) || ' - Item ' || pd.i,
     (SELECT description_text FROM descriptions WHERE desc_id = ((pd.i - 1) % 3) + 1),
     'FUR-' || LPAD(pd.i::text, 6, '0'),
@@ -314,11 +324,11 @@ SELECT
         ELSE NULL
     END,
     CASE
-        WHEN pd.promo_rand < 0.3 THEN NOW()
+        WHEN pd.promo_rand < 0.3 THEN pd.promo_from_date_calc
         ELSE NULL
     END,
     CASE
-        WHEN pd.promo_rand < 0.3 THEN NOW() + INTERVAL '45 days'
+        WHEN pd.promo_rand < 0.3 THEN pd.promo_to_date_calc
         ELSE NULL
     END
 FROM promo_data pd;
@@ -361,13 +371,16 @@ size_with_promo AS (
         p.price,
         p.sku,
         p.barcode,
-        random() as promo_rand
+        random() as promo_rand,
+        NOW() - (random() * INTERVAL '365 days') as random_created_at,
+        NOW() - (random() * INTERVAL '365 days') + (random() * INTERVAL '180 days') as promo_from_date_calc,
+        NOW() - (random() * INTERVAL '365 days') + ((random() + 0.5) * INTERVAL '180 days') as promo_to_date_calc
     FROM product_with_sizes p
     CROSS JOIN size_names sn
     WHERE sn.size_id <= (5 + ((ABS(hashtext(p.id::text))::numeric % 6))::int)
 )
 SELECT
-    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    gen_random_uuid(), 0, sp.random_created_at, sp.random_created_at, 'system', 'system', false, NULL, NULL,
     sp.product_id,
     sp.size_name,
     (sp.price * (0.85 + random() * 0.3))::numeric(10,2),
@@ -382,11 +395,11 @@ SELECT
         ELSE NULL
     END,
     CASE
-        WHEN sp.promo_rand < 0.3 THEN NOW()
+        WHEN sp.promo_rand < 0.3 THEN sp.promo_from_date_calc
         ELSE NULL
     END,
     CASE
-        WHEN sp.promo_rand < 0.3 THEN NOW() + INTERVAL '45 days'
+        WHEN sp.promo_rand < 0.3 THEN sp.promo_to_date_calc
         ELSE NULL
     END
 FROM size_with_promo sp;
@@ -407,7 +420,10 @@ END $$;
 
 INSERT INTO product_images (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, image_url)
 SELECT
-    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    gen_random_uuid(), 0,
+    NOW() - (random() * INTERVAL '365 days') as created_at,
+    NOW() - (random() * INTERVAL '365 days') as updated_at,
+    'system', 'system', false, NULL, NULL,
     p.id,
     'https://picsum.photos/600/500?' || 'random=' || (1000 + ABS(hashtext((p.id::text || '-' || img_num::text)))::int % 50000)::text
 FROM products p
@@ -428,15 +444,22 @@ BEGIN
 END $$;
 
 INSERT INTO banners (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, description, image_url, link_url, status)
-VALUES
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Grand Opening Sale - Up to 40% Off Furniture', 'https://picsum.photos/1200/400?random=200', '/promo/opening', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Summer Collection Launch - Premium Outdoor Furniture', 'https://picsum.photos/1200/400?random=201', '/promo/summer', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Home Makeover Event - Exclusive Designer Pieces', 'https://picsum.photos/1200/400?random=202', '/promo/makeover', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Premium Quality Guarantee - Lifetime Warranty', 'https://picsum.photos/1200/400?random=203', '/promo/warranty', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Free Delivery On Orders Over $500', 'https://picsum.photos/1200/400?random=204', '/promo/delivery', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Flash Sale - Limited Time Offers', 'https://picsum.photos/1200/400?random=205', '/promo/flash', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'Interior Design Consultation Services Available', 'https://picsum.photos/1200/400?random=206', '/promo/design', 'ACTIVE'),
-    (gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'New Collection Alert - Modern & Classic Styles', 'https://picsum.photos/1200/400?random=207', '/promo/collection', 'ACTIVE');
+SELECT
+    gen_random_uuid(), 0,
+    NOW() - (random() * INTERVAL '365 days') as created_at,
+    NOW() - (random() * INTERVAL '365 days') as updated_at,
+    'system', 'system', false, NULL, NULL,
+    banner_desc, 'https://picsum.photos/1200/400?random=' || (199 + i)::text, banner_link, 'ACTIVE'
+FROM (
+    SELECT 1 as i, 'Grand Opening Sale - Up to 40% Off Furniture' as banner_desc, '/promo/opening' as banner_link UNION ALL
+    SELECT 2, 'Summer Collection Launch - Premium Outdoor Furniture', '/promo/summer' UNION ALL
+    SELECT 3, 'Home Makeover Event - Exclusive Designer Pieces', '/promo/makeover' UNION ALL
+    SELECT 4, 'Premium Quality Guarantee - Lifetime Warranty', '/promo/warranty' UNION ALL
+    SELECT 5, 'Free Delivery On Orders Over $500', '/promo/delivery' UNION ALL
+    SELECT 6, 'Flash Sale - Limited Time Offers', '/promo/flash' UNION ALL
+    SELECT 7, 'Interior Design Consultation Services Available', '/promo/design' UNION ALL
+    SELECT 8, 'New Collection Alert - Modern & Classic Styles', '/promo/collection'
+) banners_list;
 
 DO $$
 BEGIN
@@ -476,27 +499,33 @@ BEGIN
 END $$;
 
 INSERT INTO orders (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_number, customer_id, order_status, payment_method, payment_status, subtotal, discount_amount, total_amount, customer_name, customer_phone, customer_email, customer_note)
+WITH order_data AS (
+    SELECT
+        i,
+        NOW() - (random() * INTERVAL '365 days') as random_created_at
+    FROM generate_series(1, 400) AS t(i)
+)
 SELECT
-    gen_random_uuid(), 0, NOW() - ((i - 1)::text || ' days')::interval, NOW() - ((i - 1)::text || ' days')::interval, 'system', 'system', false, NULL, NULL,
-    'ORD-' || TO_CHAR(NOW() - ((i - 1)::text || ' days')::interval, 'YYYYMMDD') || '-' || LPAD(i::text, 6, '0'),
+    gen_random_uuid(), 0, od.random_created_at, od.random_created_at, 'system', 'system', false, NULL, NULL,
+    'ORD-' || TO_CHAR(od.random_created_at, 'YYYYMMDD') || '-' || LPAD(od.i::text, 6, '0'),
     '550e8400-e29b-41d4-a716-446655550002',
     -- Order Status: Varied distribution (25% each)
-    CASE ((i - 1) % 4)
+    CASE ((od.i - 1) % 4)
         WHEN 0 THEN 'PENDING'
         WHEN 1 THEN 'CONFIRMED'
         WHEN 2 THEN 'COMPLETED'
         ELSE 'CANCELLED'
     END,
     -- Payment Method: Split between CASH and BANK
-    CASE ((i - 1) % 2)
+    CASE ((od.i - 1) % 2)
         WHEN 0 THEN 'CASH'
         ELSE 'BANK'
     END,
     -- Payment Status: PAID for completed orders, UNPAID for pending, REFUNDED for some
     CASE
-        WHEN ((i - 1) % 4) = 2 THEN 'PAID'           -- COMPLETED orders are PAID
-        WHEN ((i - 1) % 4) = 3 THEN 'REFUNDED'       -- CANCELLED orders are REFUNDED
-        WHEN ((i - 1) % 3) = 0 THEN 'PAID'           -- Some unpaid ones become paid
+        WHEN ((od.i - 1) % 4) = 2 THEN 'PAID'           -- COMPLETED orders are PAID
+        WHEN ((od.i - 1) % 4) = 3 THEN 'REFUNDED'       -- CANCELLED orders are REFUNDED
+        WHEN ((od.i - 1) % 3) = 0 THEN 'PAID'           -- Some unpaid ones become paid
         ELSE 'UNPAID'
     END,
     -- Subtotal: Random price between 300-3000
@@ -513,85 +542,69 @@ SELECT
     'phatmenghor21@gmail.com',
     -- Customer Note: Varied messages
     CASE
-        WHEN (i % 5) = 0 THEN 'Please deliver ASAP'
-        WHEN (i % 5) = 1 THEN 'Careful handling required'
-        WHEN (i % 5) = 2 THEN 'Call upon arrival'
-        WHEN (i % 5) = 3 THEN 'Premium furniture - handle with care'
+        WHEN (od.i % 5) = 0 THEN 'Please deliver ASAP'
+        WHEN (od.i % 5) = 1 THEN 'Careful handling required'
+        WHEN (od.i % 5) = 2 THEN 'Call upon arrival'
+        WHEN (od.i % 5) = 3 THEN 'Premium furniture - handle with care'
         ELSE 'Standard delivery'
     END
-FROM generate_series(1, 400) AS t(i);
+FROM order_data od;
 
 -- ============================================================================
--- 11. ORDER ITEMS (5-8 items per order with progress tracking)
+-- 11. ORDER ITEMS (5-8 items per order with random created_at for 1 year)
 -- ============================================================================
+INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_name, product_image_url, product_size_id, size_name, sku, barcode, quantity, current_price, final_price, unit_price, has_promotion, promotion_type, promotion_value, promotion_from_date, promotion_to_date, total_price)
+WITH order_products AS (
+    SELECT
+        o.id as order_id,
+        o.created_at as order_created_at,
+        p.id, p.name, p.price, p.main_image_url, p.sku,
+        ps.id as size_id, ps.name as size_name,
+        ROW_NUMBER() OVER (PARTITION BY o.id ORDER BY p.id) as item_num,
+        ROW_NUMBER() OVER (ORDER BY o.id, p.id) as global_num
+    FROM orders o
+    CROSS JOIN products p
+    LEFT JOIN product_sizes ps ON p.id = ps.product_id
+    WHERE (ROW_NUMBER() OVER (PARTITION BY o.id ORDER BY p.id) <= CASE WHEN ABS(hashtext(o.id::text))::int % 2 = 0 THEN 8 ELSE 5 END)
+)
+SELECT
+    gen_random_uuid(), 0,
+    op.order_created_at + (random() * INTERVAL '5 hours'),
+    op.order_created_at + (random() * INTERVAL '5 hours'),
+    'system', 'system', false, NULL, NULL,
+    op.order_id,
+    op.id,
+    op.name,
+    op.main_image_url,
+    op.size_id,
+    op.size_name,
+    op.sku,
+    'BC-' || LPAD(op.id::text, 8, '0'),
+    CASE WHEN op.item_num % 3 = 0 THEN 1 ELSE 2 END,
+    op.price,
+    -- Final price with discount
+    CASE
+        WHEN op.item_num % 4 = 0 THEN (op.price * 0.7)::numeric(10,2)
+        WHEN op.item_num % 4 = 1 THEN (op.price * 0.8)::numeric(10,2)
+        WHEN op.item_num % 4 = 2 THEN (op.price * 0.9)::numeric(10,2)
+        ELSE op.price
+    END,
+    op.price,
+    -- Has promotion: 50% of items
+    op.item_num % 2 = 0,
+    -- Promotion Type
+    CASE WHEN op.item_num % 2 = 0 THEN 'PERCENTAGE' ELSE 'FIXED_AMOUNT' END,
+    -- Promotion Value
+    CASE WHEN op.item_num % 2 = 0 THEN 20.00 ELSE 50.00 END,
+    op.order_created_at - (random() * INTERVAL '30 days'),
+    op.order_created_at + (random() * INTERVAL '180 days'),
+    -- Total Price
+    (op.price * CASE WHEN op.item_num % 3 = 0 THEN 1 ELSE 2 END)::numeric(10,2)
+FROM order_products op;
+
 DO $$
-DECLARE
-    v_order_id UUID;
-    v_order_num INT := 0;
-    v_offset INT;
-    v_product_count INT;
 BEGIN
-    RAISE NOTICE '      Inserting order items (5-8 items per order): ';
-
-    SELECT COUNT(*) INTO v_product_count FROM products;
-
-    FOR v_order_id IN SELECT id FROM orders ORDER BY created_at
-    LOOP
-        v_order_num := v_order_num + 1;
-        v_offset := (ABS(hashtext(v_order_id::text))::int % (v_product_count - 8));
-
-        -- Insert 5-8 items for this order
-        INSERT INTO order_items (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, product_id, product_name, product_image_url, product_size_id, size_name, sku, barcode, quantity, current_price, final_price, unit_price, has_promotion, promotion_type, promotion_value, promotion_from_date, promotion_to_date, total_price)
-        WITH order_products AS (
-            SELECT
-                p.id, p.name, p.price, p.main_image_url, p.sku,
-                ps.id as size_id, ps.name as size_name,
-                ROW_NUMBER() OVER (ORDER BY p.id) as item_num
-            FROM products p
-            LEFT JOIN product_sizes ps ON p.id = ps.product_id
-            ORDER BY p.id
-            LIMIT 8 OFFSET v_offset
-        )
-        SELECT
-            gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
-            v_order_id,
-            op.id,
-            op.name,
-            op.main_image_url,
-            op.size_id,
-            op.size_name,
-            op.sku,
-            'BC-' || LPAD(op.id::text, 8, '0'),
-            CASE WHEN op.item_num % 3 = 0 THEN 1 ELSE 2 END,
-            op.price,
-            -- Final price with discount
-            CASE
-                WHEN op.item_num % 4 = 0 THEN (op.price * 0.7)::numeric(10,2)
-                WHEN op.item_num % 4 = 1 THEN (op.price * 0.8)::numeric(10,2)
-                WHEN op.item_num % 4 = 2 THEN (op.price * 0.9)::numeric(10,2)
-                ELSE op.price
-            END,
-            op.price,
-            -- Has promotion: 50% of items
-            op.item_num % 2 = 0,
-            -- Promotion Type
-            CASE WHEN op.item_num % 2 = 0 THEN 'PERCENTAGE' ELSE 'FIXED_AMOUNT' END,
-            -- Promotion Value
-            CASE WHEN op.item_num % 2 = 0 THEN 20.00 ELSE 50.00 END,
-            NOW() - INTERVAL '30 days',
-            NOW() + INTERVAL '30 days',
-            -- Total Price
-            (op.price * CASE WHEN op.item_num % 3 = 0 THEN 1 ELSE 2 END)::numeric(10,2)
-        FROM order_products op
-        WHERE op.item_num <= CASE WHEN v_order_num % 2 = 0 THEN 8 ELSE 5 END;
-
-        -- Show progress every 50 orders
-        IF v_order_num % 50 = 0 THEN
-            RAISE NOTICE '      [%/400]', v_order_num;
-        END IF;
-    END LOOP;
-
-    RAISE NOTICE '      [400/400] All order items inserted!';
+    RAISE NOTICE '      All order items inserted with random dates!';
 END $$;
 
 -- ============================================================================
@@ -623,7 +636,10 @@ WITH address_locations AS (
 )
 INSERT INTO order_delivery_addresses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, village, commune, district, province, street_number, house_number, note, latitude, longitude)
 SELECT
-    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    gen_random_uuid(), 0,
+    o.created_at + (random() * INTERVAL '1 hour'),
+    o.created_at + (random() * INTERVAL '1 hour'),
+    'system', 'system', false, NULL, NULL,
     o.id,
     al.village,
     al.commune,
@@ -648,7 +664,10 @@ END $$;
 
 INSERT INTO order_status_history (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, order_status, note, changed_by_name)
 SELECT
-    gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+    gen_random_uuid(), 0,
+    o.created_at + (random() * INTERVAL '2 hours'),
+    o.created_at + (random() * INTERVAL '2 hours'),
+    'system', 'system', false, NULL, NULL,
     o.id,
     o.order_status,
     'Status: ' || o.order_status,
