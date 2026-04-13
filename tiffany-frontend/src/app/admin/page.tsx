@@ -225,7 +225,7 @@ export default function AdminPage() {
                   <Cell fill="#10b981" />
                   <Cell fill="#f59e0b" />
                 </Pie>
-                <Tooltip formatter={(value) => value} />
+                <Tooltip formatter={(value) => (typeof value === 'number' ? value : 0)} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -255,7 +255,7 @@ export default function AdminPage() {
                   <Cell fill="#059669" />
                   <Cell fill="#dc2626" />
                 </Pie>
-                <Tooltip formatter={(value) => value} />
+                <Tooltip formatter={(value) => (typeof value === 'number' ? value : 0)} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -279,7 +279,7 @@ export default function AdminPage() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
-              <Tooltip formatter={(value) => formatCurrency(value)} />
+              <Tooltip formatter={(value) => (typeof value === 'number' ? formatCurrency(value) : value)} />
               <Legend />
               <Bar dataKey="Paid" fill="#059669" name="Paid" />
               <Bar dataKey="Unpaid" fill="#dc2626" name="Unpaid" />
