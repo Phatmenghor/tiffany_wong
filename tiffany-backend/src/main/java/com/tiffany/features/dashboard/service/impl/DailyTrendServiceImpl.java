@@ -1,6 +1,7 @@
 package com.tiffany.features.dashboard.service.impl;
 
 import com.tiffany.enums.order.OrderStatus;
+import com.tiffany.features.auth.models.User;
 import com.tiffany.features.auth.repository.UserRepository;
 import com.tiffany.features.dashboard.dto.DailyTrendResponse;
 import com.tiffany.features.dashboard.service.DailyTrendService;
