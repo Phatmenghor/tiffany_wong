@@ -219,11 +219,19 @@ export default function UserBusinessModal({
         } as any;
 
         const result = await dispatch(createUserService(payload)).unwrap();
-        showToast.success(
-          `User business "${
-            result.userIdentifier || result.email
-          }" created successfully`,
-        );
+        showToast.user({
+          title: 'User Account Created',
+          message: `New user business account has been successfully created and is ready to use.`,
+          details: {
+            'User ID': result.id?.substring(0, 8) || 'N/A',
+            'Email': result.email,
+            'Name': result.userIdentifier || result.firstName || 'N/A',
+            'Status': data.accountStatus || 'ACTIVE',
+            'Role': data.userRole || 'N/A',
+            'Created At': new Date().toLocaleString(),
+          },
+          duration: 6000,
+        });
         handleClose();
       } else {
         const payload: UpdateUserRequest = {
@@ -243,17 +251,33 @@ export default function UserBusinessModal({
         const result = await dispatch(
           updateUserService({ userId: data.id, userData: payload }),
         ).unwrap();
-        showToast.success(
-          `User business "${
-            result.fullName || result.email
-          }" updated successfully`,
-        );
+        showToast.user({
+          title: 'User Account Updated',
+          message: `User business account has been successfully updated with new information.`,
+          details: {
+            'User ID': data.id?.substring(0, 8) || 'N/A',
+            'Email': result.email || data.email,
+            'Name': result.fullName || data.firstName || 'N/A',
+            'Status': data.accountStatus || 'ACTIVE',
+            'Role': data.userRole || 'N/A',
+            'Updated At': new Date().toLocaleString(),
+          },
+          duration: 6000,
+        });
         handleClose();
       }
     } catch (error: any) {
-      showToast.error(
-        error || `Failed to ${isCreate ? "create" : "update"} user business`,
-      );
+      showToast.error({
+        title: `Failed to ${isCreate ? 'Create' : 'Update'} User`,
+        message: error?.message || `Unable to ${isCreate ? 'create' : 'update'} user business account. Please try again.`,
+        details: {
+          'Email': data.email || 'N/A',
+          'Action': isCreate ? 'CREATE' : 'UPDATE',
+          'Attempted At': new Date().toLocaleString(),
+          'Error': error?.message?.substring(0, 50) || 'Unknown error',
+        },
+        duration: 7000,
+      });
     }
   };
 

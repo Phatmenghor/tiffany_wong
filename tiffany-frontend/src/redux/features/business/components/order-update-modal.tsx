@@ -116,7 +116,17 @@ export function OrderUpdateModal({
       );
 
       if (response.status === 200 || response.status === 204) {
-        showToast.success("✅ Order updated successfully!");
+        showToast.order({
+          title: 'Order Updated Successfully',
+          message: 'The order has been updated with the new status and payment information.',
+          details: {
+            'Order ID': orderId.substring(0, 8),
+            'Status': data.orderStatus,
+            'Payment': data.paymentStatus,
+            'Updated At': new Date().toLocaleString(),
+          },
+          duration: 6000,
+        });
         if (onOrderUpdated) {
           onOrderUpdated();
         }
@@ -127,7 +137,15 @@ export function OrderUpdateModal({
         error?.response?.data?.message ||
         error?.message ||
         "Error updating order";
-      showToast.error(errorMessage);
+      showToast.error({
+        title: 'Failed to Update Order',
+        message: errorMessage,
+        details: {
+          'Order ID': orderId.substring(0, 8),
+          'Error Type': error?.response?.status === 404 ? 'Not Found' : 'Server Error',
+          'Attempted At': new Date().toLocaleString(),
+        },
+      });
       console.error("Order update error:", error);
     } finally {
       setIsSaving(false);
