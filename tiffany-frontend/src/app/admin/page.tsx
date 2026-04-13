@@ -116,7 +116,6 @@ export default function AdminPage() {
       <Card className="border-2 border-blue-300 shadow-lg bg-white">
         <CardHeader className="pb-2 border-b-2 border-blue-200">
           <CardTitle className="text-2xl font-bold text-blue-900">💰 Revenue Analysis</CardTitle>
-          <p className="text-sm text-gray-600 mt-1">Paid vs Unpaid Revenue Overview</p>
         </CardHeader>
         <CardContent className="pt-6">
           <ResponsiveContainer width="100%" height={400}>

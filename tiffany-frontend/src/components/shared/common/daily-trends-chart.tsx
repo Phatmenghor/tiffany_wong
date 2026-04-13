@@ -146,7 +146,6 @@ export function DailyTrendsChart() {
     <Card className="border-2 border-blue-200 shadow-lg bg-white mb-8">
       <CardHeader className="pb-2 border-b-2 border-blue-200">
         <CardTitle className="text-xl font-bold">📈 Daily Trends - Last 30 Days</CardTitle>
-        <p className="text-sm text-gray-600 mt-1">Orders, Revenue, and Customer Registration Trends</p>
       </CardHeader>
       <CardContent className="pt-6">
         <ResponsiveContainer width="100%" height={380}>
