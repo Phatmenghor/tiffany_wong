@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { axiosClientWithAuth } from '@/utils/axios/axios-client';
 import { DollarSign, ShoppingCart, Users, TrendingUp, CheckCircle, Clock, Package } from 'lucide-react';
+import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 
 interface SimpleDashboardData {
   totalRevenue: number;
@@ -197,6 +198,121 @@ export default function AdminPage() {
           <p className="text-blue-600 text-sm mt-2">Collection rate</p>
         </div>
       </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Order Status Distribution */}
+        <Card className="border border-gray-200 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg">Order Status Distribution</CardTitle>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Completed', value: data.completedOrders, fill: '#10b981' },
+                    { name: 'Pending', value: data.pendingOrders, fill: '#f59e0b' },
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  <Cell fill="#10b981" />
+                  <Cell fill="#f59e0b" />
+                </Pie>
+                <Tooltip formatter={(value) => value} />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Payment Status Distribution */}
+        <Card className="border border-gray-200 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg">Payment Status Distribution</CardTitle>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Paid', value: data.paidOrders, fill: '#059669' },
+                    { name: 'Unpaid', value: data.unpaidOrders, fill: '#dc2626' },
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  <Cell fill="#059669" />
+                  <Cell fill="#dc2626" />
+                </Pie>
+                <Tooltip formatter={(value) => value} />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Revenue Comparison Chart */}
+      <Card className="border border-gray-200 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg">Revenue Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={[
+              {
+                name: 'Revenue',
+                'Paid': parseFloat(data.totalPaid.toString()),
+                'Unpaid': parseFloat(data.totalUnpaid.toString()),
+              }
+            ]}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip formatter={(value) => formatCurrency(value)} />
+              <Legend />
+              <Bar dataKey="Paid" fill="#059669" name="Paid" />
+              <Bar dataKey="Unpaid" fill="#dc2626" name="Unpaid" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Metrics Summary Cards */}
+      <Card className="border border-gray-200 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg">Key Performance Indicators</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="border-l-4 border-blue-500 pl-4 py-2">
+              <p className="text-gray-600 text-sm">Fulfillment Rate</p>
+              <p className="text-3xl font-bold text-blue-600 mt-1">{data.fulfillmentRate.toFixed(1)}%</p>
+              <p className="text-xs text-gray-500 mt-1">Completion rate</p>
+            </div>
+            <div className="border-l-4 border-green-500 pl-4 py-2">
+              <p className="text-gray-600 text-sm">Payment Rate</p>
+              <p className="text-3xl font-bold text-green-600 mt-1">{data.paymentRate.toFixed(1)}%</p>
+              <p className="text-xs text-gray-500 mt-1">Collection rate</p>
+            </div>
+            <div className="border-l-4 border-purple-500 pl-4 py-2">
+              <p className="text-gray-600 text-sm">Avg Order Value</p>
+              <p className="text-3xl font-bold text-purple-600 mt-1">{formatCurrency(data.averageOrderValue)}</p>
+              <p className="text-xs text-gray-500 mt-1">Per order</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
