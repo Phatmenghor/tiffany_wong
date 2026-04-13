@@ -17,6 +17,12 @@ public class OrderCreateRequest {
     @NotNull(message = "Address ID is required")
     private UUID addressId;
 
+    @NotNull(message = "Customer name is required")
+    private String customerName;
+
+    @NotNull(message = "Customer phone is required")
+    private String customerPhone;
+
     private String customerNote;
     private OrderStatus orderStatus = OrderStatus.PENDING;
 

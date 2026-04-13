@@ -62,6 +62,8 @@ public interface OrderMapper {
         return OrderCreateHelper.builder()
                 .orderNumber(orderNumber)
                 .customerId(customerId)
+                .customerName(request.getCustomerName())
+                .customerPhone(request.getCustomerPhone())
                 .customerNote(request.getCustomerNote())
                 .orderStatus(request.getOrderStatus())
                 .paymentMethod(request.getPaymentBy())

@@ -29,6 +29,8 @@ export default function CheckoutPage() {
 
   const [mounted, setMounted] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<LocationResponseModel | null>(null);
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
   const [customerNote, setCustomerNote] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"CASH" | "BANK">("CASH");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -100,10 +102,22 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (!customerName.trim()) {
+      showToast.error("Please enter your name");
+      return;
+    }
+
+    if (!customerPhone.trim()) {
+      showToast.error("Please enter your phone number");
+      return;
+    }
+
     setIsProcessing(true);
     try {
       const payload = {
         addressId: selectedAddress.id,
+        customerName: customerName.trim(),
+        customerPhone: customerPhone.trim(),
         customerNote: customerNote || "",
         orderStatus: "PENDING",
         PaymentBy: paymentMethod,
@@ -190,6 +204,37 @@ export default function CheckoutPage() {
               </>
             )}
 
+            {/* Customer Information */}
+            <div className="bg-card border rounded-2xl p-5 space-y-4">
+              <h3 className="text-base font-bold">Customer Information</h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Full Name *</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    disabled={isProcessing}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Phone Number *</label>
+                  <input
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    disabled={isProcessing}
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Customer Note */}
             <OrderNoteSection
               customerNote={customerNote}
@@ -210,6 +255,8 @@ export default function CheckoutPage() {
             onCheckout={handleCheckout}
             isProcessing={isProcessing}
             selectedAddressId={selectedAddress?.id}
+            customerName={customerName}
+            customerPhone={customerPhone}
           />
         </div>
       </PageContainer>

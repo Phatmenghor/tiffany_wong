@@ -17,6 +17,8 @@ import java.util.UUID;
 public class OrderCreateHelper {
     private String orderNumber;
     private UUID customerId;
+    private String customerName;
+    private String customerPhone;
     private String customerNote;
     private OrderStatus orderStatus;
     private PaymentMethod paymentMethod;
