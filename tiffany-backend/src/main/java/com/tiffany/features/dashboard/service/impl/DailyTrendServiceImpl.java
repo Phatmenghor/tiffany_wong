@@ -37,7 +37,7 @@ public class DailyTrendServiceImpl implements DailyTrendService {
         try {
             LocalDateTime startDate = LocalDateTime.now().minusDays(days);
             List<Order> orders = orderRepository.findAllByIsDeletedFalse();
-            List<Object> users = userRepository.findAllByIsDeletedFalse();
+            List<User> users = userRepository.findAllByIsDeletedFalse();
 
             // Filter orders by date range
             List<Order> filteredOrders = orders.stream()
@@ -88,10 +88,7 @@ public class DailyTrendServiceImpl implements DailyTrendService {
             }
 
             // Aggregate customer data by date
-            for (Object userObj : users) {
-                if (!(userObj instanceof com.tiffany.features.auth.models.User)) continue;
-
-                com.tiffany.features.auth.models.User user = (com.tiffany.features.auth.models.User) userObj;
+            for (User user : users) {
                 if (user.getCreatedAt() == null) continue;
 
                 LocalDateTime userCreatedAt = user.getCreatedAt();
