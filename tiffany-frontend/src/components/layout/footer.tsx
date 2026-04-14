@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Phone, Clock } from "lucide-react";
+import { MapPin, Phone, Clock, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PageContainer } from "../shared/common/page-container";
 import { useAppSelector } from "@/redux/store/hooks";
@@ -88,12 +88,12 @@ export function Footer() {
                 <p className="text-white">{contactPhone}</p>
               </div>
               <div className="flex gap-3">
+                <Mail className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                 <a
                   href={`mailto:${contactEmail}`}
-                  className="text-white hover:text-white/80 transition-colors flex gap-3"
+                  className="text-white hover:text-white/80 transition-colors"
                 >
-                  <span className="text-white/80 text-xs">✉</span>
-                  <span>{contactEmail}</span>
+                  {contactEmail}
                 </a>
               </div>
             </div>
