@@ -86,9 +86,9 @@ export function SelectField<T extends FieldValues = any>({
               </PopoverTrigger>
               <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
                 <div className="max-h-[300px] overflow-y-auto">
-                  {options.map((option) => (
+                  {options.map((option, i) => (
                     <button
-                      key={option.value}
+                      key={option.value || String(i)}
                       type="button"
                       onClick={() => {
                         if (onValueChange) {
