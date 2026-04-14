@@ -223,7 +223,6 @@ export default function UserBusinessModal({
           title: 'User Account Created',
           message: `New user business account has been successfully created and is ready to use.`,
           details: {
-            'User ID': result.id?.substring(0, 8) || 'N/A',
             'Email': result.email,
             'Name': result.userIdentifier || result.firstName || 'N/A',
             'Status': data.accountStatus || 'ACTIVE',
@@ -255,7 +254,6 @@ export default function UserBusinessModal({
           title: 'User Account Updated',
           message: `User business account has been successfully updated with new information.`,
           details: {
-            'User ID': data.id?.substring(0, 8) || 'N/A',
             'Email': result.email || data.email,
             'Name': result.fullName || data.firstName || 'N/A',
             'Status': data.accountStatus || 'ACTIVE',

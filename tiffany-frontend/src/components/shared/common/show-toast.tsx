@@ -1,7 +1,6 @@
 // utils/toast.ts
 import { toast, ToastOptions } from "react-toastify";
 import { ModernToastContent } from "./modern-toast";
-import { v4 as uuidv4 } from 'uuid';
 
 const defaultOptions: ToastOptions = {
   position: "top-right",
@@ -17,7 +16,6 @@ interface ToastParams {
   message: string;
   details?: Record<string, any>;
   duration?: number;
-  id?: string;
 }
 
 interface ValidationParams {
@@ -69,7 +67,7 @@ export const showToast = {
         type="success"
         title={title || getToastTitle('success')}
         message={message}
-        id={uuidv4()}
+
         details={details}
       />,
       { ...defaultOptions, autoClose: duration || 5000 }
@@ -85,7 +83,7 @@ export const showToast = {
         type="error"
         title={title || getToastTitle('error')}
         message={message}
-        id={uuidv4()}
+
         details={details}
       />,
       { ...defaultOptions, autoClose: duration || 5000 }
@@ -101,7 +99,7 @@ export const showToast = {
         type="warning"
         title={title || getToastTitle('warning')}
         message={message}
-        id={uuidv4()}
+
         details={details}
       />,
       { ...defaultOptions, autoClose: duration || 5000 }
@@ -117,7 +115,7 @@ export const showToast = {
         type="info"
         title={title || getToastTitle('info')}
         message={message}
-        id={uuidv4()}
+
         details={details}
       />,
       { ...defaultOptions, autoClose: duration || 5000 }
@@ -125,14 +123,13 @@ export const showToast = {
   },
 
   order: (params: ToastParams) => {
-    const { message, title, details, duration, id } = params;
+    const { message, title, details, duration } = params;
 
     toast.info(
       <ModernToastContent
         type="order"
         title={title || getToastTitle('order')}
         message={message}
-        id={id || uuidv4()}
         details={details}
       />,
       { ...defaultOptions, autoClose: duration || 5000 }
@@ -140,14 +137,13 @@ export const showToast = {
   },
 
   payment: (params: ToastParams) => {
-    const { message, title, details, duration, id } = params;
+    const { message, title, details, duration } = params;
 
     toast.info(
       <ModernToastContent
         type="payment"
         title={title || getToastTitle('payment')}
         message={message}
-        id={id || uuidv4()}
         details={details}
       />,
       { ...defaultOptions, autoClose: duration || 5000 }
@@ -155,14 +151,13 @@ export const showToast = {
   },
 
   user: (params: ToastParams) => {
-    const { message, title, details, duration, id } = params;
+    const { message, title, details, duration } = params;
 
     toast.info(
       <ModernToastContent
         type="user"
         title={title || getToastTitle('user')}
         message={message}
-        id={id || uuidv4()}
         details={details}
       />,
       { ...defaultOptions, autoClose: duration || 5000 }
@@ -202,7 +197,7 @@ export const showToast = {
         type="validation"
         title={title || defaultTitle}
         message={message || defaultMessage}
-        id={uuidv4()}
+
         validationData={{
           nid,
           score,

@@ -143,7 +143,6 @@ export function OrderUpdateModal({
         title: 'Failed to Update Order',
         message: errorMessage,
         details: {
-          'Order ID': orderId.substring(0, 8),
           'Error Type': error?.response?.status === 404 ? 'Not Found' : 'Server Error',
           'Attempted At': new Date().toLocaleString(),
         },

@@ -1,13 +1,11 @@
 'use client';
 
 import React from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 interface ModernToastProps {
   type: 'success' | 'error' | 'warning' | 'info' | 'order' | 'payment' | 'user' | 'validation';
   title: string;
   message: string;
-  id?: string;
   timestamp?: string;
   details?: Record<string, any>;
   validationData?: ValidationData;
@@ -31,7 +29,6 @@ export function ModernToastContent({
   type,
   title,
   message,
-  id = uuidv4(),
   timestamp = new Date().toLocaleString(),
   details,
   validationData,
@@ -215,17 +212,11 @@ export function ModernToastContent({
         </div>
       )}
 
-      {/* Footer with ID and Timestamp */}
+      {/* Footer with Timestamp */}
       <div className="border-t border-gray-200 pt-2 mt-3">
-        <div className="flex flex-col gap-1">
-          <div className="flex justify-between text-xs">
-            <span className="text-gray-500">ID</span>
-            <span className="text-gray-700 font-mono">#{id.substring(0, 8)}</span>
-          </div>
-          <div className="flex justify-between text-xs">
-            <span className="text-gray-500">Time</span>
-            <span className="text-gray-700 text-xs">{timestamp}</span>
-          </div>
+        <div className="flex justify-between text-xs">
+          <span className="text-gray-500">Time</span>
+          <span className="text-gray-700 text-xs">{timestamp}</span>
         </div>
       </div>
     </div>
