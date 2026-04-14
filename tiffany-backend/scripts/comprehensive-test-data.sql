@@ -98,11 +98,11 @@ END $$;
 -- ============================================================================
 INSERT INTO social_media (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, name, link_url, icon_url)
 VALUES
-('550e8400-e29b-41d4-a716-446655991001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Facebook',  'https://www.facebook.com/TiffanyCambodia',                    'https://cdn.simpleicons.org/facebook/white'),
-('550e8400-e29b-41d4-a716-446655991002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Instagram', 'https://www.instagram.com/tiffanycambodia',                   'https://cdn.simpleicons.org/instagram/white'),
-('550e8400-e29b-41d4-a716-446655991003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Telegram',  'https://t.me/tiffanycambodia',                                'https://cdn.simpleicons.org/telegram/white'),
-('550e8400-e29b-41d4-a716-446655991004', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Twitter',   'https://twitter.com/TiffanyKH',                               'https://cdn.simpleicons.org/x/white'),
-('550e8400-e29b-41d4-a716-446655991005', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'LinkedIn',  'https://www.linkedin.com/company/tiffany-cambodia',           'https://cdn.simpleicons.org/linkedin/white');
+('550e8400-e29b-41d4-a716-446655991001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Facebook',  'https://www.facebook.com/TiffanyCambodia',           'https://picsum.photos/50/50?random=201'),
+('550e8400-e29b-41d4-a716-446655991002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Instagram', 'https://www.instagram.com/tiffanycambodia',          'https://picsum.photos/50/50?random=202'),
+('550e8400-e29b-41d4-a716-446655991003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Telegram',  'https://t.me/tiffanycambodia',                       'https://picsum.photos/50/50?random=203'),
+('550e8400-e29b-41d4-a716-446655991004', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Twitter',   'https://twitter.com/TiffanyKH',                      'https://picsum.photos/50/50?random=204'),
+('550e8400-e29b-41d4-a716-446655991005', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'LinkedIn',  'https://www.linkedin.com/company/tiffany-cambodia',  'https://picsum.photos/50/50?random=205');
 
 DO $$
 BEGIN
