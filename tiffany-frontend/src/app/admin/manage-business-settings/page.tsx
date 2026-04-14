@@ -620,7 +620,7 @@ export default function BusinessSettingsPage() {
                       key={index}
                       className="border rounded-lg p-4 relative lg:col-span-2"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-start">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
                         <div className="space-y-2">
                           <Label className="text-sm font-medium">
                             Platform Name
@@ -668,9 +668,9 @@ export default function BusinessSettingsPage() {
                           }}
                           disabled={isSaving}
                           aspectRatio="square"
-                          height="h-10"
-                          placeholder="Upload"
-                          helperText=""
+                          height="h-24"
+                          placeholder="Click to upload icon"
+                          helperText="PNG, SVG, JPG up to 5MB"
                           showPreviewText={false}
                           maxSize={5}
                         />
