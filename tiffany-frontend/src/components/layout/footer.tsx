@@ -35,9 +35,9 @@ export function Footer() {
     setIsHydrated(true);
   }, []);
 
-  // Dynamic footer background color
+  // Dynamic footer background color — guarded by isHydrated to prevent SSR/CSR mismatch
   const footerStyle = {
-    backgroundColor: primaryColor ? `${primaryColor}E6` : undefined,
+    backgroundColor: isHydrated && primaryColor ? `${primaryColor}E6` : undefined,
   };
 
   return (
