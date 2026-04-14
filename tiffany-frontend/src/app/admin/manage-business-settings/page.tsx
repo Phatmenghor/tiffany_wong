@@ -620,43 +620,41 @@ export default function BusinessSettingsPage() {
                       key={index}
                       className="border rounded-lg p-4 relative lg:col-span-2"
                     >
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label className="text-sm font-medium">
-                              Platform Name
-                            </Label>
-                            <Input
-                              placeholder="e.g., Facebook"
-                              value={social.name}
-                              onChange={(e) => {
-                                const updated = [
-                                  ...(form.getValues("socialMedia") || []),
-                                ];
-                                updated[index].name = e.target.value;
-                                form.setValue("socialMedia", updated, { shouldDirty: true });
-                              }}
-                              disabled={isSaving}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label className="text-sm font-medium">
-                              Profile URL
-                            </Label>
-                            <Input
-                              placeholder="https://facebook.com/yourprofile"
-                              type="url"
-                              value={social.linkUrl}
-                              onChange={(e) => {
-                                const updated = [
-                                  ...(form.getValues("socialMedia") || []),
-                                ];
-                                updated[index].linkUrl = e.target.value;
-                                form.setValue("socialMedia", updated, { shouldDirty: true });
-                              }}
-                              disabled={isSaving}
-                            />
-                          </div>
+                      <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-start">
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium">
+                            Platform Name
+                          </Label>
+                          <Input
+                            placeholder="e.g., Facebook"
+                            value={social.name}
+                            onChange={(e) => {
+                              const updated = [
+                                ...(form.getValues("socialMedia") || []),
+                              ];
+                              updated[index].name = e.target.value;
+                              form.setValue("socialMedia", updated, { shouldDirty: true });
+                            }}
+                            disabled={isSaving}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium">
+                            Profile URL
+                          </Label>
+                          <Input
+                            placeholder="https://facebook.com/yourprofile"
+                            type="url"
+                            value={social.linkUrl}
+                            onChange={(e) => {
+                              const updated = [
+                                ...(form.getValues("socialMedia") || []),
+                              ];
+                              updated[index].linkUrl = e.target.value;
+                              form.setValue("socialMedia", updated, { shouldDirty: true });
+                            }}
+                            disabled={isSaving}
+                          />
                         </div>
                         <ClickableImageUpload
                           label="Icon Image"
@@ -670,9 +668,9 @@ export default function BusinessSettingsPage() {
                           }}
                           disabled={isSaving}
                           aspectRatio="square"
-                          height="h-24"
-                          placeholder="Click to upload icon"
-                          helperText="PNG, SVG, JPG up to 5MB"
+                          height="h-10"
+                          placeholder="Upload"
+                          helperText=""
                           showPreviewText={false}
                           maxSize={5}
                         />
