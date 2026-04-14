@@ -630,14 +630,21 @@ WITH address_locations AS (
     SELECT 3, 'Russian Market Area', 'Sangkat Beung Trabek', 'Khan Chamkar Mon', 'Phnom Penh', '123', 'Street 155', 'Customer Pickup Point', 11.5400::numeric, 104.9100::numeric
     UNION ALL
     SELECT 4, 'Tuol Kork', 'Sangkat Tuol Kork', 'Khan Tuol Kork', 'Phnom Penh', '789', 'Street 271', 'Warehouse & Distribution', 11.5700::numeric, 104.9400::numeric
+),
+numbered_orders AS (
+    SELECT
+        id,
+        created_at,
+        ROW_NUMBER() OVER (ORDER BY created_at) AS rn
+    FROM orders
 )
 INSERT INTO order_delivery_addresses (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, order_id, village, commune, district, province, street_number, house_number, note, latitude, longitude)
 SELECT
     gen_random_uuid(), 0,
-    o.created_at + (random() * INTERVAL '1 hour'),
-    o.created_at + (random() * INTERVAL '1 hour'),
+    no.created_at + (random() * INTERVAL '1 hour'),
+    no.created_at + (random() * INTERVAL '1 hour'),
     'system', 'system', false, NULL, NULL,
-    o.id,
+    no.id,
     al.village,
     al.commune,
     al.district,
@@ -647,9 +654,9 @@ SELECT
     al.note,
     al.latitude,
     al.longitude
-FROM orders o
+FROM numbered_orders no
 CROSS JOIN address_locations al
-WHERE (ROW_NUMBER() OVER (PARTITION BY o.id ORDER BY o.created_at) - 1) % 4 = al.addr_num - 1;
+WHERE (no.rn - 1) % 4 = al.addr_num - 1;
 
 -- ============================================================================
 -- 13. ORDER STATUS HISTORY
