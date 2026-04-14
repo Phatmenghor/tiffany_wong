@@ -207,6 +207,72 @@ BEGIN
 END $$;
 
 -- ============================================================================
+-- 2.2 USER PROFILES for named admin users
+-- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '[56 PERCENT] Inserting profiles for named admin users...';
+END $$;
+
+INSERT INTO user_profiles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, first_name, last_name, email, phone_number, profile_image_url, gender, date_of_birth, nickname)
+VALUES
+(gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+ '550e8400-e29b-41d4-a716-446655550001',
+ 'Phat', 'Meng Hor', 'phatmenghor19@gmail.com', '+855 98 777 8819',
+ 'https://picsum.photos/150/150?random=101', 'MALE', '1988-03-22'::date, 'Phat19'),
+(gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
+ '550e8400-e29b-41d4-a716-446655550003',
+ 'Meng', 'Hor', 'phatmenghor20@gmail.com', '+855 98 777 8820',
+ 'https://picsum.photos/150/150?random=102', 'MALE', '1992-07-10'::date, 'Phat20');
+
+-- ============================================================================
+-- 2.3 USER PROFILES for bulk admin users (with profile images)
+-- ============================================================================
+DO $$
+BEGIN
+    RAISE NOTICE '[56 PERCENT] Inserting profile images for 19,998 bulk admin users...';
+END $$;
+
+WITH admin_users AS (
+    SELECT
+        u.*,
+        NULLIF(regexp_replace(u.user_identifier, '[^0-9]', '', 'g'), '')::int AS seq
+    FROM users u
+    WHERE u.user_identifier LIKE 'admin%@tiffany.com'
+)
+INSERT INTO user_profiles (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_id, first_name, last_name, email, phone_number, profile_image_url, gender, date_of_birth, nickname)
+SELECT
+    gen_random_uuid(), 0,
+    au.created_at,
+    au.created_at,
+    'system', 'system', false, NULL, NULL,
+    au.id,
+    CASE (au.seq % 10)
+        WHEN 0 THEN 'Sophea'   WHEN 1 THEN 'Dara'    WHEN 2 THEN 'Bopha'
+        WHEN 3 THEN 'Virak'    WHEN 4 THEN 'Sreyna'   WHEN 5 THEN 'Ratana'
+        WHEN 6 THEN 'Pich'     WHEN 7 THEN 'Kosal'    WHEN 8 THEN 'Channary'
+        ELSE 'Vuthea'
+    END,
+    CASE (au.seq % 8)
+        WHEN 0 THEN 'Chan'  WHEN 1 THEN 'Kim'   WHEN 2 THEN 'Sok'
+        WHEN 3 THEN 'Lim'   WHEN 4 THEN 'Pov'   WHEN 5 THEN 'Phan'
+        WHEN 6 THEN 'Heng'  ELSE 'Chhim'
+    END,
+    au.user_identifier,
+    NULL,
+    'https://picsum.photos/150/150?random=' || (au.seq % 100 + 1)::text,
+    CASE WHEN (au.seq % 2) = 0 THEN 'MALE' ELSE 'FEMALE' END,
+    ('1980-01-01'::date + ((au.seq % 5475) || ' days')::interval)::date,
+    split_part(au.user_identifier, '@', 1)
+FROM admin_users au;
+
+DO $$
+BEGIN
+    RAISE NOTICE '      [56 PERCENT] All admin user profiles with images inserted';
+    RAISE NOTICE '';
+END $$;
+
+-- ============================================================================
 -- 3. CATEGORIES (12 Furniture Types)
 -- ============================================================================
 DO $$
