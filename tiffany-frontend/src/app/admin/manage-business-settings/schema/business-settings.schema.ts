@@ -14,6 +14,7 @@ export const businessSettingsSchema = z.object({
     z.object({
       name: z.string(),
       linkUrl: z.string(),
+      iconUrl: z.string().optional(),
     })
   ),
   primaryColor: z.string().min(1, "Primary color is required"),

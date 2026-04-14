@@ -8,4 +8,6 @@ public class SocialMediaUpdateRequest {
     private String name;
 
     private String linkUrl;
+
+    private String iconUrl;
 }

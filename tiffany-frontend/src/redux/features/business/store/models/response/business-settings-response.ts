@@ -13,6 +13,7 @@ export interface SocialMedia {
   systemSettingId: string;
   name: string;
   linkUrl: string;
+  iconUrl?: string;
 }
 
 export interface BusinessHours {

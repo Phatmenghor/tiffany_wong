@@ -129,9 +129,16 @@ export function Footer() {
                     href={social.linkUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-white hover:text-white/80 transition-colors"
+                    className="flex items-center gap-2 text-white hover:text-white/80 transition-colors"
                   >
-                    {social.name}
+                    {social.iconUrl ? (
+                      <img
+                        src={social.iconUrl}
+                        alt={social.name}
+                        className="w-5 h-5 object-contain flex-shrink-0"
+                      />
+                    ) : null}
+                    <span>{social.name}</span>
                   </a>
                 ))
               ) : (

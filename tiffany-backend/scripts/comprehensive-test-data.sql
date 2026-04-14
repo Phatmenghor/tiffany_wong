@@ -96,13 +96,13 @@ END $$;
 -- ============================================================================
 -- 1.1 SOCIAL MEDIA (5 social media accounts)
 -- ============================================================================
-INSERT INTO social_media (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, name, link_url)
+INSERT INTO social_media (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, system_setting_id, name, link_url, icon_url)
 VALUES
-('550e8400-e29b-41d4-a716-446655991001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Facebook', 'https://www.facebook.com/TiffanyCambodia'),
-('550e8400-e29b-41d4-a716-446655991002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Instagram', 'https://www.instagram.com/tiffanycambodia'),
-('550e8400-e29b-41d4-a716-446655991003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Telegram', 'https://t.me/tiffanycambodia'),
-('550e8400-e29b-41d4-a716-446655991004', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Twitter', 'https://twitter.com/TiffanyKH'),
-('550e8400-e29b-41d4-a716-446655991005', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'LinkedIn', 'https://www.linkedin.com/company/tiffany-cambodia');
+('550e8400-e29b-41d4-a716-446655991001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Facebook',  'https://www.facebook.com/TiffanyCambodia',                    'https://cdn.simpleicons.org/facebook/white'),
+('550e8400-e29b-41d4-a716-446655991002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Instagram', 'https://www.instagram.com/tiffanycambodia',                   'https://cdn.simpleicons.org/instagram/white'),
+('550e8400-e29b-41d4-a716-446655991003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Telegram',  'https://t.me/tiffanycambodia',                                'https://cdn.simpleicons.org/telegram/white'),
+('550e8400-e29b-41d4-a716-446655991004', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'Twitter',   'https://twitter.com/TiffanyKH',                               'https://cdn.simpleicons.org/x/white'),
+('550e8400-e29b-41d4-a716-446655991005', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, '550e8400-e29b-41d4-a716-446655990001', 'LinkedIn',  'https://www.linkedin.com/company/tiffany-cambodia',           'https://cdn.simpleicons.org/linkedin/white');
 
 DO $$
 BEGIN

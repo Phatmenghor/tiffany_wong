@@ -10,4 +10,6 @@ public class SocialMediaCreateRequest {
     private String name;
 
     private String linkUrl;
+
+    private String iconUrl;
 }

@@ -17,4 +17,5 @@ public class SocialMediaResponse extends BaseAuditResponse {
     private UUID systemSettingId;
     private String name;       // e.g., "Facebook", "Instagram"
     private String linkUrl;    // Link to the social media profile
+    private String iconUrl;    // Icon image URL for display in footer
 }

@@ -34,4 +34,7 @@ public class SocialMedia extends BaseUUIDEntity {
 
     @Column(name = "link_url")
     private String linkUrl;
+
+    @Column(name = "icon_url")
+    private String iconUrl;
 }

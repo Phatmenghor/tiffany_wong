@@ -577,7 +577,7 @@ export default function BusinessSettingsPage() {
                 const currentSocialMedia = form.getValues("socialMedia") || [];
                 form.setValue("socialMedia", [
                   ...currentSocialMedia,
-                  { name: "", linkUrl: "" },
+                  { name: "", linkUrl: "", iconUrl: "" },
                 ]);
               }}
               disabled={isSaving}
@@ -602,7 +602,7 @@ export default function BusinessSettingsPage() {
                       key={index}
                       className="border rounded-lg p-4 relative lg:col-span-2"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="space-y-2">
                           <Label className="text-sm font-medium">
                             Platform Name
@@ -633,6 +633,24 @@ export default function BusinessSettingsPage() {
                                 ...(form.getValues("socialMedia") || []),
                               ];
                               updated[index].linkUrl = e.target.value;
+                              form.setValue("socialMedia", updated, { shouldDirty: true });
+                            }}
+                            disabled={isSaving}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium">
+                            Icon Image URL
+                          </Label>
+                          <Input
+                            placeholder="https://cdn.simpleicons.org/facebook/white"
+                            type="url"
+                            value={social.iconUrl || ""}
+                            onChange={(e) => {
+                              const updated = [
+                                ...(form.getValues("socialMedia") || []),
+                              ];
+                              updated[index].iconUrl = e.target.value;
                               form.setValue("socialMedia", updated, { shouldDirty: true });
                             }}
                             disabled={isSaving}
