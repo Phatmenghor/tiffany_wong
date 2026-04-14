@@ -186,6 +186,24 @@ export default function BusinessSettingsPage() {
         }
       }
 
+      // Upload social media icons if they are base64
+      let processedSocialMedia: typeof data.socialMedia;
+      try {
+        processedSocialMedia = await Promise.all(
+          (data.socialMedia || []).map(async (sm) => {
+            let iconUrl = sm.iconUrl || "";
+            if (iconUrl && isBase64Image(iconUrl)) {
+              iconUrl = await uploadImage(iconUrl);
+            }
+            return { ...sm, iconUrl: iconUrl || undefined };
+          })
+        );
+      } catch (error) {
+        console.error("Failed to upload social media icon:", error);
+        showToast.error("Failed to upload a social media icon");
+        return;
+      }
+
       // Create payload with the uploaded logo URL
       // Convert null values to undefined for API compatibility
       const payload = {
@@ -195,7 +213,7 @@ export default function BusinessSettingsPage() {
           ? parseFloat(data.taxPercentage)
           : undefined,
         logoSystemUrl: logoSystemUrl || undefined,
-        socialMedia: data.socialMedia as any,
+        socialMedia: processedSocialMedia as any,
         primaryColor: data.primaryColor || undefined,
         contactAddress: data.contactAddress || undefined,
         contactPhone: data.contactPhone || undefined,
@@ -602,60 +620,62 @@ export default function BusinessSettingsPage() {
                       key={index}
                       className="border rounded-lg p-4 relative lg:col-span-2"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium">
-                            Platform Name
-                          </Label>
-                          <Input
-                            placeholder="e.g., Facebook"
-                            value={social.name}
-                            onChange={(e) => {
-                              const updated = [
-                                ...(form.getValues("socialMedia") || []),
-                              ];
-                              updated[index].name = e.target.value;
-                              form.setValue("socialMedia", updated, { shouldDirty: true });
-                            }}
-                            disabled={isSaving}
-                          />
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium">
+                              Platform Name
+                            </Label>
+                            <Input
+                              placeholder="e.g., Facebook"
+                              value={social.name}
+                              onChange={(e) => {
+                                const updated = [
+                                  ...(form.getValues("socialMedia") || []),
+                                ];
+                                updated[index].name = e.target.value;
+                                form.setValue("socialMedia", updated, { shouldDirty: true });
+                              }}
+                              disabled={isSaving}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium">
+                              Profile URL
+                            </Label>
+                            <Input
+                              placeholder="https://facebook.com/yourprofile"
+                              type="url"
+                              value={social.linkUrl}
+                              onChange={(e) => {
+                                const updated = [
+                                  ...(form.getValues("socialMedia") || []),
+                                ];
+                                updated[index].linkUrl = e.target.value;
+                                form.setValue("socialMedia", updated, { shouldDirty: true });
+                              }}
+                              disabled={isSaving}
+                            />
+                          </div>
                         </div>
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium">
-                            Profile URL
-                          </Label>
-                          <Input
-                            placeholder="https://facebook.com/yourprofile"
-                            type="url"
-                            value={social.linkUrl}
-                            onChange={(e) => {
-                              const updated = [
-                                ...(form.getValues("socialMedia") || []),
-                              ];
-                              updated[index].linkUrl = e.target.value;
-                              form.setValue("socialMedia", updated, { shouldDirty: true });
-                            }}
-                            disabled={isSaving}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium">
-                            Icon Image URL
-                          </Label>
-                          <Input
-                            placeholder="https://cdn.simpleicons.org/facebook/white"
-                            type="url"
-                            value={social.iconUrl || ""}
-                            onChange={(e) => {
-                              const updated = [
-                                ...(form.getValues("socialMedia") || []),
-                              ];
-                              updated[index].iconUrl = e.target.value;
-                              form.setValue("socialMedia", updated, { shouldDirty: true });
-                            }}
-                            disabled={isSaving}
-                          />
-                        </div>
+                        <ClickableImageUpload
+                          label="Icon Image"
+                          value={social.iconUrl || ""}
+                          onChange={(base64) => {
+                            const updated = [
+                              ...(form.getValues("socialMedia") || []),
+                            ];
+                            updated[index].iconUrl = base64;
+                            form.setValue("socialMedia", updated, { shouldDirty: true });
+                          }}
+                          disabled={isSaving}
+                          aspectRatio="square"
+                          height="h-24"
+                          placeholder="Click to upload icon"
+                          helperText="PNG, SVG, JPG up to 5MB"
+                          showPreviewText={false}
+                          maxSize={5}
+                        />
                       </div>
                       {!isSaving && (
                         <Button
