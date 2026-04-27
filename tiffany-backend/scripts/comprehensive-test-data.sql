@@ -2,7 +2,7 @@
 -- TIFFANY E-MENU PLATFORM - OPTIMIZED TEST DATA (2026)
 -- ============================================================================
 -- DEFAULT PASSWORD FOR ALL USERS: 88889999
--- Password Hash (bcrypt): $2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36
+-- Password Hash (bcrypt): $2a$12$yxN6QmwdSQIOcHeh7d6YA.A6GrL6UN9OIeJ2O8CONZ5FLUKmdjmYK
 --
 -- Users: 20,001 total
 --   - 20,000 ADMIN users (UserType: OWNER, UserRole: ADMIN)
@@ -141,12 +141,12 @@ END $$;
 -- Insert main admin user (phatmenghor19@gmail.com)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, account_status, user_role)
 VALUES
-('550e8400-e29b-41d4-a716-446655550001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor19@gmail.com', '$2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36', 'OWNER', 'ACTIVE', 'ADMIN');
+('550e8400-e29b-41d4-a716-446655550001', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor19@gmail.com', '$2a$12$yxN6QmwdSQIOcHeh7d6YA.A6GrL6UN9OIeJ2O8CONZ5FLUKmdjmYK', 'OWNER', 'ACTIVE', 'ADMIN');
 
 -- Insert owner user with ADMIN role (phatmenghor20@gmail.com)
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, account_status, user_role)
 VALUES
-('550e8400-e29b-41d4-a716-446655550003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor20@gmail.com', '$2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36', 'OWNER', 'ACTIVE', 'ADMIN');
+('550e8400-e29b-41d4-a716-446655550003', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor20@gmail.com', '$2a$12$yxN6QmwdSQIOcHeh7d6YA.A6GrL6UN9OIeJ2O8CONZ5FLUKmdjmYK', 'OWNER', 'ACTIVE', 'ADMIN');
 
 DO $$
 BEGIN
@@ -158,7 +158,7 @@ INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, 
 SELECT
     gen_random_uuid(), 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL,
     'admin' || i || '@tiffany.com',
-    '$2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36',
+    '$2a$12$yxN6QmwdSQIOcHeh7d6YA.A6GrL6UN9OIeJ2O8CONZ5FLUKmdjmYK',
     'OWNER', 'ACTIVE', 'ADMIN'
 FROM generate_series(1, 19998) AS t(i);
 
@@ -170,7 +170,7 @@ END $$;
 -- Insert CUSTOMER user (phatmenghor21@gmail.com) with FULL PROFILE
 INSERT INTO users (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, user_identifier, password, user_type, account_status, user_role)
 VALUES
-('550e8400-e29b-41d4-a716-446655550002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor21@gmail.com', '$2a$12$C3nxQcF8f1rHHOJnyE0ZFOHOYXTn4/pCvUNBkhNPrS40WrnQ9gZ36', 'CUSTOMER', 'ACTIVE', 'CUSTOMER');
+('550e8400-e29b-41d4-a716-446655550002', 0, NOW(), NOW(), 'system', 'system', false, NULL, NULL, 'phatmenghor21@gmail.com', '$2a$12$yxN6QmwdSQIOcHeh7d6YA.A6GrL6UN9OIeJ2O8CONZ5FLUKmdjmYK', 'CUSTOMER', 'ACTIVE', 'CUSTOMER');
 
 DO $$
 BEGIN
