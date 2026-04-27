@@ -10,9 +10,9 @@
 --     - phatmenghor20@gmail.com (OWNER with ADMIN role)
 --     - 19,998 additional ADMIN users
 --   - 1 CUSTOMER user (phatmenghor21@gmail.com with FULL PROFILE INFO)
--- Products: 9,600 with detailed descriptions and furniture categories
+-- Products: 960 with detailed descriptions and furniture categories
 --   - 12 Furniture Categories
---   - 800 products per category
+--   - 80 products per category
 --   - 40% with sizes (5-10 per product)
 --   - 30% with promotions
 --   - Random images from picsum.photos with unique seeds
@@ -309,12 +309,12 @@ BEGIN
 END $$;
 
 -- ============================================================================
--- 5. PRODUCTS (9,600 with detailed furniture descriptions)
+-- 5. PRODUCTS (960 with detailed furniture descriptions)
 -- ============================================================================
 DO $$
 BEGIN
-    RAISE NOTICE '[65 PERCENT] Inserting 9,600 furniture products (800 per category)...';
-    RAISE NOTICE '      This may take several minutes...';
+    RAISE NOTICE '[65 PERCENT] Inserting 960 premium furniture products (80 per category)...';
+    RAISE NOTICE '      This may take a moment...';
 END $$;
 
 INSERT INTO products (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, name, description, sku, barcode, price, main_image_url, category_id, status, view_count, favorite_count, promotion_type, promotion_value, promotion_from_date, promotion_to_date)
@@ -322,16 +322,16 @@ WITH category_list AS (
     SELECT id, ROW_NUMBER() OVER (ORDER BY id) as cat_num FROM categories
 ),
 product_names AS (
-    SELECT 1 as name_id, 'Elegant Designer Sofa' as pname UNION ALL
-    SELECT 2, 'Modern Leather Sectional' UNION ALL
-    SELECT 3, 'Classic Wooden Chair' UNION ALL
-    SELECT 4, 'Contemporary Coffee Table' UNION ALL
-    SELECT 5, 'Premium Dining Set' UNION ALL
-    SELECT 6, 'Executive Office Desk' UNION ALL
-    SELECT 7, 'Comfortable Recliner' UNION ALL
-    SELECT 8, 'Stylish Cabinet' UNION ALL
-    SELECT 9, 'Luxurious Bedframe' UNION ALL
-    SELECT 10, 'Wall-Mounted Shelving Unit'
+    SELECT 1 as name_id, 'Luxury Modern Sectional Sofa' as pname UNION ALL
+    SELECT 2, 'Premium Leather Recliner Chair' UNION ALL
+    SELECT 3, 'Solid Oak Dining Table' UNION ALL
+    SELECT 4, 'Minimalist Glass Coffee Table' UNION ALL
+    SELECT 5, 'Contemporary Fabric Armchair' UNION ALL
+    SELECT 6, 'Executive Mahogany Office Desk' UNION ALL
+    SELECT 7, 'Adjustable Ergonomic Work Chair' UNION ALL
+    SELECT 8, 'Walnut Wood Storage Cabinet' UNION ALL
+    SELECT 9, 'Queen Size Platform Bed Frame' UNION ALL
+    SELECT 10, 'Modern Floating Wall Shelves'
 ),
 descriptions AS (
     SELECT 1 as desc_id, 'A high-quality premium furniture piece designed with an ergonomic shape for maximum comfort, offering superior craftsmanship, long-lasting durability, and seamless compatibility with modern interior designs, making it ideal for residential and commercial spaces.
@@ -359,7 +359,7 @@ promo_data AS (
         NOW() - (random() * INTERVAL '365 days') as random_created_at,
         NOW() - (random() * INTERVAL '365 days') + (random() * INTERVAL '180 days') as promo_from_date_calc,
         NOW() - (random() * INTERVAL '365 days') + ((random() + 0.5) * INTERVAL '180 days') as promo_to_date_calc
-    FROM generate_series(1, 9600) AS t(i)
+    FROM generate_series(1, 960) AS t(i)
 )
 SELECT
     gen_random_uuid(), 0, pd.random_created_at, pd.random_created_at, 'system', 'system', false, NULL, NULL,
@@ -394,12 +394,12 @@ FROM promo_data pd;
 
 DO $$
 BEGIN
-    RAISE NOTICE '      [80 PERCENT] 9,600 products inserted successfully';
+    RAISE NOTICE '      [80 PERCENT] 960 premium furniture products inserted successfully';
     RAISE NOTICE '';
 END $$;
 
 -- ============================================================================
--- 6. PRODUCT SIZES (40% of products = 3,840 with 5-10 sizes each)
+-- 6. PRODUCT SIZES (40% of products = 384 with 5-10 sizes each)
 -- ============================================================================
 DO $$
 BEGIN
@@ -408,7 +408,7 @@ END $$;
 
 INSERT INTO product_sizes (id, version, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at, deleted_by, product_id, name, price, sku, barcode, promotion_type, promotion_value, promotion_from_date, promotion_to_date)
 WITH product_with_sizes AS (
-    SELECT * FROM products ORDER BY RANDOM() LIMIT (9600 * 0.4)::int
+    SELECT * FROM products ORDER BY RANDOM() LIMIT (960 * 0.4)::int
 ),
 size_names AS (
     SELECT 1 as size_id, 'Extra Small' as name UNION ALL
@@ -803,7 +803,7 @@ BEGIN
     RAISE NOTICE '  - Name: Phat Meng Hor';
     RAISE NOTICE '  - Phone: +855 98 777 8888';
     RAISE NOTICE '  - Address: No. 888, Sihanouk Boulevard, Phnom Penh';
-    RAISE NOTICE '  - Orders: 400 with 2,000-3,200 order items';
+    RAISE NOTICE '  - Orders: 400 with premium furniture purchases';
     RAISE NOTICE '  - Delivery Locations: 4 addresses';
     RAISE NOTICE '';
     RAISE NOTICE 'Additional ADMIN users:';
