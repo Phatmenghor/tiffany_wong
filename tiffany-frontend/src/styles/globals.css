@@ -678,6 +678,12 @@
     touch-action: manipulation;
     /* Prevent content-triggered horizontal scroll at any zoom level */
     overflow-x: clip;
+    /* Prevent elastic/rubber-band scrolling past page boundaries (native feel).
+       overscroll-behavior-y leaves horizontal swipe gestures intact. */
+    overscroll-behavior-y: none;
+    /* Ensure iOS Safari uses the same safe-area padding as Android Chrome */
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
   }
 
   /* Prevent images and videos from overflowing their containers at high zoom */
@@ -685,6 +691,33 @@
   video {
     max-width: 100%;
     height: auto;
+  }
+
+  /*
+   * iOS Safari auto-zoom prevention (belt-and-suspenders alongside viewport
+   * maximum-scale=1).  Safari zooms in when an input's computed font-size is
+   * below 16px.  html { font-size: 65% } makes 1rem = 10.4px, so inputs that
+   * inherit that value trigger the zoom.  We force 16px on mobile only — the
+   * desktop design is unaffected.
+   */
+  @media (max-width: 767px) {
+    input,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="date"],
+    input[type="datetime-local"],
+    input[type="time"],
+    input[type="month"],
+    input[type="week"],
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
   }
 
   ::-webkit-scrollbar {
@@ -986,6 +1019,28 @@ body.route-changing #nprogress .peg {
 @media (max-width: 639px) {
   .pb-nav-safe {
     padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/*
+ * Positions a fixed element just above the bottom nav (4rem) plus any safe area.
+ * Used by the mobile sticky checkout/action bars.
+ */
+.bottom-nav-safe {
+  bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+}
+
+/*
+ * Radix UI / Shadcn dialog — when rendered as a mobile bottom sheet the
+ * content sits at bottom-0.  Ensure the inner padding clears the iPhone X+
+ * home indicator.  Uses an attribute selector so this only applies to Radix
+ * dialog content and not to other fixed panels.
+ */
+@media (max-width: 639px) {
+  [data-radix-dialog-content] {
+    padding-bottom: max(1.5rem, calc(1.5rem + env(safe-area-inset-bottom, 0px)));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 

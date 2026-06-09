@@ -112,7 +112,9 @@ export default function CartPage() {
 
   return (
     <>
-      <PageContainer className="py-4 sm:py-8 pb-40 sm:pb-8">
+      {/* pb-40 covers: bottom-nav (4rem) + mobile checkout bar (~5rem) + breathing room.
+          lg:pb-8 resets once the sticky bar and bottom nav are both gone. */}
+      <PageContainer className="py-4 sm:py-8 pb-40 lg:pb-8">
 
         <PageHeader
           title="Shopping Cart"
@@ -235,8 +237,8 @@ export default function CartPage() {
         </div>
       </PageContainer>
 
-      {/* Mobile sticky checkout bar */}
-      <div className="fixed bottom-16 left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur-sm border-t px-4 py-3">
+      {/* Mobile sticky checkout bar — sits above the bottom nav (4rem) + safe area */}
+      <div className="fixed bottom-nav-safe left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur-sm border-t px-4 py-3">
         <div className="flex items-center justify-between mb-2.5">
           <div className="text-xs">
             <div className="text-muted-foreground font-medium">{totalItems} items • {totalQuantity} qty</div>

@@ -153,7 +153,7 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <PageContainer className="py-4 sm:py-8 pb-40 sm:pb-8">
+      <PageContainer className="py-4 sm:py-8 pb-40 lg:pb-8">
         <PageHeader
           title="Checkout"
           icon={CreditCard}
@@ -174,7 +174,8 @@ export default function CheckoutPage() {
             {/* Customer Information */}
             <div className="bg-card border rounded-2xl p-5">
               <h3 className="text-base font-bold mb-4">Customer Information</h3>
-              <div className="grid grid-cols-2 gap-4">
+              {/* grid-cols-1 on mobile prevents two-column overflow at small/zoomed screens */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Full Name *</label>
                   <input

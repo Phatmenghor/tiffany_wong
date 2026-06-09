@@ -54,7 +54,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex min-h-screen w-full">
       {/* Left side — decorative image (desktop only) */}
       <div className="hidden flex-1 relative lg:block">
         <Image

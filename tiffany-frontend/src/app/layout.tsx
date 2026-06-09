@@ -20,7 +20,26 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Tiffany Furniture Cambodia",
-  description: "Tiffany Furniture Cambodia - E-commerce Platform",
+  description: "Tiffany Furniture Cambodia – Shop premium furniture online.",
+  applicationName: "Tiffany Furniture Cambodia",
+  manifest: "/manifest.json",
+
+  // Apple PWA
+  appleWebApp: {
+    capable: true,
+    title: "Tiffany",
+    statusBarStyle: "default",
+  },
+
+  // Standard PWA icons / touch icons
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/icons/icon-192.png",
+  },
+
+  formatDetection: {
+    telephone: false,   // prevent iOS from auto-linking phone numbers
+  },
 };
 
 /**
@@ -28,7 +47,10 @@ export const metadata: Metadata = {
  * - Mobile: maximum-scale=1 + user-scalable=no disables pinch-to-zoom and
  *   prevents Safari's automatic zoom on input focus (font-size < 16px).
  * - Desktop: viewport meta is ignored for Ctrl+/- zoom — those always work.
- * - viewportFit=cover extends content behind notches on iPhone X+.
+ * - viewportFit=cover extends content behind notches/dynamic-islands (iPhone X+).
+ * - themeColor: tints the browser chrome / status bar on Android & Safari.
+ * - interactiveWidget=resizes-visual: keyboard resizes the visual viewport only,
+ *   preventing layout shift when the soft keyboard opens (Chrome 108+).
  */
 export const viewport: Viewport = {
   width: "device-width",
@@ -36,6 +58,11 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#57823D" },
+    { media: "(prefers-color-scheme: dark)",  color: "#476B32" },
+  ],
+  interactiveWidget: "resizes-visual",
 };
 
 export default async function RootLayout({
