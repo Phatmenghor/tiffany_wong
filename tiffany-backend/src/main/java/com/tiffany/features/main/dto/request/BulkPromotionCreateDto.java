@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,10 +26,10 @@ public class BulkPromotionCreateDto {
     private BigDecimal promotionValue;
 
     @NotNull(message = "Promotion from date is required")
-    private LocalDateTime promotionFromDate;
+    private LocalDate promotionFromDate;
 
     @NotNull(message = "Promotion to date is required")
-    private LocalDateTime promotionToDate;
+    private LocalDate promotionToDate;
 
     // Optional: Map of productId -> List of sizeIds for per-size promotions
     // If provided, promotion will only be applied to specified sizes

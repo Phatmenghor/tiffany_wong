@@ -28,7 +28,7 @@ public interface CartMapper {
         if (cartItem.getProduct() != null) {
             response.setProductName(cartItem.getProduct().getName());
             response.setProductImageUrl(cartItem.getProduct().getMainImageUrl());
-            response.setSku(cartItem.getProduct().getSku());
+
         }
     }
 
