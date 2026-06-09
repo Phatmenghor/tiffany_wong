@@ -11,10 +11,7 @@ import java.util.UUID;
 public class SystemSettingResponse extends BaseAuditResponse {
 
     private UUID id;
-    private Double taxPercentage;
-    private String systemName;
     private String description;
-    private String primaryColor;
     private String contactAddress;
     private String contactPhone;
     private String contactEmail;

@@ -13,10 +13,6 @@ import { UserAvatarCard } from "../shared/avator/user-avatar-card";
 import { useIsMobile } from "@/redux/store/use-mobile";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { getProfileService } from "@/redux/features/auth/store/thunks/auth-thunks";
-import { useAppSelector } from '@/redux/store/hooks';
-import {
-  selectBusinessName,
-} from "@/redux/features/business/store/selectors/business-settings-selector";
 import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
 
 interface SidebarProps {
@@ -30,7 +26,7 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
 
   const { profile, isProfileLoading, dispatch } = useAuthState();
 
-  const businessName = useAppSelector(selectBusinessName);
+  const businessName = BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME;
 
   // Track if component is hydrated to avoid hydration mismatch
   const [isHydrated, setIsHydrated] = useState(false);

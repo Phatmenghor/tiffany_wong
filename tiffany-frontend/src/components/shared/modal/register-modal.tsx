@@ -21,8 +21,7 @@ import {
   registerCustomerService,
 } from "@/redux/features/auth/store/thunks/auth-thunks";
 import { showToast } from "@/components/shared/common/show-toast";
-import { useAppSelector } from '@/redux/store/hooks';
-import { selectBusinessName } from "@/redux/features/business/store/selectors/business-settings-selector";
+import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
 
 interface RegisterModalProps {
   open: boolean;
@@ -49,7 +48,7 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { isLoading, dispatch } = useAuthState();
-  const businessName = useAppSelector(selectBusinessName);
+  const businessName = BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME;
   const isAnyLoading = isLoading;
 
   const registerForm = useForm<RegisterFormData>({

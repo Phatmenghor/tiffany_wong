@@ -60,7 +60,7 @@ export function useBusinessTheme() {
     // Apply color immediately from constant (no flash)
     applyPrimaryColor();
 
-    // Fetch fresh settings into Redux store for components that read systemName, socialMedia, etc.
+    // Fetch fresh settings into Redux store for contact info and social links.
     dispatch(fetchBusinessSettingsThunk());
   }, [dispatch]);
 }

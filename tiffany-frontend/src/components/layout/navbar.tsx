@@ -17,7 +17,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   Search,
   ShoppingCart,
@@ -39,7 +39,7 @@ import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
 import { useFavoriteState } from "@/redux/features/main/store/state/favorite-state";
 import { clearProducts } from "@/redux/features/main/store/slice/public-product-slice";
-import { selectBusinessName } from "@/redux/features/business/store/selectors/business-settings-selector";
+import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
 import { showToast } from "@/components/shared/common/show-toast";
 import { useLogout } from "@/redux/store/use-logout";
 import { useDebounce } from "@/utils/debounce/debounce";
@@ -77,7 +77,7 @@ export function Navbar() {
   const { totalItems: favoriteItemCount } = useFavoriteState();
   const { logout: handleLogout } = useLogout();
 
-  const businessName = useSelector(selectBusinessName);
+  const businessName = BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME;
 
   const [favoriteAnimating, setFavoriteAnimating] = useState(false);
   const prevFavoriteCount = useRef(favoriteItemCount);

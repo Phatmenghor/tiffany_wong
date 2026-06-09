@@ -25,9 +25,6 @@ public class SystemSettingInitializer {
             log.info("Creating default system settings for Tiffany Furniture");
 
             SystemSetting systemSetting = new SystemSetting();
-            systemSetting.setSystemName("Tiffany Furniture");
-            systemSetting.setPrimaryColor("#57823D");
-            systemSetting.setTaxPercentage(0.0);
             systemSetting.setContactEmail("support@tiffany.com");
             systemSetting.setContactPhone("+855-0-000-0000");
             systemSetting.setContactAddress("Cambodia");

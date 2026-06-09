@@ -12,7 +12,7 @@ export function Footer() {
   const [isHydrated, setIsHydrated] = useState(false);
   const businessSettings = useAppSelector(selectBusinessSettings);
 
-  const businessName = businessSettings?.systemName || BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME;
+  const businessName = BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME;
   const businessDescription = isHydrated ? businessSettings?.description || "" : "";
   const contactAddress = isHydrated ? businessSettings?.contactAddress || "" : "";
   const contactPhone = isHydrated ? businessSettings?.contactPhone || "" : "";

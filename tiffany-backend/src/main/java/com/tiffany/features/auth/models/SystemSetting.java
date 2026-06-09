@@ -15,17 +15,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SystemSetting extends BaseUUIDEntity {
 
-    @Column(name = "tax_percentage")
-    private Double taxPercentage;
-
-    @Column(name = "system_name")
-    private String systemName;
-
     @Column(name = "description", length = 1000)
     private String description;
-
-    @Column(name = "primary_color")
-    private String primaryColor;
 
     // Contact Information
     @Column(name = "contact_address", length = 500)

@@ -10,10 +10,7 @@ export interface BusinessSettingsResponse {
   updatedAt: string;
   createdBy: string;
   updatedBy: string;
-  taxPercentage: number;
-  systemName: string;
   description?: string | null;
-  primaryColor: string | null;
   contactAddress: string;
   contactPhone: string;
   contactEmail: string;
@@ -23,10 +20,7 @@ export interface BusinessSettingsResponse {
 }
 
 export interface UpdateBusinessSettingsRequest {
-  taxPercentage?: number;
-  systemName?: string;
   description?: string | null;
-  primaryColor?: string | null;
   contactAddress?: string;
   contactPhone?: string;
   contactEmail?: string;

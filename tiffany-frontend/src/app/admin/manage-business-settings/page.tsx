@@ -10,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { showToast } from "@/components/shared/common/show-toast";
 import { Loader2, Save, Facebook, Instagram, Send } from "lucide-react";
-import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
 import { selectBusinessSettings } from "@/redux/features/business/store/selectors/business-settings-selector";
 import {
@@ -27,7 +26,6 @@ function convertResponseToFormData(
   response: BusinessSettingsResponse
 ): BusinessSettingsFormData {
   return {
-    systemName: response.systemName || BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME,
     description: response.description || "",
     contactAddress: response.contactAddress || "",
     contactPhone: response.contactPhone || "",
@@ -50,7 +48,6 @@ export default function BusinessSettingsPage() {
     resolver: zodResolver(businessSettingsSchema),
     mode: "onChange",
     defaultValues: {
-      systemName: BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME,
       description: "",
       contactAddress: "",
       contactPhone: "",
@@ -92,10 +89,7 @@ export default function BusinessSettingsPage() {
       setIsSaving(true);
 
       const payload = {
-        systemName: data.systemName,
         description: data.description || undefined,
-        taxPercentage: BUSINESS_SETTINGS_DEFAULTS.TAX_PERCENTAGE,
-        primaryColor: BUSINESS_SETTINGS_DEFAULTS.PRIMARY_COLOR,
         contactAddress: data.contactAddress || undefined,
         contactPhone: data.contactPhone || undefined,
         contactEmail: data.contactEmail || undefined,
@@ -143,20 +137,6 @@ export default function BusinessSettingsPage() {
             <CardTitle>Basic Settings</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="systemName">System Name</Label>
-              <Input
-                id="systemName"
-                placeholder="System name"
-                {...form.register("systemName")}
-              />
-              {form.formState.errors.systemName && (
-                <p className="text-xs text-destructive">
-                  {form.formState.errors.systemName.message}
-                </p>
-              )}
-            </div>
-
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea

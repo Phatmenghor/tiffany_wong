@@ -6,8 +6,6 @@ import { MapPin, Plus, CheckCircle2, Loader2 } from "lucide-react";
 import { DeleteConfirmationModal } from "@/components/shared/modal/delete-confirmation-modal";
 import { showToast } from "@/components/shared/common/show-toast";
 import { PageContainer } from "@/components/shared/common/page-container";
-import { useAppSelector } from '@/redux/store/hooks';
-import { selectBusinessColors } from "@/redux/features/business/store/selectors/business-settings-selector";
 import { PageHeader } from "@/components/shared/common/page-header";
 
 import { useLocationState } from "@/redux/features/location/store/state/location-state";
@@ -29,9 +27,6 @@ export default function LocationPage() {
     remove,
     fetchAllWithPagination,
   } = useLocationState();
-
-  const colors = useAppSelector(selectBusinessColors);
-  const primaryColor = colors.primary;
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingLocation, setEditingLocation] =

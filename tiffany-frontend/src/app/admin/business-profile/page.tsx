@@ -26,6 +26,7 @@ import {
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { fetchBusinessSettingsThunk } from "@/redux/features/business/store/thunks/business-settings-thunks";
+import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
 
 export default function BusinessProfileEditorPage() {
   const dispatch = useAppDispatch();
@@ -54,10 +55,10 @@ export default function BusinessProfileEditorPage() {
     if (businessSettings) {
       const mappedProfile: SystemAdminSettings = {
         id: businessSettings.id,
-        businessName: businessSettings.systemName,
+        businessName: BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME,
         tagline: "",
         description: businessSettings.description || "",
-        logo: businessSettings.logoSystemUrl || "",
+        logo: "",
         coverImage: "",
         businessType: BusinessType.POS,
         industry: "",
@@ -74,19 +75,8 @@ export default function BusinessProfileEditorPage() {
           },
           mapLink: "",
         },
-        socialMedia: businessSettings.socialMedia.reduce(
-          (acc, sm) => ({
-            ...acc,
-            [sm.name.toLowerCase()]: sm.linkUrl,
-          }),
-          {}
-        ),
-        businessHours: businessSettings.businessHours.map((bh) => ({
-          day: bh.day as DayOfWeek,
-          isOpen: true,
-          openTime: bh.openingTime,
-          closeTime: bh.closingTime,
-        })),
+        socialMedia: {},
+        businessHours: [],
         gallery: [],
         features: [],
         services: [],
@@ -99,7 +89,7 @@ export default function BusinessProfileEditorPage() {
           productsAvailable: 0,
         },
         theme: {
-          primaryColor: businessSettings.primaryColor || "#FF6B6B",
+          primaryColor: BUSINESS_SETTINGS_DEFAULTS.PRIMARY_COLOR,
           fontFamily: "Inter",
           layout: "modern",
         },

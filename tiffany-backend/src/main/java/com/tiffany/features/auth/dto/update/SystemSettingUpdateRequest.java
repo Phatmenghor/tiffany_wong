@@ -6,10 +6,7 @@ import lombok.Data;
 @Data
 public class SystemSettingUpdateRequest {
 
-    private Double taxPercentage;
-    private String systemName;
     private String description;
-    private String primaryColor;
 
     // Contact Information
     private String contactAddress;

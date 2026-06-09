@@ -21,8 +21,7 @@ import {
   loginService,
 } from "@/redux/features/auth/store/thunks/auth-thunks";
 import { showToast } from "@/components/shared/common/show-toast";
-import { useAppSelector } from '@/redux/store/hooks';
-import { selectBusinessName } from "@/redux/features/business/store/selectors/business-settings-selector";
+import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
 
 interface LoginModalProps {
   open: boolean;
@@ -41,7 +40,7 @@ export function LoginModal({ open, onOpenChange, onRegisterClick }: LoginModalPr
   const [showPassword, setShowPassword] = useState(false);
 
   const { isLoading, dispatch } = useAuthState();
-  const businessName = useAppSelector(selectBusinessName);
+  const businessName = BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME;
   const isAnyLoading = isLoading;
 
   const loginForm = useForm<LoginFormData>({
