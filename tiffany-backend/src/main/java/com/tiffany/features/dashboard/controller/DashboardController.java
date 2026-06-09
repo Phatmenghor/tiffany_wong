@@ -2,16 +2,11 @@ package com.tiffany.features.dashboard.controller;
 
 import com.tiffany.features.dashboard.dto.*;
 import com.tiffany.features.dashboard.service.DashboardService;
-import com.tiffany.features.dashboard.service.SimpleDashboardService;
-import com.tiffany.features.dashboard.service.DailyTrendService;
 import com.tiffany.shared.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/dashboard")
@@ -20,56 +15,57 @@ import org.springframework.web.bind.annotation.RestController;
 public class DashboardController {
 
     private final DashboardService dashboardService;
-    private final SimpleDashboardService simpleDashboardService;
-    private final DailyTrendService dailyTrendService;
+
+    @GetMapping("/summary")
+    public ResponseEntity<ApiResponse<DashboardSummaryResponse>> getSummary(
+            @RequestParam(defaultValue = "TODAY") String period) {
+        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getSummary(period)));
+    }
 
     @GetMapping("/sales")
-    public ResponseEntity<ApiResponse<SalesMetricsResponse>> getSalesMetrics() {
-        log.info("Fetching sales metrics");
-        SalesMetricsResponse metrics = dashboardService.getSalesMetrics();
-        return ResponseEntity.ok(ApiResponse.success("Sales metrics retrieved successfully", metrics));
-    }
-
-    @GetMapping("/orders")
-    public ResponseEntity<ApiResponse<OrderMetricsResponse>> getOrderMetrics() {
-        log.info("Fetching order metrics");
-        OrderMetricsResponse metrics = dashboardService.getOrderMetrics();
-        return ResponseEntity.ok(ApiResponse.success("Order metrics retrieved successfully", metrics));
-    }
-
-    @GetMapping("/products")
-    public ResponseEntity<ApiResponse<ProductMetricsResponse>> getProductMetrics() {
-        log.info("Fetching product metrics");
-        ProductMetricsResponse metrics = dashboardService.getProductMetrics();
-        return ResponseEntity.ok(ApiResponse.success("Product metrics retrieved successfully", metrics));
-    }
-
-    @GetMapping("/customers")
-    public ResponseEntity<ApiResponse<CustomerMetricsResponse>> getCustomerMetrics() {
-        log.info("Fetching customer metrics");
-        CustomerMetricsResponse metrics = dashboardService.getCustomerMetrics();
-        return ResponseEntity.ok(ApiResponse.success("Customer metrics retrieved successfully", metrics));
+    public ResponseEntity<ApiResponse<DashboardSalesResponse>> getSales(
+            @RequestParam(defaultValue = "7D") String period) {
+        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getSales(period)));
     }
 
     @GetMapping("/payments")
-    public ResponseEntity<ApiResponse<PaymentMetricsResponse>> getPaymentMetrics() {
-        log.info("Fetching payment metrics");
-        PaymentMetricsResponse metrics = dashboardService.getPaymentMetrics();
-        return ResponseEntity.ok(ApiResponse.success("Payment metrics retrieved successfully", metrics));
+    public ResponseEntity<ApiResponse<DashboardPaymentsResponse>> getPayments(
+            @RequestParam(defaultValue = "TODAY") String period) {
+        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getPayments(period)));
     }
 
-    @GetMapping("/simple")
-    public ResponseEntity<ApiResponse<SimpleDashboardResponse>> getSimpleDashboard() {
-        log.info("Fetching simple dashboard metrics");
-        SimpleDashboardResponse metrics = simpleDashboardService.getSimpleDashboard();
-        return ResponseEntity.ok(ApiResponse.success("Dashboard metrics retrieved successfully", metrics));
+    @GetMapping("/stock")
+    public ResponseEntity<ApiResponse<DashboardStockResponse>> getStock() {
+        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getStock()));
     }
 
-    @GetMapping("/daily-trends")
-    public ResponseEntity<ApiResponse<DailyTrendResponse>> getDailyTrends(
-            @RequestParam(defaultValue = "30") int days) {
-        log.info("Fetching daily trends for {} days", days);
-        DailyTrendResponse trends = dailyTrendService.getDailyTrends(days);
-        return ResponseEntity.ok(ApiResponse.success("Daily trends retrieved successfully", trends));
+    @GetMapping("/orders")
+    public ResponseEntity<ApiResponse<DashboardOrdersResponse>> getRecentOrders(
+            @RequestParam(defaultValue = "TODAY") String period) {
+        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getRecentOrders(period)));
+    }
+
+    @GetMapping("/top-products")
+    public ResponseEntity<ApiResponse<DashboardTopProductsResponse>> getTopProducts(
+            @RequestParam(defaultValue = "TODAY") String period) {
+        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getTopProducts(period)));
+    }
+
+    @GetMapping("/hourly-sales")
+    public ResponseEntity<ApiResponse<DashboardHourlySalesResponse>> getHourlySales(
+            @RequestParam(defaultValue = "TODAY") String period) {
+        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getHourlySales(period)));
+    }
+
+    @GetMapping("/customers")
+    public ResponseEntity<ApiResponse<DashboardCustomerStatsResponse>> getCustomerStats(
+            @RequestParam(defaultValue = "TODAY") String period) {
+        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getCustomerStats(period)));
+    }
+
+    @GetMapping("/promotions")
+    public ResponseEntity<ApiResponse<DashboardPromotionsResponse>> getPromotions(
+            @RequestParam(defaultValue = "TODAY") String period) {
+        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getPromotions(period)));
     }
 }

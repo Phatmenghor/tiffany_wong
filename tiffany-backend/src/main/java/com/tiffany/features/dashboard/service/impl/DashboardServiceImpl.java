@@ -1,27 +1,20 @@
 package com.tiffany.features.dashboard.service.impl;
 
-import com.tiffany.enums.order.OrderStatus;
-import com.tiffany.enums.payment.PaymentMethod;
-import com.tiffany.enums.payment.PaymentStatus;
-import com.tiffany.features.auth.models.User;
-import com.tiffany.features.auth.repository.UserRepository;
 import com.tiffany.features.dashboard.dto.*;
 import com.tiffany.features.dashboard.service.DashboardService;
-import com.tiffany.features.main.repository.ProductRepository;
-import com.tiffany.features.order.models.Order;
-import com.tiffany.features.order.models.OrderItem;
-import com.tiffany.features.order.repository.OrderRepository;
+import com.tiffany.features.dashboard.util.DashboardPeriodUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,531 +22,355 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class DashboardServiceImpl implements DashboardService {
 
-    private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
-    private final ProductRepository productRepository;
+    private static final int RECENT_ORDERS_LIMIT = 10;
+    private static final int TOP_PRODUCTS_LIMIT  = 8;
+    private static final DateTimeFormatter DT_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
-    public SalesMetricsResponse getSalesMetrics() {
-        log.info("Fetching sales metrics");
+    public DashboardSummaryResponse getSummary(String period) {
+        LocalDateTime[] today     = DashboardPeriodUtil.getTodayRange();
+        LocalDateTime[] yesterday = DashboardPeriodUtil.getYesterdayRange();
 
-        List<Order> allOrders = orderRepository.findAllByIsDeletedFalse();
+        BigDecimal salesToday     = queryRevenue(today[0], today[1]);
+        BigDecimal salesYesterday = queryRevenue(yesterday[0], yesterday[1]);
+        long ordersToday     = queryOrderCount(today[0], today[1]);
+        long ordersYesterday = queryOrderCount(yesterday[0], yesterday[1]);
+        long pendingOrders   = queryPendingCount();
 
-        BigDecimal totalRevenue = allOrders.stream()
-                .map(Order::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal avg = ordersToday > 0
+            ? salesToday.divide(BigDecimal.valueOf(ordersToday), 2, RoundingMode.HALF_UP)
+            : BigDecimal.ZERO;
 
-        Integer totalOrders = allOrders.size();
-
-        Set<UUID> uniqueCustomers = allOrders.stream()
-                .map(Order::getCustomerId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        Integer activeCustomers = uniqueCustomers.size();
-
-        BigDecimal averageOrderValue = totalOrders > 0
-                ? totalRevenue.divide(BigDecimal.valueOf(totalOrders), 2, BigDecimal.ROUND_HALF_UP)
-                : BigDecimal.ZERO;
-
-        // Revenue Trend (last 30 days)
-        List<SalesMetricsResponse.DailyRevenueDTO> revenueTrend = buildDailyRevenueTrend(allOrders);
-
-        // Orders by Status
-        List<SalesMetricsResponse.OrderStatusCountDTO> ordersByStatus = buildOrdersByStatus(allOrders);
-
-        // Payment Status Distribution
-        List<SalesMetricsResponse.PaymentStatusCountDTO> paymentStatusDistribution = buildPaymentStatusDistribution(allOrders);
-
-        // Top Products
-        List<SalesMetricsResponse.TopProductDTO> topProducts = buildTopProducts(allOrders, 10);
-
-        // Sales by Payment Method
-        List<SalesMetricsResponse.PaymentMethodDTO> salesByPaymentMethod = buildSalesByPaymentMethod(allOrders);
-
-        return SalesMetricsResponse.builder()
-                .totalRevenue(totalRevenue)
-                .totalOrders(totalOrders)
-                .activeCustomers(activeCustomers)
-                .averageOrderValue(averageOrderValue)
-                .revenueTrend(revenueTrend)
-                .ordersByStatus(ordersByStatus)
-                .paymentStatusDistribution(paymentStatusDistribution)
-                .topProducts(topProducts)
-                .salesByPaymentMethod(salesByPaymentMethod)
-                .build();
+        return DashboardSummaryResponse.builder()
+            .totalSalesToday(salesToday)
+            .totalOrdersToday(ordersToday)
+            .totalSalesChange(DashboardPeriodUtil.percentageChange(
+                salesToday.doubleValue(), salesYesterday.doubleValue()))
+            .totalOrdersChange(DashboardPeriodUtil.percentageChange(
+                (double) ordersToday, (double) ordersYesterday))
+            .lowStockItems(0L)
+            .systemAlerts(pendingOrders)
+            .activeStaff(0L)
+            .avgOrderValue(avg)
+            .build();
     }
 
     @Override
-    public OrderMetricsResponse getOrderMetrics() {
-        log.info("Fetching order metrics");
+    public DashboardSalesResponse getSales(String period) {
+        LocalDateTime[] range = DashboardPeriodUtil.getRange(period);
 
-        List<Order> allOrders = orderRepository.findAllByIsDeletedFalse();
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = em.createNativeQuery(
+            "SELECT DATE(created_at) AS day, " +
+            "       COALESCE(SUM(total_amount), 0) AS revenue, " +
+            "       COUNT(*) AS orders " +
+            "FROM orders " +
+            "WHERE created_at >= :start AND created_at < :end " +
+            "  AND order_status = 'COMPLETED' " +
+            "  AND is_deleted = false " +
+            "GROUP BY DATE(created_at) " +
+            "ORDER BY DATE(created_at)")
+            .setParameter("start", range[0])
+            .setParameter("end",   range[1])
+            .getResultList();
 
-        Integer totalOrders = allOrders.size();
-        Integer pendingOrders = (int) allOrders.stream()
-                .filter(o -> OrderStatus.PENDING.equals(o.getOrderStatus())).count();
-        Integer confirmedOrders = (int) allOrders.stream()
-                .filter(o -> OrderStatus.CONFIRMED.equals(o.getOrderStatus())).count();
-        Integer completedOrders = (int) allOrders.stream()
-                .filter(o -> OrderStatus.COMPLETED.equals(o.getOrderStatus())).count();
-        Integer cancelledOrders = (int) allOrders.stream()
-                .filter(o -> OrderStatus.CANCELLED.equals(o.getOrderStatus())).count();
+        List<DashboardSalesResponse.SalesDataPoint> points = new ArrayList<>();
+        BigDecimal totalRevenue = BigDecimal.ZERO;
+        long totalOrders = 0;
 
-        Double fulfillmentRate = totalOrders > 0 ? (completedOrders * 100.0) / totalOrders : 0.0;
+        for (Object[] row : rows) {
+            BigDecimal rev = toBigDecimal(row[1]);
+            long orders    = toLong(row[2]);
+            points.add(DashboardSalesResponse.SalesDataPoint.builder()
+                .date(row[0] != null ? row[0].toString() : "")
+                .revenue(rev).orders(orders).build());
+            totalRevenue = totalRevenue.add(rev);
+            totalOrders  += orders;
+        }
 
-        // Orders by Status
-        List<OrderMetricsResponse.OrderStatusDTO> ordersByStatus = Arrays.stream(OrderStatus.values())
-                .map(status -> {
-                    Integer count = (int) allOrders.stream()
-                            .filter(o -> status.equals(o.getOrderStatus()))
-                            .count();
-                    return OrderMetricsResponse.OrderStatusDTO.builder()
-                            .status(status.toString())
-                            .count(count)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        // Recent Orders (last 20)
-        List<OrderMetricsResponse.RecentOrderDTO> recentOrders = allOrders.stream()
-                .sorted(Comparator.comparing(Order::getCreatedAt).reversed())
-                .limit(20)
-                .map(this::mapToRecentOrderDTO)
-                .collect(Collectors.toList());
-
-        return OrderMetricsResponse.builder()
-                .totalOrders(totalOrders)
-                .pendingOrders(pendingOrders)
-                .confirmedOrders(confirmedOrders)
-                .completedOrders(completedOrders)
-                .cancelledOrders(cancelledOrders)
-                .fulfillmentRate(fulfillmentRate)
-                .ordersByStatus(ordersByStatus)
-                .recentOrders(recentOrders)
-                .build();
+        return DashboardSalesResponse.builder()
+            .data(points).totalRevenue(totalRevenue)
+            .totalOrders(totalOrders).period(period).build();
     }
 
     @Override
-    public ProductMetricsResponse getProductMetrics() {
-        log.info("Fetching product metrics");
+    public DashboardPaymentsResponse getPayments(String period) {
+        LocalDateTime[] range = DashboardPeriodUtil.getRange(period);
 
-        List<Order> allOrders = orderRepository.findAllByIsDeletedFalse();
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = em.createNativeQuery(
+            "SELECT payment_method, " +
+            "       COALESCE(SUM(total_amount), 0) AS amount, " +
+            "       COUNT(*) AS cnt " +
+            "FROM orders " +
+            "WHERE created_at >= :start AND created_at < :end " +
+            "  AND payment_method IS NOT NULL " +
+            "  AND is_deleted = false " +
+            "GROUP BY payment_method")
+            .setParameter("start", range[0])
+            .setParameter("end",   range[1])
+            .getResultList();
 
-        Integer totalProducts = (int) productRepository.count();
-        Integer activeProducts = (int) productRepository.findAll().stream()
-                .filter(p -> p.getStatus() != null && "ACTIVE".equals(p.getStatus().toString()))
-                .count();
-        Integer inactiveProducts = totalProducts - activeProducts;
-        Integer productsWithPromotion = (int) productRepository.findAll().stream()
-                .filter(p -> p.getPromotionFromDate() != null && p.getPromotionToDate() != null
-                        && LocalDateTime.now().isAfter(p.getPromotionFromDate())
-                        && LocalDateTime.now().isBefore(p.getPromotionToDate()))
-                .count();
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        long totalCount = 0;
+        List<DashboardPaymentsResponse.PaymentMethodData> items = new ArrayList<>();
 
-        // Top Products by Revenue
-        List<ProductMetricsResponse.ProductPerformanceDTO> topProductsByRevenue = buildTopProductsByRevenue(allOrders, 10);
+        for (Object[] row : rows) {
+            BigDecimal amt = toBigDecimal(row[1]);
+            long cnt       = toLong(row[2]);
+            totalAmount    = totalAmount.add(amt);
+            totalCount     += cnt;
+            items.add(DashboardPaymentsResponse.PaymentMethodData.builder()
+                .method(str(row[0])).amount(amt).count(cnt).percentage(0.0).build());
+        }
 
-        // Top Products by Views
-        List<ProductMetricsResponse.ProductPerformanceDTO> topProductsByViews = buildTopProductsByViews(10);
+        final BigDecimal total = totalAmount.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : totalAmount;
+        items.forEach(item -> item.setPercentage(
+            item.getAmount().divide(total, 4, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100)).doubleValue()));
 
-        // Top Products by Favorites
-        List<ProductMetricsResponse.ProductPerformanceDTO> topProductsByFavorites = buildTopProductsByFavorites(10);
-
-        // Products by Category
-        List<ProductMetricsResponse.CategoryCountDTO> productsByCategory = buildProductsByCategory(allOrders);
-
-        // Lowest Performance
-        List<ProductMetricsResponse.ProductPerformanceDTO> lowestPerformance = buildLowestPerformanceProducts(allOrders, 10);
-
-        return ProductMetricsResponse.builder()
-                .totalProducts(totalProducts)
-                .activeProducts(activeProducts)
-                .inactiveProducts(inactiveProducts)
-                .productsWithPromotion(productsWithPromotion)
-                .topProductsByRevenue(topProductsByRevenue)
-                .topProductsByViews(topProductsByViews)
-                .topProductsByFavorites(topProductsByFavorites)
-                .productsByCategory(productsByCategory)
-                .lowestPerformanceProducts(lowestPerformance)
-                .build();
+        return DashboardPaymentsResponse.builder()
+            .data(items).totalAmount(totalAmount).totalCount(totalCount).build();
     }
 
     @Override
-    public CustomerMetricsResponse getCustomerMetrics() {
-        log.info("Fetching customer metrics");
-
-        List<User> allCustomers = userRepository.findAllByIsDeletedFalse();
-        List<Order> allOrders = orderRepository.findAllByIsDeletedFalse();
-
-        Integer totalCustomers = allCustomers.size();
-        Integer activeCustomers = (int) allCustomers.stream()
-                .filter(u -> u.isActive())
-                .count();
-
-        YearMonth currentMonth = YearMonth.now();
-        Integer newCustomersThisMonth = (int) allCustomers.stream()
-                .filter(u -> u.getCreatedAt() != null
-                        && YearMonth.from(u.getCreatedAt()).equals(currentMonth))
-                .count();
-
-        // Top Customers by Revenue
-        List<CustomerMetricsResponse.TopCustomerDTO> topCustomers = buildTopCustomers(allOrders, 10);
-
-        // New Customers This Month
-        List<CustomerMetricsResponse.NewCustomerDTO> newCustomers = buildNewCustomers(allOrders, currentMonth);
-
-        BigDecimal totalCustomerValue = allOrders.stream()
-                .map(Order::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal averageCustomerValue = totalCustomers > 0
-                ? totalCustomerValue.divide(BigDecimal.valueOf(totalCustomers), 2, BigDecimal.ROUND_HALF_UP)
-                : BigDecimal.ZERO;
-
-        return CustomerMetricsResponse.builder()
-                .totalCustomers(totalCustomers)
-                .activeCustomers(activeCustomers)
-                .newCustomersThisMonth(newCustomersThisMonth)
-                .totalCustomerValue(totalCustomerValue)
-                .averageCustomerValue(averageCustomerValue)
-                .topCustomers(topCustomers)
-                .newCustomers(newCustomers)
-                .build();
+    public DashboardStockResponse getStock() {
+        return DashboardStockResponse.builder()
+            .data(new ArrayList<>()).lowStockCount(0L).outOfStockCount(0L).build();
     }
 
     @Override
-    public PaymentMetricsResponse getPaymentMetrics() {
-        log.info("Fetching payment metrics");
+    public DashboardOrdersResponse getRecentOrders(String period) {
+        LocalDateTime[] range = DashboardPeriodUtil.getRange(period);
 
-        List<Order> allOrders = orderRepository.findAllByIsDeletedFalse();
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = em.createNativeQuery(
+            "SELECT o.id, o.order_number, o.customer_name, o.total_amount, " +
+            "       o.order_status, o.payment_method, o.created_at, " +
+            "       (SELECT COUNT(*) FROM order_items oi WHERE oi.order_id = o.id AND oi.is_deleted = false) AS item_count " +
+            "FROM orders o " +
+            "WHERE o.created_at >= :start AND o.created_at < :end " +
+            "  AND o.is_deleted = false " +
+            "ORDER BY o.created_at DESC " +
+            "LIMIT :lim")
+            .setParameter("start", range[0])
+            .setParameter("end",   range[1])
+            .setParameter("lim",   RECENT_ORDERS_LIMIT)
+            .getResultList();
 
-        Integer totalOrders = allOrders.size();
-        Integer paidOrders = (int) allOrders.stream()
-                .filter(o -> PaymentStatus.PAID.equals(o.getPaymentStatus())).count();
-        Integer unpaidOrders = (int) allOrders.stream()
-                .filter(o -> PaymentStatus.UNPAID.equals(o.getPaymentStatus())).count();
-        Integer refundedOrders = (int) allOrders.stream()
-                .filter(o -> PaymentStatus.REFUNDED.equals(o.getPaymentStatus())).count();
+        long totalCount = queryOrderCount(range[0], range[1]);
+        List<DashboardOrdersResponse.DashboardOrderItem> items = new ArrayList<>();
 
-        BigDecimal totalRevenuePaid = allOrders.stream()
-                .filter(o -> PaymentStatus.PAID.equals(o.getPaymentStatus()))
-                .map(Order::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        for (Object[] row : rows) {
+            LocalDateTime createdAt = row[6] instanceof LocalDateTime ldt ? ldt : null;
+            items.add(DashboardOrdersResponse.DashboardOrderItem.builder()
+                .id(toUUID(row[0])).orderCode(str(row[1])).customerName(str(row[2]))
+                .totalAmount(toBigDecimal(row[3])).status(str(row[4])).paymentMethod(str(row[5]))
+                .createdAt(createdAt != null ? createdAt.format(DT_FMT) : "")
+                .itemCount(toInt(row[7])).build());
+        }
 
-        BigDecimal totalRevenueUnpaid = allOrders.stream()
-                .filter(o -> PaymentStatus.UNPAID.equals(o.getPaymentStatus()))
-                .map(Order::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal totalRevenueRefunded = allOrders.stream()
-                .filter(o -> PaymentStatus.REFUNDED.equals(o.getPaymentStatus()))
-                .map(Order::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        Double paymentRate = totalOrders > 0 ? (paidOrders * 100.0) / totalOrders : 0.0;
-
-        // Payment Status Distribution
-        List<PaymentMetricsResponse.PaymentStatusDTO> paymentStatusDistribution = Arrays.stream(PaymentStatus.values())
-                .map(status -> {
-                    Integer count = (int) allOrders.stream()
-                            .filter(o -> status.equals(o.getPaymentStatus()))
-                            .count();
-                    BigDecimal amount = allOrders.stream()
-                            .filter(o -> status.equals(o.getPaymentStatus()))
-                            .map(Order::getTotalAmount)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-                    Double percentage = totalOrders > 0 ? (count * 100.0) / totalOrders : 0.0;
-                    return PaymentMetricsResponse.PaymentStatusDTO.builder()
-                            .status(status.toString())
-                            .count(count)
-                            .amount(amount)
-                            .percentage(percentage)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        // Revenue by Payment Method
-        List<PaymentMetricsResponse.PaymentMethodRevenueDTO> revenueByPaymentMethod = Arrays.stream(PaymentMethod.values())
-                .map(method -> {
-                    Integer count = (int) allOrders.stream()
-                            .filter(o -> method.equals(o.getPaymentMethod()))
-                            .count();
-                    BigDecimal amount = allOrders.stream()
-                            .filter(o -> method.equals(o.getPaymentMethod()))
-                            .map(Order::getTotalAmount)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-                    Double percentage = totalOrders > 0 ? (count * 100.0) / totalOrders : 0.0;
-                    return PaymentMetricsResponse.PaymentMethodRevenueDTO.builder()
-                            .method(method.toString())
-                            .count(count)
-                            .amount(amount)
-                            .percentage(percentage)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        return PaymentMetricsResponse.builder()
-                .totalOrders(totalOrders)
-                .paidOrders(paidOrders)
-                .unpaidOrders(unpaidOrders)
-                .refundedOrders(refundedOrders)
-                .totalRevenuePaid(totalRevenuePaid)
-                .totalRevenueUnpaid(totalRevenueUnpaid)
-                .totalRevenueRefunded(totalRevenueRefunded)
-                .paymentRate(paymentRate)
-                .paymentStatusDistribution(paymentStatusDistribution)
-                .revenueByPaymentMethod(revenueByPaymentMethod)
-                .build();
+        return DashboardOrdersResponse.builder().data(items).totalElements(totalCount).build();
     }
 
-    // Helper Methods
-    private List<SalesMetricsResponse.DailyRevenueDTO> buildDailyRevenueTrend(List<Order> orders) {
-        Map<LocalDate, List<Order>> ordersByDate = orders.stream()
-                .collect(Collectors.groupingBy(o -> o.getCreatedAt().toLocalDate()));
+    @Override
+    public DashboardTopProductsResponse getTopProducts(String period) {
+        LocalDateTime[] range = DashboardPeriodUtil.getRange(period);
 
-        return ordersByDate.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .map(entry -> SalesMetricsResponse.DailyRevenueDTO.builder()
-                        .date(entry.getKey())
-                        .revenue(entry.getValue().stream()
-                                .map(Order::getTotalAmount)
-                                .reduce(BigDecimal.ZERO, BigDecimal::add))
-                        .orderCount(entry.getValue().size())
-                        .build())
-                .collect(Collectors.toList());
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = em.createNativeQuery(
+            "SELECT oi.product_id, oi.product_name, " +
+            "       SUM(oi.quantity) AS units_sold, " +
+            "       SUM(oi.total_price) AS revenue, " +
+            "       MAX(oi.product_image_url) AS image_url " +
+            "FROM order_items oi " +
+            "JOIN orders o ON o.id = oi.order_id " +
+            "WHERE o.created_at >= :start AND o.created_at < :end " +
+            "  AND o.is_deleted = false AND oi.is_deleted = false " +
+            "GROUP BY oi.product_id, oi.product_name " +
+            "ORDER BY units_sold DESC " +
+            "LIMIT :lim")
+            .setParameter("start", range[0])
+            .setParameter("end",   range[1])
+            .setParameter("lim",   TOP_PRODUCTS_LIMIT)
+            .getResultList();
+
+        List<DashboardTopProductsResponse.DashboardTopProduct> items = new ArrayList<>();
+        for (Object[] row : rows) {
+            items.add(DashboardTopProductsResponse.DashboardTopProduct.builder()
+                .id(toUUID(row[0])).name(str(row[1])).unitsSold(toLong(row[2]))
+                .revenue(toBigDecimal(row[3])).category("").imageUrl(str(row[4])).build());
+        }
+
+        return DashboardTopProductsResponse.builder().data(items).period(period).build();
     }
 
-    private List<SalesMetricsResponse.OrderStatusCountDTO> buildOrdersByStatus(List<Order> orders) {
-        return Arrays.stream(OrderStatus.values())
-                .map(status -> {
-                    List<Order> statusOrders = orders.stream()
-                            .filter(o -> status.equals(o.getOrderStatus()))
-                            .collect(Collectors.toList());
-                    return SalesMetricsResponse.OrderStatusCountDTO.builder()
-                            .status(status.toString())
-                            .count(statusOrders.size())
-                            .totalAmount(statusOrders.stream()
-                                    .map(Order::getTotalAmount)
-                                    .reduce(BigDecimal.ZERO, BigDecimal::add))
-                            .build();
-                })
-                .collect(Collectors.toList());
+    @Override
+    public DashboardHourlySalesResponse getHourlySales(String period) {
+        LocalDateTime[] range = DashboardPeriodUtil.getRange(period);
+
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = em.createNativeQuery(
+            "SELECT EXTRACT(HOUR FROM created_at) AS hour, " +
+            "       COALESCE(SUM(total_amount), 0) AS revenue, " +
+            "       COUNT(*) AS orders " +
+            "FROM orders " +
+            "WHERE created_at >= :start AND created_at < :end " +
+            "  AND is_deleted = false " +
+            "GROUP BY EXTRACT(HOUR FROM created_at) " +
+            "ORDER BY hour")
+            .setParameter("start", range[0])
+            .setParameter("end",   range[1])
+            .getResultList();
+
+        Map<Integer, Object[]> byHour = new LinkedHashMap<>();
+        for (Object[] r : rows) byHour.put(toInt(r[0]), r);
+
+        int nowHour = LocalDateTime.now().getHour();
+        List<DashboardHourlySalesResponse.HourlySalesPoint> points = new ArrayList<>();
+        int peakHour = 0;
+        BigDecimal peakRev = BigDecimal.ZERO;
+
+        for (int h = 0; h <= 23; h++) {
+            BigDecimal rev; long orders;
+            if (byHour.containsKey(h)) {
+                Object[] r = byHour.get(h);
+                rev = toBigDecimal(r[1]); orders = toLong(r[2]);
+            } else {
+                rev = BigDecimal.ZERO; orders = 0;
+            }
+            if (rev.compareTo(peakRev) > 0) { peakRev = rev; peakHour = h; }
+            points.add(DashboardHourlySalesResponse.HourlySalesPoint.builder()
+                .hour(h).revenue(rev).orders(orders).build());
+        }
+
+        return DashboardHourlySalesResponse.builder()
+            .data(points).peakHour(peakHour).currentHour(nowHour).build();
     }
 
-    private List<SalesMetricsResponse.PaymentStatusCountDTO> buildPaymentStatusDistribution(List<Order> orders) {
-        return Arrays.stream(PaymentStatus.values())
-                .map(status -> {
-                    List<Order> statusOrders = orders.stream()
-                            .filter(o -> status.equals(o.getPaymentStatus()))
-                            .collect(Collectors.toList());
-                    return SalesMetricsResponse.PaymentStatusCountDTO.builder()
-                            .status(status.toString())
-                            .count(statusOrders.size())
-                            .amount(statusOrders.stream()
-                                    .map(Order::getTotalAmount)
-                                    .reduce(BigDecimal.ZERO, BigDecimal::add))
-                            .build();
-                })
-                .collect(Collectors.toList());
+    @Override
+    public DashboardCustomerStatsResponse getCustomerStats(String period) {
+        LocalDateTime[] range = DashboardPeriodUtil.getRange(period);
+
+        Object totalResult = em.createNativeQuery(
+            "SELECT COUNT(DISTINCT COALESCE(customer_id::text, customer_name)) " +
+            "FROM orders WHERE created_at >= :start AND created_at < :end AND is_deleted = false")
+            .setParameter("start", range[0]).setParameter("end", range[1]).getSingleResult();
+
+        Object returningResult = em.createNativeQuery(
+            "SELECT COUNT(DISTINCT o.customer_id) FROM orders o " +
+            "WHERE o.created_at >= :start AND o.created_at < :end " +
+            "  AND o.customer_id IS NOT NULL AND o.is_deleted = false " +
+            "  AND EXISTS (SELECT 1 FROM orders o2 WHERE o2.customer_id = o.customer_id " +
+            "              AND o2.created_at < :start AND o2.is_deleted = false)")
+            .setParameter("start", range[0]).setParameter("end", range[1]).getSingleResult();
+
+        long total     = toLong(totalResult);
+        long returning = toLong(returningResult);
+        long newCust   = Math.max(0, total - returning);
+        double rate    = total > 0 ? (returning * 100.0 / total) : 0.0;
+
+        BigDecimal revenue = queryRevenue(range[0], range[1]);
+        long orders        = queryOrderCount(range[0], range[1]);
+        BigDecimal avg     = orders > 0
+            ? revenue.divide(BigDecimal.valueOf(orders), 2, RoundingMode.HALF_UP)
+            : BigDecimal.ZERO;
+
+        return DashboardCustomerStatsResponse.builder()
+            .totalCustomers(total).newCustomers(newCust).returningCustomers(returning)
+            .returnRate(rate).avgOrderValue(avg).build();
     }
 
-    private List<SalesMetricsResponse.TopProductDTO> buildTopProducts(List<Order> orders, int limit) {
-        Map<String, List<OrderItem>> itemsByProduct = orders.stream()
-                .flatMap(o -> o.getItems().stream())
-                .collect(Collectors.groupingBy(OrderItem::getProductName));
+    @Override
+    public DashboardPromotionsResponse getPromotions(String period) {
+        LocalDateTime[] range = DashboardPeriodUtil.getRange(period);
 
-        return itemsByProduct.entrySet().stream()
-                .map(entry -> {
-                    List<OrderItem> items = entry.getValue();
-                    Integer totalQty = items.stream().mapToInt(OrderItem::getQuantity).sum();
-                    BigDecimal totalRevenue = items.stream()
-                            .map(OrderItem::getTotalPrice)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = em.createNativeQuery(
+            "SELECT oi.promotion_type, COUNT(*) AS times_used, " +
+            "       COALESCE(SUM(o.total_amount), 0) AS revenue, " +
+            "       COALESCE(SUM(oi.promotion_value), 0) AS discount " +
+            "FROM order_items oi " +
+            "JOIN orders o ON o.id = oi.order_id " +
+            "WHERE o.created_at >= :start AND o.created_at < :end " +
+            "  AND oi.promotion_type IS NOT NULL " +
+            "  AND o.is_deleted = false AND oi.is_deleted = false " +
+            "GROUP BY oi.promotion_type ORDER BY times_used DESC LIMIT 10")
+            .setParameter("start", range[0]).setParameter("end", range[1]).getResultList();
 
-                    return SalesMetricsResponse.TopProductDTO.builder()
-                            .productId(items.get(0).getProductId().toString())
-                            .productName(entry.getKey())
-                            .quantity(totalQty)
-                            .revenue(totalRevenue)
-                            .build();
-                })
-                .sorted(Comparator.comparing(SalesMetricsResponse.TopProductDTO::getRevenue).reversed())
-                .limit(limit)
-                .collect(Collectors.toList());
+        List<DashboardPromotionsResponse.DashboardPromotion> items = new ArrayList<>();
+        int idx = 1;
+        for (Object[] row : rows) {
+            String dtype = str(row[0]);
+            items.add(DashboardPromotionsResponse.DashboardPromotion.builder()
+                .id(String.valueOf(idx++)).name(friendlyType(dtype)).type(dtype)
+                .timesUsed(toLong(row[1])).revenueGenerated(toBigDecimal(row[2]))
+                .discountGiven(toBigDecimal(row[3])).build());
+        }
+        return DashboardPromotionsResponse.builder().data(items).build();
     }
 
-    private List<SalesMetricsResponse.PaymentMethodDTO> buildSalesByPaymentMethod(List<Order> orders) {
-        return Arrays.stream(PaymentMethod.values())
-                .map(method -> {
-                    List<Order> methodOrders = orders.stream()
-                            .filter(o -> method.equals(o.getPaymentMethod()))
-                            .collect(Collectors.toList());
-                    return SalesMetricsResponse.PaymentMethodDTO.builder()
-                            .method(method.toString())
-                            .count(methodOrders.size())
-                            .amount(methodOrders.stream()
-                                    .map(Order::getTotalAmount)
-                                    .reduce(BigDecimal.ZERO, BigDecimal::add))
-                            .build();
-                })
-                .collect(Collectors.toList());
+    // ─── Private helpers ──────────────────────────────────────────────────────
+
+    private BigDecimal queryRevenue(LocalDateTime start, LocalDateTime end) {
+        Object r = em.createNativeQuery(
+            "SELECT COALESCE(SUM(total_amount), 0) FROM orders " +
+            "WHERE created_at >= :start AND created_at < :end AND order_status = 'COMPLETED' AND is_deleted = false")
+            .setParameter("start", start).setParameter("end", end).getSingleResult();
+        return toBigDecimal(r);
     }
 
-    private OrderMetricsResponse.RecentOrderDTO mapToRecentOrderDTO(Order order) {
-        return OrderMetricsResponse.RecentOrderDTO.builder()
-                .orderId(order.getId().toString())
-                .orderNumber(order.getOrderNumber())
-                .customerName(order.getCustomerName() != null ? order.getCustomerName() : "Guest")
-                .totalAmount(order.getTotalAmount())
-                .orderStatus(order.getOrderStatus().toString())
-                .paymentStatus(order.getPaymentStatus().toString())
-                .createdAt(order.getCreatedAt())
-                .build();
+    private long queryOrderCount(LocalDateTime start, LocalDateTime end) {
+        Object r = em.createNativeQuery(
+            "SELECT COUNT(*) FROM orders WHERE created_at >= :start AND created_at < :end AND is_deleted = false")
+            .setParameter("start", start).setParameter("end", end).getSingleResult();
+        return toLong(r);
     }
 
-    private List<ProductMetricsResponse.ProductPerformanceDTO> buildTopProductsByRevenue(List<Order> orders, int limit) {
-        return buildTopProducts(orders, limit).stream()
-                .map(dto -> ProductMetricsResponse.ProductPerformanceDTO.builder()
-                        .productId(dto.getProductId())
-                        .productName(dto.getProductName())
-                        .quantity(dto.getQuantity())
-                        .revenue(dto.getRevenue())
-                        .build())
-                .collect(Collectors.toList());
+    private long queryPendingCount() {
+        Object r = em.createNativeQuery(
+            "SELECT COUNT(*) FROM orders WHERE order_status = 'PENDING' AND is_deleted = false")
+            .getSingleResult();
+        return toLong(r);
     }
 
-    private List<ProductMetricsResponse.ProductPerformanceDTO> buildTopProductsByViews(int limit) {
-        return productRepository.findAll().stream()
-                .sorted(Comparator.comparing(p -> p.getViewCount() != null ? p.getViewCount() : 0L, Comparator.reverseOrder()))
-                .limit(limit)
-                .map(p -> ProductMetricsResponse.ProductPerformanceDTO.builder()
-                        .productId(p.getId().toString())
-                        .productName(p.getName())
-                        .price(p.getPrice())
-                        .viewCount(p.getViewCount() != null ? p.getViewCount().intValue() : 0)
-                        .build())
-                .collect(Collectors.toList());
+    private BigDecimal toBigDecimal(Object v) {
+        if (v == null) return BigDecimal.ZERO;
+        if (v instanceof BigDecimal bd) return bd;
+        if (v instanceof Number n) return BigDecimal.valueOf(n.doubleValue());
+        try { return new BigDecimal(v.toString()); } catch (Exception e) { return BigDecimal.ZERO; }
     }
 
-    private List<ProductMetricsResponse.ProductPerformanceDTO> buildTopProductsByFavorites(int limit) {
-        return productRepository.findAll().stream()
-                .sorted(Comparator.comparing(p -> p.getFavoriteCount() != null ? p.getFavoriteCount() : 0L, Comparator.reverseOrder()))
-                .limit(limit)
-                .map(p -> ProductMetricsResponse.ProductPerformanceDTO.builder()
-                        .productId(p.getId().toString())
-                        .productName(p.getName())
-                        .price(p.getPrice())
-                        .favoriteCount(p.getFavoriteCount() != null ? p.getFavoriteCount().intValue() : 0)
-                        .build())
-                .collect(Collectors.toList());
+    private long toLong(Object v) {
+        if (v == null) return 0L;
+        if (v instanceof Number n) return n.longValue();
+        try { return Long.parseLong(v.toString()); } catch (Exception e) { return 0L; }
     }
 
-    private List<ProductMetricsResponse.CategoryCountDTO> buildProductsByCategory(List<Order> orders) {
-        return productRepository.findAll().stream()
-                .filter(p -> {
-                    try {
-                        return p.getCategory() != null && p.getCategory().getName() != null;
-                    } catch (Exception e) {
-                        return false;
-                    }
-                })
-                .collect(Collectors.groupingBy(p -> {
-                    try {
-                        return p.getCategory().getName();
-                    } catch (Exception e) {
-                        return "Unknown";
-                    }
-                }))
-                .entrySet().stream()
-                .map(entry -> {
-                    BigDecimal revenue = orders.stream()
-                            .flatMap(o -> o.getItems().stream())
-                            .filter(item -> entry.getValue().stream()
-                                    .anyMatch(p -> p.getId().toString().equals(item.getProductId().toString())))
-                            .map(OrderItem::getTotalPrice)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-                    return ProductMetricsResponse.CategoryCountDTO.builder()
-                            .categoryId(entry.getValue().get(0).getCategory().getId().toString())
-                            .categoryName(entry.getKey())
-                            .productCount(entry.getValue().size())
-                            .revenue(revenue)
-                            .build();
-                })
-                .sorted(Comparator.comparing(ProductMetricsResponse.CategoryCountDTO::getProductCount).reversed())
-                .collect(Collectors.toList());
+    private int toInt(Object v) {
+        if (v == null) return 0;
+        if (v instanceof Number n) return n.intValue();
+        try { return Integer.parseInt(v.toString()); } catch (Exception e) { return 0; }
     }
 
-    private List<ProductMetricsResponse.ProductPerformanceDTO> buildLowestPerformanceProducts(List<Order> orders, int limit) {
-        Set<String> soldProductIds = orders.stream()
-                .flatMap(o -> {
-                    try {
-                        return o.getItems() != null ? o.getItems().stream() : java.util.stream.Stream.empty();
-                    } catch (Exception e) {
-                        return java.util.stream.Stream.empty();
-                    }
-                })
-                .map(item -> item.getProductId().toString())
-                .collect(Collectors.toSet());
+    private String str(Object v) { return v != null ? v.toString() : ""; }
 
-        return productRepository.findAll().stream()
-                .filter(p -> !soldProductIds.contains(p.getId().toString()))
-                .limit(limit)
-                .map(p -> ProductMetricsResponse.ProductPerformanceDTO.builder()
-                        .productId(p.getId().toString())
-                        .productName(p.getName() != null ? p.getName() : "Unknown")
-                        .price(p.getPrice() != null ? p.getPrice() : BigDecimal.ZERO)
-                        .quantity(0)
-                        .revenue(BigDecimal.ZERO)
-                        .build())
-                .collect(Collectors.toList());
+    private UUID toUUID(Object v) {
+        if (v == null) return null;
+        if (v instanceof UUID u) return u;
+        try { return UUID.fromString(v.toString()); } catch (Exception e) { return null; }
     }
 
-    private List<CustomerMetricsResponse.TopCustomerDTO> buildTopCustomers(List<Order> orders, int limit) {
-        return orders.stream()
-                .collect(Collectors.groupingBy(Order::getCustomerId))
-                .entrySet().stream()
-                .map(entry -> {
-                    List<Order> customerOrders = entry.getValue();
-                    BigDecimal totalSpent = customerOrders.stream()
-                            .map(Order::getTotalAmount)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-                    return CustomerMetricsResponse.TopCustomerDTO.builder()
-                            .customerId(entry.getKey().toString())
-                            .customerName(customerOrders.get(0).getCustomerName())
-                            .email(customerOrders.get(0).getCustomerEmail())
-                            .phoneNumber(customerOrders.get(0).getCustomerPhone())
-                            .orderCount(customerOrders.size())
-                            .totalSpent(totalSpent)
-                            .lastOrderDate(customerOrders.stream()
-                                    .map(Order::getCreatedAt)
-                                    .max(LocalDateTime::compareTo)
-                                    .orElse(null))
-                            .build();
-                })
-                .sorted(Comparator.comparing(CustomerMetricsResponse.TopCustomerDTO::getTotalSpent).reversed())
-                .limit(limit)
-                .collect(Collectors.toList());
-    }
-
-    private List<CustomerMetricsResponse.NewCustomerDTO> buildNewCustomers(List<Order> orders, YearMonth month) {
-        Set<Long> newCustomerIds = userRepository.findAllByIsDeletedFalse().stream()
-                .filter(u -> u.getCreatedAt() != null && YearMonth.from(u.getCreatedAt()).equals(month))
-                .map(u -> u.getId().getMostSignificantBits())
-                .collect(Collectors.toSet());
-
-        return orders.stream()
-                .filter(o -> newCustomerIds.contains(o.getCustomerId().getMostSignificantBits()))
-                .distinct()
-                .map(o -> CustomerMetricsResponse.NewCustomerDTO.builder()
-                        .customerId(o.getCustomerId().toString())
-                        .customerName(o.getCustomerName())
-                        .email(o.getCustomerEmail())
-                        .registeredDate(o.getCreatedAt())
-                        .orders(1)
-                        .totalSpent(o.getTotalAmount())
-                        .build())
-                .collect(Collectors.toList());
+    private String friendlyType(String t) {
+        if (t == null) return "Unknown";
+        return switch (t.toUpperCase()) {
+            case "PERCENTAGE"   -> "Percentage Discount";
+            case "FIXED_AMOUNT" -> "Fixed Amount Discount";
+            case "FIXED"        -> "Fixed Discount";
+            default             -> t;
+        };
     }
 }

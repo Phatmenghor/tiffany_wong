@@ -12,7 +12,7 @@ import type {
   DashboardPromotionsResponse,
 } from "../models/response/dashboard-response";
 
-const BASE = "/api/v1/dashboard/v2";
+const BASE = "/api/v1/dashboard";
 
 export const fetchDashboardSummaryThunk = createAsyncThunk<DashboardSummaryResponse, { period: string }>(
   "dashboard/fetchSummary",
