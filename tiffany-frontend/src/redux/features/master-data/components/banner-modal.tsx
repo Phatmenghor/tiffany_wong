@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,6 +31,7 @@ import { clearError, clearSelectedBanner } from "../store/slice/banner-slice";
 import { showToast } from "@/components/shared/common/show-toast";
 import { BANNER_STATUS_CREATE_UPDATE } from "@/constants/status/create-update-status";
 import { SpacesImageUpload } from "@/components/shared/form-field/spaces-image-upload";
+import { isBase64Image, uploadBase64ToSpaces } from "@/services/spaces-service";
 import { BannerResponseModel } from "../store/models/response/banner-response";
 
 type Props = {
@@ -49,6 +50,8 @@ export default function BannerModal({
   const isCreate = mode === ModalMode.CREATE_MODE;
 
   const dispatch = useAppDispatch();
+
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const operations = useAppSelector(selectOperations);
   const reduxError = useAppSelector(selectError);
@@ -102,8 +105,21 @@ export default function BannerModal({
 
   const onSubmit = async (data: CreateBannerData) => {
     try {
+      let imageUrl = data.imageUrl;
+      if (imageUrl && isBase64Image(imageUrl)) {
+        setIsUploadingImage(true);
+        try {
+          imageUrl = await uploadBase64ToSpaces(imageUrl);
+        } catch {
+          showToast.error("Failed to upload banner image. Please try again.");
+          return;
+        } finally {
+          setIsUploadingImage(false);
+        }
+      }
+
       const payload = {
-        imageUrl: data.imageUrl,
+        imageUrl,
         description: data.description || "",
         linkUrl: data.linkUrl || "",
         status: data.status,
@@ -130,12 +146,13 @@ export default function BannerModal({
 
   const handleClose = () => {
     reset();
+    setIsUploadingImage(false);
     dispatch(clearError());
     dispatch(clearSelectedBanner());
     onClose();
   };
 
-  const isProcessing = isCreate ? isCreating : isUpdating;
+  const isProcessing = (isCreate ? isCreating : isUpdating) || isUploadingImage;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -229,8 +246,8 @@ export default function BannerModal({
               isSubmitting={isProcessing}
               isDirty={isDirty}
               isCreate={isCreate}
-              createMessage="Creating banner..."
-              updateMessage="Updating banner..."
+              createMessage={isUploadingImage ? "Uploading image..." : "Creating banner..."}
+              updateMessage={isUploadingImage ? "Uploading image..." : "Updating banner..."}
             >
               <CancelButton onClick={handleClose} disabled={isProcessing} />
               <SubmitButton

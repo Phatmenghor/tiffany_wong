@@ -10,6 +10,7 @@ import { SelectField } from "@/components/shared/form-field/select-field";
 import { CancelButton } from "@/components/shared/form-field/cancel-button";
 import { SubmitButton } from "@/components/shared/form-field/submid-button";
 import { SpacesImageUpload } from "@/components/shared/form-field/spaces-image-upload";
+import { isBase64Image, uploadBase64ToSpaces } from "@/services/spaces-service";
 import { DateTimePickerField } from "@/components/shared/form-field/date-picker-field";
 import {
   CreateUserRequest,
@@ -66,6 +67,7 @@ export default function UserBusinessModal({
 }: Props) {
   const isCreate = mode === ModalMode.CREATE_MODE;
   const [showPassword, setShowPassword] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -181,7 +183,18 @@ export default function UserBusinessModal({
 
   const onSubmit = async (data: UserFormData) => {
     try {
-      const profileImageUrl = data.profileImageUrl;
+      let profileImageUrl = data.profileImageUrl;
+      if (profileImageUrl && isBase64Image(profileImageUrl)) {
+        setIsUploadingImage(true);
+        try {
+          profileImageUrl = await uploadBase64ToSpaces(profileImageUrl);
+        } catch {
+          showToast.error("Failed to upload profile image");
+          return;
+        } finally {
+          setIsUploadingImage(false);
+        }
+      }
 
       if (isCreate) {
         const payload: CreateUserRequest = {
@@ -265,12 +278,13 @@ export default function UserBusinessModal({
   const handleClose = () => {
     reset();
     setShowPassword(false);
+    setIsUploadingImage(false);
     dispatch(clearError());
     dispatch(clearSelectedUser());
     onClose();
   };
 
-  const isSubmitting = isCreate ? isCreating : isUpdating;
+  const isSubmitting = (isCreate ? isCreating : isUpdating) || isUploadingImage;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -507,8 +521,8 @@ export default function UserBusinessModal({
               isSubmitting={isSubmitting}
               isDirty={isDirty}
               isCreate={isCreate}
-              createMessage="Creating user..."
-              updateMessage="Updating user..."
+              createMessage={isUploadingImage ? "Uploading image..." : "Creating user..."}
+              updateMessage={isUploadingImage ? "Uploading image..." : "Updating user..."}
             >
               <CancelButton onClick={handleClose} disabled={isSubmitting} />
               <SubmitButton
@@ -517,8 +531,8 @@ export default function UserBusinessModal({
                 isCreate={isCreate}
                 createText="Create User"
                 updateText="Update User"
-                submittingCreateText="Creating..."
-                submittingUpdateText="Updating..."
+                submittingCreateText={isUploadingImage ? "Uploading..." : "Creating..."}
+                submittingUpdateText={isUploadingImage ? "Uploading..." : "Updating..."}
               />
             </FormFooter>
           </form>

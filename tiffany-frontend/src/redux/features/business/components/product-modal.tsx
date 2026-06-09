@@ -36,6 +36,7 @@ import { ProductMainImage } from "./product-modal/product-main-image";
 import { ProductPricing } from "./product-modal/product-pricing";
 import { ProductSizes } from "./product-modal/product-sizes";
 import { ProductImagesGallery } from "./product-modal/product-images-gallery";
+import { isBase64Image, uploadBase64ToSpaces } from "@/services/spaces-service";
 
 type Props = {
   mode: ModalMode;
@@ -62,6 +63,7 @@ export default function ProductModal({
   const productData = useAppSelector(selectSelectedProduct);
   const { isCreating, isUpdating } = operations;
 
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [selectedCategory, setSelectedCategory] =
     useState<CategoriesResponseModel | null>(null);
 
@@ -207,6 +209,39 @@ export default function ProductModal({
 
   const onSubmit = async (data: ProductFormData) => {
     try {
+      setIsUploadingImage(true);
+
+      let finalMainImageUrl = data.mainImageUrl;
+      if (finalMainImageUrl && isBase64Image(finalMainImageUrl)) {
+        try {
+          finalMainImageUrl = await uploadBase64ToSpaces(finalMainImageUrl);
+        } catch {
+          showToast.error("Failed to upload main image");
+          return;
+        }
+      }
+
+      const processedImages = await Promise.all(
+        (data.images || []).map(async (img: any) => {
+          if (!img.imageUrl) return null;
+          let imageUrl = img.imageUrl;
+          if (isBase64Image(imageUrl)) {
+            try {
+              imageUrl = await uploadBase64ToSpaces(imageUrl);
+            } catch {
+              return null;
+            }
+          }
+          return { id: img.id, imageUrl };
+        }),
+      );
+      const validImages = processedImages.filter(
+        (img: any): img is { id?: string; imageUrl: string } =>
+          img !== null && !!img.imageUrl,
+      );
+
+      setIsUploadingImage(false);
+
       const cleanedSizes = (data.sizes || []).map((size) => ({
         id: size.id,
         name: size.name,
@@ -219,15 +254,11 @@ export default function ProductModal({
         ),
       }));
 
-      const validImages = (data.images || []).filter(
-        (img: any) => img !== null && !!img.imageUrl,
-      );
-
       const basePayload = {
         name: data.name,
         description: data.description,
         categoryId: data.categoryId,
-        mainImageUrl: data.mainImageUrl,
+        mainImageUrl: finalMainImageUrl,
         images: validImages.length > 0 ? validImages : undefined,
         sizes: cleanedSizes.length > 0 ? cleanedSizes : undefined,
         status: data.status,
@@ -271,18 +302,21 @@ export default function ProductModal({
       showToast.error(
         error?.message || `Failed to ${isCreate ? "create" : "update"} product`,
       );
+    } finally {
+      setIsUploadingImage(false);
     }
   };
 
   const handleClose = () => {
     reset();
+    setIsUploadingImage(false);
     setSelectedCategory(null);
     dispatch(clearError());
     dispatch(clearSelectedProduct());
     onClose();
   };
 
-  const isProcessing = isCreate ? isCreating : isUpdating;
+  const isProcessing = (isCreate ? isCreating : isUpdating) || isUploadingImage;
   const productName = watch("name");
 
   return (
@@ -429,8 +463,8 @@ export default function ProductModal({
               isSubmitting={isProcessing}
               isDirty={isDirty}
               isCreate={isCreate}
-              createMessage="Creating product..."
-              updateMessage="Updating product..."
+              createMessage={isUploadingImage ? "Uploading images..." : "Creating product..."}
+              updateMessage={isUploadingImage ? "Uploading images..." : "Updating product..."}
             >
               <CancelButton onClick={handleClose} disabled={isProcessing} />
               <SubmitButton
@@ -439,8 +473,8 @@ export default function ProductModal({
                 isCreate={isCreate}
                 createText="Create Product"
                 updateText="Update Product"
-                submittingCreateText="Creating..."
-                submittingUpdateText="Updating..."
+                submittingCreateText={isUploadingImage ? "Uploading..." : "Creating..."}
+                submittingUpdateText={isUploadingImage ? "Uploading..." : "Updating..."}
               />
             </FormFooter>
           </form>

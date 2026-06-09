@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +16,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { showToast } from "@/components/shared/common/show-toast";
 import { BANNER_STATUS_CREATE_UPDATE } from "@/constants/status/create-update-status";
 import { SpacesImageUpload } from "@/components/shared/form-field/spaces-image-upload";
+import { isBase64Image, uploadBase64ToSpaces } from "@/services/spaces-service";
 import {
   selectError,
   selectOperations,
@@ -49,6 +50,8 @@ export default function CategoriesModal({
   mode,
 }: Props) {
   const isCreate = mode === ModalMode.CREATE_MODE;
+
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -103,9 +106,22 @@ export default function CategoriesModal({
 
   const onSubmit = async (data: CreateCategoriesData) => {
     try {
+      let imageUrl = data.imageUrl;
+      if (imageUrl && isBase64Image(imageUrl)) {
+        setIsUploadingImage(true);
+        try {
+          imageUrl = await uploadBase64ToSpaces(imageUrl);
+        } catch {
+          showToast.error("Failed to upload category image. Please try again.");
+          return;
+        } finally {
+          setIsUploadingImage(false);
+        }
+      }
+
       const payload: CreateCategoriesData = {
         name: data?.name || "",
-        imageUrl: data.imageUrl,
+        imageUrl,
         status: data.status,
       };
 
@@ -134,12 +150,13 @@ export default function CategoriesModal({
 
   const handleClose = () => {
     reset();
+    setIsUploadingImage(false);
     dispatch(clearError());
     dispatch(clearSelectedCategories());
     onClose();
   };
 
-  const isProcessing = isCreate ? isCreating : isUpdating;
+  const isProcessing = (isCreate ? isCreating : isUpdating) || isUploadingImage;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -209,8 +226,8 @@ export default function CategoriesModal({
             isSubmitting={isProcessing}
             isDirty={isDirty}
             isCreate={isCreate}
-            createMessage="Creating category..."
-            updateMessage="Updating category..."
+            createMessage={isUploadingImage ? "Uploading image..." : "Creating category..."}
+            updateMessage={isUploadingImage ? "Uploading image..." : "Updating category..."}
           >
             <CancelButton onClick={handleClose} disabled={isProcessing} />
             <SubmitButton

@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Upload, X, ImageIcon, Loader2 } from "lucide-react";
+import { Upload, X, ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FieldError } from "react-hook-form";
-import { uploadToSpaces } from "@/services/spaces-service";
 import { showToast } from "@/components/shared/common/show-toast";
 
 type AspectRatio = "square" | "banner" | "portrait" | "landscape" | "auto";
@@ -14,7 +13,7 @@ type AspectRatio = "square" | "banner" | "portrait" | "landscape" | "auto";
 interface SpacesImageUploadProps {
   label: string;
   value?: string;
-  onChange: (url: string) => void;
+  onChange: (base64: string) => void;
   disabled?: boolean;
   required?: boolean;
   error?: FieldError;
@@ -41,7 +40,6 @@ export function SpacesImageUpload({
   showPreviewText = true,
 }: SpacesImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isUploading, setIsUploading] = useState(false);
 
   const getAspectRatioClass = () => {
     switch (aspectRatio) {
@@ -67,7 +65,7 @@ export function SpacesImageUpload({
     return "h-56";
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -82,19 +80,14 @@ export function SpacesImageUpload({
       return;
     }
 
-    setIsUploading(true);
-    try {
-      const result = await uploadToSpaces(file);
-      onChange(result.url);
-    } catch (err) {
-      console.error("Upload failed:", err);
-      showToast.error("Failed to upload image. Please try again.");
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        onChange(reader.result);
       }
-    }
+    };
+    reader.onerror = () => showToast.error("Failed to read image. Please try again.");
+    reader.readAsDataURL(file);
   };
 
   const handleRemove = (e: React.MouseEvent) => {
@@ -106,7 +99,7 @@ export function SpacesImageUpload({
   };
 
   const handleClick = () => {
-    if (!disabled && !isUploading) {
+    if (!disabled) {
       fileInputRef.current?.click();
     }
   };
@@ -128,7 +121,7 @@ export function SpacesImageUpload({
             value
               ? "border-border hover:border-primary/50"
               : "border-dashed border-border hover:border-primary",
-            disabled || isUploading
+            disabled
               ? "opacity-50 cursor-not-allowed"
               : "cursor-pointer hover:shadow-md",
             error && "border-red-500",
@@ -139,16 +132,11 @@ export function SpacesImageUpload({
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            disabled={disabled || isUploading}
+            disabled={disabled}
             className="hidden"
           />
 
-          {isUploading ? (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-muted/30">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Uploading...</p>
-            </div>
-          ) : value ? (
+          {value ? (
             <>
               <img
                 src={value}

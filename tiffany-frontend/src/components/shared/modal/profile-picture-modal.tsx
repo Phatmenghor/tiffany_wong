@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { CustomAvatar } from "@/components/shared/avator/custom-avator";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { uploadToSpaces } from "@/services/spaces-service";
+import { isBase64Image, uploadBase64ToSpaces } from "@/services/spaces-service";
 import { showToast } from "@/components/shared/common/show-toast";
 
 interface ProfilePictureModalProps {
@@ -33,18 +33,18 @@ export function ProfilePictureModal({
   userName,
 }: ProfilePictureModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedImageUrl, setSelectedImageUrl] = useState<string>(currentImageUrl || "");
+  const [selectedImage, setSelectedImage] = useState<string>(currentImageUrl || "");
   const [isUploading, setIsUploading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
 
   React.useEffect(() => {
     if (open) {
-      setSelectedImageUrl(currentImageUrl || "");
+      setSelectedImage(currentImageUrl || "");
       setIsRemoving(false);
     }
   }, [open, currentImageUrl]);
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -59,46 +59,56 @@ export function ProfilePictureModal({
       return;
     }
 
-    setIsUploading(true);
-    try {
-      const result = await uploadToSpaces(file);
-      setSelectedImageUrl(result.url);
-    } catch (err) {
-      console.error("Upload failed:", err);
-      showToast.error("Failed to upload image. Please try again.");
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const imageData = event.target?.result as string;
+      setSelectedImage(imageData);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleRemoveClick = () => {
     setIsRemoving(true);
-    setSelectedImageUrl("");
+    setSelectedImage("");
   };
 
   const handleRestoreClick = () => {
     setIsRemoving(false);
-    setSelectedImageUrl(currentImageUrl || "");
+    setSelectedImage(currentImageUrl || "");
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (isRemoving) {
       onImageRemove?.();
       onOpenChange(false);
-    } else if (selectedImageUrl && selectedImageUrl !== currentImageUrl) {
-      onImageCapture(selectedImageUrl);
+      return;
+    }
+
+    if (!selectedImage || selectedImage === currentImageUrl) return;
+
+    if (isBase64Image(selectedImage)) {
+      setIsUploading(true);
+      try {
+        const url = await uploadBase64ToSpaces(selectedImage);
+        onImageCapture(url);
+        onOpenChange(false);
+      } catch (err) {
+        console.error("Upload failed:", err);
+        showToast.error("Failed to upload image. Please try again.");
+      } finally {
+        setIsUploading(false);
+      }
+    } else {
+      onImageCapture(selectedImage);
       onOpenChange(false);
     }
   };
 
-  const hasChanges = isRemoving || (selectedImageUrl && selectedImageUrl !== currentImageUrl);
+  const hasChanges = isRemoving || (selectedImage && selectedImage !== currentImageUrl);
   const isBusy = isLoading || isUploading;
 
   const handleCancel = () => {
-    setSelectedImageUrl(currentImageUrl || "");
+    setSelectedImage(currentImageUrl || "");
     setIsRemoving(false);
     onOpenChange(false);
   };
@@ -123,15 +133,15 @@ export function ProfilePictureModal({
           <div
             className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 flex items-center justify-center bg-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
             onClick={() => {
-              const imageUrl = selectedImageUrl || currentImageUrl;
-              if (imageUrl) {
+              const imageUrl = selectedImage || currentImageUrl;
+              if (imageUrl && !imageUrl.startsWith("data:")) {
                 window.open(imageUrl, "_blank");
               }
             }}
           >
-            {selectedImageUrl || currentImageUrl ? (
+            {selectedImage || currentImageUrl ? (
               <img
-                src={selectedImageUrl || currentImageUrl}
+                src={selectedImage || currentImageUrl}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -144,20 +154,13 @@ export function ProfilePictureModal({
             )}
           </div>
 
-          {isUploading && (
-            <p className="text-sm text-muted-foreground flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Uploading...
-            </p>
-          )}
-
-          {selectedImageUrl && selectedImageUrl !== currentImageUrl && !isUploading && (
+          {selectedImage && selectedImage !== currentImageUrl && (
             <p className="text-sm text-blue-600 font-medium">
-              ✓ New image ready
+              ✓ New image selected
             </p>
           )}
 
-          {(currentImageUrl || selectedImageUrl) && (
+          {(currentImageUrl || selectedImage) && !selectedImage?.startsWith("data:") && (
             <p className="text-xs text-muted-foreground">
               Click image to view in new tab
             </p>
@@ -172,17 +175,8 @@ export function ProfilePictureModal({
             className="w-full gap-2 bg-primary hover:bg-primary/90"
             disabled={isBusy || isRemoving}
           >
-            {isUploading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Uploading...
-              </>
-            ) : (
-              <>
-                <Camera className="h-4 w-4" />
-                Select Photo
-              </>
-            )}
+            <Camera className="h-4 w-4" />
+            Select Photo
           </Button>
 
           {/* Remove Picture Button */}
@@ -225,10 +219,10 @@ export function ProfilePictureModal({
               disabled={isBusy || !hasChanges}
               className="flex-1"
             >
-              {isLoading ? (
+              {isBusy ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Saving...
+                  {isUploading ? "Uploading..." : "Saving..."}
                 </>
               ) : (
                 "Save"

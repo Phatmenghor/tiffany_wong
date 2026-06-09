@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { SpacesImageUpload } from "@/components/shared/form-field/spaces-image-upload";
 import { ProductFormData } from "../../store/models/schema/product-schema";
-import { uploadToSpaces } from "@/services/spaces-service";
 import { showToast } from "@/components/shared/common/show-toast";
 
 const MAX_PRODUCT_IMAGES = 5;
@@ -17,9 +16,9 @@ interface ProductImagesGalleryProps {
   errors: FieldErrors<ProductFormData>;
   isProcessing: boolean;
   imageFields: any[];
-  onAddImages: (urls: string[]) => void;
+  onAddImages: (base64s: string[]) => void;
   onRemoveImage: (index: number) => void;
-  onImageChange: (index: number, url: string) => void;
+  onImageChange: (index: number, base64: string) => void;
   watch: any;
 }
 
@@ -34,7 +33,7 @@ export function ProductImagesGallery({
   watch,
 }: ProductImagesGalleryProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isUploadingBatch, setIsUploadingBatch] = useState(false);
+  const [isProcessingBatch, setIsProcessingBatch] = useState(false);
   const canAddMore = imageFields.length < MAX_PRODUCT_IMAGES;
 
   const handleMultiUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,9 +55,18 @@ export function ProductImagesGallery({
       );
     }
 
-    setIsUploadingBatch(true);
+    setIsProcessingBatch(true);
     try {
       const maxSize = 5 * 1024 * 1024;
+
+      const toBase64 = (file: File): Promise<string> =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
       const results = await Promise.all(
         filesToProcess.map(async (file) => {
           if (!file.type.startsWith("image/")) {
@@ -68,34 +76,34 @@ export function ProductImagesGallery({
             return { success: false, error: `${file.name} exceeds 5MB` };
           }
           try {
-            const result = await uploadToSpaces(file);
-            return { success: true, url: result.url };
+            const base64 = await toBase64(file);
+            return { success: true, base64 };
           } catch {
-            return { success: false, error: `Failed to upload ${file.name}` };
+            return { success: false, error: `Failed to read ${file.name}` };
           }
         }),
       );
 
-      const successUrls = results
-        .filter((r): r is { success: true; url: string } => r.success)
-        .map((r) => r.url);
+      const successBase64s = results
+        .filter((r): r is { success: true; base64: string } => r.success)
+        .map((r) => r.base64);
 
       const failedCount = results.filter((r) => !r.success).length;
 
-      if (successUrls.length > 0) {
-        onAddImages(successUrls);
+      if (successBase64s.length > 0) {
+        onAddImages(successBase64s);
         showToast.success(
-          `Added ${successUrls.length} image${successUrls.length > 1 ? "s" : ""}`,
+          `Added ${successBase64s.length} image${successBase64s.length > 1 ? "s" : ""}`,
         );
       }
 
       if (failedCount > 0) {
-        showToast.error(`${failedCount} image(s) failed to upload`);
+        showToast.error(`${failedCount} image(s) failed to load`);
       }
     } catch {
       showToast.error("Failed to process images");
     } finally {
-      setIsUploadingBatch(false);
+      setIsProcessingBatch(false);
       event.target.value = "";
     }
   };
@@ -108,7 +116,7 @@ export function ProductImagesGallery({
             <CardTitle>Product Images</CardTitle>
             <p className="text-xs text-muted-foreground mt-1">
               {imageFields.length > 0
-                ? `${imageFields.length}/${MAX_PRODUCT_IMAGES} images uploaded`
+                ? `${imageFields.length}/${MAX_PRODUCT_IMAGES} images added`
                 : `Upload up to ${MAX_PRODUCT_IMAGES} product images`}
             </p>
           </div>
@@ -121,17 +129,17 @@ export function ProductImagesGallery({
                 accept="image/*"
                 onChange={handleMultiUpload}
                 className="hidden"
-                disabled={isProcessing || isUploadingBatch}
+                disabled={isProcessing || isProcessingBatch}
               />
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={isProcessing || isUploadingBatch}
+                disabled={isProcessing || isProcessingBatch}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                {isUploadingBatch ? "Uploading..." : "Upload"}
+                {isProcessingBatch ? "Loading..." : "Add Images"}
               </Button>
             </div>
           )}
@@ -141,7 +149,7 @@ export function ProductImagesGallery({
         {imageFields.length === 0 ? (
           <div className="text-center py-8 border-2 border-dashed rounded-lg">
             <p className="text-sm text-muted-foreground">
-              No images uploaded yet
+              No images added yet
             </p>
           </div>
         ) : (
@@ -155,11 +163,11 @@ export function ProductImagesGallery({
                   <SpacesImageUpload
                     label=""
                     value={watch(`images.${index}.imageUrl`) || ""}
-                    onChange={(url) => {
-                      if (url === "") {
+                    onChange={(base64) => {
+                      if (base64 === "") {
                         onRemoveImage(index);
                       } else {
-                        onImageChange(index, url);
+                        onImageChange(index, base64);
                       }
                     }}
                     aspectRatio="square"
