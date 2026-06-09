@@ -11,9 +11,6 @@ export const selectBusinessName = (state: RootState) =>
 export const selectBusinessDescription = (state: RootState) =>
   state.businessSettings.data?.description || "";
 
-export const selectBusinessLogo = (state: RootState) =>
-  state.businessSettings.data?.logoSystemUrl || null;
-
 export const selectTaxPercentage = (state: RootState) =>
   state.businessSettings.data?.taxPercentage || 0;
 

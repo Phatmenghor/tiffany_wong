@@ -14,7 +14,6 @@ public class SystemSettingUpdateRequest {
     private Double taxPercentage;
     private String systemName;
     private String description;
-    private String logoSystemUrl;
     private String primaryColor;
 
     // Contact Information

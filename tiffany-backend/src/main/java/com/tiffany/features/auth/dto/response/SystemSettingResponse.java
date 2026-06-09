@@ -15,7 +15,6 @@ public class SystemSettingResponse extends BaseAuditResponse {
     private Double taxPercentage;
     private String systemName;
     private String description;
-    private String logoSystemUrl;
     private String primaryColor;
     private String contactAddress;
     private String contactPhone;

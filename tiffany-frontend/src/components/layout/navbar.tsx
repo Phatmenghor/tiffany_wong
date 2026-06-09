@@ -39,7 +39,7 @@ import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
 import { useFavoriteState } from "@/redux/features/main/store/state/favorite-state";
 import { clearProducts } from "@/redux/features/main/store/slice/public-product-slice";
-import { selectBusinessName, selectBusinessLogo } from "@/redux/features/business/store/selectors/business-settings-selector";
+import { selectBusinessName } from "@/redux/features/business/store/selectors/business-settings-selector";
 import { showToast } from "@/components/shared/common/show-toast";
 import { useLogout } from "@/redux/store/use-logout";
 import { useDebounce } from "@/utils/debounce/debounce";
@@ -78,7 +78,6 @@ export function Navbar() {
   const { logout: handleLogout } = useLogout();
 
   const businessName = useSelector(selectBusinessName);
-  const businessLogoUrl = useSelector(selectBusinessLogo);
 
   const [favoriteAnimating, setFavoriteAnimating] = useState(false);
   const prevFavoriteCount = useRef(favoriteItemCount);
@@ -351,16 +350,13 @@ export function Navbar() {
             <div className="sm:hidden flex items-center justify-between w-full h-14 gap-2">
               <button onClick={handleNavigateToHome} className="flex items-center gap-2 shrink-0">
                 <div className="relative w-8 h-8 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
-                  {isHydrated && businessLogoUrl && (
-                    <img
-                      src={businessLogoUrl}
-                      alt={businessName}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
-                      }}
-                    />
-                  )}
+                  <Image
+                    src="/assets/image/logo.png"
+                    alt={businessName}
+                    fill
+                    className="object-cover"
+                    sizes="32px"
+                  />
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="font-bold text-sm text-foreground leading-tight">
@@ -438,16 +434,13 @@ export function Navbar() {
             <div className="flex items-center gap-8">
               <button onClick={handleNavigateToHome} className="flex items-center gap-2 group">
                 <div className="relative w-10 h-10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
-                  {isHydrated && businessLogoUrl && (
-                    <img
-                      src={businessLogoUrl}
-                      alt={businessName}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
-                      }}
-                    />
-                  )}
+                  <Image
+                    src="/assets/image/logo.png"
+                    alt={businessName}
+                    fill
+                    className="object-cover"
+                    sizes="40px"
+                  />
                 </div>
                 <div className="hidden md:flex flex-col text-left">
                   <span className="text-foreground font-bold text-sm leading-tight">
