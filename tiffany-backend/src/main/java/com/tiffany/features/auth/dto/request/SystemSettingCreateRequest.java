@@ -14,8 +14,6 @@ public class SystemSettingCreateRequest {
 
     private String description;
 
-    private String logoSystemUrl;
-
     private String primaryColor;
 
     // Contact Information
@@ -25,4 +23,9 @@ public class SystemSettingCreateRequest {
 
     @Email(message = "Contact email must be valid")
     private String contactEmail;
+
+    // Social Media Links
+    private String facebookUrl;
+    private String instagramUrl;
+    private String telegramUrl;
 }

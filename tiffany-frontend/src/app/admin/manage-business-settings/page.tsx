@@ -26,19 +26,15 @@ import { BusinessSettingsResponse } from "@/redux/features/business/store/servic
 function convertResponseToFormData(
   response: BusinessSettingsResponse
 ): BusinessSettingsFormData {
-  const socialMedia = response.socialMedia || [];
-  const findUrl = (name: string) =>
-    socialMedia.find((sm) => sm.name?.toLowerCase() === name)?.linkUrl || "";
-
   return {
     systemName: response.systemName || BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME,
     description: response.description || "",
     contactAddress: response.contactAddress || "",
     contactPhone: response.contactPhone || "",
     contactEmail: response.contactEmail || "",
-    facebookUrl: findUrl("facebook"),
-    instagramUrl: findUrl("instagram"),
-    telegramUrl: findUrl("telegram"),
+    facebookUrl: response.facebookUrl || "",
+    instagramUrl: response.instagramUrl || "",
+    telegramUrl: response.telegramUrl || "",
   };
 }
 
@@ -95,12 +91,6 @@ export default function BusinessSettingsPage() {
     try {
       setIsSaving(true);
 
-      const socialMediaList = [
-        { name: "Facebook", linkUrl: data.facebookUrl || "" },
-        { name: "Instagram", linkUrl: data.instagramUrl || "" },
-        { name: "Telegram", linkUrl: data.telegramUrl || "" },
-      ];
-
       const payload = {
         systemName: data.systemName,
         description: data.description || undefined,
@@ -109,7 +99,9 @@ export default function BusinessSettingsPage() {
         contactAddress: data.contactAddress || undefined,
         contactPhone: data.contactPhone || undefined,
         contactEmail: data.contactEmail || undefined,
-        socialMediaList,
+        facebookUrl: data.facebookUrl || undefined,
+        instagramUrl: data.instagramUrl || undefined,
+        telegramUrl: data.telegramUrl || undefined,
       };
 
       const action = await dispatch(updateBusinessSettingsThunk(payload as any));

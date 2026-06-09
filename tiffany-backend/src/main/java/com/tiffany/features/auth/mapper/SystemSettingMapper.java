@@ -12,8 +12,7 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(
     componentModel = "spring",
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    uses = {SocialMediaMapper.class, BusinessHoursMapper.class}
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface SystemSettingMapper {
 

@@ -6,20 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-import java.util.List;
-
-/**
- * SystemSetting Entity
- * Represents system-wide settings and configuration
- * Has automatic audit fields: createdAt, updatedAt, createdBy, updatedBy, isDeleted
- */
 @Entity
 @Table(name = "system_settings")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"socialMedia", "businessHours"})
-@ToString(exclude = {"socialMedia", "businessHours"})
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class SystemSetting extends BaseUUIDEntity {
@@ -32,9 +23,6 @@ public class SystemSetting extends BaseUUIDEntity {
 
     @Column(name = "description", length = 1000)
     private String description;
-
-    @Column(name = "logo_system_url")
-    private String logoSystemUrl;
 
     @Column(name = "primary_color")
     private String primaryColor;
@@ -49,20 +37,13 @@ public class SystemSetting extends BaseUUIDEntity {
     @Column(name = "contact_email", length = 100)
     private String contactEmail;
 
-    // Relationships
-    @OneToMany(
-        mappedBy = "systemSetting",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
-    private List<SocialMedia> socialMedia;
+    // Social Media Links
+    @Column(name = "facebook_url")
+    private String facebookUrl;
 
-    @OneToMany(
-        mappedBy = "systemSetting",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
-    private List<BusinessHours> businessHours;
+    @Column(name = "instagram_url")
+    private String instagramUrl;
+
+    @Column(name = "telegram_url")
+    private String telegramUrl;
 }

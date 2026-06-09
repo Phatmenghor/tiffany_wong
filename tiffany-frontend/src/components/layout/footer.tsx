@@ -1,36 +1,25 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Phone, Clock, Mail, Facebook, Instagram, Send } from "lucide-react";
+import { MapPin, Phone, Mail, Facebook, Instagram, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PageContainer } from "../shared/common/page-container";
 import { useAppSelector } from "@/redux/store/hooks";
 import { selectBusinessSettings } from "@/redux/features/business/store/selectors/business-settings-selector";
 import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
 
-const PLATFORM_ICONS: Record<string, React.ReactNode> = {
-  facebook: <Facebook className="w-4 h-4 flex-shrink-0" />,
-  instagram: <Instagram className="w-4 h-4 flex-shrink-0" />,
-  telegram: <Send className="w-4 h-4 flex-shrink-0" />,
-};
-
-function getSocialIcon(name: string): React.ReactNode {
-  return PLATFORM_ICONS[name.toLowerCase()] ?? null;
-}
-
 export function Footer() {
   const [isHydrated, setIsHydrated] = useState(false);
-
   const businessSettings = useAppSelector(selectBusinessSettings);
 
   const businessName = businessSettings?.systemName || BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME;
   const businessDescription = isHydrated ? businessSettings?.description || "" : "";
-  const socialMedia = isHydrated ? businessSettings?.socialMedia || [] : [];
   const contactAddress = isHydrated ? businessSettings?.contactAddress || "" : "";
   const contactPhone = isHydrated ? businessSettings?.contactPhone || "" : "";
   const contactEmail = isHydrated ? businessSettings?.contactEmail || "" : "";
-  const businessHours = isHydrated ? businessSettings?.businessHours || [] : [];
+  const facebookUrl = isHydrated ? businessSettings?.facebookUrl || "" : "";
+  const instagramUrl = isHydrated ? businessSettings?.instagramUrl || "" : "";
+  const telegramUrl = isHydrated ? businessSettings?.telegramUrl || "" : "";
 
   useEffect(() => {
     setIsHydrated(true);
@@ -40,10 +29,16 @@ export function Footer() {
     backgroundColor: `${BUSINESS_SETTINGS_DEFAULTS.PRIMARY_COLOR}E6`,
   };
 
+  const socialLinks = [
+    { href: facebookUrl, icon: <Facebook className="w-4 h-4" />, label: "Facebook" },
+    { href: instagramUrl, icon: <Instagram className="w-4 h-4" />, label: "Instagram" },
+    { href: telegramUrl, icon: <Send className="w-4 h-4" />, label: "Telegram" },
+  ].filter((s) => s.href);
+
   return (
     <footer className="text-white" style={footerStyle}>
       <PageContainer>
-        <div className="py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 w-fit">
@@ -59,11 +54,11 @@ export function Footer() {
               <span className="font-bold text-lg text-white">{businessName}</span>
             </div>
             {isHydrated && businessDescription && (
-              <p className="text-white text-sm leading-relaxed">{businessDescription}</p>
+              <p className="text-white/80 text-sm leading-relaxed">{businessDescription}</p>
             )}
           </div>
 
-          {/* Contact Information */}
+          {/* Contact */}
           <div className="space-y-4">
             <h3 className="font-semibold text-white text-base">Contact Info</h3>
             <div className="space-y-3 text-sm">
@@ -93,45 +88,22 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Business Hours */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-white text-base">Business Hours</h3>
-            <div className="space-y-2 text-sm">
-              {businessHours.length > 0 ? (
-                <div className="flex gap-3">
-                  <Clock className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                  <div className="text-white">
-                    {businessHours.map((hours, index) => (
-                      <p key={index} className="font-medium">
-                        {hours.day}: {hours.openingTime} - {hours.closingTime}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          </div>
-
           {/* Social Media */}
           <div className="space-y-4">
             <h3 className="font-semibold text-white text-base">Follow Us</h3>
             <div className="space-y-2 text-sm">
-              {socialMedia.filter((s) => s.linkUrl).length > 0 ? (
-                socialMedia
-                  .filter((s) => s.linkUrl)
-                  .map((social) => (
-                    <a
-                      key={social.id}
-                      href={social.linkUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-white hover:text-white/80 transition-colors"
-                    >
-                      {getSocialIcon(social.name)}
-                      <span>{social.name}</span>
-                    </a>
-                  ))
-              ) : null}
+              {socialLinks.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-white hover:text-white/80 transition-colors"
+                >
+                  {s.icon}
+                  <span>{s.label}</span>
+                </a>
+              ))}
             </div>
           </div>
         </div>
