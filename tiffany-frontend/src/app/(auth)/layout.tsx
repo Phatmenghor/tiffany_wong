@@ -13,8 +13,9 @@ export const metadata = {
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="min-h-screen w-full">
-      {/* Main Content Area - Full Width, No Constraints */}
-      <main className="h-screen w-full">{children}</main>
+      {/* min-h-screen instead of h-screen: allows the page to grow when the
+          mobile soft keyboard opens, preventing content from being clipped. */}
+      <main className="min-h-screen w-full">{children}</main>
     </div>
   );
 }

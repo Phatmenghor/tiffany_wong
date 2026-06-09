@@ -63,7 +63,9 @@ export default function DashboardLayout({
         className={cn(
           "dashboard-content flex flex-col flex-1 transition-all duration-300",
           isPosPage ? "overflow-hidden" : "overflow-y-auto",
-          isMobile ? "w-full" : isSidebarOpen ? "ml-56" : "ml-[60px]",
+          // ml values match the sidebar's w-60 (open) and w-16 (collapsed)
+          // Using rem keeps the gap correct at every browser zoom level.
+          isMobile ? "w-full" : isSidebarOpen ? "ml-60" : "ml-16",
         )}
       >
         <TopBar

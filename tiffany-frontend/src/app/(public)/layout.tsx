@@ -51,8 +51,9 @@ export default function PublicLayout({
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
 
-      {/* Extra bottom padding on mobile so content clears the fixed bottom nav */}
-      <main className="flex-1 pb-16 sm:pb-0">
+      {/* pb-nav-safe = nav height (4rem) + iPhone safe-area inset on mobile;
+          falls back to plain pb-16 via the sm: reset on larger screens. */}
+      <main className="flex-1 pb-nav-safe sm:pb-0">
         <Suspense>{children}</Suspense>
       </main>
 
