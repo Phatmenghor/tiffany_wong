@@ -152,28 +152,6 @@ export function ProductSizes({
                     </div>
 
                     <div>
-                      <TextField
-                        control={control}
-                        name={`sizes.${index}.sku`}
-                        label="SKU"
-                        placeholder="Enter SKU"
-                        disabled={isProcessing}
-                        error={errors.sizes?.[index]?.sku as any}
-                      />
-                    </div>
-
-                    <div>
-                      <TextField
-                        control={control}
-                        name={`sizes.${index}.barcode`}
-                        label="Barcode"
-                        placeholder="Enter barcode"
-                        disabled={isProcessing}
-                        error={errors.sizes?.[index]?.barcode as any}
-                      />
-                    </div>
-
-                    <div>
                       <SelectField
                         control={control}
                         name={`sizes.${index}.promotionType`}
@@ -214,8 +192,8 @@ export function ProductSizes({
                               control={control}
                               name={`sizes.${index}.promotionFromDate`}
                               label="Promotion From"
-                              mode="datetime"
-                              placeholder="Select start date & time"
+                              mode="date"
+                              placeholder="Select start date"
                               disabled={isProcessing}
                               error={
                                 errors.sizes?.[index]
@@ -229,8 +207,8 @@ export function ProductSizes({
                               control={control}
                               name={`sizes.${index}.promotionToDate`}
                               label="Promotion To"
-                              mode="datetime"
-                              placeholder="Select end date & time"
+                              mode="date"
+                              placeholder="Select end date"
                               disabled={isProcessing}
                               error={
                                 errors.sizes?.[index]

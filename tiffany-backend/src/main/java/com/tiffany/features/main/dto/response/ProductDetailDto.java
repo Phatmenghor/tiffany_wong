@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,15 +20,15 @@ public class ProductDetailDto extends BaseAuditResponse {
     private BigDecimal price;
     private String promotionType;
     private BigDecimal promotionValue;
-    private LocalDateTime promotionFromDate;
-    private LocalDateTime promotionToDate;
+    private LocalDate promotionFromDate;
+    private LocalDate promotionToDate;
 
     private BigDecimal displayPrice;
     private BigDecimal displayOriginPrice;
     private String displayPromotionType;
     private BigDecimal displayPromotionValue;
-    private LocalDateTime displayPromotionFromDate;
-    private LocalDateTime displayPromotionToDate;
+    private LocalDate displayPromotionFromDate;
+    private LocalDate displayPromotionToDate;
 
     private Boolean hasSizes;
     private Boolean hasPromotion;

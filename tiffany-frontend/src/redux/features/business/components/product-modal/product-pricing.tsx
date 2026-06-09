@@ -108,8 +108,8 @@ export function ProductPricing({
                   control={control}
                   name="promotionFromDate"
                   label="Promotion From"
-                  mode="datetime"
-                  placeholder="Select start date & time"
+                  mode="date"
+                  placeholder="Select start date"
                   disabled={isProcessing}
                   error={errors.promotionFromDate}
                 />
@@ -120,8 +120,8 @@ export function ProductPricing({
                   control={control}
                   name="promotionToDate"
                   label="Promotion To"
-                  mode="datetime"
-                  placeholder="Select end date & time"
+                  mode="date"
+                  placeholder="Select end date"
                   disabled={isProcessing}
                   error={errors.promotionToDate}
                 />

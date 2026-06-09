@@ -7,8 +7,6 @@ import com.tiffany.features.main.dto.update.ProductSizeUpdateDto;
 import com.tiffany.features.main.models.ProductSize;
 import org.mapstruct.*;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
@@ -37,11 +35,6 @@ public interface ProductSizeMapper {
     @Mapping(source = "promotionType", target = "promotionType", qualifiedByName = "sizeStringToPromotionType")
     @Mapping(target = "product", ignore = true)
     void updateEntity(ProductSizeUpdateDto dto, @MappingTarget ProductSize entity);
-
-    @Named("truncateSizeToDay")
-    default LocalDateTime truncateSizeToDay(LocalDateTime dt) {
-        return dt != null ? dt.truncatedTo(ChronoUnit.DAYS) : null;
-    }
 
     @Mapping(target = "productId", ignore = true)
     @Mapping(source = "promotionType", target = "promotionType", qualifiedByName = "sizeStringToPromotionType")

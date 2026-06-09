@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -43,16 +42,10 @@ public class ProductSize extends BaseUUIDEntity {
     private BigDecimal promotionValue;
 
     @Column(name = "promotion_from_date")
-    private LocalDateTime promotionFromDate;
+    private LocalDate promotionFromDate;
 
     @Column(name = "promotion_to_date")
-    private LocalDateTime promotionToDate;
-
-    @Column(name = "barcode")
-    private String barcode;
-
-    @Column(name = "sku")
-    private String sku;
+    private LocalDate promotionToDate;
 
     public ProductSize(UUID productId, String name, BigDecimal price) {
         this.productId = productId;
@@ -91,20 +84,20 @@ public class ProductSize extends BaseUUIDEntity {
             return false;
         }
 
-        LocalDateTime today = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        LocalDate today = LocalDate.now();
 
-        if (promotionFromDate != null && today.isBefore(promotionFromDate.truncatedTo(ChronoUnit.DAYS))) {
+        if (promotionFromDate != null && today.isBefore(promotionFromDate)) {
             return false;
         }
 
-        if (promotionToDate != null && today.isAfter(promotionToDate.truncatedTo(ChronoUnit.DAYS))) {
+        if (promotionToDate != null && today.isAfter(promotionToDate)) {
             return false;
         }
 
         return true;
     }
 
-    public void setPromotion(PromotionType type, BigDecimal value, LocalDateTime fromDate, LocalDateTime toDate) {
+    public void setPromotion(PromotionType type, BigDecimal value, LocalDate fromDate, LocalDate toDate) {
         this.promotionType = type;
         this.promotionValue = value;
         this.promotionFromDate = fromDate;

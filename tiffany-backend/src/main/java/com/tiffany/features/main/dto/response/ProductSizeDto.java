@@ -2,6 +2,7 @@ package com.tiffany.features.main.dto.response;
 
 import lombok.Data;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -9,13 +10,11 @@ import java.util.UUID;
 public class ProductSizeDto {
     private UUID id;
     private String name;
-    private String barcode;
-    private String sku;
     private BigDecimal price;
     private String promotionType;
     private BigDecimal promotionValue;
-    private LocalDateTime promotionFromDate;
-    private LocalDateTime promotionToDate;
+    private LocalDate promotionFromDate;
+    private LocalDate promotionToDate;
     private BigDecimal finalPrice;
     private Boolean hasPromotion;
 

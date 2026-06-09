@@ -19,8 +19,6 @@ export const sizeSchema = z
   .object({
     id: z.string().optional(),
     name: z.string().min(1, "Size name is required"),
-    barcode: z.string().optional(),
-    sku: z.string().optional(),
     price: z.number().min(0, "Price must be positive"),
     promotionType: z.string().optional(),
     promotionValue: z
@@ -253,8 +251,6 @@ export type ProductFormData = {
   sizes?: Array<{
     id?: string;
     name: string;
-    barcode?: string;
-    sku?: string;
     price: number;
     promotionType?: string;
     promotionValue?: number;

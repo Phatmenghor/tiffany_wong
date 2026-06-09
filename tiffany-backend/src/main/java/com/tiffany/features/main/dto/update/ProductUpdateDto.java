@@ -6,7 +6,7 @@ import jakarta.validation.constraints.DecimalMin;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,8 +27,8 @@ public class ProductUpdateDto {
 
     private String promotionType;
     private BigDecimal promotionValue;
-    private LocalDateTime promotionFromDate;
-    private LocalDateTime promotionToDate;
+    private LocalDate promotionFromDate;
+    private LocalDate promotionToDate;
     
     @Valid
     private List<ProductImageUpdateDto> images;

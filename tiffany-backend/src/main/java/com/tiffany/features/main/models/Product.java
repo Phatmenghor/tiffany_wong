@@ -11,8 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -54,10 +53,10 @@ public class Product extends BaseUUIDEntity {
     private BigDecimal promotionValue;
 
     @Column(name = "promotion_from_date")
-    private LocalDateTime promotionFromDate;
+    private LocalDate promotionFromDate;
 
     @Column(name = "promotion_to_date")
-    private LocalDateTime promotionToDate;
+    private LocalDate promotionToDate;
 
 
     @Column(name = "view_count", nullable = false)
@@ -111,13 +110,13 @@ public class Product extends BaseUUIDEntity {
             return false;
         }
 
-        LocalDateTime today = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        LocalDate today = LocalDate.now();
 
-        if (promotionFromDate != null && today.isBefore(promotionFromDate.truncatedTo(ChronoUnit.DAYS))) {
+        if (promotionFromDate != null && today.isBefore(promotionFromDate)) {
             return false;
         }
 
-        if (promotionToDate != null && today.isAfter(promotionToDate.truncatedTo(ChronoUnit.DAYS))) {
+        if (promotionToDate != null && today.isAfter(promotionToDate)) {
             return false;
         }
 

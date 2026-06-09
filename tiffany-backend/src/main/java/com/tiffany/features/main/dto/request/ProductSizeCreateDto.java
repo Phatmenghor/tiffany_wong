@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -16,16 +16,12 @@ public class ProductSizeCreateDto {
     @NotBlank(message = "Size name is required")
     private String name;
 
-    private String barcode;
-
-    private String sku;
-
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.0", message = "Price must be non-negative")
     private BigDecimal price;
-    
+
     private String promotionType;
     private BigDecimal promotionValue;
-    private LocalDateTime promotionFromDate;
-    private LocalDateTime promotionToDate;
+    private LocalDate promotionFromDate;
+    private LocalDate promotionToDate;
 }
