@@ -37,7 +37,7 @@ public class SystemSettingServiceImpl implements SystemSettingService {
 
         systemSettingMapper.updateEntity(request, setting);
         SystemSetting updated = systemSettingRepository.save(setting);
-        log.info("System setting updated: systemName={}", updated.getSystemName());
+        log.info("System setting updated: id={}", updated.getId());
         return systemSettingMapper.toResponse(updated);
     }
 }
