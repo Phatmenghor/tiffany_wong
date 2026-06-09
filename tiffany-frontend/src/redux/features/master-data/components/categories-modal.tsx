@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,10 +13,9 @@ import { FormBody } from "@/components/shared/form-field/form-body";
 import { FormFooter } from "@/components/shared/form-field/form-footer";
 import { ModalMode, Status } from "@/constants/status/status";
 import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
-import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
 import { showToast } from "@/components/shared/common/show-toast";
 import { BANNER_STATUS_CREATE_UPDATE } from "@/constants/status/create-update-status";
-import { ClickableImageUpload } from "@/components/shared/form-field/clickable-image-upload";
+import { SpacesImageUpload } from "@/components/shared/form-field/spaces-image-upload";
 import {
   selectError,
   selectOperations,
@@ -51,9 +50,6 @@ export default function CategoriesModal({
 }: Props) {
   const isCreate = mode === ModalMode.CREATE_MODE;
 
-  // Local state for image upload loading
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
-
   const dispatch = useAppDispatch();
 
   const operations = useAppSelector(selectOperations);
@@ -84,14 +80,12 @@ export default function CategoriesModal({
   useEffect(() => {
     if (isOpen) {
       if (isCreate) {
-        // Reset form for create mode
         reset({
           name: "",
           imageUrl: "",
           status: Status.ACTIVE,
         });
       } else if (categories) {
-        // Populate form with categories data for edit mode
         reset({
           name: categories.name || "",
           imageUrl: categories.imageUrl || "",
@@ -101,7 +95,6 @@ export default function CategoriesModal({
     }
   }, [isOpen, categories, isCreate, reset]);
 
-  // Clear errors when modal opens
   useEffect(() => {
     if (isOpen) {
       dispatch(clearError());
@@ -110,27 +103,9 @@ export default function CategoriesModal({
 
   const onSubmit = async (data: CreateCategoriesData) => {
     try {
-      let finalImageUrl = data.imageUrl;
-
-      // Upload image if it's a base64 string
-      if (finalImageUrl && isBase64Image(finalImageUrl)) {
-        setIsUploadingImage(true);
-        try {
-          finalImageUrl = await uploadImage(finalImageUrl);
-        } catch (uploadError) {
-          console.error("Error uploading category image:", uploadError);
-          showToast.error(
-            "Failed to upload category image. Please try again.",
-          );
-          return;
-        } finally {
-          setIsUploadingImage(false);
-        }
-      }
-
       const payload: CreateCategoriesData = {
         name: data?.name || "",
-        imageUrl: finalImageUrl,
+        imageUrl: data.imageUrl,
         status: data.status,
       };
 
@@ -159,14 +134,12 @@ export default function CategoriesModal({
 
   const handleClose = () => {
     reset();
-    setIsUploadingImage(false);
     dispatch(clearError());
     dispatch(clearSelectedCategories());
     onClose();
   };
 
-  const isSubmitting = isCreate ? isCreating : isUpdating;
-  const isProcessing = isSubmitting || isUploadingImage;
+  const isProcessing = isCreate ? isCreating : isUpdating;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -196,15 +169,16 @@ export default function CategoriesModal({
             )}
 
             {/* Category Image Upload */}
-            <ClickableImageUpload
+            <SpacesImageUpload
               label="Category Image"
               value={imageUrl}
-              onChange={(base64) => setValue("imageUrl", base64)}
+              onChange={(url) => setValue("imageUrl", url)}
               aspectRatio="square"
               required
               error={errors.imageUrl}
               placeholder="Click to upload category image"
               helperText="Square image works best (500x500)"
+              disabled={isProcessing}
             />
 
             {/* Category Name */}
@@ -235,8 +209,8 @@ export default function CategoriesModal({
             isSubmitting={isProcessing}
             isDirty={isDirty}
             isCreate={isCreate}
-            createMessage={isProcessing ? "Uploading..." : "Creating category..."}
-            updateMessage={isProcessing ? "Uploading..." : "Updating category..."}
+            createMessage="Creating category..."
+            updateMessage="Updating category..."
           >
             <CancelButton onClick={handleClose} disabled={isProcessing} />
             <SubmitButton

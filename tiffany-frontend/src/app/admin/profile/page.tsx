@@ -18,7 +18,6 @@ import { Badge } from "@/components/ui/badge";
 import { TextField } from "@/components/shared/form-field/text-field";
 import { TextareaField } from "@/components/shared/form-field/text-area-field";
 import { SelectField } from "@/components/shared/form-field/select-field";
-import { ClickableImageUpload } from "@/components/shared/form-field/clickable-image-upload";
 import { DateTimePickerField } from "@/components/shared/form-field/date-picker-field";
 import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import {
@@ -40,7 +39,6 @@ import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/app-routes/routes";
 import { clearToken } from "@/utils/local-storage/token";
 import { CustomAvatar } from "@/components/shared/avator/custom-avator";
-import { isBase64Image, uploadImage } from "@/utils/common/upload-image";
 import { clearUserInfo } from "@/utils/local-storage/userInfo";
 import Link from "next/link";
 import { Loading } from "@/components/shared/common/loading";
@@ -134,22 +132,7 @@ export default function AdminProfilePage() {
 
   const onSubmit = async (data: UserFormData) => {
     try {
-      setIsUploadingImage(true);
-
-      // Process profile image URL
-      let profileImageUrl = data.profileImageUrl;
-      if (profileImageUrl && isBase64Image(profileImageUrl)) {
-        try {
-          profileImageUrl = await uploadImage(profileImageUrl);
-        } catch (error) {
-          console.error("Failed to upload profile image:", error);
-          showToast.error("Failed to upload profile image");
-          setIsUploadingImage(false);
-          return;
-        }
-      }
-
-      setIsUploadingImage(false);
+      const profileImageUrl = data.profileImageUrl;
 
       // Build payload with only backend-supported fields
       const payload: any = {};
@@ -178,43 +161,19 @@ export default function AdminProfilePage() {
     }
   };
 
-  const handleAutoUploadProfilePicture = async (imageData: string) => {
+  const handleAutoUploadProfilePicture = async (imageUrl: string) => {
     try {
       setIsUploadingImage(true);
 
-      // First upload the base64 image to CDN/storage
-      let profileImageUrl = imageData;
-      if (isBase64Image(profileImageUrl)) {
-        try {
-          profileImageUrl = await uploadImage(profileImageUrl);
-        } catch (error) {
-          console.error("Failed to upload image to CDN:", error);
-          showToast.error("Failed to upload image");
-          setIsUploadingImage(false);
-          return;
-        }
-      }
+      setValue("profileImageUrl", imageUrl, { shouldDirty: true });
 
-      // Update form with the CDN URL
-      setValue("profileImageUrl", profileImageUrl, {
-        shouldDirty: true,
-      });
-
-      // Send only the URL to API
-      const payload = {
-        profileImageUrl,
-      };
-
-      const updatedProfile = await dispatch(updateProfileService(payload)).unwrap();
-
-      // Reload profile to ensure we have the latest from server
-      const freshProfile = await dispatch(getProfileService()).unwrap();
+      await dispatch(updateProfileService({ profileImageUrl: imageUrl })).unwrap();
+      await dispatch(getProfileService()).unwrap();
 
       showToast.success("Profile picture updated successfully");
     } catch (error: any) {
-      console.error("Error uploading profile picture:", error);
+      console.error("Error updating profile picture:", error);
       showToast.error(error || "Failed to update profile picture");
-      // Reset the form value on error
       if (userProfile?.profileImageUrl) {
         setValue("profileImageUrl", userProfile.profileImageUrl);
       }

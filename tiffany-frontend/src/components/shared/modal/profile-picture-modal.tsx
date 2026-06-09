@@ -10,11 +10,13 @@ import {
 } from "lucide-react";
 import { CustomAvatar } from "@/components/shared/avator/custom-avator";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { uploadToSpaces } from "@/services/spaces-service";
+import { showToast } from "@/components/shared/common/show-toast";
 
 interface ProfilePictureModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onImageCapture: (imageData: string) => void;
+  onImageCapture: (imageUrl: string) => void;
   onImageRemove?: () => void;
   isLoading?: boolean;
   currentImageUrl?: string;
@@ -31,64 +33,72 @@ export function ProfilePictureModal({
   userName,
 }: ProfilePictureModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedImage, setSelectedImage] = useState<string>(currentImageUrl || "");
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string>(currentImageUrl || "");
+  const [isUploading, setIsUploading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
 
-  // Reset state when modal opens/closes
   React.useEffect(() => {
     if (open) {
-      setSelectedImage(currentImageUrl || "");
+      setSelectedImageUrl(currentImageUrl || "");
       setIsRemoving(false);
     }
   }, [open, currentImageUrl]);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      alert("Please select an image file");
+      showToast.error("Please select an image file");
       return;
     }
 
     const fileSizeMB = file.size / (1024 * 1024);
     if (fileSizeMB > 5) {
-      alert("File size must be less than 5MB");
+      showToast.error("File size must be less than 5MB");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const imageData = event.target?.result as string;
-      setSelectedImage(imageData);
-    };
-    reader.readAsDataURL(file);
+    setIsUploading(true);
+    try {
+      const result = await uploadToSpaces(file);
+      setSelectedImageUrl(result.url);
+    } catch (err) {
+      console.error("Upload failed:", err);
+      showToast.error("Failed to upload image. Please try again.");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
   };
 
   const handleRemoveClick = () => {
     setIsRemoving(true);
-    setSelectedImage("");
+    setSelectedImageUrl("");
   };
 
   const handleRestoreClick = () => {
     setIsRemoving(false);
-    setSelectedImage(currentImageUrl || "");
+    setSelectedImageUrl(currentImageUrl || "");
   };
 
   const handleSave = () => {
     if (isRemoving) {
       onImageRemove?.();
       onOpenChange(false);
-    } else if (selectedImage && selectedImage !== currentImageUrl) {
-      onImageCapture(selectedImage);
+    } else if (selectedImageUrl && selectedImageUrl !== currentImageUrl) {
+      onImageCapture(selectedImageUrl);
       onOpenChange(false);
     }
   };
 
-  const hasChanges = isRemoving || (selectedImage && selectedImage !== currentImageUrl);
+  const hasChanges = isRemoving || (selectedImageUrl && selectedImageUrl !== currentImageUrl);
+  const isBusy = isLoading || isUploading;
 
   const handleCancel = () => {
-    setSelectedImage(currentImageUrl || "");
+    setSelectedImageUrl(currentImageUrl || "");
     setIsRemoving(false);
     onOpenChange(false);
   };
@@ -100,7 +110,7 @@ export function ProfilePictureModal({
           <VisuallyHidden>Profile Picture Manager</VisuallyHidden>
         </DialogTitle>
         <DialogDescription asChild>
-          <VisuallyHidden>Upload, download, or remove your profile picture</VisuallyHidden>
+          <VisuallyHidden>Upload or remove your profile picture</VisuallyHidden>
         </DialogDescription>
 
         {/* Header */}
@@ -113,15 +123,15 @@ export function ProfilePictureModal({
           <div
             className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 flex items-center justify-center bg-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
             onClick={() => {
-              const imageUrl = selectedImage || currentImageUrl;
-              if (imageUrl && !imageUrl.startsWith('data:')) {
-                window.open(imageUrl, '_blank');
+              const imageUrl = selectedImageUrl || currentImageUrl;
+              if (imageUrl) {
+                window.open(imageUrl, "_blank");
               }
             }}
           >
-            {selectedImage || currentImageUrl ? (
+            {selectedImageUrl || currentImageUrl ? (
               <img
-                src={selectedImage || currentImageUrl}
+                src={selectedImageUrl || currentImageUrl}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -134,13 +144,20 @@ export function ProfilePictureModal({
             )}
           </div>
 
-          {selectedImage && selectedImage !== currentImageUrl && (
-            <p className="text-sm text-blue-600 font-medium">
-              ✓ New image selected
+          {isUploading && (
+            <p className="text-sm text-muted-foreground flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Uploading...
             </p>
           )}
 
-          {(currentImageUrl || selectedImage) && !selectedImage?.startsWith('data:') && (
+          {selectedImageUrl && selectedImageUrl !== currentImageUrl && !isUploading && (
+            <p className="text-sm text-blue-600 font-medium">
+              ✓ New image ready
+            </p>
+          )}
+
+          {(currentImageUrl || selectedImageUrl) && (
             <p className="text-xs text-muted-foreground">
               Click image to view in new tab
             </p>
@@ -153,9 +170,9 @@ export function ProfilePictureModal({
           <Button
             onClick={() => fileInputRef.current?.click()}
             className="w-full gap-2 bg-primary hover:bg-primary/90"
-            disabled={isLoading || isRemoving}
+            disabled={isBusy || isRemoving}
           >
-            {isLoading ? (
+            {isUploading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Uploading...
@@ -174,7 +191,7 @@ export function ProfilePictureModal({
               onClick={handleRemoveClick}
               variant="outline"
               className="w-full gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-              disabled={isLoading}
+              disabled={isBusy}
             >
               <Trash2 className="h-4 w-4" />
               Remove Photo
@@ -187,7 +204,7 @@ export function ProfilePictureModal({
               onClick={handleRestoreClick}
               variant="outline"
               className="w-full gap-2"
-              disabled={isLoading}
+              disabled={isBusy}
             >
               Restore Photo
             </Button>
@@ -199,19 +216,19 @@ export function ProfilePictureModal({
               onClick={handleCancel}
               variant="outline"
               className="flex-1"
-              disabled={isLoading}
+              disabled={isBusy}
             >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
-              disabled={isLoading || !hasChanges}
+              disabled={isBusy || !hasChanges}
               className="flex-1"
             >
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Uploading...
+                  Saving...
                 </>
               ) : (
                 "Save"

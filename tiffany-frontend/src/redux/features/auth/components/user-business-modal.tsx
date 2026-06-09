@@ -9,7 +9,7 @@ import { TextareaField } from "@/components/shared/form-field/text-area-field";
 import { SelectField } from "@/components/shared/form-field/select-field";
 import { CancelButton } from "@/components/shared/form-field/cancel-button";
 import { SubmitButton } from "@/components/shared/form-field/submid-button";
-import { ClickableImageUpload } from "@/components/shared/form-field/clickable-image-upload";
+import { SpacesImageUpload } from "@/components/shared/form-field/spaces-image-upload";
 import { DateTimePickerField } from "@/components/shared/form-field/date-picker-field";
 import {
   CreateUserRequest,
@@ -50,7 +50,6 @@ import { Loading } from "@/components/shared/common/loading";
 import {
   GENDER_OPTIONS,
 } from "@/constants/form-options";
-import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
 
 type Props = {
   mode: ModalMode;
@@ -67,7 +66,6 @@ export default function UserBusinessModal({
 }: Props) {
   const isCreate = mode === ModalMode.CREATE_MODE;
   const [showPassword, setShowPassword] = useState(false);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -183,22 +181,7 @@ export default function UserBusinessModal({
 
   const onSubmit = async (data: UserFormData) => {
     try {
-      setIsUploadingImage(true);
-
-      // Process profile image URL
-      let profileImageUrl = data.profileImageUrl;
-      if (profileImageUrl && isBase64Image(profileImageUrl)) {
-        try {
-          profileImageUrl = await uploadImage(profileImageUrl);
-        } catch (error) {
-          console.error("Failed to upload profile image:", error);
-          showToast.error("Failed to upload profile image");
-          setIsUploadingImage(false);
-          return;
-        }
-      }
-
-      setIsUploadingImage(false);
+      const profileImageUrl = data.profileImageUrl;
 
       if (isCreate) {
         const payload: CreateUserRequest = {
@@ -282,13 +265,12 @@ export default function UserBusinessModal({
   const handleClose = () => {
     reset();
     setShowPassword(false);
-    setIsUploadingImage(false);
     dispatch(clearError());
     dispatch(clearSelectedUser());
     onClose();
   };
 
-  const isSubmitting = (isCreate ? isCreating : isUpdating) || isUploadingImage;
+  const isSubmitting = isCreate ? isCreating : isUpdating;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -488,11 +470,11 @@ export default function UserBusinessModal({
                         error={errors.dateOfBirth}
                       />
 
-                      <ClickableImageUpload
+                      <SpacesImageUpload
                         label="Profile Image"
                         value={watch("profileImageUrl") || ""}
-                        onChange={(base64) =>
-                          setValue("profileImageUrl", base64, {
+                        onChange={(url) =>
+                          setValue("profileImageUrl", url, {
                             shouldDirty: true,
                           })
                         }
@@ -525,12 +507,8 @@ export default function UserBusinessModal({
               isSubmitting={isSubmitting}
               isDirty={isDirty}
               isCreate={isCreate}
-              createMessage={
-                isUploadingImage ? "Uploading files..." : "Creating user..."
-              }
-              updateMessage={
-                isUploadingImage ? "Uploading files..." : "Updating user..."
-              }
+              createMessage="Creating user..."
+              updateMessage="Updating user..."
             >
               <CancelButton onClick={handleClose} disabled={isSubmitting} />
               <SubmitButton
@@ -539,12 +517,8 @@ export default function UserBusinessModal({
                 isCreate={isCreate}
                 createText="Create User"
                 updateText="Update User"
-                submittingCreateText={
-                  isUploadingImage ? "Uploading..." : "Creating..."
-                }
-                submittingUpdateText={
-                  isUploadingImage ? "Uploading..." : "Updating..."
-                }
+                submittingCreateText="Creating..."
+                submittingUpdateText="Updating..."
               />
             </FormFooter>
           </form>

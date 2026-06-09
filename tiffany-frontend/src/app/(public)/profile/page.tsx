@@ -31,7 +31,6 @@ import { DeleteConfirmationModal } from "@/components/shared/modal/delete-confir
 import { ProfilePictureModal } from "@/components/shared/modal/profile-picture-modal";
 import { useRouter } from "next/navigation";
 import { CustomAvatar } from "@/components/shared/avator/custom-avator";
-import { isBase64Image, uploadImage } from "@/utils/common/upload-image";
 import { clearToken } from "@/utils/local-storage/token";
 import { clearUserInfo } from "@/utils/local-storage/userInfo";
 import { ProfilePageSkeleton } from "./components/profile-page-skeleton";
@@ -127,19 +126,7 @@ export default function PublicProfilePage() {
     try {
       setIsUploadingImage(true);
 
-      let profileImageUrl =
-        data.profileImageUrl || userProfile?.profileImageUrl || "";
-
-      if (profileImageUrl && isBase64Image(profileImageUrl)) {
-        try {
-          profileImageUrl = await uploadImage(profileImageUrl);
-        } catch (error) {
-          console.error("Failed to upload image:", error);
-          showToast.error("Failed to upload profile picture");
-          setIsUploadingImage(false);
-          return;
-        }
-      }
+      const profileImageUrl = data.profileImageUrl || userProfile?.profileImageUrl || "";
 
       const payload: any = {
         firstName: data.firstName,
@@ -184,36 +171,18 @@ export default function PublicProfilePage() {
     setIsEditing(false);
   };
 
-  const handleAutoUploadProfilePicture = async (imageData: string) => {
+  const handleAutoUploadProfilePicture = async (imageUrl: string) => {
     try {
       setIsUploadingImage(true);
 
-      let profileImageUrl = imageData;
-      if (isBase64Image(profileImageUrl)) {
-        try {
-          profileImageUrl = await uploadImage(profileImageUrl);
-        } catch (error) {
-          console.error("Failed to upload image to CDN:", error);
-          showToast.error("Failed to upload image");
-          setIsUploadingImage(false);
-          return;
-        }
-      }
+      setValue("profileImageUrl", imageUrl, { shouldDirty: true });
 
-      setValue("profileImageUrl", profileImageUrl, {
-        shouldDirty: true,
-      });
-
-      const payload = {
-        profileImageUrl,
-      };
-
-      await dispatch(updateProfileService(payload)).unwrap();
+      await dispatch(updateProfileService({ profileImageUrl: imageUrl })).unwrap();
       await dispatch(getProfileService()).unwrap();
 
       showToast.success("Profile picture updated successfully");
     } catch (error: any) {
-      console.error("Error uploading profile picture:", error);
+      console.error("Error updating profile picture:", error);
       showToast.error(error || "Failed to update profile picture");
     } finally {
       setIsUploadingImage(false);

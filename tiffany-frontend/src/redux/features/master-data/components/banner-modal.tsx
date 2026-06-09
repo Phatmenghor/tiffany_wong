@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,10 +28,9 @@ import {
   updateBannerService,
 } from "../store/thunks/banner-thunks";
 import { clearError, clearSelectedBanner } from "../store/slice/banner-slice";
-import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
 import { showToast } from "@/components/shared/common/show-toast";
 import { BANNER_STATUS_CREATE_UPDATE } from "@/constants/status/create-update-status";
-import { ClickableImageUpload } from "@/components/shared/form-field/clickable-image-upload";
+import { SpacesImageUpload } from "@/components/shared/form-field/spaces-image-upload";
 import { BannerResponseModel } from "../store/models/response/banner-response";
 
 type Props = {
@@ -48,9 +47,6 @@ export default function BannerModal({
   mode,
 }: Props) {
   const isCreate = mode === ModalMode.CREATE_MODE;
-
-  // Local state for image upload loading
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -81,7 +77,6 @@ export default function BannerModal({
   useEffect(() => {
     if (isOpen) {
       if (isCreate) {
-        // Reset form for create mode
         reset({
           imageUrl: "",
           description: "",
@@ -89,7 +84,6 @@ export default function BannerModal({
           status: Status.ACTIVE,
         });
       } else if (banner) {
-        // Populate form with banner data for edit mode
         reset({
           imageUrl: banner.imageUrl || "",
           description: banner.description || "",
@@ -100,7 +94,6 @@ export default function BannerModal({
     }
   }, [isOpen, banner, isCreate, reset]);
 
-  // Clear errors when modal opens
   useEffect(() => {
     if (isOpen) {
       dispatch(clearError());
@@ -109,24 +102,8 @@ export default function BannerModal({
 
   const onSubmit = async (data: CreateBannerData) => {
     try {
-      let finalImageUrl = data.imageUrl;
-
-      // Upload image if it's a base64 string with loading state
-      if (finalImageUrl && isBase64Image(finalImageUrl)) {
-        setIsUploadingImage(true);
-        try {
-          finalImageUrl = await uploadImage(finalImageUrl);
-        } catch (uploadError) {
-          console.error("Error uploading banner image:", uploadError);
-          showToast.error("Failed to upload banner image. Please try again.");
-          return;
-        } finally {
-          setIsUploadingImage(false);
-        }
-      }
-
       const payload = {
-        imageUrl: finalImageUrl,
+        imageUrl: data.imageUrl,
         description: data.description || "",
         linkUrl: data.linkUrl || "",
         status: data.status,
@@ -153,14 +130,12 @@ export default function BannerModal({
 
   const handleClose = () => {
     reset();
-    setIsUploadingImage(false);
     dispatch(clearError());
     dispatch(clearSelectedBanner());
     onClose();
   };
 
-  const isSubmitting = isCreate ? isCreating : isUpdating;
-  const isProcessing = isSubmitting || isUploadingImage;
+  const isProcessing = isCreate ? isCreating : isUpdating;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -190,16 +165,17 @@ export default function BannerModal({
               )}
 
               <div className="space-y-6">
-                {/* Banner Image Section - Prominent display */}
+                {/* Banner Image Section */}
                 <div className="space-y-3">
-                  <ClickableImageUpload
+                  <SpacesImageUpload
                     label="Banner Image"
                     value={imageUrl}
-                    onChange={(base64) => setValue("imageUrl", base64)}
+                    onChange={(url) => setValue("imageUrl", url)}
                     aspectRatio="banner"
                     required
                     error={errors.imageUrl}
                     placeholder="Click to upload banner image"
+                    disabled={isProcessing}
                   />
                 </div>
 
@@ -253,12 +229,8 @@ export default function BannerModal({
               isSubmitting={isProcessing}
               isDirty={isDirty}
               isCreate={isCreate}
-              createMessage={
-                isProcessing ? "Uploading banner..." : "Creating banner..."
-              }
-              updateMessage={
-                isProcessing ? "Uploading banner..." : "Updating banner..."
-              }
+              createMessage="Creating banner..."
+              updateMessage="Updating banner..."
             >
               <CancelButton onClick={handleClose} disabled={isProcessing} />
               <SubmitButton
@@ -267,12 +239,8 @@ export default function BannerModal({
                 isCreate={isCreate}
                 createText="Create Banner"
                 updateText="Update Banner"
-                submittingCreateText={
-                  isProcessing ? "Uploading..." : "Creating..."
-                }
-                submittingUpdateText={
-                  isProcessing ? "Uploading..." : "Updating..."
-                }
+                submittingCreateText="Creating..."
+                submittingUpdateText="Updating..."
               />
             </FormFooter>
           </form>

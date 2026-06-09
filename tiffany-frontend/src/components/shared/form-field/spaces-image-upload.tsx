@@ -1,18 +1,20 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Upload, X, ImageIcon } from "lucide-react";
+import { Upload, X, ImageIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FieldError } from "react-hook-form";
+import { uploadToSpaces } from "@/services/spaces-service";
+import { showToast } from "@/components/shared/common/show-toast";
 
 type AspectRatio = "square" | "banner" | "portrait" | "landscape" | "auto";
 
-interface ClickableImageUploadProps {
+interface SpacesImageUploadProps {
   label: string;
   value?: string;
-  onChange: (base64: string) => void;
+  onChange: (url: string) => void;
   disabled?: boolean;
   required?: boolean;
   error?: FieldError;
@@ -24,7 +26,7 @@ interface ClickableImageUploadProps {
   showPreviewText?: boolean;
 }
 
-export function ClickableImageUpload({
+export function SpacesImageUpload({
   label,
   value,
   onChange,
@@ -37,8 +39,9 @@ export function ClickableImageUpload({
   placeholder = "Click to upload image",
   helperText,
   showPreviewText = true,
-}: ClickableImageUploadProps) {
+}: SpacesImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const getAspectRatioClass = () => {
     switch (aspectRatio) {
@@ -64,45 +67,34 @@ export function ClickableImageUpload({
     return "h-56";
   };
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      alert("Please select an image file");
+      showToast.error("Please select an image file");
       return;
     }
 
     const fileSizeMB = file.size / (1024 * 1024);
     if (fileSizeMB > maxSize) {
-      alert(`File size must be less than ${maxSize}MB`);
+      showToast.error(`File size must be less than ${maxSize}MB`);
       return;
     }
 
+    setIsUploading(true);
     try {
-      const base64 = await fileToBase64(file);
-      onChange(base64);
-    } catch (error) {
-      console.error("Error reading image:", error);
-      alert("Failed to read image. Please try again.");
+      const result = await uploadToSpaces(file);
+      onChange(result.url);
+    } catch (err) {
+      console.error("Upload failed:", err);
+      showToast.error("Failed to upload image. Please try again.");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
-  };
-
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === "string") {
-          resolve(reader.result);
-        } else {
-          reject(new Error("Failed to convert file to base64"));
-        }
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
   };
 
   const handleRemove = (e: React.MouseEvent) => {
@@ -114,7 +106,7 @@ export function ClickableImageUpload({
   };
 
   const handleClick = () => {
-    if (!disabled) {
+    if (!disabled && !isUploading) {
       fileInputRef.current?.click();
     }
   };
@@ -136,7 +128,7 @@ export function ClickableImageUpload({
             value
               ? "border-border hover:border-primary/50"
               : "border-dashed border-border hover:border-primary",
-            disabled
+            disabled || isUploading
               ? "opacity-50 cursor-not-allowed"
               : "cursor-pointer hover:shadow-md",
             error && "border-red-500",
@@ -147,11 +139,16 @@ export function ClickableImageUpload({
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            disabled={disabled}
+            disabled={disabled || isUploading}
             className="hidden"
           />
 
-          {value ? (
+          {isUploading ? (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-muted/30">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">Uploading...</p>
+            </div>
+          ) : value ? (
             <>
               <img
                 src={value}

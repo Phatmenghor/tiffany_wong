@@ -1,16 +1,16 @@
 "use client";
 
 import React from "react";
-import { useWatch, UseFormSetValue, FieldErrors, Control } from "react-hook-form";
+import { useWatch, FieldErrors, Control } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ClickableImageUpload } from "@/components/shared/form-field/clickable-image-upload";
+import { SpacesImageUpload } from "@/components/shared/form-field/spaces-image-upload";
 import { ProductFormData } from "../../store/models/schema/product-schema";
 
 interface ProductMainImageProps {
   control: Control<ProductFormData>;
   errors: FieldErrors<ProductFormData>;
   isProcessing: boolean;
-  onImageChange: (base64: string) => void;
+  onImageChange: (url: string) => void;
 }
 
 export function ProductMainImage({
@@ -27,7 +27,7 @@ export function ProductMainImage({
         <CardTitle>Product Image</CardTitle>
       </CardHeader>
       <CardContent>
-        <ClickableImageUpload
+        <SpacesImageUpload
           label="Main Product Image"
           value={mainImageUrl}
           onChange={onImageChange}
@@ -38,6 +38,7 @@ export function ProductMainImage({
           error={errors.mainImageUrl}
           placeholder="Click to upload main product image"
           helperText="PNG, JPG up to 5MB"
+          disabled={isProcessing}
         />
       </CardContent>
     </Card>

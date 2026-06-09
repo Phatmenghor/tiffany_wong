@@ -36,7 +36,6 @@ import { ProductMainImage } from "./product-modal/product-main-image";
 import { ProductPricing } from "./product-modal/product-pricing";
 import { ProductSizes } from "./product-modal/product-sizes";
 import { ProductImagesGallery } from "./product-modal/product-images-gallery";
-import { uploadImage, isBase64Image } from "@/utils/common/upload-image";
 
 type Props = {
   mode: ModalMode;
@@ -63,8 +62,6 @@ export default function ProductModal({
   const productData = useAppSelector(selectSelectedProduct);
   const { isCreating, isUpdating } = operations;
 
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [selectedCategory, setSelectedCategory] =
     useState<CategoriesResponseModel | null>(null);
 
@@ -208,139 +205,12 @@ export default function ProductModal({
     };
   };
 
-  const handleMultipleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-
-    if (imageFields.length >= MAX_PRODUCT_IMAGES) {
-      showToast.error(`Maximum ${MAX_PRODUCT_IMAGES} images allowed`);
-      event.target.value = "";
-      return;
-    }
-
-    const availableSlots = MAX_PRODUCT_IMAGES - imageFields.length;
-    const filesToProcess = Array.from(files).slice(0, availableSlots);
-
-    if (files.length > availableSlots) {
-      showToast.warning(
-        `Only ${availableSlots} slot${
-          availableSlots > 1 ? "s" : ""
-        } remaining. Processing first ${availableSlots} image${
-          availableSlots > 1 ? "s" : ""
-        }.`,
-      );
-    }
-
-    setIsProcessingImages(true);
-
-    try {
-      const maxSize = 5 * 1024 * 1024;
-      const fileToBase64 = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-      };
-
-      const results = await Promise.all(
-        filesToProcess.map(async (file) => {
-          if (!file.type.startsWith("image/")) {
-            return { success: false, error: `${file.name} is not an image` };
-          }
-          if (file.size > maxSize) {
-            return { success: false, error: `${file.name} exceeds 5MB` };
-          }
-          try {
-            const base64 = await fileToBase64(file);
-            return { success: true, base64 };
-          } catch {
-            return { success: false, error: `Failed to process ${file.name}` };
-          }
-        }),
-      );
-
-      const successfulImages = results.filter(
-        (r): r is { success: true; base64: string } => r.success,
-      );
-      const failedImages = results.filter(
-        (r): r is { success: false; error: string } => !r.success,
-      );
-
-      if (successfulImages.length > 0) {
-        successfulImages.forEach((img) => {
-          appendImage({ imageUrl: img.base64 });
-        });
-        showToast.success(
-          `Added ${successfulImages.length} image${
-            successfulImages.length > 1 ? "s" : ""
-          }`,
-        );
-      }
-
-      if (failedImages.length > 0) {
-        showToast.error(`${failedImages.length} image(s) failed to upload`);
-      }
-    } catch (error) {
-      showToast.error("Failed to process images");
-    } finally {
-      setIsProcessingImages(false);
-      event.target.value = "";
-    }
-  };
-
   const onSubmit = async (data: ProductFormData) => {
     try {
-      setIsUploadingImage(true);
-
-      let finalMainImageUrl = data.mainImageUrl;
-      if (finalMainImageUrl && isBase64Image(finalMainImageUrl)) {
-        try {
-          finalMainImageUrl = await uploadImage(finalMainImageUrl);
-        } catch (uploadError) {
-          showToast.error("Failed to upload main image");
-          setIsUploadingImage(false);
-          return;
-        }
-      }
-
-      const processedImages = await Promise.all(
-        (data.images || []).map(async (img: any) => {
-          if (!img.imageUrl) return null;
-
-          let imageUrl = img.imageUrl;
-          if (isBase64Image(imageUrl)) {
-            try {
-              imageUrl = await uploadImage(imageUrl);
-            } catch (error) {
-              console.error("Failed to upload product image:", error);
-              return null;
-            }
-          }
-
-          return {
-            id: img.id,
-            imageUrl,
-          };
-        }),
-      );
-
-      const validImages = processedImages.filter(
-        (img: any): img is { id?: string; imageUrl: string } =>
-          img !== null && !!img.imageUrl,
-      );
-
-      setIsUploadingImage(false);
-
       const cleanedSizes = (data.sizes || []).map((size) => ({
         id: size.id,
         name: size.name,
         price: size.price,
-        sku: size.sku || undefined,
-        barcode: size.barcode || undefined,
         ...cleanPromotionData(
           size.promotionType,
           size.promotionValue,
@@ -349,11 +219,15 @@ export default function ProductModal({
         ),
       }));
 
+      const validImages = (data.images || []).filter(
+        (img: any) => img !== null && !!img.imageUrl,
+      );
+
       const basePayload = {
         name: data.name,
         description: data.description,
         categoryId: data.categoryId,
-        mainImageUrl: finalMainImageUrl,
+        mainImageUrl: data.mainImageUrl,
         images: validImages.length > 0 ? validImages : undefined,
         sizes: cleanedSizes.length > 0 ? cleanedSizes : undefined,
         status: data.status,
@@ -402,16 +276,13 @@ export default function ProductModal({
 
   const handleClose = () => {
     reset();
-    setIsUploadingImage(false);
-    setIsProcessingImages(false);
     setSelectedCategory(null);
     dispatch(clearError());
     dispatch(clearSelectedProduct());
     onClose();
   };
 
-  const isSubmitting = isCreate ? isCreating : isUpdating;
-  const isProcessing = isSubmitting || isUploadingImage || isProcessingImages;
+  const isProcessing = isCreate ? isCreating : isUpdating;
   const productName = watch("name");
 
   return (
@@ -466,8 +337,8 @@ export default function ProductModal({
                   control={control}
                   errors={errors}
                   isProcessing={isProcessing}
-                  onImageChange={(base64) =>
-                    setValue("mainImageUrl", base64, { shouldDirty: true })
+                  onImageChange={(url) =>
+                    setValue("mainImageUrl", url, { shouldDirty: true })
                   }
                 />
 
@@ -478,18 +349,10 @@ export default function ProductModal({
                   hasSizes={hasSizes}
                   setValue={setValue}
                   onResetPromotion={() => {
-                    setValue("promotionType", "NONE", {
-                      shouldDirty: true,
-                    });
-                    setValue("promotionValue", undefined, {
-                      shouldDirty: true,
-                    });
-                    setValue("promotionFromDate", "", {
-                      shouldDirty: true,
-                    });
-                    setValue("promotionToDate", "", {
-                      shouldDirty: true,
-                    });
+                    setValue("promotionType", "NONE", { shouldDirty: true });
+                    setValue("promotionValue", undefined, { shouldDirty: true });
+                    setValue("promotionFromDate", "", { shouldDirty: true });
+                    setValue("promotionToDate", "", { shouldDirty: true });
                   }}
                 />
 
@@ -503,8 +366,6 @@ export default function ProductModal({
                   onAddSize={() =>
                     appendSize({
                       name: "",
-                      barcode: "",
-                      sku: "",
                       price: 0,
                       promotionType: "NONE",
                       promotionValue: undefined,
@@ -549,16 +410,17 @@ export default function ProductModal({
                   control={control}
                   errors={errors}
                   isProcessing={isProcessing}
-                  isProcessingImages={isProcessingImages}
                   imageFields={imageFields}
-                  watch={watch}
-                  onUploadImages={handleMultipleImageUpload}
+                  onAddImages={(urls) =>
+                    urls.forEach((url) => appendImage({ imageUrl: url }))
+                  }
                   onRemoveImage={removeImage}
-                  onImageChange={(index, base64) =>
-                    setValue(`images.${index}.imageUrl`, base64, {
+                  onImageChange={(index, url) =>
+                    setValue(`images.${index}.imageUrl`, url, {
                       shouldDirty: true,
                     })
                   }
+                  watch={watch}
                 />
               </div>
             </FormBody>
@@ -567,12 +429,8 @@ export default function ProductModal({
               isSubmitting={isProcessing}
               isDirty={isDirty}
               isCreate={isCreate}
-              createMessage={
-                isUploadingImage ? "Uploading images..." : "Creating product..."
-              }
-              updateMessage={
-                isUploadingImage ? "Uploading images..." : "Updating product..."
-              }
+              createMessage="Creating product..."
+              updateMessage="Updating product..."
             >
               <CancelButton onClick={handleClose} disabled={isProcessing} />
               <SubmitButton
@@ -581,12 +439,8 @@ export default function ProductModal({
                 isCreate={isCreate}
                 createText="Create Product"
                 updateText="Update Product"
-                submittingCreateText={
-                  isUploadingImage ? "Uploading..." : "Creating..."
-                }
-                submittingUpdateText={
-                  isUploadingImage ? "Uploading..." : "Updating..."
-                }
+                submittingCreateText="Creating..."
+                submittingUpdateText="Updating..."
               />
             </FormFooter>
           </form>
