@@ -51,9 +51,7 @@ public class DashboardServiceImpl implements DashboardService {
                 salesToday.doubleValue(), salesYesterday.doubleValue()))
             .totalOrdersChange(DashboardPeriodUtil.percentageChange(
                 (double) ordersToday, (double) ordersYesterday))
-            .lowStockItems(0L)
             .systemAlerts(pendingOrders)
-            .activeStaff(0L)
             .avgOrderValue(avg)
             .build();
     }
@@ -134,12 +132,6 @@ public class DashboardServiceImpl implements DashboardService {
 
         return DashboardPaymentsResponse.builder()
             .data(items).totalAmount(totalAmount).totalCount(totalCount).build();
-    }
-
-    @Override
-    public DashboardStockResponse getStock() {
-        return DashboardStockResponse.builder()
-            .data(new ArrayList<>()).lowStockCount(0L).outOfStockCount(0L).build();
     }
 
     @Override

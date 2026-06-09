@@ -9,7 +9,6 @@ import {
   fetchDashboardSummaryThunk,
   fetchDashboardSalesThunk,
   fetchDashboardPaymentsThunk,
-  fetchDashboardStockThunk,
   fetchDashboardOrdersThunk,
   fetchDashboardTopProductsThunk,
   fetchDashboardHourlySalesThunk,
@@ -24,7 +23,6 @@ import { KpiSection } from "./_components/kpi-section";
 import { CustomerStatsCard } from "./_components/customer-stats-card";
 import { PromotionPerformanceCard } from "./_components/promotion-performance-card";
 import { RecentOrdersCard } from "./_components/recent-orders-card";
-import { InventoryStatusCard } from "./_components/inventory-status-card";
 
 const SalesAnalyticsCard = dynamic(
   () => import("./_components/sales-analytics-card").then((m) => m.SalesAnalyticsCard),
@@ -44,7 +42,7 @@ const HourlySalesCard = dynamic(
 );
 
 export default function AdminDashboardPage() {
-  const { period, summary, sales, payments, stock, orders, topProducts, hourlySales, customerStats, promotions, loading, error, dispatch } = useDashboardState();
+  const { period, summary, sales, payments, orders, topProducts, hourlySales, customerStats, promotions, loading, error, dispatch } = useDashboardState();
 
   useEffect(() => {
     return () => { dispatch(resetDashboard()); };
@@ -55,7 +53,6 @@ export default function AdminDashboardPage() {
     dispatch(fetchDashboardSummaryThunk({ period: p }));
     dispatch(fetchDashboardSalesThunk({ period: "7D" }));
     dispatch(fetchDashboardPaymentsThunk({ period: p }));
-    dispatch(fetchDashboardStockThunk());
     dispatch(fetchDashboardOrdersThunk({ period: p }));
     dispatch(fetchDashboardTopProductsThunk({ period: p }));
     dispatch(fetchDashboardHourlySalesThunk({ period: "TODAY" }));
@@ -98,7 +95,6 @@ export default function AdminDashboardPage() {
         <PromotionPerformanceCard promotions={promotions} loading={loading.promotions} />
         <RecentOrdersCard orders={orders} loading={loading.orders} />
       </div>
-      <InventoryStatusCard stock={stock} loading={loading.stock} />
     </div>
   );
 }

@@ -7,7 +7,6 @@ import type {
   DashboardPeriod,
   DashboardPromotionsResponse,
   DashboardSalesResponse,
-  DashboardStockResponse,
   DashboardSummaryResponse,
   DashboardTopProductsResponse,
 } from "../models/response/dashboard-response";
@@ -18,7 +17,6 @@ import {
   fetchDashboardPaymentsThunk,
   fetchDashboardPromotionsThunk,
   fetchDashboardSalesThunk,
-  fetchDashboardStockThunk,
   fetchDashboardSummaryThunk,
   fetchDashboardTopProductsThunk,
 } from "../thunks/dashboard-thunks";
@@ -28,7 +26,6 @@ interface DashboardState {
   summary: DashboardSummaryResponse | null;
   sales: DashboardSalesResponse | null;
   payments: DashboardPaymentsResponse | null;
-  stock: DashboardStockResponse | null;
   orders: DashboardOrdersResponse | null;
   topProducts: DashboardTopProductsResponse | null;
   hourlySales: DashboardHourlySalesResponse | null;
@@ -38,7 +35,6 @@ interface DashboardState {
     summary: boolean;
     sales: boolean;
     payments: boolean;
-    stock: boolean;
     orders: boolean;
     topProducts: boolean;
     hourlySales: boolean;
@@ -50,11 +46,11 @@ interface DashboardState {
 
 const initialState: DashboardState = {
   period: "TODAY",
-  summary: null, sales: null, payments: null, stock: null,
+  summary: null, sales: null, payments: null,
   orders: null, topProducts: null, hourlySales: null,
   customerStats: null, promotions: null,
   loading: {
-    summary: true, sales: true, payments: true, stock: true,
+    summary: true, sales: true, payments: true,
     orders: true, topProducts: true, hourlySales: true,
     customerStats: true, promotions: true,
   },
@@ -83,11 +79,6 @@ const dashboardSlice = createSlice({
       .addCase(fetchDashboardPaymentsThunk.pending, (s) => { s.loading.payments = true; })
       .addCase(fetchDashboardPaymentsThunk.fulfilled, (s, a) => { s.payments = a.payload; s.loading.payments = false; })
       .addCase(fetchDashboardPaymentsThunk.rejected, (s) => { s.loading.payments = false; });
-
-    builder
-      .addCase(fetchDashboardStockThunk.pending, (s) => { s.loading.stock = true; })
-      .addCase(fetchDashboardStockThunk.fulfilled, (s, a) => { s.stock = a.payload; s.loading.stock = false; })
-      .addCase(fetchDashboardStockThunk.rejected, (s) => { s.loading.stock = false; });
 
     builder
       .addCase(fetchDashboardOrdersThunk.pending, (s) => { s.loading.orders = true; })

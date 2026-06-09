@@ -34,11 +34,6 @@ public class DashboardController {
         return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getPayments(period)));
     }
 
-    @GetMapping("/stock")
-    public ResponseEntity<ApiResponse<DashboardStockResponse>> getStock() {
-        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getStock()));
-    }
-
     @GetMapping("/orders")
     public ResponseEntity<ApiResponse<DashboardOrdersResponse>> getRecentOrders(
             @RequestParam(defaultValue = "TODAY") String period) {

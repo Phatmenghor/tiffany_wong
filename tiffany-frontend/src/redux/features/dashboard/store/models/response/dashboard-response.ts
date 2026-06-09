@@ -3,9 +3,7 @@ export interface DashboardSummaryResponse {
   totalOrdersToday: number;
   totalOrdersChange: number;
   totalSalesChange: number;
-  lowStockItems: number;
   systemAlerts: number;
-  activeStaff: number;
   avgOrderValue: number;
 }
 
@@ -33,25 +31,6 @@ export interface DashboardPaymentsResponse {
   data: PaymentMethodData[];
   totalAmount: number;
   totalCount: number;
-}
-
-export type StockStatus = "IN_STOCK" | "LOW_STOCK" | "OUT_OF_STOCK";
-
-export interface DashboardStockItem {
-  id: string;
-  name: string;
-  sku: string;
-  quantity: number;
-  minStock: number;
-  status: StockStatus;
-  category: string;
-  imageUrl?: string;
-}
-
-export interface DashboardStockResponse {
-  data: DashboardStockItem[];
-  lowStockCount: number;
-  outOfStockCount: number;
 }
 
 export interface DashboardOrder {

@@ -4,7 +4,6 @@ import type {
   DashboardSummaryResponse,
   DashboardSalesResponse,
   DashboardPaymentsResponse,
-  DashboardStockResponse,
   DashboardOrdersResponse,
   DashboardTopProductsResponse,
   DashboardHourlySalesResponse,
@@ -46,18 +45,6 @@ export const fetchDashboardPaymentsThunk = createAsyncThunk<DashboardPaymentsRes
       return res.data.data;
     } catch (e: any) {
       return rejectWithValue(e?.response?.data?.message || "Failed to load payments");
-    }
-  }
-);
-
-export const fetchDashboardStockThunk = createAsyncThunk<DashboardStockResponse, void>(
-  "dashboard/fetchStock",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await axiosClientWithAuth.get(`${BASE}/stock`);
-      return res.data.data;
-    } catch (e: any) {
-      return rejectWithValue(e?.response?.data?.message || "Failed to load stock");
     }
   }
 );

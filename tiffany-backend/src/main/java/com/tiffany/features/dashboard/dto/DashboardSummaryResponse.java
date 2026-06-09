@@ -9,8 +9,6 @@ public class DashboardSummaryResponse {
     private long      totalOrdersToday;
     private double    totalSalesChange;
     private double    totalOrdersChange;
-    private long      lowStockItems;
     private long      systemAlerts;
-    private long      activeStaff;
     private BigDecimal avgOrderValue;
 }

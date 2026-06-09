@@ -6,7 +6,6 @@ public interface DashboardService {
     DashboardSummaryResponse getSummary(String period);
     DashboardSalesResponse getSales(String period);
     DashboardPaymentsResponse getPayments(String period);
-    DashboardStockResponse getStock();
     DashboardOrdersResponse getRecentOrders(String period);
     DashboardTopProductsResponse getTopProducts(String period);
     DashboardHourlySalesResponse getHourlySales(String period);
