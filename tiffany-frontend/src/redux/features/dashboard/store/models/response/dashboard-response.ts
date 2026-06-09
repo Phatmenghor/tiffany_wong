@@ -33,36 +33,6 @@ export interface DashboardPaymentsResponse {
   totalCount: number;
 }
 
-export interface DashboardOrder {
-  id: string;
-  orderCode: string;
-  customerName: string;
-  totalAmount: number;
-  status: string;
-  paymentMethod: string;
-  itemCount: number;
-  createdAt: string | null;
-}
-
-export interface DashboardOrdersResponse {
-  data: DashboardOrder[];
-  totalElements: number;
-}
-
-export interface DashboardTopProduct {
-  id: string;
-  name: string;
-  unitsSold: number;
-  revenue: number;
-  category: string;
-  imageUrl?: string;
-}
-
-export interface DashboardTopProductsResponse {
-  data: DashboardTopProduct[];
-  period: string;
-}
-
 export interface HourlySalesPoint {
   hour: number;
   revenue: number;
@@ -74,26 +44,3 @@ export interface DashboardHourlySalesResponse {
   peakHour: number;
   currentHour: number;
 }
-
-export interface DashboardCustomerStatsResponse {
-  newCustomers: number;
-  returningCustomers: number;
-  returnRate: number;
-  totalCustomers: number;
-  avgOrderValue: number;
-}
-
-export interface DashboardPromotion {
-  id: string;
-  name: string;
-  type: string;
-  timesUsed: number;
-  revenueGenerated: number;
-  discountGiven: number;
-}
-
-export interface DashboardPromotionsResponse {
-  data: DashboardPromotion[];
-}
-
-export type DashboardPeriod = "TODAY" | "7D" | "30D" | "90D";

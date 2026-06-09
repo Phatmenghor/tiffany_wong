@@ -4,20 +4,16 @@ import type {
   DashboardSummaryResponse,
   DashboardSalesResponse,
   DashboardPaymentsResponse,
-  DashboardOrdersResponse,
-  DashboardTopProductsResponse,
   DashboardHourlySalesResponse,
-  DashboardCustomerStatsResponse,
-  DashboardPromotionsResponse,
 } from "../models/response/dashboard-response";
 
 const BASE = "/api/v1/dashboard";
 
-export const fetchDashboardSummaryThunk = createAsyncThunk<DashboardSummaryResponse, { period: string }>(
+export const fetchDashboardSummaryThunk = createAsyncThunk<DashboardSummaryResponse, void>(
   "dashboard/fetchSummary",
-  async ({ period }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosClientWithAuth.get(`${BASE}/summary`, { params: { period } });
+      const res = await axiosClientWithAuth.get(`${BASE}/summary`);
       return res.data.data;
     } catch (e: any) {
       return rejectWithValue(e?.response?.data?.message || "Failed to load summary");
@@ -25,11 +21,11 @@ export const fetchDashboardSummaryThunk = createAsyncThunk<DashboardSummaryRespo
   }
 );
 
-export const fetchDashboardSalesThunk = createAsyncThunk<DashboardSalesResponse, { period: string }>(
+export const fetchDashboardSalesThunk = createAsyncThunk<DashboardSalesResponse, void>(
   "dashboard/fetchSales",
-  async ({ period }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosClientWithAuth.get(`${BASE}/sales`, { params: { period } });
+      const res = await axiosClientWithAuth.get(`${BASE}/sales`);
       return res.data.data;
     } catch (e: any) {
       return rejectWithValue(e?.response?.data?.message || "Failed to load sales");
@@ -37,11 +33,11 @@ export const fetchDashboardSalesThunk = createAsyncThunk<DashboardSalesResponse,
   }
 );
 
-export const fetchDashboardPaymentsThunk = createAsyncThunk<DashboardPaymentsResponse, { period: string }>(
+export const fetchDashboardPaymentsThunk = createAsyncThunk<DashboardPaymentsResponse, void>(
   "dashboard/fetchPayments",
-  async ({ period }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosClientWithAuth.get(`${BASE}/payments`, { params: { period } });
+      const res = await axiosClientWithAuth.get(`${BASE}/payments`);
       return res.data.data;
     } catch (e: any) {
       return rejectWithValue(e?.response?.data?.message || "Failed to load payments");
@@ -49,62 +45,14 @@ export const fetchDashboardPaymentsThunk = createAsyncThunk<DashboardPaymentsRes
   }
 );
 
-export const fetchDashboardOrdersThunk = createAsyncThunk<DashboardOrdersResponse, { period: string }>(
-  "dashboard/fetchOrders",
-  async ({ period }, { rejectWithValue }) => {
-    try {
-      const res = await axiosClientWithAuth.get(`${BASE}/orders`, { params: { period } });
-      return res.data.data;
-    } catch (e: any) {
-      return rejectWithValue(e?.response?.data?.message || "Failed to load orders");
-    }
-  }
-);
-
-export const fetchDashboardTopProductsThunk = createAsyncThunk<DashboardTopProductsResponse, { period: string }>(
-  "dashboard/fetchTopProducts",
-  async ({ period }, { rejectWithValue }) => {
-    try {
-      const res = await axiosClientWithAuth.get(`${BASE}/top-products`, { params: { period } });
-      return res.data.data;
-    } catch (e: any) {
-      return rejectWithValue(e?.response?.data?.message || "Failed to load top products");
-    }
-  }
-);
-
-export const fetchDashboardHourlySalesThunk = createAsyncThunk<DashboardHourlySalesResponse, { period: string }>(
+export const fetchDashboardHourlySalesThunk = createAsyncThunk<DashboardHourlySalesResponse, void>(
   "dashboard/fetchHourlySales",
-  async ({ period }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosClientWithAuth.get(`${BASE}/hourly-sales`, { params: { period } });
+      const res = await axiosClientWithAuth.get(`${BASE}/hourly-sales`);
       return res.data.data;
     } catch (e: any) {
       return rejectWithValue(e?.response?.data?.message || "Failed to load hourly sales");
-    }
-  }
-);
-
-export const fetchDashboardCustomerStatsThunk = createAsyncThunk<DashboardCustomerStatsResponse, { period: string }>(
-  "dashboard/fetchCustomerStats",
-  async ({ period }, { rejectWithValue }) => {
-    try {
-      const res = await axiosClientWithAuth.get(`${BASE}/customers`, { params: { period } });
-      return res.data.data;
-    } catch (e: any) {
-      return rejectWithValue(e?.response?.data?.message || "Failed to load customer stats");
-    }
-  }
-);
-
-export const fetchDashboardPromotionsThunk = createAsyncThunk<DashboardPromotionsResponse, { period: string }>(
-  "dashboard/fetchPromotions",
-  async ({ period }, { rejectWithValue }) => {
-    try {
-      const res = await axiosClientWithAuth.get(`${BASE}/promotions`, { params: { period } });
-      return res.data.data;
-    } catch (e: any) {
-      return rejectWithValue(e?.response?.data?.message || "Failed to load promotions");
     }
   }
 );

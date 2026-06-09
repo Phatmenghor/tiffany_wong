@@ -1,10 +1,10 @@
 "use client";
-import { TrendingUp, TrendingDown, ShoppingCart, DollarSign, Bell, ArrowUpRight, RotateCcw } from "lucide-react";
+import { TrendingUp, TrendingDown, ShoppingCart, DollarSign, Bell, ArrowUpRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/utils/common/currency-format";
 import { cn } from "@/lib/utils";
-import type { DashboardSummaryResponse, DashboardCustomerStatsResponse } from "@/redux/features/dashboard/store/models/response/dashboard-response";
+import type { DashboardSummaryResponse } from "@/redux/features/dashboard/store/models/response/dashboard-response";
 
 interface KpiCardProps {
   title: string; value: string; change?: number;
@@ -35,35 +35,26 @@ function KpiCard({ title, value, change, icon, iconBg, description }: KpiCardPro
   );
 }
 
-function KpiCardSkeleton() {
+export function KpiSectionSkeleton() {
   return (
-    <Card><CardContent className="p-3">
-      <div className="flex items-center justify-between mb-2"><Skeleton className="h-2.5 w-16" /><Skeleton className="h-7 w-7 rounded-md" /></div>
-      <Skeleton className="h-5 w-24 mb-1.5" /><Skeleton className="h-2.5 w-20" />
-    </CardContent></Card>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      {[...Array(4)].map((_, i) => (
+        <Card key={i}><CardContent className="p-3">
+          <div className="flex items-center justify-between mb-2"><Skeleton className="h-2.5 w-16" /><Skeleton className="h-7 w-7 rounded-md" /></div>
+          <Skeleton className="h-5 w-24 mb-1.5" /><Skeleton className="h-2.5 w-20" />
+        </CardContent></Card>
+      ))}
+    </div>
   );
 }
 
-interface KpiSectionProps {
-  summary: DashboardSummaryResponse | null;
-  customerStats: DashboardCustomerStatsResponse | null;
-  loading: { summary: boolean; customerStats: boolean };
-}
-
-export function KpiSection({ summary, customerStats, loading }: KpiSectionProps) {
-  if (loading.summary || loading.customerStats) {
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-        {[...Array(5)].map((_, i) => <KpiCardSkeleton key={i} />)}
-      </div>
-    );
-  }
+export function KpiSection({ summary, loading }: { summary: DashboardSummaryResponse | null; loading: boolean }) {
+  if (loading) return <KpiSectionSkeleton />;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-      <KpiCard title="Total Sales" value={formatCurrency(summary?.totalSalesToday ?? 0)} change={summary?.totalSalesChange} icon={<DollarSign className="h-3.5 w-3.5 text-primary" />} iconBg="bg-primary/10" />
-      <KpiCard title="Total Orders" value={String(summary?.totalOrdersToday ?? 0)} change={summary?.totalOrdersChange} icon={<ShoppingCart className="h-3.5 w-3.5 text-sky-600" />} iconBg="bg-sky-100 dark:bg-sky-950/40" />
-      <KpiCard title="Avg Order Value" value={formatCurrency(summary?.avgOrderValue ?? 0)} icon={<ArrowUpRight className="h-3.5 w-3.5 text-violet-600" />} iconBg="bg-violet-100 dark:bg-violet-950/40" description="Per transaction" />
-      <KpiCard title="Return Customers" value={`${customerStats?.returnRate?.toFixed(0) ?? 0}%`} icon={<RotateCcw className="h-3.5 w-3.5 text-emerald-600" />} iconBg="bg-emerald-100 dark:bg-emerald-950/40" description={`${customerStats?.returningCustomers ?? 0} returning`} />
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <KpiCard title="Total Sales Today" value={formatCurrency(summary?.totalSalesToday ?? 0)} change={summary?.totalSalesChange} icon={<DollarSign className="h-3.5 w-3.5 text-primary" />} iconBg="bg-primary/10" />
+      <KpiCard title="Total Orders Today" value={String(summary?.totalOrdersToday ?? 0)} change={summary?.totalOrdersChange} icon={<ShoppingCart className="h-3.5 w-3.5 text-sky-600" />} iconBg="bg-sky-100 dark:bg-sky-950/40" />
+      <KpiCard title="Avg Order Value" value={formatCurrency(summary?.avgOrderValue ?? 0)} icon={<ArrowUpRight className="h-3.5 w-3.5 text-violet-600" />} iconBg="bg-violet-100 dark:bg-violet-950/40" description="Per transaction today" />
       <KpiCard title="Pending Orders" value={String(summary?.systemAlerts ?? 0)} icon={<Bell className="h-3.5 w-3.5 text-rose-600" />} iconBg="bg-rose-100 dark:bg-rose-950/40" description={summary?.systemAlerts ? "Awaiting action" : "All clear"} />
     </div>
   );

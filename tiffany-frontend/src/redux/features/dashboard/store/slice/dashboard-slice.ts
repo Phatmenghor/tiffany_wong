@@ -1,59 +1,37 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import type {
-  DashboardCustomerStatsResponse,
   DashboardHourlySalesResponse,
-  DashboardOrdersResponse,
   DashboardPaymentsResponse,
-  DashboardPeriod,
-  DashboardPromotionsResponse,
   DashboardSalesResponse,
   DashboardSummaryResponse,
-  DashboardTopProductsResponse,
 } from "../models/response/dashboard-response";
 import {
-  fetchDashboardCustomerStatsThunk,
   fetchDashboardHourlySalesThunk,
-  fetchDashboardOrdersThunk,
   fetchDashboardPaymentsThunk,
-  fetchDashboardPromotionsThunk,
   fetchDashboardSalesThunk,
   fetchDashboardSummaryThunk,
-  fetchDashboardTopProductsThunk,
 } from "../thunks/dashboard-thunks";
 
 interface DashboardState {
-  period: DashboardPeriod;
   summary: DashboardSummaryResponse | null;
   sales: DashboardSalesResponse | null;
   payments: DashboardPaymentsResponse | null;
-  orders: DashboardOrdersResponse | null;
-  topProducts: DashboardTopProductsResponse | null;
   hourlySales: DashboardHourlySalesResponse | null;
-  customerStats: DashboardCustomerStatsResponse | null;
-  promotions: DashboardPromotionsResponse | null;
   loading: {
     summary: boolean;
     sales: boolean;
     payments: boolean;
-    orders: boolean;
-    topProducts: boolean;
     hourlySales: boolean;
-    customerStats: boolean;
-    promotions: boolean;
   };
   error: string | null;
 }
 
 const initialState: DashboardState = {
-  period: "TODAY",
-  summary: null, sales: null, payments: null,
-  orders: null, topProducts: null, hourlySales: null,
-  customerStats: null, promotions: null,
-  loading: {
-    summary: true, sales: true, payments: true,
-    orders: true, topProducts: true, hourlySales: true,
-    customerStats: true, promotions: true,
-  },
+  summary: null,
+  sales: null,
+  payments: null,
+  hourlySales: null,
+  loading: { summary: true, sales: true, payments: true, hourlySales: true },
   error: null,
 };
 
@@ -61,7 +39,6 @@ const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
   reducers: {
-    setPeriod: (state, action: PayloadAction<DashboardPeriod>) => { state.period = action.payload; },
     resetDashboard: () => initialState,
   },
   extraReducers: (builder) => {
@@ -81,31 +58,11 @@ const dashboardSlice = createSlice({
       .addCase(fetchDashboardPaymentsThunk.rejected, (s) => { s.loading.payments = false; });
 
     builder
-      .addCase(fetchDashboardOrdersThunk.pending, (s) => { s.loading.orders = true; })
-      .addCase(fetchDashboardOrdersThunk.fulfilled, (s, a) => { s.orders = a.payload; s.loading.orders = false; })
-      .addCase(fetchDashboardOrdersThunk.rejected, (s) => { s.loading.orders = false; });
-
-    builder
-      .addCase(fetchDashboardTopProductsThunk.pending, (s) => { s.loading.topProducts = true; })
-      .addCase(fetchDashboardTopProductsThunk.fulfilled, (s, a) => { s.topProducts = a.payload; s.loading.topProducts = false; })
-      .addCase(fetchDashboardTopProductsThunk.rejected, (s) => { s.loading.topProducts = false; });
-
-    builder
       .addCase(fetchDashboardHourlySalesThunk.pending, (s) => { s.loading.hourlySales = true; })
       .addCase(fetchDashboardHourlySalesThunk.fulfilled, (s, a) => { s.hourlySales = a.payload; s.loading.hourlySales = false; })
       .addCase(fetchDashboardHourlySalesThunk.rejected, (s) => { s.loading.hourlySales = false; });
-
-    builder
-      .addCase(fetchDashboardCustomerStatsThunk.pending, (s) => { s.loading.customerStats = true; })
-      .addCase(fetchDashboardCustomerStatsThunk.fulfilled, (s, a) => { s.customerStats = a.payload; s.loading.customerStats = false; })
-      .addCase(fetchDashboardCustomerStatsThunk.rejected, (s) => { s.loading.customerStats = false; });
-
-    builder
-      .addCase(fetchDashboardPromotionsThunk.pending, (s) => { s.loading.promotions = true; })
-      .addCase(fetchDashboardPromotionsThunk.fulfilled, (s, a) => { s.promotions = a.payload; s.loading.promotions = false; })
-      .addCase(fetchDashboardPromotionsThunk.rejected, (s) => { s.loading.promotions = false; });
   },
 });
 
-export const { setPeriod, resetDashboard } = dashboardSlice.actions;
+export const { resetDashboard } = dashboardSlice.actions;
 export default dashboardSlice.reducer;

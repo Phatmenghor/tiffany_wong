@@ -18,49 +18,25 @@ public class DashboardController {
 
     @GetMapping("/summary")
     public ResponseEntity<ApiResponse<DashboardSummaryResponse>> getSummary(
-            @RequestParam(defaultValue = "TODAY") String period) {
+            @RequestParam(defaultValue = "30D") String period) {
         return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getSummary(period)));
     }
 
     @GetMapping("/sales")
     public ResponseEntity<ApiResponse<DashboardSalesResponse>> getSales(
-            @RequestParam(defaultValue = "7D") String period) {
+            @RequestParam(defaultValue = "30D") String period) {
         return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getSales(period)));
     }
 
     @GetMapping("/payments")
     public ResponseEntity<ApiResponse<DashboardPaymentsResponse>> getPayments(
-            @RequestParam(defaultValue = "TODAY") String period) {
+            @RequestParam(defaultValue = "30D") String period) {
         return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getPayments(period)));
-    }
-
-    @GetMapping("/orders")
-    public ResponseEntity<ApiResponse<DashboardOrdersResponse>> getRecentOrders(
-            @RequestParam(defaultValue = "TODAY") String period) {
-        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getRecentOrders(period)));
-    }
-
-    @GetMapping("/top-products")
-    public ResponseEntity<ApiResponse<DashboardTopProductsResponse>> getTopProducts(
-            @RequestParam(defaultValue = "TODAY") String period) {
-        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getTopProducts(period)));
     }
 
     @GetMapping("/hourly-sales")
     public ResponseEntity<ApiResponse<DashboardHourlySalesResponse>> getHourlySales(
             @RequestParam(defaultValue = "TODAY") String period) {
         return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getHourlySales(period)));
-    }
-
-    @GetMapping("/customers")
-    public ResponseEntity<ApiResponse<DashboardCustomerStatsResponse>> getCustomerStats(
-            @RequestParam(defaultValue = "TODAY") String period) {
-        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getCustomerStats(period)));
-    }
-
-    @GetMapping("/promotions")
-    public ResponseEntity<ApiResponse<DashboardPromotionsResponse>> getPromotions(
-            @RequestParam(defaultValue = "TODAY") String period) {
-        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getPromotions(period)));
     }
 }
