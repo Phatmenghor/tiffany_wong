@@ -3,7 +3,7 @@ package com.tiffany.features.order.dto.response;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -14,7 +14,6 @@ public class OrderItemResponse {
     private String productImageUrl;
     private UUID productSizeId;
     private String sizeName;
-    private String sku;
 
     private Integer quantity;
 
@@ -25,8 +24,8 @@ public class OrderItemResponse {
     // Promotion details
     private String displayPromotionType;       // PERCENTAGE or FIXED_AMOUNT
     private BigDecimal displayPromotionValue;  // Discount amount or percentage
-    private LocalDateTime displayPromotionFromDate;
-    private LocalDateTime displayPromotionToDate;
+    private LocalDate displayPromotionFromDate;
+    private LocalDate displayPromotionToDate;
     private Boolean hasActivePromotion;
 
     // Subtotal calculations

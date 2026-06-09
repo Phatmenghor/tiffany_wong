@@ -25,9 +25,6 @@ public class ProductListDto extends BaseAuditResponse {
     private Boolean hasSizes;
     private Boolean hasActivePromotion;
     private String mainImageUrl;
-    
-    private String barcode;
-    private String sku;
 
     private Long viewCount;
     private Long favoriteCount;

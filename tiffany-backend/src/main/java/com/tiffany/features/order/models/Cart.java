@@ -14,8 +14,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "carts",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id"})
-)
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id"}),
+        indexes = {
+                @Index(name = "idx_carts_user_id", columnList = "user_id")
+        })
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor

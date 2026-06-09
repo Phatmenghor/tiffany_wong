@@ -11,7 +11,11 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "categories",
+        indexes = {
+                @Index(name = "idx_categories_status", columnList = "status"),
+                @Index(name = "idx_categories_is_deleted", columnList = "is_deleted")
+        })
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor

@@ -12,7 +12,10 @@ import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "images")
+@Table(name = "images",
+        indexes = {
+                @Index(name = "idx_images_type", columnList = "type")
+        })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

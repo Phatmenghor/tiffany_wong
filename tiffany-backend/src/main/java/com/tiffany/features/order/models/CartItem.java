@@ -13,9 +13,14 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table(name = "cart_items", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"cart_id", "product_id", "product_size_id"})
-})
+@Table(name = "cart_items",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"cart_id", "product_id", "product_size_id"})
+        },
+        indexes = {
+                @Index(name = "idx_cart_items_cart_id", columnList = "cart_id"),
+                @Index(name = "idx_cart_items_product_id", columnList = "product_id")
+        })
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor

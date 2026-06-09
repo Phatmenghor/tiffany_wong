@@ -13,9 +13,16 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_user_identifier", columnNames = {"user_identifier"})
-})
+@Table(name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_user_identifier", columnNames = {"user_identifier"})
+        },
+        indexes = {
+                @Index(name = "idx_users_user_identifier", columnList = "user_identifier"),
+                @Index(name = "idx_users_account_status", columnList = "account_status"),
+                @Index(name = "idx_users_user_type", columnList = "user_type"),
+                @Index(name = "idx_users_is_deleted", columnList = "is_deleted")
+        })
 @Data
 @EqualsAndHashCode(callSuper = true, exclude = {"profile"})
 @ToString(exclude = {"profile"})

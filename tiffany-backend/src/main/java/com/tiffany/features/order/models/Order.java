@@ -17,7 +17,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "orders",
+        indexes = {
+                @Index(name = "idx_orders_customer_id", columnList = "customer_id"),
+                @Index(name = "idx_orders_order_status", columnList = "order_status"),
+                @Index(name = "idx_orders_payment_status", columnList = "payment_status"),
+                @Index(name = "idx_orders_created_at", columnList = "created_at"),
+                @Index(name = "idx_orders_is_deleted", columnList = "is_deleted")
+        })
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor

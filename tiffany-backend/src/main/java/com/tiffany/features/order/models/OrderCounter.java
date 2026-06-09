@@ -9,9 +9,13 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "order_counters", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"counter_date"}, name = "uk_order_counter_date")
-})
+@Table(name = "order_counters",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"counter_date"}, name = "uk_order_counter_date")
+        },
+        indexes = {
+                @Index(name = "idx_order_counters_counter_date", columnList = "counter_date")
+        })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

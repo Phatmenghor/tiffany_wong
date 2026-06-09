@@ -4,8 +4,6 @@ import com.tiffany.enums.order.OrderStatus;
 import com.tiffany.exception.custom.NotFoundException;
 import com.tiffany.exception.custom.ValidationException;
 import com.tiffany.features.auth.models.User;
-import com.tiffany.features.main.models.Product;
-import com.tiffany.features.main.repository.ProductRepository;
 import com.tiffany.features.notification.service.TelegramService;
 import com.tiffany.features.order.dto.filter.OrderFilterRequest;
 import com.tiffany.features.order.dto.helper.OrderCreateHelper;
@@ -46,7 +44,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
-    private final ProductRepository productRepository;
     private final OrderDeliveryAddressRepository orderDeliveryAddressRepository;
     private final OrderMapper orderMapper;
     private final SecurityUtils securityUtils;
@@ -211,16 +208,7 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal discountAmount = BigDecimal.ZERO;
 
         for (var cartItem : cart.getItems()) {
-            // Get product for SKU/barcode
-            Product product = productRepository.findById(cartItem.getProductId())
-                    .orElseThrow(() -> new NotFoundException("Product not found: " + cartItem.getProductId()));
-
             OrderItemCreateHelper helper = orderMapper.buildOrderItemHelperFromCartItem(cartItem, orderId);
-
-            // Set SKU and barcode from product master data (primary source)
-            helper.setSku(product.getSku());
-            helper.setBarcode(product.getBarcode());
-
             OrderItem orderItem = orderMapper.createOrderItemFromHelper(helper);
             orderItem.calculateTotalPrice();
 

@@ -13,7 +13,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "customer_addresses")
+@Table(name = "customer_addresses",
+        indexes = {
+                @Index(name = "idx_customer_addresses_user_id", columnList = "user_id"),
+                @Index(name = "idx_customer_addresses_user_id_is_default", columnList = "user_id, is_default")
+        })
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor

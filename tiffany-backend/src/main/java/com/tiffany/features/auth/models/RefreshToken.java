@@ -14,7 +14,12 @@ import java.util.UUID;
  * RefreshToken entity for managing long-lived refresh tokens.
  */
 @Entity
-@Table(name = "refresh_tokens")
+@Table(name = "refresh_tokens",
+        indexes = {
+                @Index(name = "idx_refresh_tokens_user_id", columnList = "user_id"),
+                @Index(name = "idx_refresh_tokens_is_revoked", columnList = "is_revoked"),
+                @Index(name = "idx_refresh_tokens_expiry_date", columnList = "expiry_date")
+        })
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor

@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -18,7 +18,6 @@ public class CartItemResponse {
     private String productImageUrl;
     private UUID productSizeId;
     private String sizeName;
-    private String sku;
 
     private Integer quantity;
 
@@ -27,8 +26,8 @@ public class CartItemResponse {
     private BigDecimal displayOriginPrice;
     private String displayPromotionType;
     private BigDecimal displayPromotionValue;
-    private LocalDateTime displayPromotionFromDate;
-    private LocalDateTime displayPromotionToDate;
+    private LocalDate displayPromotionFromDate;
+    private LocalDate displayPromotionToDate;
     private Boolean hasActivePromotion;
 
     // Subtotal calculations

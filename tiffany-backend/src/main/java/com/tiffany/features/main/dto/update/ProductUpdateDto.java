@@ -22,9 +22,6 @@ public class ProductUpdateDto {
     
     private String mainImageUrl;
 
-    private String barcode;
-    private String sku;
-
     private String promotionType;
     private BigDecimal promotionValue;
     private LocalDate promotionFromDate;

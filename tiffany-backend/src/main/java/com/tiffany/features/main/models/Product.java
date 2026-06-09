@@ -18,7 +18,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "products")
+@Table(name = "products",
+        indexes = {
+                @Index(name = "idx_products_category_id", columnList = "category_id"),
+                @Index(name = "idx_products_status", columnList = "status"),
+                @Index(name = "idx_products_is_deleted", columnList = "is_deleted"),
+                @Index(name = "idx_products_status_is_deleted", columnList = "status, is_deleted")
+        })
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
@@ -64,12 +70,6 @@ public class Product extends BaseUUIDEntity {
 
     @Column(name = "favorite_count", nullable = false)
     private Long favoriteCount = 0L;
-
-    @Column(name = "barcode")
-    private String barcode;
-
-    @Column(name = "sku")
-    private String sku;
 
     @Column(name = "main_image_url")
     private String mainImageUrl;

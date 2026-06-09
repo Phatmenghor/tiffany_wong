@@ -8,7 +8,10 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "user_profiles")
+@Table(name = "user_profiles",
+        indexes = {
+                @Index(name = "idx_user_profiles_user_id", columnList = "user_id")
+        })
 @Data
 @EqualsAndHashCode(callSuper = true, exclude = "user")
 @ToString(exclude = "user")

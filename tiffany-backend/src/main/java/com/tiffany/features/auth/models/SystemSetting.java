@@ -8,7 +8,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "system_settings")
+@Table(name = "system_settings",
+        indexes = {
+                @Index(name = "idx_system_settings_is_deleted", columnList = "is_deleted")
+        })
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor

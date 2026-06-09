@@ -17,11 +17,9 @@ import org.mapstruct.ReportingPolicy;
 import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = {OrderItemMapper.class, PaginationMapper.class, OrderStatusHistoryMapper.class})
@@ -76,11 +74,10 @@ public interface OrderMapper {
      * Helper to build OrderItemCreateHelper from cart item
      */
     default OrderItemCreateHelper buildOrderItemHelperFromCartItem(CartItem cartItem, UUID orderId) {
-        // Get promotion details from product or productSize
         String promotionType = null;
         BigDecimal promotionValue = null;
-        LocalDateTime promotionFromDate = null;
-        LocalDateTime promotionToDate = null;
+        LocalDate promotionFromDate = null;
+        LocalDate promotionToDate = null;
 
         if (cartItem.getProduct() != null && isPromotionActive(cartItem.getProduct())) {
             promotionType = cartItem.getProduct().getPromotionType() != null ?
@@ -97,12 +94,10 @@ public interface OrderMapper {
                 .productName(cartItem.getProduct().getName())
                 .productImageUrl(cartItem.getProduct().getMainImageUrl())
                 .sizeName(cartItem.getSizeName())
-                // Pricing snapshot
                 .currentPrice(cartItem.getCurrentPrice())
                 .finalPrice(cartItem.getFinalPrice())
                 .unitPrice(cartItem.getFinalPrice())
                 .hasPromotion(cartItem.hasDiscount())
-                // Promotion details snapshot
                 .promotionType(promotionType)
                 .promotionValue(promotionValue)
                 .promotionFromDate(promotionFromDate)
@@ -110,7 +105,6 @@ public interface OrderMapper {
                 .quantity(cartItem.getQuantity())
                 .build();
     }
-
 
     /**
      * Calculate total number of items in the order
@@ -125,21 +119,18 @@ public interface OrderMapper {
     }
 
 
-    /**
-     * Check if promotion is active for a product
-     */
     default boolean isPromotionActive(Product product) {
         if (product.getPromotionValue() == null || product.getPromotionType() == null) {
             return false;
         }
 
-        LocalDateTime today = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        LocalDate today = LocalDate.now();
 
-        if (product.getPromotionFromDate() != null && today.isBefore(product.getPromotionFromDate().truncatedTo(ChronoUnit.DAYS))) {
+        if (product.getPromotionFromDate() != null && today.isBefore(product.getPromotionFromDate())) {
             return false;
         }
 
-        if (product.getPromotionToDate() != null && today.isAfter(product.getPromotionToDate().truncatedTo(ChronoUnit.DAYS))) {
+        if (product.getPromotionToDate() != null && today.isAfter(product.getPromotionToDate())) {
             return false;
         }
 

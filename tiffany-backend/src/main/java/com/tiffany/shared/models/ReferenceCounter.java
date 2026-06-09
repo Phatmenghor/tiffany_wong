@@ -8,9 +8,14 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "reference_counters", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"entity_type", "counter_date"}, name = "uk_reference_counter")
-})
+@Table(name = "reference_counters",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"entity_type", "counter_date"}, name = "uk_reference_counter")
+        },
+        indexes = {
+                @Index(name = "idx_reference_counters_entity_type", columnList = "entity_type"),
+                @Index(name = "idx_reference_counters_entity_type_date", columnList = "entity_type, counter_date")
+        })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

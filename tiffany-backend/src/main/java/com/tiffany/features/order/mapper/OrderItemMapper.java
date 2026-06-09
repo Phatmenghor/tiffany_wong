@@ -20,7 +20,6 @@ public interface OrderItemMapper {
     @Mapping(target = "productImageUrl", source = "productImageUrl")
     @Mapping(target = "productSizeId", source = "productSizeId")
     @Mapping(target = "sizeName", source = "sizeName")
-    @Mapping(target = "sku", source = "sku")
     @Mapping(target = "quantity", source = "quantity")
     @Mapping(target = "displayPrice", source = "finalPrice")
     @Mapping(target = "displayOriginPrice", source = "currentPrice")
