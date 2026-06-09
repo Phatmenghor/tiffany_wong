@@ -20,6 +20,7 @@
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<springdoc.version>2.7.0</springdoc.version>
 		<jwt.version>0.12.6</jwt.version>
+		<awssdk.version>2.25.60</awssdk.version>
 	</properties>
 
 	<dependencies>
@@ -116,6 +117,13 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc.version}</version>
+		</dependency>
+
+		<!-- DigitalOcean Spaces / AWS S3 SDK -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>${awssdk.version}</version>
 		</dependency>
 
 		<!-- Caffeine Caching -->
