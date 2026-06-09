@@ -203,16 +203,15 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
               className="relative flex items-center gap-3 group transition-all duration-300 hover:scale-[1.02]"
             >
               <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg group-hover:shadow-primary/20 transition-all duration-300 overflow-hidden">
+                <div className="w-10 h-10 overflow-hidden">
                   <Image
                     src="/assets/image/logo.png"
                     alt={businessName}
                     width={40}
                     height={40}
-                    className="w-full h-full object-cover rounded"
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-primary/20 to-primary/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               <div className="flex flex-col">
                 <span className="text-foreground font-bold text-sm leading-tight tracking-tight">
