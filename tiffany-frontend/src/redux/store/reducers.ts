@@ -24,6 +24,7 @@ import cartReducer from "../features/main/store/slice/cart-slice";
 import globalSettingsReducer from "./slices/global-settings-slice";
 import locationReducer from "../features/location/store/slice/location-slice";
 import publicLocationReducer from "../features/location/store/slice/public-location-slice";
+import dashboardReducer from "../features/dashboard/store/slice/dashboard-slice";
 
 /**
  * Root reducer configuration
@@ -32,6 +33,9 @@ import publicLocationReducer from "../features/location/store/slice/public-locat
 export const reducers = {
   // Global Settings
   globalSettings: globalSettingsReducer,
+
+  // Dashboard
+  dashboard: dashboardReducer,
 
   // Auth
   auth: authReducer,
