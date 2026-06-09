@@ -28,8 +28,6 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
 
   const businessName = BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME;
 
-  // Track if component is hydrated to avoid hydration mismatch
-  const [isHydrated, setIsHydrated] = useState(false);
 
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -41,11 +39,6 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
     Settings: true,
   });
   const [collapsed, setCollapsed] = useState(false);
-
-  useEffect(() => {
-    // Mark as hydrated to avoid hydration mismatch
-    setIsHydrated(true);
-  }, []);
 
   useEffect(() => {
     if (!profile && !isProfileLoading) {
@@ -224,7 +217,7 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
               </div>
               <div className="flex flex-col">
                 <span className="text-foreground font-bold text-sm leading-tight tracking-tight">
-                  {isHydrated ? businessName : "Dashboard"}
+                  {businessName}
                 </span>
                 <span className="text-muted-foreground text-xs font-medium tracking-wide">
                   Dashboard
