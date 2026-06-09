@@ -40,7 +40,7 @@ export default function LoginPage() {
 
   async function onSubmit(values: FormData) {
     try {
-      dispatch(
+      await dispatch(
         loginService({
           userIdentifier: values.userIdentifier,
           password: values.password,

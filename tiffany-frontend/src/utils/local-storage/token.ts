@@ -1,19 +1,6 @@
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { COOKIE_KEYS } from "@/constants/cookie-keys";
 
-// Native browser cookie API (works reliably on client-side)
-function setNativeCookie(name: string, value: string, maxAge: number): void {
-  if (typeof window === "undefined") return;
-  const expires = new Date();
-  expires.setSeconds(expires.getSeconds() + maxAge);
-  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; expires=${expires.toUTCString()}`;
-}
-
-function deleteNativeCookie(name: string): void {
-  if (typeof window === "undefined") return;
-  document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-}
-
 // Cookie names - use centralized constants
 const ACCESS_TOKEN_KEY = COOKIE_KEYS.ACCESS_TOKEN;
 const REFRESH_TOKEN_KEY = COOKIE_KEYS.REFRESH_TOKEN;
@@ -150,14 +137,14 @@ export function clearAllTokens(): void {
 export function storeAdminToken(token: string | undefined): void {
   if (typeof window === "undefined" || !token) return;
   const maxAge = getMaxAgeFromToken(token, 7 * 24 * 60 * 60);
-  setNativeCookie(COOKIE_KEYS.ADMIN_ACCESS_TOKEN, token, maxAge);
+  setCookie(COOKIE_KEYS.ADMIN_ACCESS_TOKEN, token, { maxAge, path: "/" });
   localStorage.setItem(COOKIE_KEYS.ADMIN_ACCESS_TOKEN, token);
 }
 
 export function storeAdminRefreshToken(refreshToken: string | undefined): void {
   if (typeof window === "undefined" || !refreshToken) return;
   const maxAge = getMaxAgeFromToken(refreshToken, 30 * 24 * 60 * 60);
-  setNativeCookie(COOKIE_KEYS.ADMIN_REFRESH_TOKEN, refreshToken, maxAge);
+  setCookie(COOKIE_KEYS.ADMIN_REFRESH_TOKEN, refreshToken, { maxAge, path: "/" });
   localStorage.setItem(COOKIE_KEYS.ADMIN_REFRESH_TOKEN, refreshToken);
 }
 
@@ -198,8 +185,8 @@ export function getAdminRefreshToken(): string | undefined {
 }
 
 export function clearAdminTokens(): void {
-  deleteNativeCookie(COOKIE_KEYS.ADMIN_ACCESS_TOKEN);
-  deleteNativeCookie(COOKIE_KEYS.ADMIN_REFRESH_TOKEN);
+  deleteCookie(COOKIE_KEYS.ADMIN_ACCESS_TOKEN);
+  deleteCookie(COOKIE_KEYS.ADMIN_REFRESH_TOKEN);
   localStorage.removeItem(COOKIE_KEYS.ADMIN_ACCESS_TOKEN);
   localStorage.removeItem(COOKIE_KEYS.ADMIN_REFRESH_TOKEN);
 }
