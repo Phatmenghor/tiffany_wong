@@ -90,7 +90,7 @@ export const ORDER_STATUS_CREATE_UPDATE = [
 
 export const PRODUCT_STATUS_CREATE_UPDATE = [
   { value: ProductStatus.ACTIVE, label: "Active" },
-  { value: ProductStatus.INACTIVE, label: "Draft" },
+  { value: ProductStatus.INACTIVE, label: "Inactive" },
 ];
 
 export const PROMOTION_TYPE_CREATE_UPDATE = [

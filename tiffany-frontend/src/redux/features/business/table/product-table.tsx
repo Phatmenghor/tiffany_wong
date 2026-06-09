@@ -4,8 +4,8 @@ import { Edit, Eye, Trash, Package, RotateCcw, Zap, Check } from "lucide-react";
 import { TableColumn } from "@/components/shared/common/data-table";
 import { ActionButton } from "@/components/shared/button/action-button";
 import { CustomAvatar } from "@/components/shared/avator/custom-avator";
-import { CustomSelect } from "@/components/shared/common/custom-select";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -94,9 +94,9 @@ function SizesDisplay({ sizes }: { sizes: any[] | undefined }) {
 }
 
 /**
- * StatusSelect - CustomSelect component for status updates
+ * StatusSwitch - Toggle switch for ACTIVE/INACTIVE status
  */
-function StatusSelect({
+function StatusSwitch({
   value,
   onStatusChange,
   productId,
@@ -105,20 +105,25 @@ function StatusSelect({
   onStatusChange?: (productId: string, status: string) => void;
   productId: string;
 }) {
-  const statusOptions = [
-    { value: "ACTIVE", label: "Active" },
-    { value: "INACTIVE", label: "Inactive" },
-    { value: "OUT_OF_STOCK", label: "Out Of Stock" },
-  ];
+  const isActive = value === "ACTIVE";
 
   return (
-    <CustomSelect
-      options={statusOptions}
-      value={value}
-      onValueChange={(newStatus) => onStatusChange?.(productId, newStatus)}
-      placeholder="Select status"
-      size="sm"
-    />
+    <div className="flex items-center gap-2">
+      <Switch
+        checked={isActive}
+        onCheckedChange={(checked) =>
+          onStatusChange?.(productId, checked ? "ACTIVE" : "INACTIVE")
+        }
+      />
+      <span
+        className={cn(
+          "text-xs font-medium",
+          isActive ? "text-green-600" : "text-muted-foreground",
+        )}
+      >
+        {isActive ? "Active" : "Inactive"}
+      </span>
+    </div>
   );
 }
 
@@ -244,7 +249,7 @@ export const productTableColumns = ({
       minWidth: "150px",
       maxWidth: "350px",
       render: (product) => (
-        <StatusSelect
+        <StatusSwitch
           value={product?.status || "ACTIVE"}
           onStatusChange={handleStatusChange}
           productId={product?.id || ""}
