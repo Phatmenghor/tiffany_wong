@@ -55,8 +55,9 @@ export interface UpdateBusinessSettingsRequest {
   contactAddress?: string;
   contactPhone?: string;
   contactEmail?: string;
-  socialMedia?: SocialMedia[];
-  businessHours?: BusinessHours[];
+  // Field names must match Spring backend's SystemSettingUpdateRequest
+  socialMediaList?: { name: string; linkUrl: string; iconUrl?: string }[];
+  businessHoursList?: { day: string; openingTime: string; closingTime: string }[];
 }
 
 const API_BASE_URL = "/api/v1/system-settings";
