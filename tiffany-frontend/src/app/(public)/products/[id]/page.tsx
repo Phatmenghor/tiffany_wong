@@ -456,22 +456,24 @@ export default function ProductDetailPage() {
 
         {/* ── Main grid ── */}
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8 lg:gap-10 mb-16">
-          {/* ──── LEFT: Image Gallery ──── */}
-          <ProductImageGallery
-            mainImageUrl={product.mainImageUrl}
-            images={product.images || []}
-            productName={product.name}
-            imageLoaded={imageLoaded}
-            onImageLoad={() => setImageLoaded(true)}
-            currentImageIndex={currentImageIndex}
-            selectedImage={selectedImage}
-            onSelectImage={selectImage}
-            onPrevImage={prevImage}
-            onNextImage={nextImage}
-            onOpenLightbox={openLightbox}
-            discountPercent={discountPercent}
-            hasDiscount={!!hasDiscount}
-          />
+          {/* ──── LEFT: Image Gallery — sticky so it stays visible while scrolling right ──── */}
+          <div className="lg:self-start lg:sticky lg:top-4">
+            <ProductImageGallery
+              mainImageUrl={product.mainImageUrl}
+              images={product.images || []}
+              productName={product.name}
+              imageLoaded={imageLoaded}
+              onImageLoad={() => setImageLoaded(true)}
+              currentImageIndex={currentImageIndex}
+              selectedImage={selectedImage}
+              onSelectImage={selectImage}
+              onPrevImage={prevImage}
+              onNextImage={nextImage}
+              onOpenLightbox={openLightbox}
+              discountPercent={discountPercent}
+              hasDiscount={!!hasDiscount}
+            />
+          </div>
 
           {/* ──── RIGHT: Product Info & Actions ──── */}
           <div className="flex flex-col gap-4">
