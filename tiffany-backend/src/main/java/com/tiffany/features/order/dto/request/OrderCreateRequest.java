@@ -1,5 +1,6 @@
 package com.tiffany.features.order.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tiffany.enums.order.OrderStatus;
 import com.tiffany.enums.payment.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
@@ -26,6 +27,7 @@ public class OrderCreateRequest {
     private String customerNote;
     private OrderStatus orderStatus = OrderStatus.PENDING;
 
+    @JsonProperty("PaymentBy")
     @NotNull(message = "Payment method is required")
     private PaymentMethod PaymentBy = PaymentMethod.CASH;
 }

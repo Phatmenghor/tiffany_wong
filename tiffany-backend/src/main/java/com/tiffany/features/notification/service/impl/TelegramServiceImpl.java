@@ -41,6 +41,7 @@ public class TelegramServiceImpl implements TelegramService {
     private boolean telegramEnabled;
 
     private static final String TELEGRAM_API_URL = "https://api.telegram.org/bot{token}/sendMessage";
+    private static final String SEP = "────────────────────";
     private static final ZoneId CAMBODIA_ZONE = ZoneId.of("Asia/Phnom_Penh");
     private static final ZoneId UTC_ZONE = ZoneId.of("UTC");
     private static final DateTimeFormatter KH_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a");
@@ -50,8 +51,7 @@ public class TelegramServiceImpl implements TelegramService {
     public void notifyUserCreated(User user) {
         if (!telegramEnabled) return;
         try {
-            String message = buildUserRegistrationMessage(user);
-            sendMessage(message);
+            sendMessage(buildUserRegistrationMessage(user));
         } catch (Exception e) {
             log.error("Failed to send user creation notification - userId: {}, error: {}", user.getId(), e.getMessage());
         }
@@ -62,10 +62,8 @@ public class TelegramServiceImpl implements TelegramService {
     public void notifyOrderCreated(Order order) {
         if (!telegramEnabled) return;
         try {
-            // Re-fetch inside the async transaction to get fully loaded items
             Order full = orderRepository.findByIdWithDetails(order.getId()).orElse(order);
-            String message = buildOrderCreatedMessage(full);
-            sendMessage(message);
+            sendMessage(buildOrderCreatedMessage(full));
         } catch (Exception e) {
             log.error("Failed to send order creation notification - orderId: {}, error: {}", order.getId(), e.getMessage());
         }
@@ -77,8 +75,7 @@ public class TelegramServiceImpl implements TelegramService {
         if (!telegramEnabled) return;
         try {
             Order full = orderRepository.findByIdWithDetails(order.getId()).orElse(order);
-            String message = buildOrderStatusChangeMessage(full);
-            sendMessage(message);
+            sendMessage(buildOrderStatusChangeMessage(full));
         } catch (Exception e) {
             log.error("Failed to send order status change notification - orderId: {}, error: {}", order.getId(), e.getMessage());
         }
@@ -91,21 +88,17 @@ public class TelegramServiceImpl implements TelegramService {
         StringBuilder sb = new StringBuilder();
 
         sb.append("NEW USER REGISTRATION\n");
-        sb.append("━━━━━━━━━━━━━━━━━━━━━\n\n");
-
-        sb.append("USER INFORMATION\n");
-        sb.append("─────────────────\n");
+        sb.append(SEP).append("\n");
         sb.append("Name: ").append(getDisplayName(user, profile)).append("\n");
-
         if (profile != null && profile.getEmail() != null) {
             sb.append("Email: ").append(profile.getEmail()).append("\n");
         }
         if (profile != null && profile.getPhoneNumber() != null) {
             sb.append("Phone: ").append(profile.getPhoneNumber()).append("\n");
         }
-
         sb.append("Type: ").append(user.getUserType()).append("\n");
-        sb.append("Registered: ").append(formatKhTime(user.getCreatedAt())).append("\n");
+        sb.append(SEP).append("\n");
+        sb.append("Time: ").append(formatKhTime(user.getCreatedAt())).append("\n");
 
         return sb.toString();
     }
@@ -114,11 +107,7 @@ public class TelegramServiceImpl implements TelegramService {
         StringBuilder sb = new StringBuilder();
 
         sb.append("NEW ORDER PLACED\n");
-        sb.append("━━━━━━━━━━━━━━━━━━━━━\n\n");
-
-        // Order info
-        sb.append("ORDER INFORMATION\n");
-        sb.append("─────────────────\n");
+        sb.append(SEP).append("\n");
         sb.append("Order #: ").append(order.getOrderNumber()).append("\n");
         sb.append("Customer: ").append(nvl(order.getCustomerName(), "Guest")).append("\n");
         sb.append("Phone: ").append(nvl(order.getCustomerPhone(), "-")).append("\n");
@@ -126,49 +115,47 @@ public class TelegramServiceImpl implements TelegramService {
             sb.append("Note: ").append(order.getCustomerNote()).append("\n");
         }
         sb.append("Time: ").append(formatKhTime(order.getCreatedAt())).append("\n");
-        sb.append("\n");
 
         // Items
         List<OrderItem> items = order.getItems();
         int itemCount = items != null ? items.size() : 0;
+        sb.append(SEP).append("\n");
         sb.append("ITEMS (").append(itemCount).append(")\n");
-        sb.append("─────────────────\n");
         if (items != null && !items.isEmpty()) {
-            int i = 1;
-            for (OrderItem item : items) {
-                sb.append(i++).append(". ").append(item.getProductName()).append("\n");
-                if (item.getSizeName() != null && !item.getSizeName().equals("Standard")) {
-                    sb.append("   Size: ").append(item.getSizeName()).append("\n");
+            for (int i = 0; i < items.size(); i++) {
+                OrderItem item = items.get(i);
+                sb.append(i + 1).append(". ").append(item.getProductName()).append("\n");
+                String size = item.getSizeName();
+                if (size != null && !size.equals("Standard")) {
+                    sb.append("   Size: ").append(size).append("\n");
                 }
                 sb.append("   ").append(formatPrice(item.getFinalPrice()))
                         .append(" x ").append(item.getQuantity())
                         .append(" = ").append(formatPrice(item.getTotalPrice())).append("\n");
-                if (Boolean.TRUE.equals(item.getHasPromotion()) && item.getCurrentPrice() != null
+                if (Boolean.TRUE.equals(item.getHasPromotion())
+                        && item.getCurrentPrice() != null
                         && item.getCurrentPrice().compareTo(item.getFinalPrice()) > 0) {
-                    if (item.getPromotionType() != null && item.getPromotionType().equals("PERCENTAGE")) {
-                        sb.append("   Discount: ").append(item.getPromotionValue()).append("% OFF")
+                    if ("PERCENTAGE".equals(item.getPromotionType())) {
+                        sb.append("   ").append(item.getPromotionValue()).append("% OFF")
                                 .append(" (was ").append(formatPrice(item.getCurrentPrice())).append(")\n");
                     } else {
-                        sb.append("   Discount: -").append(formatPrice(item.getCurrentPrice().subtract(item.getFinalPrice())))
-                                .append(" (was ").append(formatPrice(item.getCurrentPrice())).append(")\n");
+                        sb.append("   -").append(formatPrice(item.getCurrentPrice().subtract(item.getFinalPrice())))
+                                .append(" OFF (was ").append(formatPrice(item.getCurrentPrice())).append(")\n");
                     }
                 }
             }
-        } else {
-            sb.append("No items\n");
         }
-        sb.append("\n");
 
-        // Payment summary
-        sb.append("PAYMENT SUMMARY\n");
-        sb.append("─────────────────\n");
+        // Payment
+        sb.append(SEP).append("\n");
+        sb.append("PAYMENT\n");
+        sb.append("Method: ").append(order.getPaymentMethod() != null ? order.getPaymentMethod().name() : "-").append("\n");
+        sb.append("Status: ").append(order.getPaymentStatus() != null ? order.getPaymentStatus().name() : "-").append("\n");
         if (order.getDiscountAmount() != null && order.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
             sb.append("Subtotal: ").append(formatPrice(order.getSubtotal())).append("\n");
             sb.append("Discount: -").append(formatPrice(order.getDiscountAmount())).append("\n");
         }
         sb.append("Total: ").append(formatPrice(order.getTotalAmount())).append("\n");
-        sb.append("Method: ").append(nvl(order.getPaymentMethod() != null ? order.getPaymentMethod().name() : null, "-")).append("\n");
-        sb.append("Payment: ").append(nvl(order.getPaymentStatus() != null ? order.getPaymentStatus().name() : null, "-")).append("\n");
 
         return sb.toString();
     }
@@ -177,38 +164,34 @@ public class TelegramServiceImpl implements TelegramService {
         StringBuilder sb = new StringBuilder();
 
         sb.append("ORDER STATUS UPDATE\n");
-        sb.append("━━━━━━━━━━━━━━━━━━━━━\n\n");
-
-        sb.append("ORDER INFORMATION\n");
-        sb.append("─────────────────\n");
+        sb.append(SEP).append("\n");
         sb.append("Order #: ").append(order.getOrderNumber()).append("\n");
         sb.append("Customer: ").append(nvl(order.getCustomerName(), "Guest")).append("\n");
         sb.append("Phone: ").append(nvl(order.getCustomerPhone(), "-")).append("\n");
         sb.append("Updated: ").append(formatKhTime(order.getUpdatedAt())).append("\n");
-        sb.append("\n");
 
         // Items
         List<OrderItem> items = order.getItems();
         if (items != null && !items.isEmpty()) {
+            sb.append(SEP).append("\n");
             sb.append("ITEMS (").append(items.size()).append(")\n");
-            sb.append("─────────────────\n");
-            int i = 1;
-            for (OrderItem item : items) {
-                sb.append(i++).append(". ").append(item.getProductName()).append("\n");
-                if (item.getSizeName() != null && !item.getSizeName().equals("Standard")) {
-                    sb.append("   Size: ").append(item.getSizeName()).append("\n");
+            for (int i = 0; i < items.size(); i++) {
+                OrderItem item = items.get(i);
+                sb.append(i + 1).append(". ").append(item.getProductName()).append("\n");
+                String size = item.getSizeName();
+                if (size != null && !size.equals("Standard")) {
+                    sb.append("   Size: ").append(size).append("\n");
                 }
                 sb.append("   ").append(formatPrice(item.getFinalPrice()))
                         .append(" x ").append(item.getQuantity())
                         .append(" = ").append(formatPrice(item.getTotalPrice())).append("\n");
             }
-            sb.append("\n");
         }
 
-        sb.append("CURRENT STATUS\n");
-        sb.append("─────────────────\n");
+        sb.append(SEP).append("\n");
+        sb.append("STATUS\n");
         sb.append("Order: ").append(order.getOrderStatus()).append("\n");
-        sb.append("Payment: ").append(nvl(order.getPaymentStatus() != null ? order.getPaymentStatus().name() : null, "-")).append("\n");
+        sb.append("Payment: ").append(order.getPaymentStatus() != null ? order.getPaymentStatus().name() : "-").append("\n");
         sb.append("Total: ").append(formatPrice(order.getTotalAmount())).append("\n");
 
         return sb.toString();
@@ -228,7 +211,6 @@ public class TelegramServiceImpl implements TelegramService {
         }
     }
 
-    /** Convert UTC LocalDateTime stored by JPA to Cambodia time (UTC+7) */
     private String formatKhTime(LocalDateTime utcTime) {
         if (utcTime == null) return "N/A";
         return utcTime.atZone(UTC_ZONE)
