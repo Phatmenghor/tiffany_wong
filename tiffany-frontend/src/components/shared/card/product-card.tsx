@@ -123,6 +123,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
 
     if (!isAuthenticated) {
       setShowLoginModal(true);
@@ -188,6 +189,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
 
       // For sized products, open the size modal to select size
       if (product.hasSizes) {
@@ -243,6 +245,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
 
       // For sized products, open the size modal to select size
       if (product.hasSizes) {
@@ -295,6 +298,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
 
     if (!isAuthenticated) {
       setShowLoginModal(true);
