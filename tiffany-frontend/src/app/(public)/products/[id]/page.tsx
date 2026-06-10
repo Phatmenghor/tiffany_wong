@@ -51,6 +51,9 @@ export default function ProductDetailPage() {
   useScrollToTop();
 
   const [similarProducts, setSimilarProducts] = useState<ProductDetailResponseModel[]>([]);
+  const [similarPage, setSimilarPage] = useState(1);
+  const [similarHasMore, setSimilarHasMore] = useState(false);
+  const [similarLoading, setSimilarLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -143,29 +146,57 @@ export default function ProductDetailPage() {
     setSelectedSize(product.hasSizes && product.sizes?.length ? product.sizes[0] : null);
   }, [product?.id]);
 
-  // Fetch similar products
+  // Fetch similar products (page 1)
   const fetchedSimilarRef = useRef<string | null>(null);
   useEffect(() => {
     if (!product?.id || fetchedSimilarRef.current === product.id) return;
     fetchedSimilarRef.current = product.id;
+    setSimilarProducts([]);
+    setSimilarPage(1);
+    setSimilarHasMore(false);
+    setSimilarLoading(true);
     dispatch(
       fetchPublicProducts({
         pageNo: 1,
-        pageSize: 6,
+        pageSize: 12,
         categoryId: product.categoryId || undefined,
         statuses: ["ACTIVE"],
       })
     )
       .unwrap()
       .then((res) => {
-        setSimilarProducts(
-          (res.content || [])
-            .filter((p: any) => p.id !== productId)
-            .slice(0, 4)
-        );
+        const filtered = (res.content || []).filter((p: any) => p.id !== productId);
+        setSimilarProducts(filtered);
+        setSimilarHasMore(!res.last);
+        setSimilarPage(1);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setSimilarLoading(false));
   }, [product?.id, product?.categoryId, productId, dispatch]);
+
+  // Load more similar products
+  const handleLoadMoreSimilar = useCallback(() => {
+    if (!product || similarLoading || !similarHasMore) return;
+    const nextPage = similarPage + 1;
+    setSimilarLoading(true);
+    dispatch(
+      fetchPublicProducts({
+        pageNo: nextPage,
+        pageSize: 12,
+        categoryId: product.categoryId || undefined,
+        statuses: ["ACTIVE"],
+      })
+    )
+      .unwrap()
+      .then((res) => {
+        const filtered = (res.content || []).filter((p: any) => p.id !== productId);
+        setSimilarProducts((prev) => [...prev, ...filtered]);
+        setSimilarHasMore(!res.last);
+        setSimilarPage(nextPage);
+      })
+      .catch(() => {})
+      .finally(() => setSimilarLoading(false));
+  }, [product, similarLoading, similarHasMore, similarPage, productId, dispatch]);
 
   const selectImage = (url: string, index: number) => {
     setCurrentImageIndex(index);
@@ -519,7 +550,12 @@ export default function ProductDetailPage() {
         </div>
 
         {/* ── Similar Products ── */}
-        <SimilarProducts products={similarProducts} />
+        <SimilarProducts
+          products={similarProducts}
+          loading={similarLoading}
+          hasMore={similarHasMore}
+          onLoadMore={handleLoadMoreSimilar}
+        />
       </PageContainer>
 
       {/* ── Image Lightbox ── */}
