@@ -143,7 +143,6 @@ export function OrderDetailModal({
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(orderData.orderNumber);
-                    showToast.success("Copied!");
                   }}
                   className="p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                   title="Copy order number"

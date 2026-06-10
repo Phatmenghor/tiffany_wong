@@ -65,9 +65,12 @@ export default function OrdersPage() {
   const [mounted, setMounted] = useState(false);
   const [displayTabs, setDisplayTabs] = useState<StatusTab[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [detailModalState, setDetailModalState] = useState({
+  const [detailModalState, setDetailModalState] = useState<{
+    isOpen: boolean;
+    order: OrderResponse | null;
+  }>({
     isOpen: false,
-    orderId: "",
+    order: null,
   });
   const [cancelModalState, setCancelModalState] = useState({
     isOpen: false,
@@ -160,7 +163,7 @@ export default function OrdersPage() {
   ]);
 
   const handleViewOrder = (order: Order) => {
-    setDetailModalState({ isOpen: true, orderId: order.id });
+    setDetailModalState({ isOpen: true, order });
   };
 
   const handleCancelOrder = (order: Order) => {
@@ -332,9 +335,9 @@ export default function OrdersPage() {
 
       {/* Detail Modal */}
       <CustomerOrderDetailModal
-        orderId={detailModalState.orderId}
+        order={detailModalState.order}
         isOpen={detailModalState.isOpen}
-        onClose={() => setDetailModalState({ isOpen: false, orderId: "" })}
+        onClose={() => setDetailModalState({ isOpen: false, order: null })}
       />
 
       {/* Cancel Order Modal */}

@@ -1,29 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { dateTimeFormat } from "@/utils/date/date-time-format";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useAppDispatch } from "@/redux/store/hooks";
-import { fetchOrderDetailsService } from "@/redux/features/main/store/thunks/my-orders-thunks";
 import { formatCurrency } from "@/utils/common/currency-format";
-import { Loading } from "@/components/shared/common/loading";
 import { OrderResponse } from "@/redux/features/main/store/models/response/order-response";
 import { getOrderStatusLabel, OrderStatus } from "@/enums/order-status.enum";
-import { showToast } from "@/components/shared/common/show-toast";
 import { Button } from "@/components/ui/button";
-import { Download, Package, Check, XCircle, Copy } from "lucide-react";
+import { Package, Check, XCircle, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { showToast } from "@/components/shared/common/show-toast";
 
 interface CustomerOrderDetailModalProps {
-  orderId?: string;
+  order?: OrderResponse | null;
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface OrderDetailState {
-  order: OrderResponse | null;
-  loading: boolean;
-  error: string | null;
 }
 
 const ORDER_STEPS: OrderStatus[] = [
@@ -56,180 +46,29 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export function CustomerOrderDetailModal({
-  orderId,
+  order,
   isOpen,
   onClose,
 }: CustomerOrderDetailModalProps) {
-  const dispatch = useAppDispatch();
-  const [state, setState] = useState<OrderDetailState>({
-    order: null,
-    loading: false,
-    error: null,
-  });
+  if (!order) return null;
 
-  useEffect(() => {
-    if (!orderId || !isOpen) return;
-    const fetch = async () => {
-      try {
-        setState({ order: null, loading: true, error: null });
-        const result = await dispatch(fetchOrderDetailsService(orderId)).unwrap();
-        setState({ order: result, loading: false, error: null });
-      } catch (error: any) {
-        setState({
-          order: null,
-          loading: false,
-          error: error?.message || "Failed to load order details",
-        });
-      }
-    };
-    fetch();
-  }, [orderId, isOpen, dispatch]);
-
-  const handleClose = () => {
-    setState({ order: null, loading: false, error: null });
-    onClose();
-  };
-
-  const handleDownloadReceipt = async () => {
-    const orderData = state.order;
-    if (!orderData?.id || !orderData?.items) return;
-    try {
-      const element = document.createElement("div");
-      element.style.position = "absolute";
-      element.style.left = "-9999px";
-      element.style.width = "80mm";
-      element.style.fontFamily = "monospace";
-      element.style.fontSize = "11px";
-      element.style.backgroundColor = "#fff";
-      element.style.padding = "4mm";
-
-      const date = new Date(orderData.createdAt);
-      const formattedDate = date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-      const formattedTime = date
-        .toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })
-        .replace(/\b(am|pm)\b/i, (m) => m.toUpperCase());
-
-      const subtotal = orderData.subtotal || 0;
-      const discount = orderData.discountAmount || 0;
-      const total = orderData.totalAmount || 0;
-
-      const itemsHTML = orderData.items
-        .map((item) => {
-          const itemTotal = item.subtotalAfterDiscount || item.displayPrice * item.quantity;
-          return `
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;">
-              <span style="flex:1;">${item.productName}${item.sizeName ? ` (${item.sizeName})` : ""}</span>
-              <span style="width:16px;text-align:center;">${item.quantity}</span>
-              <span style="width:50px;text-align:right;">$${itemTotal.toFixed(2)}</span>
-            </div>`;
-        })
-        .join("");
-
-      element.innerHTML = `
-        <div style="width:80mm;background:white;">
-          <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:4px;margin-bottom:6px;">
-            <div style="font-weight:bold;font-size:13px;letter-spacing:1px;">RECEIPT</div>
-          </div>
-          <div style="text-align:center;font-size:10px;margin-bottom:6px;border-bottom:1px solid #666;padding-bottom:4px;">
-            <div>Order #: ${orderData.orderNumber}</div>
-            <div>Date: ${formattedDate} • ${formattedTime}</div>
-          </div>
-          <div style="margin-bottom:6px;border-bottom:1px solid #666;padding-bottom:4px;">
-            <div style="text-align:center;font-weight:bold;font-size:10px;border-bottom:1px solid #666;padding-bottom:2px;margin-bottom:4px;">ITEMS</div>
-            <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:10px;margin-bottom:2px;">
-              <span style="flex:1;">NAME</span>
-              <span style="width:16px;text-align:center;">QTY</span>
-              <span style="width:50px;text-align:right;">TOTAL</span>
-            </div>
-            <div style="border-bottom:1px solid #ccc;margin-bottom:2px;"></div>
-            ${itemsHTML}
-          </div>
-          <div style="margin-bottom:6px;border-bottom:2px solid #000;padding-bottom:6px;">
-            <div style="font-size:10px;line-height:1.6;">
-              <div style="display:flex;justify-content:space-between;"><span>Subtotal</span><span style="font-weight:bold;">$${subtotal.toFixed(2)}</span></div>
-              ${discount > 0 ? `<div style="display:flex;justify-content:space-between;color:#d32f2f;"><span>Discount</span><span style="font-weight:bold;">-$${discount.toFixed(2)}</span></div>` : ""}
-              <div style="border-top:1px solid #666;padding-top:3px;margin-top:3px;display:flex;justify-content:space-between;font-weight:bold;font-size:11px;"><span>TOTAL</span><span>$${total.toFixed(2)}</span></div>
-            </div>
-          </div>
-          <div style="text-align:center;font-size:10px;padding-top:4px;"><div>Thank you for your order!</div></div>
-        </div>`;
-
-      document.body.appendChild(element);
-      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
-        import("html2canvas"),
-        import("jspdf"),
-      ]);
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff" });
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: [80, 250] });
-      const imgData = canvas.toDataURL("image/png");
-      const imgHeight = (canvas.height * 80) / canvas.width;
-      pdf.addImage(imgData, "PNG", 0, 0, 80, imgHeight);
-      pdf.save(`receipt-${orderData.orderNumber}.pdf`);
-      document.body.removeChild(element);
-      showToast.success("Receipt downloaded successfully");
-    } catch {
-      showToast.error("Failed to generate receipt");
-    }
-  };
-
-  if (state.loading) {
-    return (
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogTitle className="sr-only">Order Details Loading</DialogTitle>
-        <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
-          <div className="flex items-center justify-center h-64">
-            <Loading />
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  if (!state.order) {
-    return (
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogTitle className="sr-only">Order Details</DialogTitle>
-        <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
-          <div className="flex items-center justify-center h-64 flex-col gap-2">
-            <p className="text-sm font-medium text-muted-foreground">
-              {state.error ? `Error: ${state.error}` : "No order data available"}
-            </p>
-            {state.error && (
-              <p className="text-xs text-muted-foreground">
-                The order may have been deleted or you may not have permission to view it.
-              </p>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  const orderData = state.order;
-  const currentStep = STEP_ORDER[orderData.orderStatus] ?? -1;
-  const isCancelled = orderData.orderStatus === "CANCELLED";
+  const currentStep = STEP_ORDER[order.orderStatus] ?? -1;
+  const isCancelled = order.orderStatus === "CANCELLED";
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogTitle className="sr-only">Order Details - {orderData.orderNumber}</DialogTitle>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogTitle className="sr-only">Order Details - {order.orderNumber}</DialogTitle>
 
-      <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+      <DialogContent className="w-full sm:max-w-6xl max-h-[95dvh] p-0 gap-0 flex flex-col overflow-hidden">
         {/* Header */}
         <div className="px-4 py-3 border-b bg-muted/30 flex-shrink-0 flex items-center gap-3">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <p className="text-sm font-bold text-foreground font-mono truncate">
-                {orderData.orderNumber}
+                {order.orderNumber}
               </p>
               <button
-                onClick={() => {
-                  navigator.clipboard.writeText(orderData.orderNumber);
-                  showToast.success("Copied!");
-                }}
+                onClick={() => navigator.clipboard.writeText(order.orderNumber)}
                 className="p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                 title="Copy order number"
               >
@@ -297,11 +136,11 @@ export function CustomerOrderDetailModal({
               </div>
 
               {/* Order Items */}
-              {orderData.items && orderData.items.length > 0 && (
+              {order.items && order.items.length > 0 && (
                 <div className="rounded border border-border/50 bg-card p-3">
-                  <SectionTitle>Order Items ({orderData.items.length})</SectionTitle>
+                  <SectionTitle>Order Items ({order.items.length})</SectionTitle>
                   <div className="space-y-2">
-                    {orderData.items.map((item) => (
+                    {order.items.map((item) => (
                       <div
                         key={item.id}
                         className="flex gap-2.5 p-2 rounded border border-border/50 bg-muted/20"
@@ -368,24 +207,24 @@ export function CustomerOrderDetailModal({
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs">
                     <span className="text-muted-foreground">
-                      Subtotal ({orderData.items?.length || 0} items)
+                      Subtotal ({order.items?.length || 0} items)
                     </span>
                     <span className="font-medium text-foreground">
-                      {formatCurrency(orderData.subtotal || 0)}
+                      {formatCurrency(order.subtotal || 0)}
                     </span>
                   </div>
-                  {(orderData.discountAmount ?? 0) > 0 && (
+                  {(order.discountAmount ?? 0) > 0 && (
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">Discount</span>
                       <span className="font-medium text-red-600">
-                        -{formatCurrency(orderData.discountAmount)}
+                        -{formatCurrency(order.discountAmount)}
                       </span>
                     </div>
                   )}
                   <div className="pt-2 mt-1 border-t border-border/50 flex justify-between">
                     <span className="text-xs font-bold text-foreground">Total</span>
                     <span className="text-sm font-bold text-primary">
-                      {formatCurrency(orderData.totalAmount || 0)}
+                      {formatCurrency(order.totalAmount || 0)}
                     </span>
                   </div>
                 </div>
@@ -399,32 +238,22 @@ export function CustomerOrderDetailModal({
               <div className="rounded border border-border/50 bg-card p-3">
                 <SectionTitle>Order Info</SectionTitle>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-2">
-                  <InfoRow
-                    label="Date"
-                    value={new Date(orderData.createdAt).toLocaleDateString()}
-                  />
-                  <InfoRow
-                    label="Time"
-                    value={new Date(orderData.createdAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  />
-                  <InfoRow label="Payment" value={orderData.paymentMethod || "-"} />
+                  <InfoRow label="Date" value={dateTimeFormat(order.createdAt)} />
+                  <InfoRow label="Payment" value={order.paymentMethod || "-"} />
                   <InfoRow
                     label="Pay Status"
                     value={
                       <span
                         className={cn(
                           "font-semibold",
-                          orderData.paymentStatus === "PAID"
+                          order.paymentStatus === "PAID"
                             ? "text-green-600"
-                            : orderData.paymentStatus === "REFUNDED"
+                            : order.paymentStatus === "REFUNDED"
                               ? "text-red-600"
                               : "text-amber-600",
                         )}
                       >
-                        {orderData.paymentStatus || "-"}
+                        {order.paymentStatus || "-"}
                       </span>
                     }
                   />
@@ -435,40 +264,27 @@ export function CustomerOrderDetailModal({
               <div className="rounded border border-border/50 bg-card p-3">
                 <SectionTitle>Customer</SectionTitle>
                 <div className="space-y-2">
-                  <InfoRow label="Name" value={orderData.customerName || "-"} />
-                  {orderData.customerPhone && (
-                    <InfoRow label="Phone" value={orderData.customerPhone} />
+                  <InfoRow label="Name" value={order.customerName || "-"} />
+                  {order.customerPhone && (
+                    <InfoRow label="Phone" value={order.customerPhone} />
                   )}
-                  {orderData.customerEmail && (
-                    <InfoRow label="Email" value={orderData.customerEmail} />
+                  {order.customerEmail && (
+                    <InfoRow label="Email" value={order.customerEmail} />
                   )}
                 </div>
               </div>
 
               {/* Customer Note */}
-              {orderData.customerNote && (
+              {order.customerNote && (
                 <div className="rounded border border-border/50 bg-card p-3">
                   <SectionTitle>Note</SectionTitle>
                   <p className="text-xs text-foreground leading-relaxed">
-                    {orderData.customerNote}
+                    {order.customerNote}
                   </p>
                 </div>
               )}
             </div>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex-shrink-0 px-4 py-3 border-t bg-muted/20 flex items-center justify-end gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDownloadReceipt}
-            className="gap-1.5 h-8"
-          >
-            <Download className="h-3 w-3" />
-            Download Receipt
-          </Button>
         </div>
       </DialogContent>
     </Dialog>
