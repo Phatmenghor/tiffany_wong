@@ -467,17 +467,15 @@ export function SizeSelectionModal({
                               isModified && "ring-2 ring-amber-400/50",
                             )}
                           >
-                            <div className="font-semibold text-xs">
+                            <div className="font-semibold text-xs text-left">
                               {size.name}
                             </div>
-                            <div className="text-primary font-bold text-sm">
-                              {formatCurrency(size.finalPrice)}
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-primary font-bold text-sm">{formatCurrency(size.finalPrice)}</span>
+                              {size.hasPromotion && (
+                                <span className="text-[10px] text-muted-foreground line-through">{formatCurrency(size.price)}</span>
+                              )}
                             </div>
-                            {size.hasPromotion && (
-                              <div className="text-xs text-muted-foreground line-through">
-                                {formatCurrency(size.price)}
-                              </div>
-                            )}
                             {selectedSize?.id === size.id && (
                               <div className="absolute -top-1.5 -right-1.5 bg-primary text-primary-foreground rounded-full p-0.5">
                                 <Check className="h-2.5 w-2.5" />
