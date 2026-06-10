@@ -207,10 +207,15 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal subtotal = BigDecimal.ZERO;
         BigDecimal discountAmount = BigDecimal.ZERO;
 
+        Order order = orderRepository.findById(orderId).orElseThrow();
+
         for (var cartItem : cart.getItems()) {
             OrderItemCreateHelper helper = orderMapper.buildOrderItemHelperFromCartItem(cartItem, orderId);
             OrderItem orderItem = orderMapper.createOrderItemFromHelper(helper);
             orderItem.calculateTotalPrice();
+
+            // Add to order's items collection so CascadeType.ALL persists it
+            order.getItems().add(orderItem);
 
             subtotal = subtotal.add(orderItem.getTotalPrice());
             // Accumulate discount = base price - final price per item * quantity
@@ -221,7 +226,6 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        Order order = orderRepository.findById(orderId).orElseThrow();
         order.setSubtotal(subtotal);
         order.setDiscountAmount(discountAmount);
 
