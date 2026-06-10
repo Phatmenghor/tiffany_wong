@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderCreateRequest {
 
-    @NotNull(message = "Address ID is required")
     private UUID addressId;
 
     @NotNull(message = "Customer name is required")

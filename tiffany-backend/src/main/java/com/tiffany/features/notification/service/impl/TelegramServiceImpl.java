@@ -4,6 +4,7 @@ import com.tiffany.features.auth.models.User;
 import com.tiffany.features.auth.models.UserProfile;
 import com.tiffany.features.notification.service.TelegramService;
 import com.tiffany.features.order.models.Order;
+import com.tiffany.features.order.models.OrderDeliveryAddress;
 import com.tiffany.features.order.models.OrderItem;
 import com.tiffany.features.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -121,6 +122,7 @@ public class TelegramServiceImpl implements TelegramService {
         sb.append("Order #: ").append(order.getOrderNumber()).append("\n");
         sb.append("Customer: ").append(nvl(order.getCustomerName(), "Guest")).append("\n");
         sb.append("Phone: ").append(nvl(order.getCustomerPhone(), "-")).append("\n");
+        sb.append("Delivery: ").append(formatDeliveryAddress(order.getDeliveryAddress())).append("\n");
         if (order.getCustomerNote() != null && !order.getCustomerNote().isBlank()) {
             sb.append("Note: ").append(order.getCustomerNote()).append("\n");
         }
@@ -178,6 +180,7 @@ public class TelegramServiceImpl implements TelegramService {
         sb.append("Order #: ").append(order.getOrderNumber()).append("\n");
         sb.append("Customer: ").append(nvl(order.getCustomerName(), "Guest")).append("\n");
         sb.append("Phone: ").append(nvl(order.getCustomerPhone(), "-")).append("\n");
+        sb.append("Delivery: ").append(formatDeliveryAddress(order.getDeliveryAddress())).append("\n");
         sb.append("Updated: ").append(formatKhTime(order.getUpdatedAt())).append("\n");
 
         // Items
@@ -219,6 +222,19 @@ public class TelegramServiceImpl implements TelegramService {
         } catch (Exception e) {
             log.error("Error sending message to Telegram: {}", e.getMessage());
         }
+    }
+
+    private String formatDeliveryAddress(OrderDeliveryAddress addr) {
+        if (addr == null) return "Pickup";
+        StringBuilder sb = new StringBuilder();
+        if (addr.getHouseNumber() != null) sb.append(addr.getHouseNumber()).append(", ");
+        if (addr.getStreetNumber() != null) sb.append(addr.getStreetNumber()).append(", ");
+        if (addr.getVillage() != null) sb.append(addr.getVillage()).append(", ");
+        if (addr.getCommune() != null) sb.append(addr.getCommune()).append(", ");
+        if (addr.getDistrict() != null) sb.append(addr.getDistrict()).append(", ");
+        if (addr.getProvince() != null) sb.append(addr.getProvince());
+        String result = sb.toString().trim().replaceAll(",\\s*$", "");
+        return result.isEmpty() ? "Pickup" : result;
     }
 
     private String formatKhTime(LocalDateTime utcTime) {

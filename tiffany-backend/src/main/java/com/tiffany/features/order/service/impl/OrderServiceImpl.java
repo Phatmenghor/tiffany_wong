@@ -16,6 +16,8 @@ import com.tiffany.features.order.models.Cart;
 import com.tiffany.features.order.models.Order;
 import com.tiffany.features.order.models.OrderDeliveryAddress;
 import com.tiffany.features.order.models.OrderItem;
+import com.tiffany.features.location.models.Location;
+import com.tiffany.features.location.repository.LocationRepository;
 import com.tiffany.features.main.models.ProductSize;
 import com.tiffany.features.main.repository.ProductSizeRepository;
 import com.tiffany.features.order.repository.CartRepository;
@@ -52,6 +54,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductSizeRepository productSizeRepository;
     private final CartRepository cartRepository;
     private final OrderDeliveryAddressRepository orderDeliveryAddressRepository;
+    private final LocationRepository locationRepository;
     private final OrderMapper orderMapper;
     private final SecurityUtils securityUtils;
     private final OrderNumberGenerator orderNumberGenerator;
@@ -282,15 +285,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderDeliveryAddress createDeliveryAddressSnapshot(UUID orderId, UUID addressId) {
-        try {
-            OrderDeliveryAddress deliveryAddress = new OrderDeliveryAddress();
-            deliveryAddress.setOrderId(orderId);
-            deliveryAddress.setLocationId(addressId);
-            log.info("Delivery address snapshot created - orderId: {}", orderId);
-            return deliveryAddress;
-        } catch (Exception e) {
-            log.error("Failed to create delivery address snapshot: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to create delivery address snapshot", e);
-        }
+        Location location = locationRepository.findByIdAndIsDeletedFalse(addressId)
+                .orElseThrow(() -> new NotFoundException("Delivery address not found"));
+
+        OrderDeliveryAddress snap = new OrderDeliveryAddress();
+        snap.setOrderId(orderId);
+        snap.setLocationId(addressId);
+        snap.setVillage(location.getVillage());
+        snap.setCommune(location.getCommune());
+        snap.setDistrict(location.getDistrict());
+        snap.setProvince(location.getProvince());
+        snap.setStreetNumber(location.getStreetNumber());
+        snap.setHouseNumber(location.getHouseNumber());
+        snap.setNote(location.getNote());
+        snap.setLatitude(location.getLatitude());
+        snap.setLongitude(location.getLongitude());
+        log.info("Delivery address snapshot created - orderId: {}, locationId: {}", orderId, addressId);
+        return snap;
     }
 }

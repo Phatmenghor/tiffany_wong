@@ -102,11 +102,6 @@ export default function CheckoutPage() {
   }, [mounted, authReady, isAuthenticated, items.length, cartLoaded, router]);
 
   const handleCheckout = async () => {
-    if (!selectedAddress?.id) {
-      showToast.error("Please select a delivery address");
-      return;
-    }
-
     if (!customerName.trim()) {
       showToast.error("Please enter your name");
       return;
@@ -120,7 +115,7 @@ export default function CheckoutPage() {
     setIsProcessing(true);
     try {
       const payload = {
-        addressId: selectedAddress.id,
+        ...(selectedAddress?.id ? { addressId: selectedAddress.id } : {}),
         customerName: customerName.trim(),
         customerPhone: customerPhone.trim(),
         customerNote: customerNote || "",
