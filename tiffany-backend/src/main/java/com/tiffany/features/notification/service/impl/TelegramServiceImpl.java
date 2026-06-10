@@ -5,13 +5,11 @@ import com.tiffany.features.auth.models.UserProfile;
 import com.tiffany.features.notification.service.TelegramService;
 import com.tiffany.features.order.models.Order;
 import com.tiffany.features.order.models.OrderItem;
-import com.tiffany.features.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -25,11 +23,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class TelegramServiceImpl implements TelegramService {
 
     private final RestTemplate restTemplate;
-    private final OrderRepository orderRepository;
 
     @Value("${telegram.bot-token}")
     private String botToken;
@@ -62,8 +58,10 @@ public class TelegramServiceImpl implements TelegramService {
     public void notifyOrderCreated(Order order) {
         if (!telegramEnabled) return;
         try {
-            Order full = orderRepository.findByIdWithDetails(order.getId()).orElse(order);
-            sendMessage(buildOrderCreatedMessage(full));
+            // Use the already eagerly-loaded entity (items fetched via JOIN FETCH before this call).
+            // Do NOT re-fetch here — the parent transaction may not have committed yet,
+            // so a new query would return 0 items.
+            sendMessage(buildOrderCreatedMessage(order));
         } catch (Exception e) {
             log.error("Failed to send order creation notification - orderId: {}, error: {}", order.getId(), e.getMessage());
         }
@@ -74,8 +72,7 @@ public class TelegramServiceImpl implements TelegramService {
     public void notifyOrderStatusChanged(Order order) {
         if (!telegramEnabled) return;
         try {
-            Order full = orderRepository.findByIdWithDetails(order.getId()).orElse(order);
-            sendMessage(buildOrderStatusChangeMessage(full));
+            sendMessage(buildOrderStatusChangeMessage(order));
         } catch (Exception e) {
             log.error("Failed to send order status change notification - orderId: {}, error: {}", order.getId(), e.getMessage());
         }

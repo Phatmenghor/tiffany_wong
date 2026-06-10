@@ -38,6 +38,10 @@ export default function CheckoutPage() {
   const [successModalState, setSuccessModalState] = useState({
     isOpen: false,
     orderNumber: "",
+    totalAmount: undefined as number | undefined,
+    discountAmount: undefined as number | undefined,
+    itemCount: undefined as number | undefined,
+    paymentMethod: undefined as string | undefined,
   });
 
   useEffect(() => {
@@ -129,10 +133,14 @@ export default function CheckoutPage() {
       // Clear cart in Redux state immediately
       dispatch(resetCart());
 
-      // Show success modal with order number
+      // Show success modal with order details
       setSuccessModalState({
         isOpen: true,
         orderNumber: result?.orderNumber || "",
+        totalAmount: result?.totalAmount,
+        discountAmount: result?.discountAmount,
+        itemCount: result?.items?.length,
+        paymentMethod: result?.paymentMethod,
       });
     } catch (error: any) {
       console.error("Checkout error:", error);
@@ -142,13 +150,16 @@ export default function CheckoutPage() {
     }
   };
 
+  const resetSuccessModal = () =>
+    setSuccessModalState({ isOpen: false, orderNumber: "", totalAmount: undefined, discountAmount: undefined, itemCount: undefined, paymentMethod: undefined });
+
   const handleSuccessModalClose = () => {
-    setSuccessModalState({ isOpen: false, orderNumber: "" });
+    resetSuccessModal();
     router.push("/orders");
   };
 
   const handleBackToHome = () => {
-    setSuccessModalState({ isOpen: false, orderNumber: "" });
+    resetSuccessModal();
     router.push("/");
   };
 
@@ -284,9 +295,13 @@ export default function CheckoutPage() {
       {/* Success Modal */}
       <OrderSuccessModal
         isOpen={successModalState.isOpen}
-        onClose={handleSuccessModalClose}
+        onViewOrders={handleSuccessModalClose}
         onBackToHome={handleBackToHome}
         orderNumber={successModalState.orderNumber}
+        totalAmount={successModalState.totalAmount}
+        discountAmount={successModalState.discountAmount}
+        itemCount={successModalState.itemCount}
+        paymentMethod={successModalState.paymentMethod}
       />
     </>
   );
