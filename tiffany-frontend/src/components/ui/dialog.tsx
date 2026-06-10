@@ -55,12 +55,12 @@ const DialogContent = React.forwardRef<
         // max-h-[92dvh] + overflow-y-auto make long dialogs scrollable
         // pb-[...] clears the iPhone X+ home indicator via safe-area-inset-bottom
         "bottom-0 left-0 right-0 max-h-[92dvh] overflow-y-auto rounded-t-2xl border-t",
-        "pb-[max(1.5rem,calc(1.5rem+env(safe-area-inset-bottom,0px)))]",
+        "pb-[max(0.975rem,calc(0.975rem+env(safe-area-inset-bottom,0px)))]",
         // Desktop: centered modal (overflow also helps with tall modals)
         "sm:bottom-auto sm:right-auto sm:left-1/2 sm:top-1/2 sm:overflow-visible",
         "sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl sm:border sm:pb-6",
         // Desktop: constrain height so modal never bleeds off-screen at low zoom
-        "sm:max-h-[calc(100dvh-4rem)]",
+        "sm:max-h-[calc(100dvh-2.6rem)]",
         // Animations — mobile: slide from bottom
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",

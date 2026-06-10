@@ -281,7 +281,7 @@ function ProductFiltersComponent({
     <>
       {/* Desktop Sidebar */}
       <div className="hidden lg:flex w-72 flex-shrink-0">
-        <div className="sticky top-24 h-[calc(100vh-7rem)] w-full">
+        <div className="sticky top-24 h-[calc(100vh-4.55rem)] w-full">
           <div className="bg-card border rounded-xl shadow-sm h-full flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border/60 flex-shrink-0">

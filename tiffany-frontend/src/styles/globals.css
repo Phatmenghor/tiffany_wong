@@ -521,24 +521,23 @@
 
 .grid-header {
   display: grid;
-  gap: 1rem;
+  gap: 0.65rem;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.56875rem;
   /* min(200px, 100%) lets columns shrink below 200px rather than overflow */
   grid-template-columns: repeat(var(--cols), minmax(min(200px, 100%), 1fr));
 }
 
 .grid-row {
   display: grid;
-  gap: 1rem;
+  gap: 0.65rem;
   align-items: center;
   grid-template-columns: repeat(var(--cols), minmax(min(200px, 100%), 1fr));
 }
 
 @layer base {
-  /* 35% smaller = 65% of original size (more compact display) */
   html {
-    font-size: 65%;
+    font-size: 100%;
     /* Prevent Safari from auto-scaling text when orientation changes */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
@@ -620,9 +619,9 @@
     --chart-4: 146 79% 41%;
     --chart-5: 2 85% 55%;
 
-    --radius: 0.5rem;
-    --card-radius: 0.75rem;
-    --button-radius: 0.5rem;
+    --radius: 0.325rem;
+    --card-radius: 0.4875rem;
+    --button-radius: 0.325rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -696,8 +695,8 @@
   /*
    * iOS Safari auto-zoom prevention (belt-and-suspenders alongside viewport
    * maximum-scale=1).  Safari zooms in when an input's computed font-size is
-   * below 16px.  html { font-size: 65% } makes 1rem = 10.4px, so inputs that
-   * inherit that value trigger the zoom.  We force 16px on mobile only — the
+   * below 16px.  Our scaled rem values (e.g. text-base = 0.65rem = 10.4px)
+   * are below that threshold, so we force 16px on mobile only — the
    * desktop design is unaffected.
    */
   @media (max-width: 767px) {
@@ -1013,21 +1012,21 @@ body.route-changing #nprogress .peg {
 
 /*
  * Bottom padding for main content on mobile:
- * = fixed bottom-nav height (4rem) + iPhone home-indicator safe area.
+ * = fixed bottom-nav height (2.6rem) + iPhone home-indicator safe area.
  * Used in the public layout so scrollable content never hides behind the nav.
  */
 @media (max-width: 639px) {
   .pb-nav-safe {
-    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(2.6rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
 /*
- * Positions a fixed element just above the bottom nav (4rem) plus any safe area.
+ * Positions a fixed element just above the bottom nav (2.6rem) plus any safe area.
  * Used by the mobile sticky checkout/action bars.
  */
 .bottom-nav-safe {
-  bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  bottom: calc(2.6rem + env(safe-area-inset-bottom, 0px));
 }
 
 /*
@@ -1038,7 +1037,7 @@ body.route-changing #nprogress .peg {
  */
 @media (max-width: 639px) {
   [data-radix-dialog-content] {
-    padding-bottom: max(1.5rem, calc(1.5rem + env(safe-area-inset-bottom, 0px)));
+    padding-bottom: max(0.975rem, calc(0.975rem + env(safe-area-inset-bottom, 0px)));
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
