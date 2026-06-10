@@ -97,8 +97,10 @@ export function ProductActionsSection({
                       </div>
                     )}
                     <div className="font-semibold text-sm">{size.name}</div>
-                    <div className="text-primary font-bold text-sm">{formatCurrency(size.finalPrice)}</div>
-                    {size.hasPromotion && <div className="text-[10px] text-muted-foreground line-through">{formatCurrency(size.price)}</div>}
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-primary font-bold text-sm">{formatCurrency(size.finalPrice)}</span>
+                      {size.hasPromotion && <span className="text-[10px] text-muted-foreground line-through">{formatCurrency(size.price)}</span>}
+                    </div>
                     {szQty > 0 && (
                       <div className={cn("absolute -top-2 -left-2 text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold", isModified ? "bg-amber-500" : "bg-primary")}>
                         {szQty}
