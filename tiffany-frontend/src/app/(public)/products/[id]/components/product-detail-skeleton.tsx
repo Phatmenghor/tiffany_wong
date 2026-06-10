@@ -7,7 +7,7 @@ export function ProductDetailSkeleton() {
   return (
     <PageContainer className="py-4 sm:py-6">
       <Skeleton className="h-8 w-16 mb-5 rounded-xl" />
-      <div className="grid grid-cols-1 lg:grid-cols-[9fr_11fr] gap-8 lg:gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8 lg:gap-10">
         {/* Left: vertical thumbs + main image */}
         <div className="flex gap-3">
           <div className="flex flex-col items-center gap-1.5 w-[60px]">
@@ -17,7 +17,7 @@ export function ProductDetailSkeleton() {
             ))}
             <Skeleton className="h-6 w-6 rounded-lg" />
           </div>
-          <Skeleton className="flex-1 aspect-[4/3] rounded-2xl" />
+          <Skeleton className="flex-1 aspect-square rounded-2xl" />
         </div>
 
         {/* Right: info + actions */}

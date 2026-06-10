@@ -455,7 +455,7 @@ export default function ProductDetailPage() {
         </CustomButton>
 
         {/* ── Main grid ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[9fr_11fr] gap-8 lg:gap-10 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8 lg:gap-10 mb-16">
           {/* ──── LEFT: Image Gallery ──── */}
           <ProductImageGallery
             mainImageUrl={product.mainImageUrl}

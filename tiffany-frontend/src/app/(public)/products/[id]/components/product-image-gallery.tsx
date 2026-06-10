@@ -109,7 +109,7 @@ export function ProductImageGallery({
       )}
 
       {/* Main image */}
-      <div className="relative flex-1 aspect-[4/3] rounded-2xl overflow-hidden bg-muted group cursor-zoom-in shadow-sm">
+      <div className="relative flex-1 aspect-square rounded-2xl overflow-hidden bg-muted group cursor-zoom-in shadow-sm">
         {!imageLoaded && (
           <div className="absolute inset-0 bg-muted animate-pulse rounded-2xl" />
         )}
