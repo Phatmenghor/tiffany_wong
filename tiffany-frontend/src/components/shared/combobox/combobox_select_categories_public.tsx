@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, memo } from "react";
+import { useEffect, useState, useRef, useMemo, memo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -18,8 +18,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown, Loader2, Package } from "lucide-react";
-import { useInView } from "react-intersection-observer";
-import { useDebounce } from "@/utils/debounce/debounce";
 import { useAppDispatch } from "@/redux/store/hooks";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
 import { fetchPublicCategories } from "@/redux/features/main/store/thunks/public-categories-thunks";
@@ -51,100 +49,48 @@ function ComboboxSelectCategoriesPublicComponent({
 
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [data, setData] = useState<CategoriesResponseModel[]>([]);
+  const [allCategories, setAllCategories] = useState<CategoriesResponseModel[]>([]);
   const [loading, setLoading] = useState(false);
-  const [lastPage, setLastPage] = useState(false);
 
-  const { ref: lastItemRef, inView } = useInView({ threshold: 0.5 });
-  const debouncedSearch = useDebounce(searchTerm, 400);
-
-  // Refs so effects don't trigger re-fetch loops via reactive deps
-  const loadingRef = useRef(false);
-  const lastPageRef = useRef(false);
-  const currentPageRef = useRef(1);
-  const debouncedSearchRef = useRef(debouncedSearch);
-  const initialFetchDoneRef = useRef(false);
-
-  // Keep refs in sync with state
-  useEffect(() => { loadingRef.current = loading; }, [loading]);
-  useEffect(() => { lastPageRef.current = lastPage; }, [lastPage]);
-  useEffect(() => { debouncedSearchRef.current = debouncedSearch; }, [debouncedSearch]);
+  const fetchedRef = useRef(false);
 
   const sizeClasses = { sm: "h-8 text-xs", md: "h-9 text-sm", lg: "h-10 text-base" };
 
-  const removeDuplicates = (items: CategoriesResponseModel[]): CategoriesResponseModel[] => {
-    const seen = new Set<string>();
-    return items.filter((item) => {
-      if (seen.has(item.id)) return false;
-      seen.add(item.id);
-      return true;
-    });
-  };
-
-  const fetchData = async (search: string, newPage: number) => {
-    if (loadingRef.current || (lastPageRef.current && newPage > 1)) return;
+  // Fetch all categories once on mount — backend returns a flat array
+  useEffect(() => {
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
 
     setLoading(true);
-    try {
-      const result = await dispatch(
-        fetchPublicCategories({ search, pageNo: newPage, pageSize: 15, status: "ACTIVE" }),
-      ).unwrap();
-
-      if (!result) return;
-
-      const items: CategoriesResponseModel[] = result.content || [];
-
-      if (newPage === 1) {
-        setData(removeDuplicates(search ? items : [ALL_OPTION, ...items]));
-      } else {
-        setData((prev) => removeDuplicates([...prev, ...items]));
-      }
-
-      currentPageRef.current = result.pageNo || newPage;
-      setLastPage(result.last || false);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Initial fetch on mount — only once
-  useEffect(() => {
-    if (initialFetchDoneRef.current) return;
-    initialFetchDoneRef.current = true;
-    fetchData("", 1);
+    dispatch(fetchPublicCategories({ status: "ACTIVE", pageSize: 200 }))
+      .unwrap()
+      .then((result) => {
+        // Backend returns a direct array (not paginated)
+        const items: CategoriesResponseModel[] = Array.isArray(result)
+          ? result
+          : (result.content ?? result ?? []);
+        setAllCategories(items);
+      })
+      .catch((err) => console.error("Failed to load categories:", err))
+      .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Re-fetch when search changes (only while open).
-  // On open with no search and data already loaded — skip to avoid redundant calls.
-  useEffect(() => {
-    if (!open) return;
-    if (!debouncedSearch && data.length > 0) return;
+  // Client-side filtering
+  const filtered = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    const cats = q
+      ? allCategories.filter((c) => c.name.toLowerCase().includes(q))
+      : allCategories;
+    return [ALL_OPTION, ...cats];
+  }, [allCategories, searchTerm]);
 
-    currentPageRef.current = 1;
-    setLastPage(false);
-    setData([]);
-    fetchData(debouncedSearch, 1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearch, open]);
-
-  // Load next page when last item scrolls into view.
-  // Uses refs for page/search so this effect never re-fires from data changes.
-  useEffect(() => {
-    if (!open || !inView || loadingRef.current || lastPageRef.current) return;
-    if (data.length === 0) return;
-    fetchData(debouncedSearchRef.current, currentPageRef.current + 1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inView, open]);
+  const selectedCategoryName = allCategories.find((c) => c.id === selectedCategory)?.name;
 
   const handleSelect = (categoryId: string) => {
     onChangeSelected(categoryId);
     setOpen(false);
   };
-
-  const selectedCategoryName = data.find((c) => c.id === selectedCategory)?.name;
 
   return (
     <div className="flex flex-col gap-1 w-full">
@@ -197,44 +143,39 @@ function ComboboxSelectCategoriesPublicComponent({
               onValueChange={setSearchTerm}
             />
             <CommandList className="max-h-60 overflow-y-auto">
-              <CommandEmpty>No categories found.</CommandEmpty>
-              <CommandGroup>
-                {data.map((item, index) => (
-                  <CommandItem
-                    key={item.id || `all-${index}`}
-                    value={item.name}
-                    onSelect={() => handleSelect(item.id)}
-                    ref={index === data.length - 1 ? lastItemRef : null}
-                    className={cn(
-                      sizeClasses[size],
-                      "hover:bg-primary/10 hover:text-primary cursor-pointer",
-                      (selectedCategory === item.id || (!selectedCategory && item.id === "")) &&
-                        "bg-primary/20 text-primary font-medium",
-                    )}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        (selectedCategory === item.id || (!selectedCategory && item.id === ""))
-                          ? "opacity-100"
-                          : "opacity-0",
-                      )}
-                    />
-                    {item.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-
-              {loading && (
-                <div className="text-center py-2">
-                  <Loader2 className="animate-spin text-primary h-5 w-5 mx-auto" />
+              {loading ? (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
                 </div>
-              )}
-
-              {!loading && lastPage && data.length > 0 && (
-                <div className="text-center py-2 text-sm text-muted-foreground">
-                  No more categories
-                </div>
+              ) : (
+                <>
+                  <CommandEmpty>No categories found.</CommandEmpty>
+                  <CommandGroup>
+                    {filtered.map((item, index) => (
+                      <CommandItem
+                        key={item.id || `all-${index}`}
+                        value={item.name}
+                        onSelect={() => handleSelect(item.id)}
+                        className={cn(
+                          sizeClasses[size],
+                          "hover:bg-primary/10 hover:text-primary cursor-pointer",
+                          (selectedCategory === item.id || (!selectedCategory && item.id === "")) &&
+                            "bg-primary/20 text-primary font-medium",
+                        )}
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            (selectedCategory === item.id || (!selectedCategory && item.id === ""))
+                              ? "opacity-100"
+                              : "opacity-0",
+                          )}
+                        />
+                        {item.name}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </>
               )}
             </CommandList>
           </Command>
