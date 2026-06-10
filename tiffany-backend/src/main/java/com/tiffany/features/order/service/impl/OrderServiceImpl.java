@@ -16,6 +16,8 @@ import com.tiffany.features.order.models.Cart;
 import com.tiffany.features.order.models.Order;
 import com.tiffany.features.order.models.OrderDeliveryAddress;
 import com.tiffany.features.order.models.OrderItem;
+import com.tiffany.features.main.models.ProductSize;
+import com.tiffany.features.main.repository.ProductSizeRepository;
 import com.tiffany.features.order.repository.CartRepository;
 import com.tiffany.features.order.repository.OrderDeliveryAddressRepository;
 import com.tiffany.features.order.repository.OrderItemRepository;
@@ -45,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+    private final ProductSizeRepository productSizeRepository;
     private final CartRepository cartRepository;
     private final OrderDeliveryAddressRepository orderDeliveryAddressRepository;
     private final OrderMapper orderMapper;
@@ -211,6 +214,14 @@ public class OrderServiceImpl implements OrderService {
 
         for (var cartItem : cart.getItems()) {
             OrderItemCreateHelper helper = orderMapper.buildOrderItemHelperFromCartItem(cartItem, orderId);
+
+            // Ensure productSizeId is never null in order history
+            if (helper.getProductSizeId() == null) {
+                ProductSize size = resolveOrCreateStandardSize(cartItem.getProductId(), cartItem.getCurrentPrice());
+                helper.setProductSizeId(size.getId());
+                helper.setSizeName(size.getName());
+            }
+
             OrderItem orderItem = orderMapper.createOrderItemFromHelper(helper);
             orderItem.calculateTotalPrice();
             orderItemRepository.save(orderItem);
@@ -231,6 +242,22 @@ public class OrderServiceImpl implements OrderService {
         order.setDiscountAmount(discountAmount);
         order.setTotalAmount(subtotal.subtract(discountAmount));
         orderRepository.save(order);
+    }
+
+    /**
+     * Finds the existing "Standard" ProductSize for a product, or creates one if none exists.
+     * Ensures every order item always has a non-null productSizeId for complete history records.
+     */
+    private ProductSize resolveOrCreateStandardSize(UUID productId, BigDecimal price) {
+        List<ProductSize> sizes = productSizeRepository.findByProductId(productId);
+        if (!sizes.isEmpty()) {
+            return sizes.stream()
+                    .filter(s -> "Standard".equalsIgnoreCase(s.getName()))
+                    .findFirst()
+                    .orElse(sizes.get(0));
+        }
+        ProductSize standard = new ProductSize(productId, "Standard", price);
+        return productSizeRepository.save(standard);
     }
 
     private void clearCartAfterOrder(UUID customerId) {
