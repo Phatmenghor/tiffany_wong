@@ -38,14 +38,9 @@ const PaginatedProductsGridComponent = ({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isPaginationLoading = loading && products.length > 0;
   const [paginationSkeletonCount, setPaginationSkeletonCount] = useState(6);
-  const [newProductIds, setNewProductIds] = useState<Set<string>>(new Set());
 
-
-  // Handle load more with new product tracking
   const handleLoadMoreWithScroll = useCallback(() => {
-    setNewProductIds(new Set());
     onLoadMore();
   }, [onLoadMore]);
 
@@ -73,16 +68,6 @@ const PaginatedProductsGridComponent = ({
     return () => window.removeEventListener("resize", calculateSkeletonCount);
   }, [calculateSkeletonCount]);
 
-
-  // Track new products for animation (separate from scroll)
-  useEffect(() => {
-    if (!isPaginationLoading && products.length > 0) {
-      const newIds = new Set(
-        products.slice(-paginationSkeletonCount * 2).map((p) => p.id.toString())
-      );
-      setNewProductIds(newIds);
-    }
-  }, [isPaginationLoading, products, paginationSkeletonCount]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -133,20 +118,10 @@ const PaginatedProductsGridComponent = ({
   return (
     <div ref={containerRef}>
       <div className={className}>
-        {/* Real products with smooth fade-in animation for new items */}
         {products.map((product, index) => {
-          const isNew = newProductIds.has(product.id.toString());
-          // Use unique key: {section}-{product-id}-{index}
-          // Example: "home-product-123-0", "promo-product-456-1"
           const uniqueKey = `${sectionKey}-${product.id}-${index}`;
           return (
-            <div
-              key={uniqueKey}
-              data-product-key={`product-${product.id}`}
-              className={`transition-all duration-500 ease-out ${
-                isNew ? "animate-fade-in-up" : ""
-              }`}
-            >
+            <div key={uniqueKey} data-product-key={`product-${product.id}`}>
               <ProductCard product={product} />
             </div>
           );
@@ -157,7 +132,6 @@ const PaginatedProductsGridComponent = ({
           Array.from({ length: paginationSkeletonCount }).map((_, i) => (
             <div
               key={`skeleton-default-${i}`}
-              className="animate-fade-in-up"
             >
               <ProductCardSkeleton />
             </div>
@@ -165,7 +139,7 @@ const PaginatedProductsGridComponent = ({
 
         {/* Loading spinner ALWAYS show while hasMore: true - never hide */}
         {hasMore && (
-          <div className="col-span-full flex flex-col items-center justify-center py-8 animate-fade-in-up">
+          <div className="col-span-full flex flex-col items-center justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-primary mb-2" />
             <p className="text-xs sm:text-sm text-muted-foreground">
               Loading more products...
