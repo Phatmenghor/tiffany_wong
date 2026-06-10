@@ -51,6 +51,7 @@ export function CartItemCard({
         src={sanitizeImageUrl(productImageUrl, appImages.NoImage)}
         alt={productName}
         fill
+        sizes="80px"
         className="object-cover"
       />
     </div>
