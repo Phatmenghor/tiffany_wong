@@ -348,7 +348,6 @@ export function SizeSelectionModal({
       }
 
       await Promise.all(promises);
-      showToast.success("Cart updated");
       setPendingQuantities(new Map());
       setModifiedSizes(new Set());
       onOpenChange(false);

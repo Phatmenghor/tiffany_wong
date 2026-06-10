@@ -106,6 +106,14 @@ export const errorLoggingMiddleware: Middleware =
     const isRejectedAction = action.type.endsWith("/rejected");
 
     if (isRejectedAction) {
+      // Skip aborted requests and undefined payloads (normal abort behaviour)
+      if (
+        action.meta?.aborted ||
+        action.payload === undefined ||
+        action.payload?.aborted
+      ) {
+        return next(action);
+      }
       console.error("❌ [ERROR]", action.type, action.payload);
     }
 

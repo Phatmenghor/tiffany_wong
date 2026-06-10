@@ -391,7 +391,6 @@ export default function ProductDetailPage() {
         }
       }
       await Promise.all(promises);
-      showToast.success("Cart updated");
       setPendingQuantities(new Map());
       setModifiedSizes(new Set());
     } catch (err: any) {
