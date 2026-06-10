@@ -143,10 +143,10 @@ export function CustomerOrderDetailModal({
                     {order.items.map((item) => (
                       <div
                         key={item.id}
-                        className="flex gap-2.5 p-2 rounded border border-border/50 bg-muted/20"
+                        className="flex gap-3 p-2.5 rounded border border-border/50 bg-muted/20"
                       >
                         {/* Image */}
-                        <div className="relative flex-shrink-0 w-10 h-10 rounded overflow-hidden bg-muted border border-border/50">
+                        <div className="relative flex-shrink-0 w-16 h-16 rounded-md overflow-hidden bg-muted border border-border/50">
                           {item.productImageUrl ? (
                             <img
                               src={item.productImageUrl}
@@ -155,14 +155,14 @@ export function CustomerOrderDetailModal({
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <Package className="h-4 w-4 text-muted-foreground" />
+                              <Package className="h-6 w-6 text-muted-foreground" />
                             </div>
                           )}
                         </div>
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-1 mb-0.5">
+                          <div className="flex items-start justify-between gap-1 mb-1">
                             <p className="text-xs font-semibold text-foreground leading-tight truncate">
                               {item.productName}
                             </p>
@@ -176,21 +176,24 @@ export function CustomerOrderDetailModal({
                           </div>
 
                           {item.sizeName && (
-                            <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded inline-block mb-1">
+                            <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded inline-block mb-1.5">
                               {item.sizeName}
                             </span>
                           )}
 
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">
-                              {formatCurrency(item.displayPrice)} × {item.quantity}
+                          <div className="flex items-center justify-between text-xs gap-2">
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <span>{formatCurrency(item.displayPrice)}</span>
                               {item.hasActivePromotion && item.displayOriginPrice > item.displayPrice && (
-                                <span className="line-through text-muted-foreground/60 ml-1">
+                                <span className="line-through text-muted-foreground/50">
                                   {formatCurrency(item.displayOriginPrice)}
                                 </span>
                               )}
-                            </span>
-                            <span className="font-bold text-foreground">
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold text-[10px] leading-none">
+                                ×{item.quantity}
+                              </span>
+                            </div>
+                            <span className="font-bold text-foreground flex-shrink-0">
                               {formatCurrency(item.subtotalAfterDiscount || 0)}
                             </span>
                           </div>
