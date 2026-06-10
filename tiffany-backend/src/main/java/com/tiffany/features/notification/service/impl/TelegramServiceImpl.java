@@ -151,11 +151,11 @@ public class TelegramServiceImpl implements TelegramService {
         sb.append("PAYMENT\n");
         sb.append("Method: ").append(order.getPaymentMethod() != null ? order.getPaymentMethod().name() : "-").append("\n");
         sb.append("Status: ").append(order.getPaymentStatus() != null ? order.getPaymentStatus().name() : "-").append("\n");
+        sb.append("Total: ").append(formatPrice(order.getTotalAmount()));
         if (order.getDiscountAmount() != null && order.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
-            sb.append("Subtotal: ").append(formatPrice(order.getSubtotal())).append("\n");
-            sb.append("Discount: -").append(formatPrice(order.getDiscountAmount())).append("\n");
+            sb.append(" (Saved ").append(formatPrice(order.getDiscountAmount())).append(")");
         }
-        sb.append("Total: ").append(formatPrice(order.getTotalAmount())).append("\n");
+        sb.append("\n");
 
         return sb.toString();
     }

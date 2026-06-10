@@ -215,7 +215,10 @@ public class OrderServiceImpl implements OrderService {
             orderItem.calculateTotalPrice();
             orderItemRepository.save(orderItem);
 
-            subtotal = subtotal.add(orderItem.getTotalPrice());
+            // subtotal = original price × qty so that totalAmount = subtotal - discount = final price × qty
+            subtotal = subtotal.add(
+                    cartItem.getCurrentPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()))
+            );
             BigDecimal itemDiscount = cartItem.getCurrentPrice().subtract(cartItem.getFinalPrice())
                     .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
             if (itemDiscount.compareTo(BigDecimal.ZERO) > 0) {
