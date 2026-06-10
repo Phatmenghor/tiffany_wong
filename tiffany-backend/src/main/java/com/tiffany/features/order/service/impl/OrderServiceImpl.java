@@ -18,6 +18,7 @@ import com.tiffany.features.order.models.OrderDeliveryAddress;
 import com.tiffany.features.order.models.OrderItem;
 import com.tiffany.features.order.repository.CartRepository;
 import com.tiffany.features.order.repository.OrderDeliveryAddressRepository;
+import com.tiffany.features.order.repository.OrderItemRepository;
 import com.tiffany.features.order.repository.OrderRepository;
 import com.tiffany.features.order.service.OrderService;
 import com.tiffany.security.SecurityUtils;
@@ -43,6 +44,7 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final CartRepository cartRepository;
     private final OrderDeliveryAddressRepository orderDeliveryAddressRepository;
     private final OrderMapper orderMapper;
@@ -204,21 +206,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void createOrderItemsFromCart(UUID orderId, Cart cart) {
+        log.info("createOrderItemsFromCart - orderId: {}, cartItemCount: {}", orderId, cart.getItems().size());
+
         BigDecimal subtotal = BigDecimal.ZERO;
         BigDecimal discountAmount = BigDecimal.ZERO;
 
-        Order order = orderRepository.findById(orderId).orElseThrow();
-
         for (var cartItem : cart.getItems()) {
+            log.info("Processing cartItem - productId: {}, productName: {}, qty: {}, currentPrice: {}, finalPrice: {}",
+                    cartItem.getProductId(),
+                    cartItem.getProduct() != null ? cartItem.getProduct().getName() : "NULL",
+                    cartItem.getQuantity(),
+                    cartItem.getCurrentPrice(),
+                    cartItem.getFinalPrice());
+
             OrderItemCreateHelper helper = orderMapper.buildOrderItemHelperFromCartItem(cartItem, orderId);
+            log.info("OrderItemHelper built - orderId: {}, productName: {}, unitPrice: {}, qty: {}",
+                    helper.getOrderId(), helper.getProductName(), helper.getUnitPrice(), helper.getQuantity());
+
             OrderItem orderItem = orderMapper.createOrderItemFromHelper(helper);
             orderItem.calculateTotalPrice();
 
-            // Add to order's items collection so CascadeType.ALL persists it
-            order.getItems().add(orderItem);
+            log.info("Saving OrderItem - orderId: {}, productName: {}, qty: {}, totalPrice: {}",
+                    orderItem.getOrderId(), orderItem.getProductName(), orderItem.getQuantity(), orderItem.getTotalPrice());
+
+            OrderItem saved = orderItemRepository.save(orderItem);
+            log.info("OrderItem saved - id: {}, orderId: {}", saved.getId(), saved.getOrderId());
 
             subtotal = subtotal.add(orderItem.getTotalPrice());
-            // Accumulate discount = base price - final price per item * quantity
             BigDecimal itemDiscount = cartItem.getCurrentPrice().subtract(cartItem.getFinalPrice())
                     .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
             if (itemDiscount.compareTo(BigDecimal.ZERO) > 0) {
@@ -226,12 +240,15 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+        log.info("All items saved - updating order totals: subtotal={}, discountAmount={}", subtotal, discountAmount);
+
+        Order order = orderRepository.findById(orderId).orElseThrow();
         order.setSubtotal(subtotal);
         order.setDiscountAmount(discountAmount);
-
-        // Calculate total = subtotal - discount (free shipping, no tax)
         order.setTotalAmount(subtotal.subtract(discountAmount));
         orderRepository.save(order);
+
+        log.info("Order totals updated - orderId: {}", orderId);
     }
 
     private void clearCartAfterOrder(UUID customerId) {
