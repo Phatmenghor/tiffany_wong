@@ -26,6 +26,7 @@ import {
   updateLocalCartItem,
 } from "@/redux/features/main/store/slice/cart-slice";
 import { SizeSelectionModal } from "../modal/size-selection-modal";
+import { RegisterModal } from "../modal/register-modal";
 import { useCartDebounce, cartItemKey } from "@/hooks/use-cart-debounce";
 import { getProductQuantity } from "@/utils/common/quantity-utils";
 import {
@@ -52,6 +53,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
   const { isAuthenticated } = useAuthState();
 
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showSizeModal, setShowSizeModal] = useState(false);
 
   // Use optimized memoized selectors - only subscribe to this product's quantity
@@ -475,7 +477,16 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
         </div>
       </Link>
 
-      <LoginModal open={showLoginModal} onOpenChange={setShowLoginModal} />
+      <LoginModal
+        open={showLoginModal}
+        onOpenChange={setShowLoginModal}
+        onRegisterClick={() => { setShowLoginModal(false); setShowRegisterModal(true); }}
+      />
+      <RegisterModal
+        open={showRegisterModal}
+        onOpenChange={setShowRegisterModal}
+        onLoginClick={() => { setShowRegisterModal(false); setShowLoginModal(true); }}
+      />
       <SizeSelectionModal
         open={showSizeModal}
         onOpenChange={setShowSizeModal}
