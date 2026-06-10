@@ -252,12 +252,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void clearCartAfterOrder(UUID customerId) {
-        cartRepository.findByUserIdAndIsDeletedFalse(customerId)
+        cartRepository.findByUserIdWithItems(customerId)
                 .ifPresent(cart -> {
-                    if (cart.getItems() != null) {
-                        cart.getItems().clear();
-                    }
-                    log.info("Cart cleared after order for customer: {}", customerId);
+                    int itemCount = cart.getItems() != null ? cart.getItems().size() : 0;
+                    cart.clearItems();
+                    cartRepository.save(cart);
+                    log.info("Cart cleared after order for customer: {}, removedItems: {}", customerId, itemCount);
                 });
     }
 

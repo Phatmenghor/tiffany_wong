@@ -9,6 +9,7 @@ import { useAppDispatch } from '@/redux/store/hooks';
 import { LocationResponseModel } from "@/redux/features/location/store/models/response/location-response";
 import { createOrderService } from "@/redux/features/main/store/thunks/order-thunks";
 import { fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
+import { resetCart } from "@/redux/features/main/store/slice/cart-slice";
 import { fetchAllLocationsService } from "@/redux/features/location/store/thunks/location-thunks";
 import { showToast } from "@/components/shared/common/show-toast";
 import { PageContainer } from "@/components/shared/common/page-container";
@@ -124,6 +125,9 @@ export default function CheckoutPage() {
       };
 
       const result = await dispatch(createOrderService(payload as any) as any).unwrap();
+
+      // Clear cart in Redux state immediately
+      dispatch(resetCart());
 
       // Show success modal with order number
       setSuccessModalState({
