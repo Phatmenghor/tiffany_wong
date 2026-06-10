@@ -10,7 +10,6 @@ import { LocationResponseModel } from "@/redux/features/location/store/models/re
 import { createOrderService } from "@/redux/features/main/store/thunks/order-thunks";
 import { fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
 import { resetCart } from "@/redux/features/main/store/slice/cart-slice";
-import { fetchAllLocationsService } from "@/redux/features/location/store/thunks/location-thunks";
 import { showToast } from "@/components/shared/common/show-toast";
 import { PageContainer } from "@/components/shared/common/page-container";
 import { PageHeader } from "@/components/shared/common/page-header";
@@ -52,39 +51,6 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (!mounted || !authReady || !isAuthenticated) return;
     dispatch(fetchCart());
-  }, [mounted, authReady, isAuthenticated, dispatch]);
-
-  // Fetch and auto-select default address on mount
-  useEffect(() => {
-    if (!mounted || !authReady || !isAuthenticated) return;
-
-    const autoSelectDefaultAddress = async () => {
-      try {
-        const result = await dispatch(
-          fetchAllLocationsService({
-            pageNo: 1,
-            pageSize: 15,
-          })
-        ).unwrap();
-
-        if (result?.content && result.content.length > 0) {
-          // Find default address
-          const defaultAddr = result.content.find(
-            (addr: any) => addr.isDefault === true
-          );
-          if (defaultAddr) {
-            setSelectedAddress(defaultAddr);
-          } else {
-            // Fallback to first address if no default
-            setSelectedAddress(result.content[0]);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to auto-select default address:", error);
-      }
-    };
-
-    autoSelectDefaultAddress();
   }, [mounted, authReady, isAuthenticated, dispatch]);
 
   // Redirect if not authenticated or cart empty (but wait for cart to load)
