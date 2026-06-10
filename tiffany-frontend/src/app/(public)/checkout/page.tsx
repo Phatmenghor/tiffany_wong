@@ -10,7 +10,6 @@ import { LocationResponseModel } from "@/redux/features/location/store/models/re
 import { createOrderService } from "@/redux/features/main/store/thunks/order-thunks";
 import { fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
 import { resetCart } from "@/redux/features/main/store/slice/cart-slice";
-import { showToast } from "@/components/shared/common/show-toast";
 import { PageContainer } from "@/components/shared/common/page-container";
 import { PageHeader } from "@/components/shared/common/page-header";
 import { CartItemCard } from "@/components/shared/cart-item-card/cart-item-card";
@@ -34,6 +33,7 @@ export default function CheckoutPage() {
   const [customerNote, setCustomerNote] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"CASH" | "BANK">("CASH");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState({ name: "", phone: "" });
   const [successModalState, setSuccessModalState] = useState({
     isOpen: false,
     orderNumber: "",
@@ -68,15 +68,12 @@ export default function CheckoutPage() {
   }, [mounted, authReady, isAuthenticated, items.length, cartLoaded, router]);
 
   const handleCheckout = async () => {
-    if (!customerName.trim()) {
-      showToast.error("Please enter your name");
-      return;
-    }
-
-    if (!customerPhone.trim()) {
-      showToast.error("Please enter your phone number");
-      return;
-    }
+    const newErrors = {
+      name: customerName.trim() ? "" : "Full name is required",
+      phone: customerPhone.trim() ? "" : "Phone number is required",
+    };
+    setErrors(newErrors);
+    if (newErrors.name || newErrors.phone) return;
 
     setIsProcessing(true);
     try {
@@ -105,7 +102,7 @@ export default function CheckoutPage() {
       });
     } catch (error: any) {
       console.error("Checkout error:", error);
-      showToast.error(error?.message || "Failed to create order");
+      setErrors((e) => ({ ...e, phone: error?.message || "Failed to create order" }));
     } finally {
       setIsProcessing(false);
     }
@@ -157,28 +154,30 @@ export default function CheckoutPage() {
               <h3 className="text-base font-bold mb-4">Customer Information</h3>
               {/* grid-cols-1 on mobile prevents two-column overflow at small/zoomed screens */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label className="text-sm font-medium">Full Name *</label>
                   <input
                     type="text"
                     placeholder="Enter your full name"
                     value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    onChange={(e) => { setCustomerName(e.target.value); setErrors((v) => ({ ...v, name: "" })); }}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary ${errors.name ? "border-red-500 focus:ring-red-300" : ""}`}
                     disabled={isProcessing}
                   />
+                  {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label className="text-sm font-medium">Phone Number *</label>
                   <input
                     type="tel"
                     placeholder="Enter your phone number"
                     value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    onChange={(e) => { setCustomerPhone(e.target.value); setErrors((v) => ({ ...v, phone: "" })); }}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary ${errors.phone ? "border-red-500 focus:ring-red-300" : ""}`}
                     disabled={isProcessing}
                   />
+                  {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
                 </div>
               </div>
             </div>
