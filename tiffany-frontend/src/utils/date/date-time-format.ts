@@ -22,10 +22,9 @@ export function dateTimeFormat(timestamp: string | null | undefined): string {
   const year = khDate.getFullYear();
   const hour = String(khDate.getHours() % 12 || 12).padStart(2, "0");
   const minute = String(khDate.getMinutes()).padStart(2, "0");
-  const second = String(khDate.getSeconds()).padStart(2, "0");
   const ampm = khDate.getHours() >= 12 ? "PM" : "AM";
 
-  return `${day}/${month}/${year}, ${hour}:${minute}:${second} ${ampm}`;
+  return `${day}/${month}/${year}, ${hour}:${minute} ${ampm}`;
 }
 
 export function formatDate(dateStr: string | null | undefined): string {

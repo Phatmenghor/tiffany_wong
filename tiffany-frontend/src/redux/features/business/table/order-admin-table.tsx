@@ -70,17 +70,6 @@ export const orderAdminTableColumns = ({
       ),
     },
     {
-      key: "createdAt",
-      label: "Created Date",
-      minWidth: "140px",
-      maxWidth: "170px",
-      render: (order) => (
-        <span className="text-xs text-muted-foreground">
-          {dateTimeFormat(order?.createdAt)}
-        </span>
-      ),
-    },
-    {
       key: "orderNumber",
       label: "Order #",
       minWidth: "100px",
@@ -89,6 +78,21 @@ export const orderAdminTableColumns = ({
         <span className="text-xs font-mono font-medium">
           {order?.orderNumber || "---"}
         </span>
+      ),
+    },
+    {
+      key: "customerName",
+      label: "Customer",
+      minWidth: "130px",
+      maxWidth: "170px",
+      truncate: true,
+      render: (order) => (
+        <div className="flex flex-col">
+          <span className="text-xs font-medium">{order?.customerName || "Walk-in"}</span>
+          <span className="text-xs text-muted-foreground">
+            {order?.customerPhone || "No phone"}
+          </span>
+        </div>
       ),
     },
     {
@@ -124,21 +128,6 @@ export const orderAdminTableColumns = ({
           </span>
         );
       },
-    },
-    {
-      key: "customerName",
-      label: "Customer",
-      minWidth: "130px",
-      maxWidth: "170px",
-      truncate: true,
-      render: (order) => (
-        <div className="flex flex-col">
-          <span className="text-xs font-medium">{order?.customerName || "Walk-in"}</span>
-          <span className="text-xs text-muted-foreground">
-            {order?.customerPhone || "No phone"}
-          </span>
-        </div>
-      ),
     },
     {
       key: "paymentMethod",
@@ -205,6 +194,17 @@ export const orderAdminTableColumns = ({
             </span>
           )}
         </div>
+      ),
+    },
+    {
+      key: "createdAt",
+      label: "Created Date",
+      minWidth: "140px",
+      maxWidth: "170px",
+      render: (order) => (
+        <span className="text-xs text-muted-foreground">
+          {dateTimeFormat(order?.createdAt)}
+        </span>
       ),
     },
     {
