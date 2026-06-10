@@ -11,7 +11,9 @@ interface SimilarProductsProps {
 }
 
 export function SimilarProducts({ products, loading, hasMore, onLoadMore }: SimilarProductsProps) {
-  if (products.length === 0 && !loading) return null;
+  const isInitialLoading = loading && products.length === 0;
+
+  if (!isInitialLoading && products.length === 0) return null;
 
   return (
     <div className="pt-8 border-t">
@@ -28,6 +30,7 @@ export function SimilarProducts({ products, loading, hasMore, onLoadMore }: Simi
         loading={loading}
         hasMore={hasMore}
         onLoadMore={onLoadMore}
+        isInitialLoading={isInitialLoading}
         sectionKey="similar"
       />
     </div>
