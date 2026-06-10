@@ -17,13 +17,12 @@ import {
 } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, Package } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { useDebounce } from "@/utils/debounce/debounce";
-import { useAppDispatch } from '@/redux/store/hooks';
+import { useAppDispatch } from "@/redux/store/hooks";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
 import { fetchPublicCategories } from "@/redux/features/main/store/thunks/public-categories-thunks";
-import { Package } from "lucide-react";
 
 interface ComboboxSelectCategoriesPublicProps {
   selectedCategory: string;
@@ -53,36 +52,30 @@ function ComboboxSelectCategoriesPublicComponent({
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [data, setData] = useState<CategoriesResponseModel[]>([]);
-  const [page, setPage] = useState(1);
-  const [lastPage, setLastPage] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [lastPage, setLastPage] = useState(false);
 
   const { ref: lastItemRef, inView } = useInView({ threshold: 0.5 });
   const debouncedSearch = useDebounce(searchTerm, 400);
 
+  // Refs so effects don't trigger re-fetch loops via reactive deps
   const loadingRef = useRef(false);
   const lastPageRef = useRef(false);
-  const initialFetchRef = useRef(false);
+  const currentPageRef = useRef(1);
+  const debouncedSearchRef = useRef(debouncedSearch);
+  const initialFetchDoneRef = useRef(false);
 
-  useEffect(() => {
-    loadingRef.current = loading;
-    lastPageRef.current = lastPage;
-  }, [loading, lastPage]);
+  // Keep refs in sync with state
+  useEffect(() => { loadingRef.current = loading; }, [loading]);
+  useEffect(() => { lastPageRef.current = lastPage; }, [lastPage]);
+  useEffect(() => { debouncedSearchRef.current = debouncedSearch; }, [debouncedSearch]);
 
-  const sizeClasses = {
-    sm: "h-8 text-xs",
-    md: "h-9 text-sm",
-    lg: "h-10 text-base",
-  };
+  const sizeClasses = { sm: "h-8 text-xs", md: "h-9 text-sm", lg: "h-10 text-base" };
 
-  const removeDuplicates = (
-    items: CategoriesResponseModel[],
-  ): CategoriesResponseModel[] => {
+  const removeDuplicates = (items: CategoriesResponseModel[]): CategoriesResponseModel[] => {
     const seen = new Set<string>();
     return items.filter((item) => {
-      if (seen.has(item.id)) {
-        return false;
-      }
+      if (seen.has(item.id)) return false;
       seen.add(item.id);
       return true;
     });
@@ -92,34 +85,22 @@ function ComboboxSelectCategoriesPublicComponent({
     if (loadingRef.current || (lastPageRef.current && newPage > 1)) return;
 
     setLoading(true);
-
     try {
       const result = await dispatch(
-        fetchPublicCategories({
-          search,
-          pageNo: newPage,
-          pageSize: 15,
-          status: "ACTIVE",
-        }),
+        fetchPublicCategories({ search, pageNo: newPage, pageSize: 15, status: "ACTIVE" }),
       ).unwrap();
 
-      if (!result) {
-        return;
-      }
+      if (!result) return;
 
-      const items = result.content || [];
+      const items: CategoriesResponseModel[] = result.content || [];
 
       if (newPage === 1) {
-        if (!search) {
-          setData(removeDuplicates([ALL_OPTION, ...items]));
-        } else {
-          setData(removeDuplicates(items));
-        }
+        setData(removeDuplicates(search ? items : [ALL_OPTION, ...items]));
       } else {
         setData((prev) => removeDuplicates([...prev, ...items]));
       }
 
-      setPage(result.pageNo || newPage);
+      currentPageRef.current = result.pageNo || newPage;
       setLastPage(result.last || false);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -128,42 +109,42 @@ function ComboboxSelectCategoriesPublicComponent({
     }
   };
 
-  // Initial fetch on mount (to show selected category name)
+  // Initial fetch on mount — only once
   useEffect(() => {
-    if (initialFetchRef.current || data.length > 0) return;
-    initialFetchRef.current = true;
-    fetchData(debouncedSearch, 1);
-  }, []); // Run only once on mount
+    if (initialFetchDoneRef.current) return;
+    initialFetchDoneRef.current = true;
+    fetchData("", 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Fetch when search changes (ONLY if dropdown is open)
+  // Re-fetch when search changes (only while open).
+  // On open with no search and data already loaded — skip to avoid redundant calls.
   useEffect(() => {
-    if (!open) return; // Don't fetch if dropdown is closed
+    if (!open) return;
+    if (!debouncedSearch && data.length > 0) return;
 
-    setPage(1);
+    currentPageRef.current = 1;
     setLastPage(false);
     setData([]);
     fetchData(debouncedSearch, 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, open]);
 
-  // Pagination: Load more when last item comes into view (ONLY if dropdown is open)
+  // Load next page when last item scrolls into view.
+  // Uses refs for page/search so this effect never re-fires from data changes.
   useEffect(() => {
-    if (!open || !inView || loadingRef.current || lastPageRef.current || data.length === 0) {
-      return;
-    }
-
-    fetchData(debouncedSearch, page + 1);
+    if (!open || !inView || loadingRef.current || lastPageRef.current) return;
+    if (data.length === 0) return;
+    fetchData(debouncedSearchRef.current, currentPageRef.current + 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inView, open, page, data.length]);
+  }, [inView, open]);
 
   const handleSelect = (categoryId: string) => {
     onChangeSelected(categoryId);
     setOpen(false);
   };
 
-  const selectedCategoryName = data.find(
-    (c) => c.id === selectedCategory,
-  )?.name;
+  const selectedCategoryName = data.find((c) => c.id === selectedCategory)?.name;
 
   return (
     <div className="flex flex-col gap-1 w-full">
@@ -192,14 +173,11 @@ function ComboboxSelectCategoriesPublicComponent({
             )}
             disabled={disabled}
           >
-            <span className="truncate">
-              {selectedCategoryName || placeholder}
-            </span>
+            <span className="truncate">{selectedCategoryName || placeholder}</span>
             <ChevronsUpDown
               className={cn(
                 "ml-2 h-4 w-4 shrink-0 transition-all duration-200",
-                !open && "opacity-50",
-                open && "opacity-100 text-primary rotate-180",
+                open ? "opacity-100 text-primary rotate-180" : "opacity-50",
               )}
             />
           </Button>
@@ -230,16 +208,14 @@ function ComboboxSelectCategoriesPublicComponent({
                     className={cn(
                       sizeClasses[size],
                       "hover:bg-primary/10 hover:text-primary cursor-pointer",
-                      (selectedCategory === item.id ||
-                        (!selectedCategory && item.id === "")) &&
+                      (selectedCategory === item.id || (!selectedCategory && item.id === "")) &&
                         "bg-primary/20 text-primary font-medium",
                     )}
                   >
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        (selectedCategory === item.id ||
-                          (!selectedCategory && item.id === ""))
+                        (selectedCategory === item.id || (!selectedCategory && item.id === ""))
                           ? "opacity-100"
                           : "opacity-0",
                       )}
