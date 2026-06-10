@@ -17,7 +17,6 @@ import { Loading } from "@/components/shared/common/loading";
 import { showToast } from "@/components/shared/common/show-toast";
 import { Button } from "@/components/ui/button";
 import {
-  Download,
   Edit,
   Copy,
   Package,
@@ -90,91 +89,6 @@ export function OrderDetailModal({
   const handleClose = () => {
     dispatch(clearSelectedOrder());
     onClose();
-  };
-
-  const handleDownloadReceipt = async () => {
-    if (!orderData?.id || !orderData?.items) return;
-    try {
-      const element = document.createElement("div");
-      element.style.position = "absolute";
-      element.style.left = "-9999px";
-      element.style.width = "80mm";
-      element.style.fontFamily = "monospace";
-      element.style.fontSize = "11px";
-      element.style.backgroundColor = "#fff";
-      element.style.padding = "4mm";
-
-      const date = new Date(orderData.createdAt);
-      const formattedDate = date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-      const formattedTime = date
-        .toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })
-        .replace(/\b(am|pm)\b/i, (m) => m.toUpperCase());
-
-      const subtotal = orderData.subtotal || 0;
-      const discount = orderData.discountAmount || 0;
-      const total = orderData.totalAmount || 0;
-
-      const itemsHTML = orderData.items
-        .map((item) => {
-          const itemTotal = item.subtotalAfterDiscount || item.displayPrice * item.quantity;
-          return `
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;">
-              <span style="flex:1;">${item.productName}${item.sizeName ? ` (${item.sizeName})` : ""}</span>
-              <span style="width:16px;text-align:center;">${item.quantity}</span>
-              <span style="width:50px;text-align:right;">$${itemTotal.toFixed(2)}</span>
-            </div>`;
-        })
-        .join("");
-
-      element.innerHTML = `
-        <div style="width:80mm;background:white;">
-          <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:4px;margin-bottom:6px;">
-            <div style="font-weight:bold;font-size:13px;letter-spacing:1px;">RECEIPT</div>
-          </div>
-          <div style="text-align:center;font-size:10px;margin-bottom:6px;border-bottom:1px solid #666;padding-bottom:4px;">
-            <div>Order #: ${orderData.orderNumber}</div>
-            <div>Date: ${formattedDate} • ${formattedTime}</div>
-          </div>
-          <div style="margin-bottom:6px;border-bottom:1px solid #666;padding-bottom:4px;">
-            <div style="text-align:center;font-weight:bold;font-size:10px;border-bottom:1px solid #666;padding-bottom:2px;margin-bottom:4px;">ITEMS</div>
-            <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:10px;margin-bottom:2px;">
-              <span style="flex:1;">NAME</span>
-              <span style="width:16px;text-align:center;">QTY</span>
-              <span style="width:50px;text-align:right;">TOTAL</span>
-            </div>
-            <div style="border-bottom:1px solid #ccc;margin-bottom:2px;"></div>
-            ${itemsHTML}
-          </div>
-          <div style="margin-bottom:6px;border-bottom:2px solid #000;padding-bottom:6px;">
-            <div style="font-size:10px;line-height:1.6;">
-              <div style="display:flex;justify-content:space-between;"><span>Subtotal</span><span style="font-weight:bold;">$${subtotal.toFixed(2)}</span></div>
-              ${discount > 0 ? `<div style="display:flex;justify-content:space-between;color:#d32f2f;"><span>Discount</span><span style="font-weight:bold;">-$${discount.toFixed(2)}</span></div>` : ""}
-              <div style="border-top:1px solid #666;padding-top:3px;margin-top:3px;display:flex;justify-content:space-between;font-weight:bold;font-size:11px;"><span>TOTAL</span><span>$${total.toFixed(2)}</span></div>
-            </div>
-          </div>
-          <div style="text-align:center;font-size:10px;padding-top:4px;"><div>Thank you for your order!</div></div>
-        </div>`;
-
-      document.body.appendChild(element);
-      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
-        import("html2canvas"),
-        import("jspdf"),
-      ]);
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff" });
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: [80, 250] });
-      const imgData = canvas.toDataURL("image/png");
-      const imgHeight = (canvas.height * 80) / canvas.width;
-      pdf.addImage(imgData, "PNG", 0, 0, 80, imgHeight);
-      pdf.save(`receipt-${orderData.orderNumber}.pdf`);
-      document.body.removeChild(element);
-      showToast.success("Receipt downloaded successfully");
-    } catch {
-      showToast.error("Failed to generate receipt");
-    }
   };
 
   if (isFetchingDetail) {
@@ -475,17 +389,8 @@ export function OrderDetailModal({
         </div>
 
         {/* Footer */}
-        <div className="flex-shrink-0 px-4 py-3 border-t bg-muted/20 flex items-center justify-end gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDownloadReceipt}
-            className="gap-1.5 h-8"
-          >
-            <Download className="h-3 w-3" />
-            Download Receipt
-          </Button>
-          {onUpdateOrder && (
+        {onUpdateOrder && (
+          <div className="flex-shrink-0 px-4 py-3 border-t bg-muted/20 flex items-center justify-end gap-2">
             <Button
               variant="default"
               size="sm"
@@ -495,8 +400,8 @@ export function OrderDetailModal({
               <Edit className="h-3 w-3" />
               Update Status
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
