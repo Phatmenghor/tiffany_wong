@@ -42,7 +42,7 @@ export function MobileCheckoutBar({
       <CustomButton
         className="w-full gap-2 h-11 rounded-xl"
         onClick={onCheckout}
-        disabled={isProcessing || !selectedAddressId}
+        disabled={isProcessing}
       >
         {isProcessing ? (
           <>

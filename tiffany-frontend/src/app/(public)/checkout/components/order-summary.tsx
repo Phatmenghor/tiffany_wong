@@ -141,7 +141,7 @@ export function OrderSummary({
         <CustomButton
           className="w-full mb-2.5 gap-2 h-11 rounded-xl"
           onClick={onCheckout}
-          disabled={isProcessing || !selectedAddressId}
+          disabled={isProcessing}
         >
           {isProcessing ? (
             <>

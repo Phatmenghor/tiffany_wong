@@ -1,4 +1,4 @@
-import { MapPin, Plus, Store } from "lucide-react";
+import { MapPin, Plus } from "lucide-react";
 import { LocationResponseModel } from "@/redux/features/location/store/models/response/location-response";
 import { ComboboxSelectLocation } from "@/components/shared/combobox/combobox-select-location";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,6 @@ export function DeliveryAddressSection({
           Add Address
         </Button>
       </div>
-
       <ComboboxSelectLocation
         dataSelect={selectedAddress}
         onChangeSelected={onChangeSelected}
@@ -39,14 +38,6 @@ export function DeliveryAddressSection({
         placeholder="Select delivery address..."
         hasDefault={selectedAddress?.isDefault || false}
       />
-
-      {!selectedAddress && (
-        <div className="mt-3 flex items-center gap-2 rounded-xl border border-dashed border-primary/40 bg-primary/5 px-4 py-2.5">
-          <Store className="h-4 w-4 text-primary shrink-0" />
-          <span className="text-sm text-primary font-medium">Store Pickup</span>
-          <span className="text-xs text-muted-foreground ml-1">— no address selected</span>
-        </div>
-      )}
     </div>
   );
 }

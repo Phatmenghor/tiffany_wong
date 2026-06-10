@@ -4,11 +4,11 @@ import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from "@/components/ui/command";
 import {
   Popover,
@@ -17,12 +17,11 @@ import {
 } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown, Loader2, Plus } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, Store } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { useDebounce } from "@/utils/debounce/debounce";
 import { useAppDispatch } from '@/redux/store/hooks';
 import { fetchAllLocationsService } from "@/redux/features/location/store/thunks/location-thunks";
-import { useRouter } from "next/navigation";
 
 interface Location {
   id: string;
@@ -58,9 +57,7 @@ export function ComboboxSelectLocation({
   required = false,
   placeholder = "Select address...",
   error,
-  hasDefault = false,
 }: ComboboxSelectLocationProps) {
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -81,9 +78,7 @@ export function ComboboxSelectLocation({
   const removeDuplicates = (items: Location[]): Location[] => {
     const seen = new Set<string>();
     return items.filter((item) => {
-      if (seen.has(item.id)) {
-        return false;
-      }
+      if (seen.has(item.id)) return false;
       seen.add(item.id);
       return true;
     });
@@ -94,18 +89,13 @@ export function ComboboxSelectLocation({
     setLoading(true);
     try {
       const result = await dispatch(
-        fetchAllLocationsService({
-          search,
-          pageNo: newPage,
-          pageSize: 15,
-        })
+        fetchAllLocationsService({ search, pageNo: newPage, pageSize: 15 })
       ).unwrap();
 
       if (!result) return;
 
       if (newPage === 1) {
-        const newData = result.content || [];
-        setData(removeDuplicates(newData));
+        setData(removeDuplicates(result.content || []));
       } else {
         setData((prev) => removeDuplicates([...prev, ...(result.content || [])]));
       }
@@ -128,48 +118,21 @@ export function ComboboxSelectLocation({
   }, [debouncedSearch]);
 
   useEffect(() => {
-    if (
-      inView &&
-      !loadingRef.current &&
-      !lastPageRef.current &&
-      data.length > 0
-    ) {
+    if (inView && !loadingRef.current && !lastPageRef.current && data.length > 0) {
       fetchData(debouncedSearch, page + 1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView, page, data.length]);
 
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
+  const handleSelectPickup = () => {
+    onChangeSelected(null);
+    setOpen(false);
   };
 
   const handleSelect = (item: Location) => {
     onChangeSelected(item);
     setOpen(false);
   };
-
-  // Show add button if no default and no addresses
-  if (!hasDefault && data.length === 0 && !loading) {
-    return (
-      <div className="space-y-1.5 w-full">
-        {label && (
-          <Label className="text-xs font-semibold">
-            {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
-          </Label>
-        )}
-        <Button
-          onClick={() => router.push("/location")}
-          variant="outline"
-          className="w-full h-10 text-xs gap-2"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Add Address
-        </Button>
-        {error && <p className="text-xs text-red-500">{error}</p>}
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-1.5 w-full">
@@ -187,7 +150,6 @@ export function ComboboxSelectLocation({
             aria-expanded={open}
             className={cn(
               "w-full justify-between px-4 py-2 h-11 text-sm transition-all duration-200 border-input",
-              !dataSelect && "text-muted-foreground",
               "hover:bg-primary/10 hover:border-primary hover:text-primary",
               "focus:bg-primary/10 focus:border-primary focus:text-primary focus:ring-2 focus:ring-primary/30",
               open && "bg-primary/20 border-primary text-primary",
@@ -196,9 +158,14 @@ export function ComboboxSelectLocation({
             )}
             disabled={disabled}
           >
-            <span className="truncate line-clamp-1">
-              {dataSelect ? dataSelect.fullAddress : placeholder}
-            </span>
+            {dataSelect ? (
+              <span className="truncate line-clamp-1 text-left">{dataSelect.fullAddress}</span>
+            ) : (
+              <span className="flex items-center gap-2 text-foreground">
+                <Store className="h-3.5 w-3.5 shrink-0" />
+                Store Pickup
+              </span>
+            )}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -213,27 +180,31 @@ export function ComboboxSelectLocation({
             <CommandInput
               placeholder="Search address..."
               value={searchTerm}
-              onValueChange={handleSearchChange}
+              onValueChange={setSearchTerm}
               className="text-sm h-11 px-3 border-b"
             />
             <CommandList className="max-h-48 overflow-y-auto">
-              <CommandEmpty className="text-xs py-2">
-                <div className="flex flex-col items-center gap-2">
-                  <span>No address found</span>
-                  <Button
-                    onClick={() => {
-                      setOpen(false);
-                      router.push("/location");
-                    }}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 text-xs gap-1"
-                  >
-                    <Plus className="h-3 w-3" />
-                    Add Address
-                  </Button>
-                </div>
-              </CommandEmpty>
+              {/* Always-visible Pickup option */}
+              <CommandGroup>
+                <CommandItem
+                  value="__pickup__"
+                  onSelect={handleSelectPickup}
+                  className="text-sm py-2.5"
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4 flex-shrink-0",
+                      !dataSelect ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  <Store className="mr-2 h-3.5 w-3.5 text-primary shrink-0" />
+                  <span className="font-medium">Store Pickup</span>
+                </CommandItem>
+              </CommandGroup>
+
+              {/* Separator between pickup and address list */}
+              {(data.length > 0 || loading) && <CommandSeparator />}
+
               <CommandGroup>
                 {data.map((item, index) => (
                   <CommandItem
@@ -258,6 +229,7 @@ export function ComboboxSelectLocation({
                   </CommandItem>
                 ))}
               </CommandGroup>
+
               {loading && (
                 <div className="text-center py-2">
                   <Loader2 className="animate-spin text-gray-500 h-4 w-4 mx-auto" />
