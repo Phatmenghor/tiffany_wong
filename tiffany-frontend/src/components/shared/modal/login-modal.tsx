@@ -73,7 +73,7 @@ export function LoginModal({ open, onOpenChange, onRegisterClick }: LoginModalPr
       showToast.success("Welcome! You've successfully logged in.");
       onOpenChange(false);
       loginForm.reset();
-      window.location.reload();
+      setTimeout(() => window.location.reload(), 1000);
     } catch (err: any) {
       showToast.error(err || "Login failed. Please check your credentials.");
     }
