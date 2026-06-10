@@ -16,7 +16,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "product_sizes",
         indexes = {
-                @Index(name = "idx_product_sizes_product_id", columnList = "product_id")
+                @Index(name = "idx_product_sizes_product_id", columnList = "product_id"),
+                @Index(name = "idx_product_sizes_is_deleted", columnList = "is_deleted"),
+                @Index(name = "idx_product_sizes_product_id_is_deleted", columnList = "product_id, is_deleted")
         })
 @Data
 @EqualsAndHashCode(callSuper = true)

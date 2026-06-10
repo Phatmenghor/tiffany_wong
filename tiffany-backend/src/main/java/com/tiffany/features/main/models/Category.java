@@ -14,7 +14,9 @@ import java.util.UUID;
 @Table(name = "categories",
         indexes = {
                 @Index(name = "idx_categories_status", columnList = "status"),
-                @Index(name = "idx_categories_is_deleted", columnList = "is_deleted")
+                @Index(name = "idx_categories_is_deleted", columnList = "is_deleted"),
+                @Index(name = "idx_categories_name", columnList = "name"),
+                @Index(name = "idx_categories_status_is_deleted", columnList = "status, is_deleted")
         })
 @Data
 @EqualsAndHashCode(callSuper = true)

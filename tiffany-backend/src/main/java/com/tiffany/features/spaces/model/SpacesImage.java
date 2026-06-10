@@ -7,7 +7,8 @@ import lombok.*;
 @Entity
 @Table(name = "spaces_images",
         indexes = {
-                @Index(name = "idx_spaces_images_created_at", columnList = "created_at")
+                @Index(name = "idx_spaces_images_created_at", columnList = "created_at"),
+                @Index(name = "idx_spaces_images_object_key", columnList = "object_key")
         })
 @Getter
 @Setter

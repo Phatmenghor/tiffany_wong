@@ -19,7 +19,8 @@ import java.util.UUID;
         },
         indexes = {
                 @Index(name = "idx_cart_items_cart_id", columnList = "cart_id"),
-                @Index(name = "idx_cart_items_product_id", columnList = "product_id")
+                @Index(name = "idx_cart_items_product_id", columnList = "product_id"),
+                @Index(name = "idx_cart_items_product_size_id", columnList = "product_size_id")
         })
 @Data
 @EqualsAndHashCode(callSuper = true)

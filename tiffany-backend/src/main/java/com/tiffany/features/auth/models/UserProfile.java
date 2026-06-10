@@ -10,7 +10,9 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "user_profiles",
         indexes = {
-                @Index(name = "idx_user_profiles_user_id", columnList = "user_id")
+                @Index(name = "idx_user_profiles_user_id", columnList = "user_id"),
+                @Index(name = "idx_user_profiles_email", columnList = "email"),
+                @Index(name = "idx_user_profiles_phone_number", columnList = "phone_number")
         })
 @Data
 @EqualsAndHashCode(callSuper = true, exclude = "user")

@@ -17,7 +17,8 @@ import java.util.UUID;
 @Table(name = "order_items",
         indexes = {
                 @Index(name = "idx_order_items_order_id", columnList = "order_id"),
-                @Index(name = "idx_order_items_product_id", columnList = "product_id")
+                @Index(name = "idx_order_items_product_id", columnList = "product_id"),
+                @Index(name = "idx_order_items_product_size_id", columnList = "product_size_id")
         })
 @Data
 @EqualsAndHashCode(callSuper = true)

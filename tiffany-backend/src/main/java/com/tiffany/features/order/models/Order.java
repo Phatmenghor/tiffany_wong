@@ -23,7 +23,12 @@ import java.util.UUID;
                 @Index(name = "idx_orders_order_status", columnList = "order_status"),
                 @Index(name = "idx_orders_payment_status", columnList = "payment_status"),
                 @Index(name = "idx_orders_created_at", columnList = "created_at"),
-                @Index(name = "idx_orders_is_deleted", columnList = "is_deleted")
+                @Index(name = "idx_orders_is_deleted", columnList = "is_deleted"),
+                @Index(name = "idx_orders_order_number", columnList = "order_number"),
+                @Index(name = "idx_orders_customer_id_order_status", columnList = "customer_id, order_status"),
+                @Index(name = "idx_orders_customer_id_is_deleted", columnList = "customer_id, is_deleted"),
+                @Index(name = "idx_orders_order_status_is_deleted", columnList = "order_status, is_deleted"),
+                @Index(name = "idx_orders_payment_status_is_deleted", columnList = "payment_status, is_deleted")
         })
 @Data
 @EqualsAndHashCode(callSuper = true)

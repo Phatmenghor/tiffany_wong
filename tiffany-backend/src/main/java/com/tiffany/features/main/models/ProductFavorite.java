@@ -15,7 +15,9 @@ import java.util.UUID;
         uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "product_id"}),
         indexes = {
                 @Index(name = "idx_product_favorites_user_id", columnList = "user_id"),
-                @Index(name = "idx_product_favorites_product_id", columnList = "product_id")
+                @Index(name = "idx_product_favorites_product_id", columnList = "product_id"),
+                @Index(name = "idx_product_favorites_user_id_is_deleted", columnList = "user_id, is_deleted"),
+                @Index(name = "idx_product_favorites_created_at", columnList = "created_at")
         })
 @Data
 @EqualsAndHashCode(callSuper = true)
