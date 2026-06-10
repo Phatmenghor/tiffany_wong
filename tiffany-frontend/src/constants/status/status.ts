@@ -29,6 +29,7 @@ export const isInactive = (status: Status): boolean => {
 export enum AccountStatus {
   ALL = "ALL",
   ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
   END_WORK = "END_WORK",
   LOCKED = "LOCKED",
 }

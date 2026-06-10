@@ -77,7 +77,7 @@ const updateCartFromResponse = (
       processedItems.push({
         ...newItem, // Get the real ID and server data
         quantity: localItem.quantity, // But keep the local quantity
-        totalPrice: newItem.finalPrice * localItem.quantity,
+        subtotalAfterDiscount: newItem.displayPrice * localItem.quantity,
         lastOptimisticTimestamp: localItem.lastOptimisticTimestamp,
       });
     } else {
@@ -193,15 +193,15 @@ const cartSlice = createSlice({
       if (existingItem) {
         // Update existing item quantity
         existingItem.quantity += quantity;
-        existingItem.totalPrice = existingItem.finalPrice * existingItem.quantity;
+        existingItem.subtotalAfterDiscount = (existingItem.displayPrice || 0) * existingItem.quantity;
         if (optimisticTimestamp) {
           existingItem.lastOptimisticTimestamp = optimisticTimestamp;
         }
       } else {
         // Add new item with temporary ID
         const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        const totalBeforeDiscount = currentPrice * quantity;
-        const discountAmount = totalBeforeDiscount - (finalPrice * quantity);
+        const subtotalBeforeDiscount = currentPrice * quantity;
+        const subtotalDiscountAmount = subtotalBeforeDiscount - (finalPrice * quantity);
 
         state.items.push({
           id: tempId,
@@ -211,18 +211,16 @@ const cartSlice = createSlice({
           productSizeId: productSizeId || null,
           sizeName: sizeName || null,
           quantity,
-          currentPrice,
-          finalPrice,
-          totalPrice: finalPrice * quantity,
-          hasPromotion: hasPromotion || false,
-          isAvailable: true,
-          promotionType: promotionType || null,
-          promotionValue: promotionValue || null,
-          promotionFromDate: promotionFromDate || null,
-          promotionToDate: promotionToDate || null,
-          promotionEndDate: promotionToDate || null,
-          totalBeforeDiscount,
-          discountAmount,
+          displayOriginPrice: currentPrice,
+          displayPrice: finalPrice,
+          subtotalAfterDiscount: finalPrice * quantity,
+          hasActivePromotion: hasPromotion || false,
+          displayPromotionType: promotionType || null,
+          displayPromotionValue: promotionValue || null,
+          displayPromotionFromDate: promotionFromDate || null,
+          displayPromotionToDate: promotionToDate || null,
+          subtotalBeforeDiscount,
+          subtotalDiscountAmount,
           lastOptimisticTimestamp: optimisticTimestamp || Date.now()
         });
       }
@@ -252,7 +250,7 @@ const cartSlice = createSlice({
         } else {
           // Update quantity and recalculate derived fields
           item.quantity = quantity;
-          item.totalPrice = item.finalPrice * quantity;
+          item.subtotalAfterDiscount = (item.displayPrice || 0) * quantity;
           if (optimisticTimestamp) {
             item.lastOptimisticTimestamp = optimisticTimestamp;
           }

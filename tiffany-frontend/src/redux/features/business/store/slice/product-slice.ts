@@ -142,8 +142,8 @@ const productSlice = createSlice({
               hasPromotion: false,
               displayPromotionType: null,
               displayPromotionValue: null,
-              displayPrice: product.price,
-              displayOriginPrice: product.price,
+              displayPrice: Number(product.price) || 0,
+              displayOriginPrice: Number(product.price) || 0,
             };
 
             // Reset all size promotions and recalculate display prices
@@ -175,8 +175,8 @@ const productSlice = createSlice({
             hasPromotion: false,
             displayPromotionType: null,
             displayPromotionValue: null,
-            displayPrice: product.price,
-            displayOriginPrice: product.price,
+            displayPrice: Number(product.price) || 0,
+            displayOriginPrice: Number(product.price) || 0,
           };
 
           // Reset all size promotions
@@ -208,8 +208,8 @@ const productSlice = createSlice({
               hasPromotion: false,
               displayPromotionType: null,
               displayPromotionValue: null,
-              displayPrice: product.price,
-              displayOriginPrice: product.price,
+              displayPrice: Number(product.price) || 0,
+              displayOriginPrice: Number(product.price) || 0,
             };
 
             // Reset all size promotions
