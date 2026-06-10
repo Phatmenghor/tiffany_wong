@@ -511,7 +511,7 @@ export default function ProductDetailPage() {
               isTogglingFavorite={isTogglingFavorite}
               viewCount={product.viewCount}
               favoriteCount={product.favoriteCount}
-              productId={product.id}
+
             />
           </div>
         </div>

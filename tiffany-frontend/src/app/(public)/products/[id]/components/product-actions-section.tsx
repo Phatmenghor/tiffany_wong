@@ -33,7 +33,6 @@ interface ProductActionsSectionProps {
   isTogglingFavorite: boolean;
   viewCount: number;
   favoriteCount: number;
-  productId: string;
 }
 
 export function ProductActionsSection({
@@ -62,7 +61,6 @@ export function ProductActionsSection({
   isTogglingFavorite,
   viewCount,
   favoriteCount,
-  productId,
 }: ProductActionsSectionProps) {
   const sizeId: string | null = hasSizes ? (selectedSize?.id ?? null) : null;
   const displayQty = displayQuantity(sizeId);
@@ -197,7 +195,6 @@ export function ProductActionsSection({
           <span>{favoriteCount.toLocaleString()}</span>
           <span className="text-xs">saves</span>
         </div>
-        <div className="ml-auto text-xs font-mono text-muted-foreground/70">SKU: {productId.slice(0, 8).toUpperCase()}</div>
       </div>
     </div>
   );
