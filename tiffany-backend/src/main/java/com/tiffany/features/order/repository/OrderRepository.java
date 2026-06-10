@@ -84,14 +84,22 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
      * Uses JOIN FETCH to prevent N+1 query problem
      * NOTE: statusHistory is loaded separately to avoid MultipleBagFetchException
      */
-    @Query("SELECT DISTINCT o FROM Order o " +
+    @Query(value = "SELECT DISTINCT o FROM Order o " +
+           "LEFT JOIN FETCH o.items oi " +
+           "LEFT JOIN FETCH oi.product " +
+           "LEFT JOIN FETCH oi.productSize " +
            "LEFT JOIN FETCH o.customer c " +
            "LEFT JOIN FETCH o.deliveryAddress " +
            "WHERE o.isDeleted = false " +
            "AND (:orderStatus IS NULL OR o.orderStatus = :orderStatus) " +
            "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
            "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus) " +
-           "ORDER BY o.createdAt DESC")
+           "ORDER BY o.createdAt DESC",
+           countQuery = "SELECT COUNT(DISTINCT o) FROM Order o " +
+           "WHERE o.isDeleted = false " +
+           "AND (:orderStatus IS NULL OR o.orderStatus = :orderStatus) " +
+           "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
+           "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus)")
     Page<Order> findAllWithFilters(
             @Param("orderStatus") OrderStatus orderStatus,
             @Param("paymentMethod") com.tiffany.enums.payment.PaymentMethod paymentMethod,
@@ -109,14 +117,22 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
      * Uses JOIN FETCH to prevent N+1 query problem
      * NOTE: statusHistory is loaded separately to avoid MultipleBagFetchException
      */
-    @Query("SELECT DISTINCT o FROM Order o " +
+    @Query(value = "SELECT DISTINCT o FROM Order o " +
+           "LEFT JOIN FETCH o.items oi " +
+           "LEFT JOIN FETCH oi.product " +
+           "LEFT JOIN FETCH oi.productSize " +
            "LEFT JOIN FETCH o.customer c " +
            "LEFT JOIN FETCH o.deliveryAddress " +
            "WHERE o.customerId = :customerId AND o.isDeleted = false " +
            "AND (:orderStatus IS NULL OR o.orderStatus = :orderStatus) " +
            "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
            "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus) " +
-           "ORDER BY o.createdAt DESC")
+           "ORDER BY o.createdAt DESC",
+           countQuery = "SELECT COUNT(DISTINCT o) FROM Order o " +
+           "WHERE o.customerId = :customerId AND o.isDeleted = false " +
+           "AND (:orderStatus IS NULL OR o.orderStatus = :orderStatus) " +
+           "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
+           "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus)")
     Page<Order> findCustomerOrdersWithFilters(
             @Param("customerId") UUID customerId,
             @Param("orderStatus") OrderStatus orderStatus,
