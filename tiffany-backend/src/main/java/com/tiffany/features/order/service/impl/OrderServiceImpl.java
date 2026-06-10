@@ -34,6 +34,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -92,11 +94,14 @@ public class OrderServiceImpl implements OrderService {
             OrderResponse response = getOrderById(savedOrder.getId());
             log.info("Order created successfully - orderNumber: {}, itemCount: {}", response.getOrderNumber(), response.getItems().size());
 
-            // Send Telegram notification
-            Order fullOrder = orderRepository.findByIdWithDetails(savedOrder.getId()).orElse(null);
-            if (fullOrder != null) {
-                telegramService.notifyOrderCreated(fullOrder);
-            }
+            // Notify after commit so the async thread reads fully committed data
+            UUID notifyOrderId = savedOrder.getId();
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    telegramService.notifyOrderCreated(notifyOrderId);
+                }
+            });
 
             return response;
         } catch (Exception e) {
@@ -181,9 +186,15 @@ public class OrderServiceImpl implements OrderService {
         Order updatedOrder = orderRepository.save(order);
         log.info("Order updated: {}", orderId);
 
-        // Send Telegram notification for status change
+        // Notify after commit so the async thread reads fully committed data
         if (request.getOrderStatus() != null) {
-            telegramService.notifyOrderStatusChanged(updatedOrder);
+            UUID notifyOrderId = updatedOrder.getId();
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    telegramService.notifyOrderStatusChanged(notifyOrderId);
+                }
+            });
         }
 
         return orderMapper.toResponse(updatedOrder);

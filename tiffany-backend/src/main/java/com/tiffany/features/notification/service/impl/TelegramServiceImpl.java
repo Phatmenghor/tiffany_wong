@@ -5,11 +5,13 @@ import com.tiffany.features.auth.models.UserProfile;
 import com.tiffany.features.notification.service.TelegramService;
 import com.tiffany.features.order.models.Order;
 import com.tiffany.features.order.models.OrderItem;
+import com.tiffany.features.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -19,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ import java.util.Map;
 public class TelegramServiceImpl implements TelegramService {
 
     private final RestTemplate restTemplate;
+    private final OrderRepository orderRepository;
 
     @Value("${telegram.bot-token}")
     private String botToken;
@@ -55,26 +59,35 @@ public class TelegramServiceImpl implements TelegramService {
 
     @Override
     @Async
-    public void notifyOrderCreated(Order order) {
+    @Transactional(readOnly = true)
+    public void notifyOrderCreated(UUID orderId) {
         if (!telegramEnabled) return;
         try {
-            // Use the already eagerly-loaded entity (items fetched via JOIN FETCH before this call).
-            // Do NOT re-fetch here — the parent transaction may not have committed yet,
-            // so a new query would return 0 items.
+            Order order = orderRepository.findByIdWithDetails(orderId).orElse(null);
+            if (order == null) {
+                log.warn("Order not found for Telegram notification - orderId: {}", orderId);
+                return;
+            }
             sendMessage(buildOrderCreatedMessage(order));
         } catch (Exception e) {
-            log.error("Failed to send order creation notification - orderId: {}, error: {}", order.getId(), e.getMessage());
+            log.error("Failed to send order creation notification - orderId: {}, error: {}", orderId, e.getMessage());
         }
     }
 
     @Override
     @Async
-    public void notifyOrderStatusChanged(Order order) {
+    @Transactional(readOnly = true)
+    public void notifyOrderStatusChanged(UUID orderId) {
         if (!telegramEnabled) return;
         try {
+            Order order = orderRepository.findByIdWithDetails(orderId).orElse(null);
+            if (order == null) {
+                log.warn("Order not found for Telegram status notification - orderId: {}", orderId);
+                return;
+            }
             sendMessage(buildOrderStatusChangeMessage(order));
         } catch (Exception e) {
-            log.error("Failed to send order status change notification - orderId: {}, error: {}", order.getId(), e.getMessage());
+            log.error("Failed to send order status change notification - orderId: {}, error: {}", orderId, e.getMessage());
         }
     }
 
