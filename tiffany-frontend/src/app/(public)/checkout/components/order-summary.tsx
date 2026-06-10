@@ -13,8 +13,6 @@ interface OrderSummaryProps {
   onCheckout: () => void;
   isProcessing: boolean;
   selectedAddressId?: string;
-  customerName?: string;
-  customerPhone?: string;
 }
 
 export function OrderSummary({
@@ -28,8 +26,6 @@ export function OrderSummary({
   onCheckout,
   isProcessing,
   selectedAddressId,
-  customerName,
-  customerPhone,
 }: OrderSummaryProps) {
   return (
     <div className="hidden lg:block lg:col-span-1">
@@ -40,23 +36,6 @@ export function OrderSummary({
             {totalItems} {totalItems === 1 ? "item" : "items"}
           </span>
         </h2>
-
-        {/* Customer Information - Display */}
-        {(customerName || customerPhone) && (
-          <div className="mb-5 p-4 bg-blue-50/50 rounded-xl border border-blue-200/50">
-            <div className="text-xs font-medium text-muted-foreground mb-2">Delivery Information</div>
-            {customerName && (
-              <div className="text-sm font-medium text-foreground mb-1">
-                {customerName}
-              </div>
-            )}
-            {customerPhone && (
-              <div className="text-xs text-muted-foreground">
-                📱 {customerPhone}
-              </div>
-            )}
-          </div>
-        )}
 
         <div className="space-y-3 mb-5">
           {/* Items count with quantity */}

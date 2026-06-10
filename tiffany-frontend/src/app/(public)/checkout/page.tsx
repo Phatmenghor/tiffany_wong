@@ -236,8 +236,6 @@ export default function CheckoutPage() {
             onCheckout={handleCheckout}
             isProcessing={isProcessing}
             selectedAddressId={selectedAddress?.id}
-            customerName={customerName}
-            customerPhone={customerPhone}
           />
         </div>
       </PageContainer>
