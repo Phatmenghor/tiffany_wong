@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { dateTimeFormat } from "@/utils/date/date-time-format";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useAppDispatch } from '@/redux/store/hooks';
+import { useAppDispatch } from "@/redux/store/hooks";
 import { fetchOrderDetailsService } from "@/redux/features/main/store/thunks/my-orders-thunks";
 import { formatCurrency } from "@/utils/common/currency-format";
 import { Loading } from "@/components/shared/common/loading";
 import { OrderResponse } from "@/redux/features/main/store/models/response/order-response";
-import { Check, Clock, AlertCircle, Package } from "lucide-react";
+import { getOrderStatusLabel, OrderStatus } from "@/enums/order-status.enum";
+import { showToast } from "@/components/shared/common/show-toast";
+import { Button } from "@/components/ui/button";
+import { Download, Package, Check, XCircle, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CustomerOrderDetailModalProps {
@@ -24,27 +26,34 @@ interface OrderDetailState {
   error: string | null;
 }
 
-// Order status steps configuration
-const ORDER_STATUS_STEPS = [
-  { status: "PENDING", label: "Pending", description: "Order placed, awaiting confirmation" },
-  { status: "CONFIRMED", label: "Confirmed", description: "Order confirmed" },
-  { status: "COMPLETED", label: "Completed", description: "Order delivered/completed" },
+const ORDER_STEPS: OrderStatus[] = [
+  OrderStatus.PENDING,
+  OrderStatus.CONFIRMED,
+  OrderStatus.COMPLETED,
 ];
 
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case "COMPLETED":
-      return <Check className="h-5 w-5" />;
-    case "CONFIRMED":
-      return <Package className="h-5 w-5" />;
-    case "PENDING":
-      return <Clock className="h-5 w-5" />;
-    case "CANCELLED":
-      return <AlertCircle className="h-5 w-5" />;
-    default:
-      return <Clock className="h-5 w-5" />;
-  }
+const STEP_ORDER: Record<string, number> = {
+  PENDING: 0,
+  CONFIRMED: 1,
+  COMPLETED: 2,
 };
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mb-2.5">
+      <h3 className="text-xs font-bold text-foreground">{children}</h3>
+    </div>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className="text-xs font-semibold text-muted-foreground">{label}</span>
+      <span className="text-xs text-foreground">{value || "-"}</span>
+    </div>
+  );
+}
 
 export function CustomerOrderDetailModal({
   orderId,
@@ -60,8 +69,7 @@ export function CustomerOrderDetailModal({
 
   useEffect(() => {
     if (!orderId || !isOpen) return;
-
-    const fetchOrderDetails = async () => {
+    const fetch = async () => {
       try {
         setState({ order: null, loading: true, error: null });
         const result = await dispatch(fetchOrderDetailsService(orderId)).unwrap();
@@ -74,8 +82,7 @@ export function CustomerOrderDetailModal({
         });
       }
     };
-
-    fetchOrderDetails();
+    fetch();
   }, [orderId, isOpen, dispatch]);
 
   const handleClose = () => {
@@ -83,12 +90,98 @@ export function CustomerOrderDetailModal({
     onClose();
   };
 
+  const handleDownloadReceipt = async () => {
+    const orderData = state.order;
+    if (!orderData?.id || !orderData?.items) return;
+    try {
+      const element = document.createElement("div");
+      element.style.position = "absolute";
+      element.style.left = "-9999px";
+      element.style.width = "80mm";
+      element.style.fontFamily = "monospace";
+      element.style.fontSize = "11px";
+      element.style.backgroundColor = "#fff";
+      element.style.padding = "4mm";
+
+      const date = new Date(orderData.createdAt);
+      const formattedDate = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      const formattedTime = date
+        .toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })
+        .replace(/\b(am|pm)\b/i, (m) => m.toUpperCase());
+
+      const subtotal = orderData.subtotal || 0;
+      const discount = orderData.discountAmount || 0;
+      const total = orderData.totalAmount || 0;
+
+      const itemsHTML = orderData.items
+        .map((item) => {
+          const itemTotal = item.subtotalAfterDiscount || item.displayPrice * item.quantity;
+          return `
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;">
+              <span style="flex:1;">${item.productName}${item.sizeName ? ` (${item.sizeName})` : ""}</span>
+              <span style="width:16px;text-align:center;">${item.quantity}</span>
+              <span style="width:50px;text-align:right;">$${itemTotal.toFixed(2)}</span>
+            </div>`;
+        })
+        .join("");
+
+      element.innerHTML = `
+        <div style="width:80mm;background:white;">
+          <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:4px;margin-bottom:6px;">
+            <div style="font-weight:bold;font-size:13px;letter-spacing:1px;">RECEIPT</div>
+          </div>
+          <div style="text-align:center;font-size:10px;margin-bottom:6px;border-bottom:1px solid #666;padding-bottom:4px;">
+            <div>Order #: ${orderData.orderNumber}</div>
+            <div>Date: ${formattedDate} • ${formattedTime}</div>
+          </div>
+          <div style="margin-bottom:6px;border-bottom:1px solid #666;padding-bottom:4px;">
+            <div style="text-align:center;font-weight:bold;font-size:10px;border-bottom:1px solid #666;padding-bottom:2px;margin-bottom:4px;">ITEMS</div>
+            <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:10px;margin-bottom:2px;">
+              <span style="flex:1;">NAME</span>
+              <span style="width:16px;text-align:center;">QTY</span>
+              <span style="width:50px;text-align:right;">TOTAL</span>
+            </div>
+            <div style="border-bottom:1px solid #ccc;margin-bottom:2px;"></div>
+            ${itemsHTML}
+          </div>
+          <div style="margin-bottom:6px;border-bottom:2px solid #000;padding-bottom:6px;">
+            <div style="font-size:10px;line-height:1.6;">
+              <div style="display:flex;justify-content:space-between;"><span>Subtotal</span><span style="font-weight:bold;">$${subtotal.toFixed(2)}</span></div>
+              ${discount > 0 ? `<div style="display:flex;justify-content:space-between;color:#d32f2f;"><span>Discount</span><span style="font-weight:bold;">-$${discount.toFixed(2)}</span></div>` : ""}
+              <div style="border-top:1px solid #666;padding-top:3px;margin-top:3px;display:flex;justify-content:space-between;font-weight:bold;font-size:11px;"><span>TOTAL</span><span>$${total.toFixed(2)}</span></div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:10px;padding-top:4px;"><div>Thank you for your order!</div></div>
+        </div>`;
+
+      document.body.appendChild(element);
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff" });
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: [80, 250] });
+      const imgData = canvas.toDataURL("image/png");
+      const imgHeight = (canvas.height * 80) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, 80, imgHeight);
+      pdf.save(`receipt-${orderData.orderNumber}.pdf`);
+      document.body.removeChild(element);
+      showToast.success("Receipt downloaded successfully");
+    } catch {
+      showToast.error("Failed to generate receipt");
+    }
+  };
+
   if (state.loading) {
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">Order Details Loading</DialogTitle>
         <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
-          <div className="flex items-center justify-center h-full">
+          <div className="flex items-center justify-center h-64">
             <Loading />
           </div>
         </DialogContent>
@@ -101,17 +194,15 @@ export function CustomerOrderDetailModal({
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">Order Details</DialogTitle>
         <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <p className="text-muted-foreground">
-                {state.error ? `Error: ${state.error}` : "No order data available"}
+          <div className="flex items-center justify-center h-64 flex-col gap-2">
+            <p className="text-sm font-medium text-muted-foreground">
+              {state.error ? `Error: ${state.error}` : "No order data available"}
+            </p>
+            {state.error && (
+              <p className="text-xs text-muted-foreground">
+                The order may have been deleted or you may not have permission to view it.
               </p>
-              {state.error && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  The order may have been deleted or you may not have permission to view it.
-                </p>
-              )}
-            </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
@@ -119,308 +210,265 @@ export function CustomerOrderDetailModal({
   }
 
   const orderData = state.order;
+  const currentStep = STEP_ORDER[orderData.orderStatus] ?? -1;
   const isCancelled = orderData.orderStatus === "CANCELLED";
-  const currentStepIndex = ORDER_STATUS_STEPS.findIndex(
-    (step) => step.status === orderData.orderStatus
-  );
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogTitle className="sr-only">Order Details - {orderData.orderNumber}</DialogTitle>
-      <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden bg-white">
-        {/* Header with Order Number */}
-        <div className="px-6 py-4 border-b bg-gradient-to-r from-primary/5 to-primary/10 flex-shrink-0">
-          <h2 className="text-xl font-bold text-slate-900">Order Details</h2>
-          <p className="text-sm text-slate-600 mt-1 font-mono font-semibold">
-            {orderData.orderNumber}
-          </p>
+
+      <DialogContent className="w-full sm:max-w-4xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="px-4 py-3 border-b bg-muted/30 flex-shrink-0 flex items-center gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-bold text-foreground font-mono truncate">
+                {orderData.orderNumber}
+              </p>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(orderData.orderNumber);
+                  showToast.success("Copied!");
+                }}
+                className="p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                title="Copy order number"
+              >
+                <Copy className="h-3 w-3" />
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-0.5">Order Details</p>
+          </div>
         </div>
 
-        {/* Content */}
+        {/* Body */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-6 space-y-6">
-            {/* Order Status Timeline - Modern Progress Bar */}
-            {!isCancelled ? (
-              <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-8 shadow-sm">
-                <h3 className="text-base font-bold text-slate-900 mb-10">Order Progress</h3>
+          <div className="p-3 grid grid-cols-1 lg:grid-cols-3 gap-3">
 
-                {/* Progress Steps with Full Width Connection Lines */}
-                <div className="relative">
-                  {/* Full Width Background Line */}
-                  <div className="absolute top-7 left-0 right-0 h-1 bg-slate-300 rounded-full">
-                    {/* Filled Progress Line */}
-                    <div
-                      className={cn(
-                        "h-full bg-gradient-to-r from-primary via-primary to-primary rounded-full transition-all duration-500 shadow-sm shadow-primary/30",
-                        currentStepIndex > 0 && "shadow-md shadow-primary/30"
-                      )}
-                      style={{
-                        width: `${((currentStepIndex) / (ORDER_STATUS_STEPS.length - 1)) * 100}%`,
-                      }}
-                    />
+            {/* Left column */}
+            <div className="lg:col-span-2 space-y-3">
+
+              {/* Status Timeline */}
+              <div className="rounded border border-border/50 bg-card p-3">
+                <SectionTitle>Order Progress</SectionTitle>
+                {isCancelled ? (
+                  <div className="flex items-center gap-2 px-2 py-2 rounded bg-red-50 border border-red-200">
+                    <XCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
+                    <span className="text-xs font-semibold text-red-700">
+                      This order has been cancelled
+                    </span>
                   </div>
-
-                  {/* Steps Container */}
-                  <div className="flex items-start justify-between">
-                    {ORDER_STATUS_STEPS.map((step, index) => {
-                      const isCompleted = index < currentStepIndex;
-                      const isActive = step.status === orderData.orderStatus;
-
+                ) : (
+                  <div className="flex items-start overflow-x-auto px-2 py-2">
+                    {ORDER_STEPS.map((step, idx) => {
+                      const isDone = currentStep >= STEP_ORDER[step];
+                      const isCurrent = currentStep === STEP_ORDER[step];
                       return (
-                        <div
-                          key={step.status}
-                          className="flex flex-col items-center relative z-10"
-                        >
-                          {/* Step Circle with Icon */}
-                          <div
-                            className={cn(
-                              "w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 transition-all ring-2 ring-offset-2 ring-offset-white",
-                              isCompleted || isActive
-                                ? "bg-primary text-white ring-primary/30 shadow-md shadow-primary/20"
-                                : "bg-slate-200 text-slate-400 ring-slate-300"
-                            )}
-                          >
-                            {getStatusIcon(step.status)}
+                        <div key={step} className="flex items-start flex-shrink-0">
+                          <div className="flex flex-col items-center w-24">
+                            <div
+                              className={cn(
+                                "w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ring-2 ring-offset-1 transition-all",
+                                isDone
+                                  ? "bg-green-100 text-green-700 ring-green-200"
+                                  : isCurrent
+                                    ? "bg-primary text-primary-foreground ring-primary/40"
+                                    : "bg-muted text-muted-foreground ring-muted",
+                              )}
+                            >
+                              {isDone ? <Check className="h-3 w-3" /> : idx + 1}
+                            </div>
+                            <span className="text-xs font-semibold text-foreground text-center mt-1.5 w-full">
+                              {getOrderStatusLabel(step)}
+                            </span>
                           </div>
-
-                          {/* Label */}
-                          <span
-                            className={cn(
-                              "text-sm font-bold mt-3 whitespace-nowrap",
-                              isCompleted || isActive ? "text-primary" : "text-slate-500"
-                            )}
-                          >
-                            {step.label}
-                          </span>
+                          {idx < ORDER_STEPS.length - 1 && (
+                            <div
+                              className={cn(
+                                "flex-shrink-0 mt-4 w-8 h-0.5 transition-colors",
+                                currentStep > STEP_ORDER[step] ? "bg-green-300" : "bg-muted",
+                              )}
+                            />
+                          )}
                         </div>
                       );
                     })}
                   </div>
-                </div>
+                )}
               </div>
-            ) : (
-              /* Cancelled State */
-              <div className="bg-red-50 border border-red-200 rounded-xl p-5 shadow-sm">
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                    <AlertCircle className="h-6 w-6 text-red-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-red-700">Order Cancelled</h3>
-                    <p className="text-sm text-red-600 mt-1">This order has been cancelled</p>
-                  </div>
-                </div>
-              </div>
-            )}
 
-            {/* Order Information Cards */}
-            <div className="grid md:grid-cols-2 gap-4">
-              {/* Customer Information */}
-              <Card className="border border-slate-200 shadow-sm bg-white">
-                <CardHeader className="pb-3 border-b border-slate-200">
-                  <CardTitle className="text-base font-bold text-slate-900">
-                    👤 Customer Info
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 text-sm pt-4">
-                  <div className="flex justify-between items-start">
-                    <span className="text-slate-600">Name</span>
-                    <span className="font-semibold text-slate-900 text-right">
-                      {orderData.customerName || "---"}
-                    </span>
-                  </div>
-                  {orderData.customerPhone && (
-                    <div className="flex justify-between items-start">
-                      <span className="text-slate-600">Phone</span>
-                      <a
-                        href={`tel:${orderData.customerPhone}`}
-                        className="text-blue-600 hover:text-blue-700 hover:underline font-medium"
+              {/* Order Items */}
+              {orderData.items && orderData.items.length > 0 && (
+                <div className="rounded border border-border/50 bg-card p-3">
+                  <SectionTitle>Order Items ({orderData.items.length})</SectionTitle>
+                  <div className="space-y-2">
+                    {orderData.items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex gap-2.5 p-2 rounded border border-border/50 bg-muted/20"
                       >
-                        {orderData.customerPhone}
-                      </a>
-                    </div>
-                  )}
-                  {orderData.customerEmail && (
-                    <div className="flex justify-between items-start">
-                      <span className="text-slate-600">Email</span>
-                      <a
-                        href={`mailto:${orderData.customerEmail}`}
-                        className="text-blue-600 hover:text-blue-700 hover:underline font-medium break-all text-right max-w-xs"
-                      >
-                        {orderData.customerEmail}
-                      </a>
-                    </div>
-                  )}
-                  <div className="flex justify-between items-start border-t border-slate-200 pt-3">
-                    <span className="text-slate-600">Order Date</span>
-                    <span className="font-semibold text-slate-900 text-right">
-                      {dateTimeFormat(orderData.createdAt)}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Payment Information */}
-              <Card className="border border-slate-200 shadow-sm bg-white">
-                <CardHeader className="pb-3 border-b border-slate-200">
-                  <CardTitle className="text-base font-bold text-slate-900">💳 Payment</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 text-sm pt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600">Method</span>
-                    <span
-                      className={cn(
-                        "px-3 py-1 rounded-full font-semibold text-xs",
-                        orderData.paymentMethod === "CASH"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-blue-100 text-blue-700"
-                      )}
-                    >
-                      {orderData.paymentMethod || "---"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600">Status</span>
-                    <span
-                      className={cn(
-                        "px-3 py-1 rounded-full font-semibold text-xs",
-                        orderData.paymentStatus === "PAID"
-                          ? "bg-green-100 text-green-700"
-                          : orderData.paymentStatus === "PENDING"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : "bg-red-100 text-red-700"
-                      )}
-                    >
-                      {orderData.paymentStatus || "---"}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Price Summary */}
-            <Card className="border border-slate-200 shadow-sm bg-gradient-to-br from-primary/5 to-primary/10">
-              <CardHeader className="pb-3 border-b border-slate-200">
-                <CardTitle className="text-base font-bold text-slate-900">
-                  💰 Order Summary
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600">{orderData.items?.length || 0} Items</span>
-                    <span className="font-semibold text-slate-900">
-                      {formatCurrency(orderData.subtotal || 0)}
-                    </span>
-                  </div>
-                  {(orderData.discountAmount ?? 0) > 0 && (
-                    <div className="flex justify-between items-center text-red-600">
-                      <span>Discount</span>
-                      <span className="font-semibold">
-                        -{formatCurrency(orderData.discountAmount)}
-                      </span>
-                    </div>
-                  )}
-                  <div className="border-t border-slate-200 pt-3 flex justify-between items-center">
-                    <span className="font-bold text-slate-900">Total Amount</span>
-                    <span className="text-2xl font-bold text-green-600">
-                      {formatCurrency(orderData.totalAmount || 0)}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Order Items */}
-            {orderData.items && orderData.items.length > 0 && (
-              <Card className="border border-slate-200 shadow-sm bg-white">
-                <CardHeader className="pb-3 border-b border-slate-200">
-                  <CardTitle className="text-base font-bold text-slate-900">
-                    🛒 Order Items ({orderData.items.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 pt-4">
-                  {orderData.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-all bg-slate-50"
-                    >
-                      <div className="flex gap-4">
-                        {/* Product Image */}
-                        {item.productImageUrl && (
-                          <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-slate-200 border border-slate-300 flex-shrink-0">
+                        {/* Image */}
+                        <div className="relative flex-shrink-0 w-10 h-10 rounded overflow-hidden bg-muted border border-border/50">
+                          {item.productImageUrl ? (
                             <img
                               src={item.productImageUrl}
                               alt={item.productName}
                               className="w-full h-full object-cover"
                             />
-                          </div>
-                        )}
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Package className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                          )}
+                        </div>
 
-                        {/* Product Info */}
-                        <div className="flex-1 min-w-0 flex flex-col justify-between">
-                          {/* Name and Badge */}
-                          <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-semibold text-sm text-slate-900 line-clamp-1">
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-1 mb-0.5">
+                            <p className="text-xs font-semibold text-foreground leading-tight truncate">
                               {item.productName}
-                            </h4>
+                            </p>
                             {item.hasActivePromotion && item.displayPromotionValue != null && (
-                              <span className="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded font-semibold flex-shrink-0 whitespace-nowrap">
+                              <span className="flex-shrink-0 px-1.5 py-0.5 bg-red-100 text-red-700 rounded text-xs font-bold leading-none">
                                 {item.displayPromotionType === "PERCENTAGE"
-                                  ? `-${item.displayPromotionValue}%`
-                                  : `-${formatCurrency(item.displayPromotionValue)}`}
+                                  ? `${item.displayPromotionValue}% OFF`
+                                  : `${formatCurrency(item.displayPromotionValue)} OFF`}
                               </span>
                             )}
                           </div>
 
-                          {/* Size */}
                           {item.sizeName && (
-                            <div className="mb-2">
-                              <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full whitespace-nowrap inline-block border border-blue-200">
-                                {item.sizeName}
-                              </span>
-                            </div>
+                            <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded inline-block mb-1">
+                              {item.sizeName}
+                            </span>
                           )}
 
-                          {/* Pricing */}
-                          <div className="flex items-baseline justify-between gap-2">
-                            <div className="flex items-baseline gap-2">
-                              <span className="font-bold text-sm text-slate-900">
-                                {formatCurrency(item.displayPrice)} × {item.quantity}
-                              </span>
-                              {item.hasActivePromotion &&
-                                item.displayOriginPrice > item.displayPrice && (
-                                  <span className="text-xs text-slate-500 line-through">
-                                    {formatCurrency(item.displayOriginPrice)}
-                                  </span>
-                                )}
-                            </div>
-                            <span className="font-bold text-green-600 text-sm">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-muted-foreground">
+                              {formatCurrency(item.displayPrice)} × {item.quantity}
+                              {item.hasActivePromotion && item.displayOriginPrice > item.displayPrice && (
+                                <span className="line-through text-muted-foreground/60 ml-1">
+                                  {formatCurrency(item.displayOriginPrice)}
+                                </span>
+                              )}
+                            </span>
+                            <span className="font-bold text-foreground">
                               {formatCurrency(item.subtotalAfterDiscount || 0)}
                             </span>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            )}
+                    ))}
+                  </div>
+                </div>
+              )}
 
-            {/* Customer Note */}
-            {orderData.customerNote && (
-              <Card className="border border-slate-200 shadow-sm bg-blue-50">
-                <CardHeader className="pb-3 border-b border-slate-200">
-                  <CardTitle className="text-base font-bold text-slate-900">
-                    📝 Customer Note
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <p className="text-sm text-slate-700">{orderData.customerNote}</p>
-                </CardContent>
-              </Card>
-            )}
+              {/* Pricing Summary */}
+              <div className="rounded border border-border/50 bg-card p-3">
+                <SectionTitle>Pricing Summary</SectionTitle>
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-muted-foreground">
+                      Subtotal ({orderData.items?.length || 0} items)
+                    </span>
+                    <span className="font-medium text-foreground">
+                      {formatCurrency(orderData.subtotal || 0)}
+                    </span>
+                  </div>
+                  {(orderData.discountAmount ?? 0) > 0 && (
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Discount</span>
+                      <span className="font-medium text-red-600">
+                        -{formatCurrency(orderData.discountAmount)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="pt-2 mt-1 border-t border-border/50 flex justify-between">
+                    <span className="text-xs font-bold text-foreground">Total</span>
+                    <span className="text-sm font-bold text-primary">
+                      {formatCurrency(orderData.totalAmount || 0)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right sidebar */}
+            <div className="space-y-3">
+
+              {/* Order Info */}
+              <div className="rounded border border-border/50 bg-card p-3">
+                <SectionTitle>Order Info</SectionTitle>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+                  <InfoRow
+                    label="Date"
+                    value={new Date(orderData.createdAt).toLocaleDateString()}
+                  />
+                  <InfoRow
+                    label="Time"
+                    value={new Date(orderData.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  />
+                  <InfoRow label="Payment" value={orderData.paymentMethod || "-"} />
+                  <InfoRow
+                    label="Pay Status"
+                    value={
+                      <span
+                        className={cn(
+                          "font-semibold",
+                          orderData.paymentStatus === "PAID"
+                            ? "text-green-600"
+                            : orderData.paymentStatus === "REFUNDED"
+                              ? "text-red-600"
+                              : "text-amber-600",
+                        )}
+                      >
+                        {orderData.paymentStatus || "-"}
+                      </span>
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* Customer Info */}
+              <div className="rounded border border-border/50 bg-card p-3">
+                <SectionTitle>Customer</SectionTitle>
+                <div className="space-y-2">
+                  <InfoRow label="Name" value={orderData.customerName || "-"} />
+                  {orderData.customerPhone && (
+                    <InfoRow label="Phone" value={orderData.customerPhone} />
+                  )}
+                  {orderData.customerEmail && (
+                    <InfoRow label="Email" value={orderData.customerEmail} />
+                  )}
+                </div>
+              </div>
+
+              {/* Customer Note */}
+              {orderData.customerNote && (
+                <div className="rounded border border-border/50 bg-card p-3">
+                  <SectionTitle>Note</SectionTitle>
+                  <p className="text-xs text-foreground leading-relaxed">
+                    {orderData.customerNote}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex-shrink-0 px-4 py-3 border-t bg-muted/20 flex items-center justify-end gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDownloadReceipt}
+            className="gap-1.5 h-8"
+          >
+            <Download className="h-3 w-3" />
+            Download Receipt
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
