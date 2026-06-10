@@ -24,7 +24,7 @@ import { ProductCard } from "@/components/shared/card/product-card";
 import { ProductCardSkeleton } from "@/components/shared/skeletons/product-card-skeleton";
 import { CustomButton } from "@/components/shared/button/custom-button";
 import { showToast } from "@/components/shared/common/show-toast";
-import { LoginModal } from "@/components/shared/modal/login-modal";
+import { useAuthModal } from "@/context/auth-modal-context";
 import { DeleteConfirmationModal } from "@/components/shared/modal/delete-confirmation-modal";
 import { PageContainer } from "@/components/shared/common/page-container";
 import { usePaginationLoadMore } from "@/hooks/use-pagination-load-more";
@@ -35,7 +35,7 @@ export default function FavoritesPage() {
   const { dispatch, items, totalItems, pagination, loading, loaded } =
     useFavoriteState();
   const { dispatch: cartDispatch } = useCartState();
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const { openLoginModal } = useAuthModal();
   const [clearAllModalOpen, setClearAllModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [skeletonCount, setSkeletonCount] = useState(6);
@@ -193,7 +193,7 @@ export default function FavoritesPage() {
             </p>
             <div className="flex flex-col gap-3">
               <CustomButton
-                onClick={() => setLoginModalOpen(true)}
+                onClick={openLoginModal}
                 className="w-full gap-2"
               >
                 <LogIn className="h-4 w-4" />
@@ -210,7 +210,6 @@ export default function FavoritesPage() {
             </div>
           </div>
         </PageContainer>
-        <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
       </>
     );
   }

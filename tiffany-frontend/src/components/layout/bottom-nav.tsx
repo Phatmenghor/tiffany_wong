@@ -13,8 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
-import { useState } from "react";
-import { LoginModal } from "../shared/modal/login-modal";
+import { useAuthModal } from "@/context/auth-modal-context";
 
 const tabs = [
   { name: "Home", href: "/", icon: Home },
@@ -29,11 +28,11 @@ export function BottomNav() {
   const router = useRouter();
   const { totalItems: cartCount } = useCartState();
   const { isAuthenticated } = useAuthState();
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const { openLoginModal } = useAuthModal();
 
   const handleProtectedTab = (href: string) => {
     if ((href === "/cart" || href === "/profile") && !isAuthenticated) {
-      setLoginModalOpen(true);
+      openLoginModal();
       return;
     }
     router.push(href);
@@ -104,7 +103,6 @@ export function BottomNav() {
         <div className="h-safe-bottom bg-background" />
       </nav>
 
-      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
     </>
   );
 }

@@ -18,7 +18,7 @@ import {
   updateCartItem,
 } from "@/redux/features/main/store/thunks/cart-thunks";
 import { toggleFavorite } from "@/redux/features/main/store/thunks/favorite-thunks";
-import { LoginModal } from "@/components/shared/modal/login-modal";
+import { useAuthModal } from "@/context/auth-modal-context";
 import { showToast } from "@/components/shared/common/show-toast";
 import { Button } from "@/components/ui/button";
 import { CustomButton } from "@/components/shared/button/custom-button";
@@ -43,6 +43,7 @@ export default function ProductDetailPage() {
   const { dispatch: cartDispatch, items: cartItems } = useCartState();
   const { dispatch: favoriteDispatch, items: favoriteItems, loaded: favLoaded } = useFavoriteState();
   const { isAuthenticated } = useAuthState();
+  const { openLoginModal } = useAuthModal();
 
   const productId = params.id as string;
   const product = selectedProduct;
@@ -59,7 +60,6 @@ export default function ProductDetailPage() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
@@ -240,7 +240,7 @@ export default function ProductDetailPage() {
   const handlePendingQtyChange = useCallback(
     (sizeId: string | null, newQty: number) => {
       if (!isAuthenticated) {
-        setShowLoginModal(true);
+        openLoginModal();
         return;
       }
       const key = sizeId || "no_size";
@@ -570,7 +570,6 @@ export default function ProductDetailPage() {
         onSelectImage={setLightboxIndex}
       />
 
-      <LoginModal open={showLoginModal} onOpenChange={setShowLoginModal} />
     </div>
   );
 }

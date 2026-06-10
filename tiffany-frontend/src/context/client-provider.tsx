@@ -10,6 +10,7 @@ import { useBusinessTheme, initializeBusinessThemeFromCache } from "@/hooks/use-
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useAppDispatch } from '@/redux/store/hooks';
 import { fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
+import { AuthModalProvider } from "@/context/auth-modal-context";
 
 interface ClientProvidersProps {
   children: ReactNode;
@@ -52,9 +53,11 @@ export function ClientProviders({ children }: ClientProvidersProps) {
   const content = (
     <Provider store={store}>
       <ThemeInitializer />
-      <AppInitializer>
-        {children}
-      </AppInitializer>
+      <AuthModalProvider>
+        <AppInitializer>
+          {children}
+        </AppInitializer>
+      </AuthModalProvider>
       <Toaster />
       <ToastContainer
         position="top-right"

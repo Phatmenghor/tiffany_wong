@@ -43,8 +43,7 @@ import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
 import { showToast } from "@/components/shared/common/show-toast";
 import { useLogout } from "@/redux/store/use-logout";
 import { useDebounce } from "@/utils/debounce/debounce";
-import { LoginModal } from "../shared/modal/login-modal";
-import { RegisterModal } from "../shared/modal/register-modal";
+import { useAuthModal } from "@/context/auth-modal-context";
 import { CustomDropdownMenu } from "../shared/common/custom-dropdown-menu";
 import { PageContainer } from "../shared/common/page-container";
 import { cn } from "@/lib/utils";
@@ -61,9 +60,8 @@ const navigationLinks = [
 export function Navbar() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const { openLoginModal, openRegisterModal } = useAuthModal();
   const mobileSearchRef = useRef<HTMLInputElement>(null);
   const navigatingRef = useRef(false);
 
@@ -142,20 +140,6 @@ export function Navbar() {
    * Switch from login modal to register modal
    * Close login and open register
    */
-  const handleSwitchToRegister = () => {
-    setIsLoginModalOpen(false);
-    setIsRegisterModalOpen(true);
-  };
-
-  /**
-   * Switch from register modal to login modal
-   * Close register and open login
-   */
-  const handleSwitchToLogin = () => {
-    setIsRegisterModalOpen(false);
-    setIsLoginModalOpen(true);
-  };
-
   /**
    * Navigate to another page and clear search
    * Used for Products, Promotions, Categories, Brands links
@@ -420,7 +404,7 @@ export function Navbar() {
                     variant="ghost"
                     size="icon"
                     className="h-9 w-9"
-                    onClick={() => setIsLoginModalOpen(true)}
+                    onClick={() => openLoginModal()}
                   >
                     <User className="h-5 w-5" />
                   </Button>
@@ -573,7 +557,7 @@ export function Navbar() {
                 <CustomButton
                   variant="ghost"
                   size="icon"
-                  onClick={() => setIsLoginModalOpen(true)}
+                  onClick={() => openLoginModal()}
                   className="hover:bg-primary/10 hover:text-primary transition-colors"
                 >
                   <User className="h-5 w-5" />
@@ -584,16 +568,6 @@ export function Navbar() {
         </PageContainer>
       </nav>
 
-      <LoginModal
-        open={isLoginModalOpen}
-        onOpenChange={setIsLoginModalOpen}
-        onRegisterClick={handleSwitchToRegister}
-      />
-      <RegisterModal
-        open={isRegisterModalOpen}
-        onOpenChange={setIsRegisterModalOpen}
-        onLoginClick={handleSwitchToLogin}
-      />
     </>
   );
 }

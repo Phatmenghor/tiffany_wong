@@ -16,7 +16,7 @@ import { showToast } from "@/components/shared/common/show-toast";
 import { clearCart, fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
 import { updateLocalCartItem } from "@/redux/features/main/store/slice/cart-slice";
 import { useCartDebounce, cartItemKey } from "@/hooks/use-cart-debounce";
-import { LoginModal } from "@/components/shared/modal/login-modal";
+import { useAuthModal } from "@/context/auth-modal-context";
 import { DeleteConfirmationModal } from "@/components/shared/modal/delete-confirmation-modal";
 import { PageContainer } from "@/components/shared/common/page-container";
 import { PageHeader } from "@/components/shared/common/page-header";
@@ -40,7 +40,7 @@ export default function CartPage() {
   } = useCartState();
 
   const { debouncedUpdate, immediateUpdate } = useCartDebounce(dispatch);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const { openLoginModal } = useAuthModal();
   const [clearCartModalOpen, setClearCartModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -93,10 +93,9 @@ export default function CartPage() {
         <CartEmptyState
           title="Your Cart"
           message="Please sign in to view your cart and start shopping."
-          onLogin={() => setLoginModalOpen(true)}
+          onLogin={openLoginModal}
           showLogin
         />
-        <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
       </>
     );
   }

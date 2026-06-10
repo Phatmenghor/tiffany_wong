@@ -18,7 +18,6 @@ import { toggleFavorite } from "@/redux/features/main/store/thunks/favorite-thun
 import { showToast } from "../common/show-toast";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { appImages } from "@/constants/app-resource/icons/app-images";
-import { LoginModal } from "../modal/login-modal";
 import { useFavoriteState } from "@/redux/features/main/store/state/favorite-state";
 import { addToCart } from "@/redux/features/main/store/thunks/cart-thunks";
 import {
@@ -26,7 +25,7 @@ import {
   updateLocalCartItem,
 } from "@/redux/features/main/store/slice/cart-slice";
 import { SizeSelectionModal } from "../modal/size-selection-modal";
-import { RegisterModal } from "../modal/register-modal";
+import { useAuthModal } from "@/context/auth-modal-context";
 import { useCartDebounce, cartItemKey } from "@/hooks/use-cart-debounce";
 import { getProductQuantity } from "@/utils/common/quantity-utils";
 import {
@@ -52,8 +51,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
   } = useFavoriteState();
   const { isAuthenticated } = useAuthState();
 
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const { openLoginModal } = useAuthModal();
   const [showSizeModal, setShowSizeModal] = useState(false);
 
   // Use optimized memoized selectors - only subscribe to this product's quantity
@@ -128,7 +126,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
     e.nativeEvent.stopImmediatePropagation();
 
     if (!isAuthenticated) {
-      setShowLoginModal(true);
+      openLoginModal();
       return;
     }
 
@@ -303,7 +301,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
     e.nativeEvent.stopImmediatePropagation();
 
     if (!isAuthenticated) {
-      setShowLoginModal(true);
+      openLoginModal();
       return;
     }
 
@@ -477,16 +475,6 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
         </div>
       </Link>
 
-      <LoginModal
-        open={showLoginModal}
-        onOpenChange={setShowLoginModal}
-        onRegisterClick={() => { setShowLoginModal(false); setShowRegisterModal(true); }}
-      />
-      <RegisterModal
-        open={showRegisterModal}
-        onOpenChange={setShowRegisterModal}
-        onLoginClick={() => { setShowRegisterModal(false); setShowLoginModal(true); }}
-      />
       <SizeSelectionModal
         open={showSizeModal}
         onOpenChange={setShowSizeModal}
