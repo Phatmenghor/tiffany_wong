@@ -86,6 +86,10 @@ export default function CheckoutPage() {
         PaymentBy: paymentMethod,
       };
 
+      // Capture cart count before clearing — API response items may be empty
+      // due to Hibernate first-level cache not reflecting separately-saved OrderItems
+      const cartItemCount = items.length;
+
       const result = await dispatch(createOrderService(payload as any) as any).unwrap();
 
       // Clear cart in Redux state immediately
@@ -97,7 +101,7 @@ export default function CheckoutPage() {
         orderNumber: result?.orderNumber || "",
         totalAmount: result?.totalAmount,
         discountAmount: result?.discountAmount,
-        itemCount: result?.items?.length,
+        itemCount: cartItemCount,
         paymentMethod: result?.paymentMethod,
       });
     } catch (error: any) {
