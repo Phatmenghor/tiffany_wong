@@ -42,8 +42,8 @@ export function ProductInfo({
             {brandName}
           </Badge>
         )}
-        <Badge className={cn("text-xs", status === "OUT_OF_STOCK" ? "bg-rose-500 hover:bg-rose-600" : "bg-emerald-500 hover:bg-emerald-600")}>
-          {status === "OUT_OF_STOCK" ? "Out of Stock" : "In Stock"}
+        <Badge className={cn("text-xs", status === "ACTIVE" ? "bg-emerald-500 hover:bg-emerald-600" : "bg-muted text-muted-foreground hover:bg-muted")}>
+          {status === "ACTIVE" ? "In Stock" : "Inactive"}
         </Badge>
       </div>
 

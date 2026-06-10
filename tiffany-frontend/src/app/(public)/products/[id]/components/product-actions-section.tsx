@@ -145,7 +145,7 @@ export function ProductActionsSection({
                     size="sm"
                     className="h-8 shrink-0 gap-1.5"
                     variant={modifiedSizes.size > 0 ? "default" : "secondary"}
-                    disabled={isSaving || modifiedSizes.size === 0 || productStatus === "OUT_OF_STOCK"}
+                    disabled={isSaving || modifiedSizes.size === 0 || productStatus !== "ACTIVE"}
                     onClick={onSave}
                   >
                     {isSaving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
