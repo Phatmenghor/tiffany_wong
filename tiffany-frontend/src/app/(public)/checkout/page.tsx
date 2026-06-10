@@ -147,6 +147,11 @@ export default function CheckoutPage() {
     router.push("/orders");
   };
 
+  const handleBackToHome = () => {
+    setSuccessModalState({ isOpen: false, orderNumber: "" });
+    router.push("/");
+  };
+
   const handleAddLocation = () => {
     router.push("/location");
   };
@@ -280,6 +285,7 @@ export default function CheckoutPage() {
       <OrderSuccessModal
         isOpen={successModalState.isOpen}
         onClose={handleSuccessModalClose}
+        onBackToHome={handleBackToHome}
         orderNumber={successModalState.orderNumber}
       />
     </>

@@ -28,17 +28,6 @@ export function createOrderTableColumns(
       ),
     },
     {
-      key: "createdAt",
-      label: "Created Date",
-      minWidth: "140px",
-      maxWidth: "170px",
-      render: (order) => (
-        <span className="text-xs text-muted-foreground">
-          {dateTimeFormat(order?.createdAt)}
-        </span>
-      ),
-    },
-    {
       key: "orderNumber",
       label: "Order #",
       minWidth: "100px",
@@ -138,20 +127,29 @@ export function createOrderTableColumns(
       label: "Total",
       minWidth: "110px",
       maxWidth: "140px",
-      render: (order) => {
-        return (
-          <div className="flex flex-col">
-            <span className="text-xs font-bold text-green-600">
-              {formatCurrency(order?.totalAmount || 0)}
+      render: (order) => (
+        <div className="flex flex-col">
+          <span className="text-xs font-bold text-green-600">
+            {formatCurrency(order?.totalAmount || 0)}
+          </span>
+          {order?.discountAmount && order.discountAmount > 0 && (
+            <span className="text-xs text-red-600 font-medium">
+              Save {formatCurrency(order.discountAmount)}
             </span>
-            {order?.discountAmount && order.discountAmount > 0 && (
-              <span className="text-xs text-red-600 font-medium">
-                Save {formatCurrency(order.discountAmount)}
-              </span>
-            )}
-          </div>
-        );
-      },
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "createdAt",
+      label: "Created Date",
+      minWidth: "140px",
+      maxWidth: "170px",
+      render: (order) => (
+        <span className="text-xs text-muted-foreground">
+          {dateTimeFormat(order?.createdAt)}
+        </span>
+      ),
     },
     {
       key: "actions",
