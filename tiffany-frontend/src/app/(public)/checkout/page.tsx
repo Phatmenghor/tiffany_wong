@@ -94,8 +94,8 @@ export default function CheckoutPage() {
       router.push("/");
       return;
     }
-    // Only redirect if cart has been loaded from API and is empty
-    if (cartLoaded && items.length === 0) {
+    // Only redirect if cart has been loaded from API and is empty, and no success modal is showing
+    if (cartLoaded && items.length === 0 && !successModalState.isOpen) {
       router.push("/cart");
       return;
     }
