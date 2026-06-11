@@ -39,15 +39,15 @@ export function PageHeader({
       <div className="min-w-0">
         <div className="flex items-center gap-[0.325rem]">
           {Icon && <Icon className="h-[0.8125rem] w-[0.8125rem] text-primary shrink-0" />}
-          <h1 className="text-[0.8125rem] sm:text-[0.975rem] font-bold truncate">{title}</h1>
+          <h1 className="text-[14px] font-bold truncate">{title}</h1>
           {count !== undefined && count > 0 && (
-            <span className="shrink-0 text-[0.4875rem] font-semibold bg-muted text-muted-foreground px-[0.325rem] py-[0.08125rem] rounded-full">
+            <span className="shrink-0 text-[10px] font-semibold bg-muted text-muted-foreground px-[0.325rem] py-[0.08125rem] rounded-full">
               {count.toLocaleString()}
             </span>
           )}
         </div>
         {subtitle && (
-          <p className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground mt-[0.08125rem] truncate">
+          <p className="text-[11px] text-muted-foreground mt-[0.08125rem] truncate">
             {subtitle}
           </p>
         )}

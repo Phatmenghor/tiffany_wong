@@ -70,7 +70,7 @@ export const CardHeaderSection: React.FC<CardHeaderSectionProps> = ({
               />
             )}
             {title && (
-              <h1 className="text-[0.65rem] sm:text-[0.73125rem] font-bold">{title}</h1>
+              <h1 className="text-[13px] font-bold">{title}</h1>
             )}
           </div>
 

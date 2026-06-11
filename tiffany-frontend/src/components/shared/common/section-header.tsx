@@ -19,12 +19,12 @@ export const SectionHeader = ({
 }: SectionHeaderProps) => {
   return (
     <div className={cn("mb-[0.65rem] sm:mb-[0.975rem]", className)}>
-      <h2 className="text-[0.8125rem] sm:text-[0.975rem] md:text-[1.21875rem] font-bold tracking-tight flex items-center gap-[0.325rem]">
-        {Icon && <Icon className="h-[0.8125rem] w-[0.8125rem] sm:h-[0.975rem] sm:w-[0.975rem] md:h-[1.1375rem] md:w-[1.1375rem] text-primary" />}
+      <h2 className="text-[13px] font-bold tracking-tight flex items-center gap-[0.325rem]">
+        {Icon && <Icon className="h-[0.8125rem] w-[0.8125rem] text-primary" />}
         {title}
       </h2>
       {subtitle && (
-        <p className="text-muted-foreground text-[0.4875rem] sm:text-[0.56875rem] mt-[0.1625rem]">{subtitle}</p>
+        <p className="text-muted-foreground text-[11px] mt-[0.1625rem]">{subtitle}</p>
       )}
     </div>
   );
