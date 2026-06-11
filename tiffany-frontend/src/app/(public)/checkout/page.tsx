@@ -135,7 +135,7 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <PageContainer className="py-4 sm:py-8 pb-40 lg:pb-8">
+      <PageContainer className="py-[0.65rem] sm:py-[1.3rem] pb-[6.5rem] lg:pb-[1.3rem]">
         <PageHeader
           title="Checkout"
           icon={CreditCard}
@@ -143,9 +143,9 @@ export default function CheckoutPage() {
           subtitle={`${totalItems} ${totalItems === 1 ? "item" : "items"} • ${totalQuantity} total quantity`}
         />
 
-        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 mt-6">
+        <div className="grid lg:grid-cols-3 gap-[0.65rem] sm:gap-[0.975rem] mt-[0.975rem]">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-3">
+          <div className="lg:col-span-2 space-y-[0.4875rem]">
             {/* Delivery Address - Top */}
             <DeliveryAddressSection
               selectedAddress={selectedAddress}
@@ -154,34 +154,34 @@ export default function CheckoutPage() {
             />
 
             {/* Customer Information */}
-            <div className="bg-card border rounded-2xl p-5">
-              <h3 className="text-base font-bold mb-4">Customer Information</h3>
+            <div className="bg-card border rounded-[0.65rem] p-[0.8125rem]">
+              <h3 className="text-[0.65rem] font-bold mb-[0.65rem]">Customer Information</h3>
               {/* grid-cols-1 on mobile prevents two-column overflow at small/zoomed screens */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Full Name *</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[0.65rem]">
+                <div className="space-y-[0.24375rem]">
+                  <label className="text-[0.56875rem] font-medium">Full Name *</label>
                   <input
                     type="text"
                     placeholder="Enter your full name"
                     value={customerName}
                     onChange={(e) => { setCustomerName(e.target.value); setErrors((v) => ({ ...v, name: "" })); }}
-                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary ${errors.name ? "border-red-500 focus:ring-red-300" : ""}`}
+                    className={`w-full px-[0.4875rem] py-[0.325rem] border rounded-lg text-[0.56875rem] focus:outline-none focus:ring-2 focus:ring-primary ${errors.name ? "border-red-500 focus:ring-red-300" : ""}`}
                     disabled={isProcessing}
                   />
-                  {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
+                  {errors.name && <p className="text-[0.4875rem] text-red-500">{errors.name}</p>}
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Phone Number *</label>
+                <div className="space-y-[0.24375rem]">
+                  <label className="text-[0.56875rem] font-medium">Phone Number *</label>
                   <input
                     type="tel"
                     placeholder="Enter your phone number"
                     value={customerPhone}
                     onChange={(e) => { setCustomerPhone(e.target.value); setErrors((v) => ({ ...v, phone: "" })); }}
-                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary ${errors.phone ? "border-red-500 focus:ring-red-300" : ""}`}
+                    className={`w-full px-[0.4875rem] py-[0.325rem] border rounded-lg text-[0.56875rem] focus:outline-none focus:ring-2 focus:ring-primary ${errors.phone ? "border-red-500 focus:ring-red-300" : ""}`}
                     disabled={isProcessing}
                   />
-                  {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
+                  {errors.phone && <p className="text-[0.4875rem] text-red-500">{errors.phone}</p>}
                 </div>
               </div>
             </div>
@@ -189,7 +189,7 @@ export default function CheckoutPage() {
             {/* Cart Items */}
             {items.length > 0 && (
               <>
-                <div className="text-xs text-muted-foreground mt-6 mb-2">
+                <div className="text-[0.4875rem] text-muted-foreground mt-[0.975rem] mb-[0.325rem]">
                   Review your items before placing order
                 </div>
                 {items.map((item, index) => {

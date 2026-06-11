@@ -64,7 +64,7 @@ export const orderAdminTableColumns = ({
       minWidth: "40px",
       maxWidth: "60px",
       render: (_, index) => (
-        <span className="font-medium text-xs">
+        <span className="font-medium text-[0.4875rem]">
           {indexDisplay(data?.pageNo || 1, data?.pageSize || 15, index + 1)}
         </span>
       ),
@@ -75,7 +75,7 @@ export const orderAdminTableColumns = ({
       minWidth: "100px",
       maxWidth: "130px",
       render: (order) => (
-        <span className="text-xs font-mono font-medium">
+        <span className="text-[0.4875rem] font-mono font-medium">
           {order?.orderNumber || "---"}
         </span>
       ),
@@ -88,8 +88,8 @@ export const orderAdminTableColumns = ({
       truncate: true,
       render: (order) => (
         <div className="flex flex-col">
-          <span className="text-xs font-medium">{order?.customerName || "Walk-in"}</span>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-[0.4875rem] font-medium">{order?.customerName || "Walk-in"}</span>
+          <span className="text-[0.4875rem] text-muted-foreground">
             {order?.customerPhone || "No phone"}
           </span>
         </div>
@@ -123,7 +123,7 @@ export const orderAdminTableColumns = ({
           }
         };
         return (
-          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getStatusColor(order?.orderStatus)}`}>
+          <span className={`text-[0.4875rem] font-semibold px-[0.40625rem] py-[0.24375rem] rounded-md w-fit ${getStatusColor(order?.orderStatus)}`}>
             {getOrderStatusLabel(order?.orderStatus)}
           </span>
         );
@@ -135,7 +135,7 @@ export const orderAdminTableColumns = ({
       minWidth: "120px",
       maxWidth: "150px",
       render: (order) => (
-        <span className="text-xs font-medium">
+        <span className="text-[0.4875rem] font-medium">
           {order?.paymentMethod || "---"}
         </span>
       ),
@@ -161,7 +161,7 @@ export const orderAdminTableColumns = ({
           }
         };
         return (
-          <span className={`text-xs font-semibold px-2.5 py-1.5 rounded-md w-fit ${getPaymentStatusColor(order?.paymentStatus)}`}>
+          <span className={`text-[0.4875rem] font-semibold px-[0.40625rem] py-[0.24375rem] rounded-md w-fit ${getPaymentStatusColor(order?.paymentStatus)}`}>
             {order?.paymentStatus || "---"}
           </span>
         );
@@ -173,7 +173,7 @@ export const orderAdminTableColumns = ({
       minWidth: "80px",
       maxWidth: "110px",
       render: (order) => (
-        <span className="text-xs font-medium">
+        <span className="text-[0.4875rem] font-medium">
           {order?.items?.length || 0}
         </span>
       ),
@@ -185,11 +185,11 @@ export const orderAdminTableColumns = ({
       maxWidth: "140px",
       render: (order) => (
         <div className="flex flex-col">
-          <span className="text-xs font-bold text-green-600">
+          <span className="text-[0.4875rem] font-bold text-green-600">
             {formatCurrency(order?.totalAmount || 0)}
           </span>
           {order?.discountAmount && order.discountAmount > 0 && (
-            <span className="text-xs text-red-600 font-medium">
+            <span className="text-[0.4875rem] text-red-600 font-medium">
               Save {formatCurrency(order.discountAmount)}
             </span>
           )}
@@ -202,7 +202,7 @@ export const orderAdminTableColumns = ({
       minWidth: "140px",
       maxWidth: "170px",
       render: (order) => (
-        <span className="text-xs text-muted-foreground">
+        <span className="text-[0.4875rem] text-muted-foreground">
           {dateTimeFormat(order?.createdAt)}
         </span>
       ),
@@ -213,19 +213,19 @@ export const orderAdminTableColumns = ({
       minWidth: "100px",
       maxWidth: "130px",
       render: (order) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-[0.325rem]">
           <ActionButton
-            icon={<Eye className="w-4 h-4" />}
+            icon={<Eye className="w-[0.65rem] h-[0.65rem]" />}
             tooltip="View Details"
             onClick={() => handleViewOrder(order)}
           />
           <ActionButton
-            icon={<Edit className="w-4 h-4" />}
+            icon={<Edit className="w-[0.65rem] h-[0.65rem]" />}
             tooltip="Edit Order"
             onClick={() => handleEditOrder(order)}
           />
           <ActionButton
-            icon={<Trash className="w-4 h-4" />}
+            icon={<Trash className="w-[0.65rem] h-[0.65rem]" />}
             tooltip="Delete Order"
             onClick={() => handleDeleteOrder(order)}
             variant="destructive"

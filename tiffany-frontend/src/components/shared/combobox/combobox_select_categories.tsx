@@ -74,9 +74,9 @@ export function ComboboxSelectCategories({
   }, [loading, lastPage]);
 
   const sizeClasses = {
-    sm: "h-8 text-xs",
-    md: "h-9 text-sm",
-    lg: "h-10 text-base",
+    sm: "h-[1.3rem] text-[0.4875rem]",
+    md: "h-[1.4625rem] text-[0.56875rem]",
+    lg: "h-[1.625rem] text-[0.65rem]",
   };
 
   // Helper function to remove duplicates by ID
@@ -164,11 +164,11 @@ export function ComboboxSelectCategories({
   };
 
   return (
-    <div className="flex flex-col gap-1 w-full">
+    <div className="flex flex-col gap-[0.1625rem] w-full">
       {label && (
-        <Label className="text-xs font-medium text-foreground">
+        <Label className="text-[0.4875rem] font-medium text-foreground">
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-red-500 ml-[0.1625rem]">*</span>}
         </Label>
       )}
       <Popover open={open} onOpenChange={setOpen} modal={true}>
@@ -178,7 +178,7 @@ export function ComboboxSelectCategories({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "w-full justify-between min-w-[150px] px-3 py-2 transition-all duration-200 border-input",
+              "w-full justify-between min-w-[150px] px-[0.4875rem] py-[0.325rem] transition-all duration-200 border-input",
               sizeClasses[size],
               !dataSelect && !showAllOption && "text-muted-foreground",
               "hover:bg-primary/10 hover:border-primary hover:text-primary",
@@ -190,7 +190,7 @@ export function ComboboxSelectCategories({
             disabled={disabled}
           >
             {dataSelect ? dataSelect.name : placeholder}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="ml-[0.325rem] h-[0.65rem] w-[0.65rem] shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
 
@@ -207,7 +207,7 @@ export function ComboboxSelectCategories({
               value={searchTerm}
               onValueChange={handleSearchChange}
             />
-            <CommandList className="max-h-60 overflow-y-auto">
+            <CommandList className="max-h-[9.75rem] overflow-y-auto">
               <CommandEmpty>No category found.</CommandEmpty>
               <CommandGroup>
                 {data.map((item, index) => (
@@ -220,7 +220,7 @@ export function ComboboxSelectCategories({
                   >
                     <Check
                       className={cn(
-                        "mr-2 h-4 w-4",
+                        "mr-[0.325rem] h-[0.65rem] w-[0.65rem]",
                         (item.id === "all" && !dataSelect) ||
                           dataSelect?.id === item.id
                           ? "opacity-100"
@@ -233,13 +233,13 @@ export function ComboboxSelectCategories({
               </CommandGroup>
 
               {loading && (
-                <div className="text-center py-2">
-                  <Loader2 className="animate-spin text-gray-500 h-5 w-5 mx-auto" />
+                <div className="text-center py-[0.325rem]">
+                  <Loader2 className="animate-spin text-gray-500 h-[0.8125rem] w-[0.8125rem] mx-auto" />
                 </div>
               )}
 
               {!loading && lastPage && data.length > 0 && (
-                <div className="text-center py-2 text-sm text-gray-400">
+                <div className="text-center py-[0.325rem] text-[0.56875rem] text-gray-400">
                   No more categories
                 </div>
               )}
@@ -247,7 +247,7 @@ export function ComboboxSelectCategories({
           </Command>
         </PopoverContent>
       </Popover>
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-[0.4875rem] text-red-500">{error}</p>}
     </div>
   );
 }

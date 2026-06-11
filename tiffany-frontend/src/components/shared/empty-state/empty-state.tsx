@@ -38,22 +38,22 @@ export interface EmptyStateProps {
 
 const sizeStyles = {
   sm: {
-    container: "py-8",
-    icon: "h-12 w-12",
-    title: "text-lg",
-    description: "text-sm",
+    container: "py-[1.3rem]",
+    icon: "h-[1.95rem] w-[1.95rem]",
+    title: "text-[0.73125rem]",
+    description: "text-[0.56875rem]",
   },
   md: {
-    container: "py-12",
-    icon: "h-16 w-16",
-    title: "text-xl",
-    description: "text-base",
+    container: "py-[1.95rem]",
+    icon: "h-[2.6rem] w-[2.6rem]",
+    title: "text-[0.8125rem]",
+    description: "text-[0.65rem]",
   },
   lg: {
-    container: "py-16",
-    icon: "h-20 w-20",
-    title: "text-2xl",
-    description: "text-lg",
+    container: "py-[2.6rem]",
+    icon: "h-[3.25rem] w-[3.25rem]",
+    title: "text-[0.975rem]",
+    description: "text-[0.73125rem]",
   },
 };
 
@@ -95,26 +95,26 @@ export function EmptyState({
     >
       {/* Icon */}
       {customIcon || (Icon && (
-        <div className="mb-4 text-muted-foreground/50 animate-scale-in">
+        <div className="mb-[0.65rem] text-muted-foreground/50 animate-scale-in">
           <Icon className={styles.icon} strokeWidth={1.5} />
         </div>
       ))}
 
       {/* Title */}
-      <h3 className={cn("font-semibold text-foreground mb-2", styles.title)}>
+      <h3 className={cn("font-semibold text-foreground mb-[0.325rem]", styles.title)}>
         {title}
       </h3>
 
       {/* Description */}
       {description && (
-        <p className={cn("text-muted-foreground max-w-md mb-6", styles.description)}>
+        <p className={cn("text-muted-foreground max-w-md mb-[0.975rem]", styles.description)}>
           {description}
         </p>
       )}
 
       {/* Actions */}
       {(action || secondaryAction) && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-[0.4875rem]">
           {action && (
             <Button
               onClick={action.onClick}

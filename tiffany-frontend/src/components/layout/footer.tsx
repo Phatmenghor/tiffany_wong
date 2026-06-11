@@ -30,53 +30,53 @@ export function Footer() {
   };
 
   const socialLinks = [
-    { href: facebookUrl, icon: <Facebook className="w-4 h-4" />, label: "Facebook" },
-    { href: instagramUrl, icon: <Instagram className="w-4 h-4" />, label: "Instagram" },
-    { href: telegramUrl, icon: <Send className="w-4 h-4" />, label: "Telegram" },
+    { href: facebookUrl, icon: <Facebook className="w-[0.65rem] h-[0.65rem]" />, label: "Facebook" },
+    { href: instagramUrl, icon: <Instagram className="w-[0.65rem] h-[0.65rem]" />, label: "Instagram" },
+    { href: telegramUrl, icon: <Send className="w-[0.65rem] h-[0.65rem]" />, label: "Telegram" },
   ].filter((s) => s.href);
 
   return (
     <footer className="text-white" style={footerStyle}>
       <PageContainer>
-        <div className="py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="py-[1.95rem] grid grid-cols-1 md:grid-cols-3 gap-[1.3rem]">
           {/* Brand */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 w-fit">
-              <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
+          <div className="space-y-[0.65rem]">
+            <div className="flex items-center gap-[0.325rem] w-fit">
+              <div className="w-[1.625rem] h-[1.625rem] rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
                 <Image
                   src="/assets/image/logo.png"
                   alt={businessName}
                   width={40}
                   height={40}
-                  className="object-cover rounded"
+                  className="object-cover rounded-[0.1625rem]"
                 />
               </div>
-              <span className="font-bold text-lg text-white">{businessName}</span>
+              <span className="font-bold text-[0.73125rem] text-white">{businessName}</span>
             </div>
             {isHydrated && businessDescription && (
-              <p className="text-white/80 text-sm leading-relaxed">{businessDescription}</p>
+              <p className="text-white/80 text-[0.56875rem] leading-relaxed">{businessDescription}</p>
             )}
           </div>
 
           {/* Contact */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-white text-base">Contact Info</h3>
-            <div className="space-y-3 text-sm">
+          <div className="space-y-[0.65rem]">
+            <h3 className="font-semibold text-white text-[0.65rem]">Contact Info</h3>
+            <div className="space-y-[0.4875rem] text-[0.56875rem]">
               {contactAddress && (
-                <div className="flex gap-3">
-                  <MapPin className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                <div className="flex gap-[0.4875rem]">
+                  <MapPin className="w-[0.8125rem] h-[0.8125rem] text-white flex-shrink-0 mt-[0.08125rem]" />
                   <p className="text-white">{contactAddress}</p>
                 </div>
               )}
               {contactPhone && (
-                <div className="flex gap-3">
-                  <Phone className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                <div className="flex gap-[0.4875rem]">
+                  <Phone className="w-[0.8125rem] h-[0.8125rem] text-white flex-shrink-0 mt-[0.08125rem]" />
                   <p className="text-white">{contactPhone}</p>
                 </div>
               )}
               {contactEmail && (
-                <div className="flex gap-3">
-                  <Mail className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                <div className="flex gap-[0.4875rem]">
+                  <Mail className="w-[0.8125rem] h-[0.8125rem] text-white flex-shrink-0 mt-[0.08125rem]" />
                   <a
                     href={`mailto:${contactEmail}`}
                     className="text-white hover:text-white/80 transition-colors"
@@ -89,16 +89,16 @@ export function Footer() {
           </div>
 
           {/* Social Media */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-white text-base">Follow Us</h3>
-            <div className="space-y-2 text-sm">
+          <div className="space-y-[0.65rem]">
+            <h3 className="font-semibold text-white text-[0.65rem]">Follow Us</h3>
+            <div className="space-y-[0.325rem] text-[0.56875rem]">
               {socialLinks.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-white hover:text-white/80 transition-colors"
+                  className="flex items-center gap-[0.325rem] text-white hover:text-white/80 transition-colors"
                 >
                   {s.icon}
                   <span>{s.label}</span>

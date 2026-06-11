@@ -129,13 +129,13 @@ function ProductFiltersComponent({
 
   // Create filter content once to avoid duplicate component instances
   const filterContent = (
-    <div className="space-y-5">
+    <div className="space-y-[0.8125rem]">
       {/* Promotion - top, hidden when locked */}
       {!lockedPromotion && (
         <>
           <div
             className={cn(
-              "flex items-center justify-between rounded-lg px-3 py-3 border transition-colors cursor-pointer",
+              "flex items-center justify-between rounded-lg px-[0.4875rem] py-[0.4875rem] border transition-colors cursor-pointer",
               hasPromotion
                 ? "border-orange-400/60 bg-orange-500/5"
                 : "border-border/60 hover:border-border",
@@ -144,25 +144,25 @@ function ProductFiltersComponent({
               updateFilter("hasPromotion", hasPromotion ? "" : "true")
             }
           >
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-[0.40625rem]">
               <div
                 className={cn(
-                  "flex items-center justify-center w-7 h-7 rounded-lg transition-colors",
+                  "flex items-center justify-center w-[1.1375rem] h-[1.1375rem] rounded-lg transition-colors",
                   hasPromotion ? "bg-orange-500/20" : "bg-orange-500/10",
                 )}
               >
                 <Flame
                   className={cn(
-                    "h-3.5 w-3.5",
+                    "h-[0.56875rem] w-[0.56875rem]",
                     hasPromotion ? "text-orange-500" : "text-orange-400",
                   )}
                 />
               </div>
               <div>
-                <p className="text-sm font-semibold leading-none">
+                <p className="text-[0.56875rem] font-semibold leading-none">
                   On Sale Only
                 </p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
+                <p className="text-[11px] text-muted-foreground mt-[0.08125rem]">
                   Show promotional items
                 </p>
               </div>
@@ -194,15 +194,15 @@ function ProductFiltersComponent({
       <Separator />
 
       {/* Product Size */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500/10">
-            <ListChecks className="h-3.5 w-3.5 text-blue-600" />
+      <div className="space-y-[0.4875rem]">
+        <div className="flex items-center gap-[0.325rem]">
+          <div className="flex items-center justify-center w-[1.1375rem] h-[1.1375rem] rounded-lg bg-blue-500/10">
+            <ListChecks className="h-[0.56875rem] w-[0.56875rem] text-blue-600" />
           </div>
-          <label className="text-sm font-semibold">Product Size</label>
+          <label className="text-[0.56875rem] font-semibold">Product Size</label>
         </div>
-        <div className="space-y-2.5">
-          <label className="flex items-center gap-3 cursor-pointer group">
+        <div className="space-y-[0.40625rem]">
+          <label className="flex items-center gap-[0.4875rem] cursor-pointer group">
             <Checkbox
               id="has-sizes-true"
               checked={hasSizes === true}
@@ -210,11 +210,11 @@ function ProductFiltersComponent({
                 updateFilter("hasSizes", hasSizes === true ? "" : "true")
               }
             />
-            <span className="text-sm group-hover:text-primary transition-colors select-none">
+            <span className="text-[0.56875rem] group-hover:text-primary transition-colors select-none">
               Has Sizes
             </span>
           </label>
-          <label className="flex items-center gap-3 cursor-pointer group">
+          <label className="flex items-center gap-[0.4875rem] cursor-pointer group">
             <Checkbox
               id="has-sizes-false"
               checked={hasSizes === false}
@@ -222,7 +222,7 @@ function ProductFiltersComponent({
                 updateFilter("hasSizes", hasSizes === false ? "" : "false")
               }
             />
-            <span className="text-sm group-hover:text-primary transition-colors select-none">
+            <span className="text-[0.56875rem] group-hover:text-primary transition-colors select-none">
               No Sizes
             </span>
           </label>
@@ -232,33 +232,33 @@ function ProductFiltersComponent({
       <Separator />
 
       {/* Price Range */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-yellow-500/10">
-            <DollarSign className="h-3.5 w-3.5 text-yellow-600" />
+      <div className="space-y-[0.4875rem]">
+        <div className="flex items-center gap-[0.325rem]">
+          <div className="flex items-center justify-center w-[1.1375rem] h-[1.1375rem] rounded-lg bg-yellow-500/10">
+            <DollarSign className="h-[0.56875rem] w-[0.56875rem] text-yellow-600" />
           </div>
-          <label className="text-sm font-semibold">Price Range</label>
+          <label className="text-[0.56875rem] font-semibold">Price Range</label>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-[0.325rem]">
           <Input
             type="number"
             placeholder="Min"
             min={0}
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
-            className="h-9 text-sm"
+            className="h-[1.4625rem] text-[0.56875rem]"
           />
-          <span className="text-muted-foreground text-sm flex-shrink-0">–</span>
+          <span className="text-muted-foreground text-[0.56875rem] flex-shrink-0">–</span>
           <Input
             type="number"
             placeholder="Max"
             min={0}
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="h-9 text-sm"
+            className="h-[1.4625rem] text-[0.56875rem]"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-[0.325rem]">
           <Button
             size="sm"
             className="flex-1"
@@ -269,7 +269,7 @@ function ProductFiltersComponent({
           </Button>
           {hasPriceFilter && (
             <Button size="sm" variant="outline" onClick={clearPrice}>
-              <X className="h-3.5 w-3.5" />
+              <X className="h-[0.56875rem] w-[0.56875rem]" />
             </Button>
           )}
         </div>
@@ -280,16 +280,16 @@ function ProductFiltersComponent({
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex w-72 flex-shrink-0">
-        <div className="sticky top-24 h-[calc(100vh-4.55rem)] w-full">
-          <div className="bg-card border rounded-xl shadow-sm h-full flex flex-col">
+      <div className="hidden lg:flex w-[11.7rem] flex-shrink-0">
+        <div className="sticky top-[3.9rem] h-[calc(100vh-4.55rem)] w-full">
+          <div className="bg-card border rounded-[0.4875rem] shadow-sm h-full flex flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border/60 flex-shrink-0">
-              <div className="flex items-center gap-2.5">
-                <SlidersHorizontal className="h-5 w-5 text-primary" />
-                <h3 className="font-bold text-base">Filters</h3>
+            <div className="flex items-center justify-between px-[0.8125rem] py-[0.65rem] border-b border-border/60 flex-shrink-0">
+              <div className="flex items-center gap-[0.40625rem]">
+                <SlidersHorizontal className="h-[0.8125rem] w-[0.8125rem] text-primary" />
+                <h3 className="font-bold text-[0.65rem]">Filters</h3>
                 {activeFiltersCount > 0 && (
-                  <Badge className="rounded-full h-5 w-5 p-0 flex items-center justify-center text-[10px] font-bold">
+                  <Badge className="rounded-full h-[0.8125rem] w-[0.8125rem] p-0 flex items-center justify-center text-[10px] font-bold">
                     {activeFiltersCount}
                   </Badge>
                 )}
@@ -298,18 +298,18 @@ function ProductFiltersComponent({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 px-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-1.5 text-xs"
+                  className="h-[1.3rem] px-[0.325rem] text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-[0.24375rem] text-[0.4875rem]"
                   onClick={clearAllFilters}
                 >
-                  <FilterX className="h-3.5 w-3.5" />
+                  <FilterX className="h-[0.56875rem] w-[0.56875rem]" />
                   Clear all
                 </Button>
               )}
             </div>
 
             {/* Results count */}
-            <div className="px-5 py-3 border-b border-border/40 flex-shrink-0 bg-muted/30">
-              <p className="text-xs text-muted-foreground">
+            <div className="px-[0.8125rem] py-[0.4875rem] border-b border-border/40 flex-shrink-0 bg-muted/30">
+              <p className="text-[0.4875rem] text-muted-foreground">
                 <span className="font-semibold text-foreground">
                   {totalResults.toLocaleString()}
                 </span>{" "}
@@ -319,7 +319,7 @@ function ProductFiltersComponent({
 
             {/* Scrollable content */}
             <ScrollArea className="flex-1">
-              <div className="p-5">{filterContent}</div>
+              <div className="p-[0.8125rem]">{filterContent}</div>
             </ScrollArea>
           </div>
         </div>
@@ -327,40 +327,40 @@ function ProductFiltersComponent({
 
       {/* Mobile Filters */}
       <div className="lg:hidden w-full">
-        <div className="flex items-center justify-between gap-3 bg-card border rounded-xl p-4 shadow-sm">
+        <div className="flex items-center justify-between gap-[0.4875rem] bg-card border rounded-[0.4875rem] p-[0.65rem] shadow-sm">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold truncate">
+            <p className="text-[0.56875rem] font-semibold truncate">
               {totalResults.toLocaleString()} result
               {totalResults !== 1 ? "s" : ""}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[0.4875rem] text-muted-foreground">
               {activeFiltersCount > 0
                 ? `${activeFiltersCount} filter${activeFiltersCount > 1 ? "s" : ""} applied`
                 : "No filters applied"}
             </p>
           </div>
 
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-[0.325rem] flex-shrink-0">
             {activeFiltersCount > 0 && (
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 px-3 text-muted-foreground hover:text-destructive hover:border-destructive/50 gap-1.5 text-xs"
+                className="h-[1.4625rem] px-[0.4875rem] text-muted-foreground hover:text-destructive hover:border-destructive/50 gap-[0.24375rem] text-[0.4875rem]"
                 onClick={clearAllFilters}
               >
-                <FilterX className="h-3.5 w-3.5" />
+                <FilterX className="h-[0.56875rem] w-[0.56875rem]" />
                 Clear
               </Button>
             )}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="default" size="sm" className="h-9 gap-2">
-                  <SlidersHorizontal className="h-4 w-4" />
+                <Button variant="default" size="sm" className="h-[1.4625rem] gap-[0.325rem]">
+                  <SlidersHorizontal className="h-[0.65rem] w-[0.65rem]" />
                   Filters
                   {activeFiltersCount > 0 && (
                     <Badge
                       variant="secondary"
-                      className="ml-0.5 rounded-full h-5 w-5 p-0 flex items-center justify-center text-[10px] font-bold bg-white text-primary"
+                      className="ml-[0.08125rem] rounded-full h-[0.8125rem] w-[0.8125rem] p-0 flex items-center justify-center text-[10px] font-bold bg-white text-primary"
                     >
                       {activeFiltersCount}
                     </Badge>
@@ -369,15 +369,15 @@ function ProductFiltersComponent({
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="w-80 sm:w-96 p-0 flex flex-col"
+                className="w-[13rem] sm:w-[15.6rem] p-0 flex flex-col"
               >
-                <SheetHeader className="px-5 py-4 border-b border-border/60 flex-shrink-0">
+                <SheetHeader className="px-[0.8125rem] py-[0.65rem] border-b border-border/60 flex-shrink-0">
                   <div className="flex items-center justify-between">
-                    <SheetTitle className="flex items-center gap-2.5">
-                      <SlidersHorizontal className="h-5 w-5 text-primary" />
+                    <SheetTitle className="flex items-center gap-[0.40625rem]">
+                      <SlidersHorizontal className="h-[0.8125rem] w-[0.8125rem] text-primary" />
                       Filters
                       {activeFiltersCount > 0 && (
-                        <Badge className="rounded-full h-5 w-5 p-0 flex items-center justify-center text-[10px] font-bold">
+                        <Badge className="rounded-full h-[0.8125rem] w-[0.8125rem] p-0 flex items-center justify-center text-[10px] font-bold">
                           {activeFiltersCount}
                         </Badge>
                       )}
@@ -386,15 +386,15 @@ function ProductFiltersComponent({
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 px-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-1.5 text-xs"
+                        className="h-[1.3rem] px-[0.325rem] text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-[0.24375rem] text-[0.4875rem]"
                         onClick={clearAllFilters}
                       >
-                        <FilterX className="h-3.5 w-3.5" />
+                        <FilterX className="h-[0.56875rem] w-[0.56875rem]" />
                         Clear all
                       </Button>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground text-left mt-1">
+                  <p className="text-[0.4875rem] text-muted-foreground text-left mt-[0.1625rem]">
                     <span className="font-semibold text-foreground">
                       {totalResults.toLocaleString()}
                     </span>{" "}
@@ -402,7 +402,7 @@ function ProductFiltersComponent({
                   </p>
                 </SheetHeader>
                 <ScrollArea className="flex-1">
-                  <div className="p-5">{filterContent}</div>
+                  <div className="p-[0.8125rem]">{filterContent}</div>
                 </ScrollArea>
               </SheetContent>
             </Sheet>

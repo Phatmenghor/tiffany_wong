@@ -113,15 +113,15 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
           <FormBody>
             {/* Error Display */}
             {reduxError && (
-              <div className="p-4 bg-destructive/10 border border-destructive rounded-lg">
-                <p className="text-sm text-destructive font-medium">
+              <div className="p-[0.65rem] bg-destructive/10 border border-destructive rounded-lg">
+                <p className="text-[0.56875rem] text-destructive font-medium">
                   {reduxError}
                 </p>
               </div>
             )}
 
             {/* Form Fields */}
-            <div className="space-y-4">
+            <div className="space-y-[0.65rem]">
               {/* Current Password */}
               <div className="relative">
                 <TextField
@@ -133,20 +133,20 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
                   disabled={isProfileLoading}
                   required
                   error={errors.currentPassword}
-                  className="pr-10"
+                  className="pr-[1.625rem]"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-[28px] h-10 px-3 hover:bg-transparent"
+                  className="absolute right-0 top-[28px] h-[1.625rem] px-[0.4875rem] hover:bg-transparent"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   disabled={isProfileLoading}
                 >
                   {showCurrentPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    <EyeOff className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
                   ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
+                    <Eye className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
                   )}
                 </Button>
               </div>
@@ -162,20 +162,20 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
                   disabled={isProfileLoading}
                   required
                   error={errors.newPassword}
-                  className="pr-10"
+                  className="pr-[1.625rem]"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-[28px] h-10 px-3 hover:bg-transparent"
+                  className="absolute right-0 top-[28px] h-[1.625rem] px-[0.4875rem] hover:bg-transparent"
                   onClick={() => setShowNewPassword(!showNewPassword)}
                   disabled={isProfileLoading}
                 >
                   {showNewPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    <EyeOff className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
                   ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
+                    <Eye className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
                   )}
                 </Button>
               </div>
@@ -191,20 +191,20 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
                   disabled={isProfileLoading}
                   required
                   error={errors.confirmPassword}
-                  className="pr-10"
+                  className="pr-[1.625rem]"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-[28px] h-10 px-3 hover:bg-transparent"
+                  className="absolute right-0 top-[28px] h-[1.625rem] px-[0.4875rem] hover:bg-transparent"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   disabled={isProfileLoading}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    <EyeOff className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
                   ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
+                    <Eye className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
                   )}
                 </Button>
               </div>

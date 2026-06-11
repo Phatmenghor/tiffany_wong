@@ -101,25 +101,25 @@ export default function ResetPasswordModal({
         />
 
         <FormBody>
-          <div className="space-y-6">
+          <div className="space-y-[0.975rem]">
             {/* User Preview Card */}
             <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <CardContent className="pt-[0.975rem]">
+                <div className="flex items-center gap-[0.65rem]">
+                  <div className="h-[1.95rem] w-[1.95rem] rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
                     {profileImageUrl ? (
                       <img src={profileImageUrl} alt={userName} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-sm font-semibold text-primary">
+                      <span className="text-[0.56875rem] font-semibold text-primary">
                         {userName?.charAt(0)?.toUpperCase() || "U"}
                       </span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">
+                    <p className="text-[0.56875rem] font-medium text-foreground truncate">
                       {userName || "Unknown User"}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-[0.4875rem] text-muted-foreground">
                       {userRole && userRole.length > 0
                         ? userRole.map(role => formatEnumValue(role)).join(", ")
                         : "User Account"}
@@ -130,10 +130,10 @@ export default function ResetPasswordModal({
             </Card>
 
             {/* Default Password Section */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Key className="h-4 w-4 text-muted-foreground" />
-                <Label className="text-sm font-semibold">New Password</Label>
+            <div className="space-y-[0.4875rem]">
+              <div className="flex items-center gap-[0.325rem]">
+                <Key className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
+                <Label className="text-[0.56875rem] font-semibold">New Password</Label>
               </div>
 
               <div className="relative">
@@ -141,21 +141,21 @@ export default function ResetPasswordModal({
                   type={showPassword ? "text" : "password"}
                   value={defaultPassword}
                   readOnly
-                  className="pr-20 font-mono text-sm h-12 py-3"
+                  className="pr-[3.25rem] font-mono text-[0.56875rem] h-[1.95rem] py-[0.4875rem]"
                 />
-                <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1">
+                <div className="absolute right-[0.1625rem] top-1/2 -translate-y-1/2 flex gap-[0.1625rem]">
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="h-8 w-8 p-0"
+                    className="h-[1.3rem] w-[1.3rem] p-0"
                     title={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff className="h-[0.65rem] w-[0.65rem]" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye className="h-[0.65rem] w-[0.65rem]" />
                     )}
                   </Button>
                   <Button
@@ -163,28 +163,28 @@ export default function ResetPasswordModal({
                     variant="ghost"
                     size="sm"
                     onClick={copyPassword}
-                    className="h-8 w-8 p-0"
+                    className="h-[1.3rem] w-[1.3rem] p-0"
                     title="Copy password"
                   >
-                    <Copy className="h-4 w-4" />
+                    <Copy className="h-[0.65rem] w-[0.65rem]" />
                   </Button>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[0.4875rem] text-muted-foreground">
                 User must change this password on first login
               </p>
             </div>
 
             {/* Warning Card */}
             <Card className="border-orange-200 bg-orange-50/50">
-              <CardContent className="pt-6">
-                <div className="flex gap-3">
-                  <AlertTriangle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+              <CardContent className="pt-[0.975rem]">
+                <div className="flex gap-[0.4875rem]">
+                  <AlertTriangle className="h-[0.8125rem] w-[0.8125rem] text-orange-600 flex-shrink-0 mt-[0.08125rem]" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-orange-900">
+                    <p className="text-[0.56875rem] font-semibold text-orange-900">
                       Important Notice
                     </p>
-                    <p className="text-sm text-orange-800 mt-1">
+                    <p className="text-[0.56875rem] text-orange-800 mt-[0.1625rem]">
                       This action will log out the user from all devices. They must use the new password to sign in.
                     </p>
                   </div>
@@ -194,7 +194,7 @@ export default function ResetPasswordModal({
           </div>
         </FormBody>
 
-        <div className="flex gap-3 px-4 py-4 border-t bg-muted/30 flex-shrink-0 sm:px-6 justify-end">
+        <div className="flex gap-[0.4875rem] px-[0.65rem] py-[0.65rem] border-t bg-muted/30 flex-shrink-0 sm:px-[0.975rem] justify-end">
           <Button
             type="button"
             variant="outline"
@@ -211,7 +211,7 @@ export default function ResetPasswordModal({
           >
             {isResettingPassword ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />
                 Resetting...
               </>
             ) : (

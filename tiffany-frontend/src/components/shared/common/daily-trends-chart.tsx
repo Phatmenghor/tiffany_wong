@@ -94,7 +94,7 @@ export function DailyTrendsChart() {
 
   if (loading) {
     return (
-      <Card className="border-2 border-blue-200 shadow-lg bg-white mb-8">
+      <Card className="border-2 border-blue-200 shadow-lg bg-white mb-[1.3rem]">
         <ChartSkeleton />
       </Card>
     );
@@ -102,17 +102,17 @@ export function DailyTrendsChart() {
 
   if (error) {
     return (
-      <Card className="border-2 border-red-200 shadow-lg bg-white mb-8">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Daily Trends</CardTitle>
+      <Card className="border-2 border-red-200 shadow-lg bg-white mb-[1.3rem]">
+        <CardHeader className="pb-[0.325rem]">
+          <CardTitle className="text-[0.73125rem]">Daily Trends</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-800 font-semibold mb-2">Error Loading Daily Trends</p>
-            <p className="text-red-700 text-sm mb-4">{error}</p>
+          <div className="p-[0.975rem] bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-800 font-semibold mb-[0.325rem]">Error Loading Daily Trends</p>
+            <p className="text-red-700 text-[0.56875rem] mb-[0.65rem]">{error}</p>
             <button
               onClick={fetchDailyTrends}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+              className="px-[0.65rem] py-[0.325rem] bg-red-600 text-white rounded-[0.1625rem] hover:bg-red-700 text-[0.56875rem]"
             >
               Try Again
             </button>
@@ -124,12 +124,12 @@ export function DailyTrendsChart() {
 
   if (!data || data.length === 0) {
     return (
-      <Card className="border-2 border-gray-200 shadow-lg bg-white mb-8">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Daily Trends</CardTitle>
+      <Card className="border-2 border-gray-200 shadow-lg bg-white mb-[1.3rem]">
+        <CardHeader className="pb-[0.325rem]">
+          <CardTitle className="text-[0.73125rem]">Daily Trends</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center h-80">
+          <div className="flex items-center justify-center h-[13rem]">
             <p className="text-gray-600">No data available</p>
           </div>
         </CardContent>
@@ -143,11 +143,11 @@ export function DailyTrendsChart() {
   }));
 
   return (
-    <Card className="border-2 border-blue-200 shadow-lg bg-white mb-8">
-      <CardHeader className="pb-2 border-b-2 border-blue-200">
-        <CardTitle className="text-xl font-bold">📈 Daily Trends - Last 30 Days</CardTitle>
+    <Card className="border-2 border-blue-200 shadow-lg bg-white mb-[1.3rem]">
+      <CardHeader className="pb-[0.325rem] border-b-2 border-blue-200">
+        <CardTitle className="text-[0.8125rem] font-bold">📈 Daily Trends - Last 30 Days</CardTitle>
       </CardHeader>
-      <CardContent className="pt-6">
+      <CardContent className="pt-[0.975rem]">
         <ResponsiveContainer width="100%" height={380}>
           <ComposedChart
             data={chartData}

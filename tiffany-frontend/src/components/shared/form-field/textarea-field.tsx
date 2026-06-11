@@ -26,8 +26,8 @@ export function TextAreaField({
   rows = 3,
 }: TextAreaFieldProps) {
   return (
-    <div className={`space-y-2 ${className}`}>
-      <Label htmlFor={name as string} className="text-sm font-medium text-foreground">
+    <div className={`space-y-[0.325rem] ${className}`}>
+      <Label htmlFor={name as string} className="text-[0.56875rem] font-medium text-foreground">
         {label}
       </Label>
       <Controller
@@ -41,7 +41,7 @@ export function TextAreaField({
             placeholder={placeholder}
             disabled={disabled}
             rows={rows}
-            className={`w-full px-3 py-2 rounded-md border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none transition-all duration-200 ${
+            className={`w-full px-[0.4875rem] py-[0.325rem] rounded-md border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none transition-all duration-200 ${
               disabled ? "bg-muted/50 cursor-not-allowed" : ""
             } ${
               error
@@ -51,7 +51,7 @@ export function TextAreaField({
           />
         )}
       />
-      {error && <p className="text-xs text-red-500">{error.message}</p>}
+      {error && <p className="text-[0.4875rem] text-red-500">{error.message}</p>}
     </div>
   );
 }

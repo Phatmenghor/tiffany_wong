@@ -45,7 +45,7 @@ export function ProductSizes({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Product Sizes</CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-[0.325rem]">
             {hasSizes && sizeFields.some((_, idx) => {
               const sizePromotionType = watch(`sizes.${idx}.promotionType`);
               return sizePromotionType && sizePromotionType !== "NONE";
@@ -67,7 +67,7 @@ export function ProductSizes({
               onClick={onAddSize}
               disabled={isProcessing}
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-[0.65rem] w-[0.65rem] mr-[0.325rem]" />
               Add Size
             </Button>
           </div>
@@ -75,15 +75,15 @@ export function ProductSizes({
       </CardHeader>
       <CardContent>
         {sizeFields.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-sm text-muted-foreground">
+          <div className="text-center py-[1.3rem]">
+            <p className="text-[0.56875rem] text-muted-foreground">
               {hasSizes
                 ? "No sizes defined."
                 : "No sizes defined. Product will use main pricing."}
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-[0.65rem]">
             {sizeFields.map((field, index) => {
               const sizePromotionType = watch(`sizes.${index}.promotionType`);
               const showSizePromotionFields =
@@ -92,13 +92,13 @@ export function ProductSizes({
               return (
                 <div
                   key={field.id}
-                  className="border rounded-lg p-4 space-y-4"
+                  className="border rounded-lg p-[0.65rem] space-y-[0.65rem]"
                 >
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between gap-[0.325rem]">
                     <h4 className="font-semibold text-foreground">
                       Size {index + 1}
                     </h4>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-[0.325rem]">
                       {showSizePromotionFields && (
                         <Button
                           type="button"
@@ -117,13 +117,13 @@ export function ProductSizes({
                         onClick={() => onRemoveSize(index)}
                         disabled={isProcessing}
                       >
-                        <Trash2 className="h-4 w-4 mr-2" />
+                        <Trash2 className="h-[0.65rem] w-[0.65rem] mr-[0.325rem]" />
                         Remove
                       </Button>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-max">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem] auto-rows-max">
                     <div>
                       <TextField
                         control={control}
@@ -186,7 +186,7 @@ export function ProductSizes({
                           />
                         </div>
 
-                        <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-max">
+                        <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-[0.65rem] auto-rows-max">
                           <div>
                             <DateTimePickerField
                               control={control}

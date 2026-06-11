@@ -758,36 +758,36 @@ export default function BulkPromotionPage() {
   return (
     <div className="flex flex-1 flex-col h-full bg-background scroll-smooth">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 sm:px-6 py-4 bg-background border-b border-border shrink-0">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between px-[0.65rem] sm:px-[0.975rem] py-[0.65rem] bg-background border-b border-border shrink-0">
+        <div className="flex items-center gap-[0.4875rem]">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => router.push(ROUTES.ADMIN.PRODUCTS_PROMOTION)}
-            className="h-9 w-9 hover:bg-muted"
+            className="h-[1.4625rem] w-[1.4625rem] hover:bg-muted"
             title="Go back"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-[0.8125rem] w-[0.8125rem]" />
           </Button>
           <div className="flex flex-col">
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+            <h1 className="text-[0.8125rem] sm:text-[0.975rem] font-bold text-foreground">
               Create Bulk Promotion
             </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+            <p className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground mt-[0.08125rem]">
               Select products and apply discount settings
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-[0.325rem]">
           <Button
             variant="outline"
             size="sm"
             onClick={handleClearSelectedPromotionsClick}
             disabled={selectedIds.length === 0 || isSubmitting}
-            className="gap-2"
+            className="gap-[0.325rem]"
             title="Clear promotion for selected products and sizes"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-[0.65rem] w-[0.65rem]" />
             <span className="hidden sm:inline">Clear Promotion Selected</span>
           </Button>
 
@@ -795,10 +795,10 @@ export default function BulkPromotionPage() {
             variant="destructive"
             size="sm"
             onClick={() => setShowResetModal(true)}
-            className="gap-2"
+            className="gap-[0.325rem]"
             title="Reset all promotions"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-[0.65rem] w-[0.65rem]" />
             <span className="hidden sm:inline">Reset All</span>
           </Button>
         </div>
@@ -810,14 +810,14 @@ export default function BulkPromotionPage() {
         className="flex flex-1 flex-col lg:flex-row overflow-hidden min-h-0"
       >
         {/* Left Column - Product Selection */}
-        <div className="flex-1 flex flex-col gap-4 px-2 sm:px-4 py-4 overflow-y-auto min-h-0 lg:border-r lg:border-border scroll-smooth">
+        <div className="flex-1 flex flex-col gap-[0.65rem] px-[0.325rem] sm:px-[0.65rem] py-[0.65rem] overflow-y-auto min-h-0 lg:border-r lg:border-border scroll-smooth">
           {/* Filters + Select All Control - Modern Responsive Design */}
           <div className="rounded-lg border border-border/60 bg-gradient-to-r from-muted/40 to-muted/20 hover:from-muted/50 hover:to-muted/30 transition-all duration-200 overflow-hidden">
             {/* Top Row - Select All Control + Search (Responsive) */}
-            <div className="px-4 py-3 border-b border-border/40">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="px-[0.65rem] py-[0.4875rem] border-b border-border/40">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-[0.4875rem]">
                 {/* Left Side - Checkbox + Status Text */}
-                <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="flex items-center gap-[0.4875rem] min-w-0 flex-1">
                   <CustomCheckbox
                     checked={allSelected}
                     onCheckedChange={handleSelectAll}
@@ -829,8 +829,8 @@ export default function BulkPromotionPage() {
                   />
 
                   {/* Status Text */}
-                  <div className="flex flex-col gap-0.5 min-w-0">
-                    <span className="text-sm font-semibold text-foreground">
+                  <div className="flex flex-col gap-[0.08125rem] min-w-0">
+                    <span className="text-[0.56875rem] font-semibold text-foreground">
                       {allSelected
                         ? "All products selected"
                         : someSelected
@@ -841,32 +841,32 @@ export default function BulkPromotionPage() {
                             } products selected`
                           : "Select all products"}
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-[0.4875rem] text-muted-foreground">
                       {productContent.length} products on this page
                     </span>
                   </div>
                 </div>
 
                 {/* Right Side - Search + Clear Button */}
-                <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+                <div className="flex items-center gap-[0.325rem] flex-wrap w-full sm:w-auto">
                   {/* Search Input - Constrained width */}
                   <div className="relative flex-1 sm:flex-none sm:w-auto sm:min-w-[300px] sm:max-w-[370px]">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                    <Search className="absolute left-[0.4875rem] top-1/2 transform -translate-y-1/2 h-[0.65rem] w-[0.65rem] text-muted-foreground pointer-events-none" />
                     <input
                       type="text"
                       placeholder="Search product..."
                       value={searchQuery}
                       onChange={(e) => handleSearchChange(e.target.value)}
-                      className="w-full pl-9 pr-9 py-2 rounded-md border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                      className="w-full pl-[1.4625rem] pr-[1.4625rem] py-[0.325rem] rounded-md border border-border bg-background text-[0.56875rem] placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
                     />
                     {searchQuery && (
                       <button
                         type="button"
                         onClick={handleClearSearch}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-muted rounded transition-colors"
+                        className="absolute right-[0.4875rem] top-1/2 transform -translate-y-1/2 p-[0.1625rem] hover:bg-muted rounded-[0.1625rem] transition-colors"
                         title="Clear search"
                       >
-                        <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                        <X className="h-[0.65rem] w-[0.65rem] text-muted-foreground hover:text-foreground" />
                       </button>
                     )}
                   </div>
@@ -876,10 +876,10 @@ export default function BulkPromotionPage() {
                     <button
                       type="button"
                       onClick={handleClearAllSelections}
-                      className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium text-destructive border border-destructive/40 bg-destructive/5 hover:border-destructive/70 hover:bg-destructive/15 hover:text-destructive transition-colors duration-150 flex-shrink-0"
+                      className="inline-flex items-center gap-[0.24375rem] px-[0.4875rem] py-[0.325rem] rounded-md text-[0.4875rem] font-medium text-destructive border border-destructive/40 bg-destructive/5 hover:border-destructive/70 hover:bg-destructive/15 hover:text-destructive transition-colors duration-150 flex-shrink-0"
                       title="Clear all selections (stored in browser)"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-[0.56875rem] w-[0.56875rem]" />
                       <span className="hidden sm:inline">Clear</span>
                     </button>
                   )}
@@ -888,7 +888,7 @@ export default function BulkPromotionPage() {
             </div>
 
             {/* Filters Row - Responsive Grid */}
-            <div className="px-4 py-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+            <div className="px-[0.65rem] py-[0.4875rem] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[0.40625rem]">
               {/* Category Filter */}
               <div className="min-w-0">
                 <ComboboxSelectCategories
@@ -967,50 +967,50 @@ export default function BulkPromotionPage() {
         </div>
 
         {/* Right Column - Promotion Settings */}
-        <div className="w-full lg:w-96 flex flex-col border-t lg:border-t-0 lg:border-l border-border min-h-0 overflow-hidden scroll-smooth bg-gradient-to-b from-background via-background to-primary/5">
+        <div className="w-full lg:w-[15.6rem] flex flex-col border-t lg:border-t-0 lg:border-l border-border min-h-0 overflow-hidden scroll-smooth bg-gradient-to-b from-background via-background to-primary/5">
           <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="px-4 sm:px-5 md:px-4 lg:px-5 py-6 sm:py-8 md:py-6 lg:py-8 space-y-6 sm:space-y-8 md:space-y-6 lg:space-y-8">
+            <div className="px-[0.65rem] sm:px-[0.8125rem] md:px-[0.65rem] lg:px-[0.8125rem] py-[0.975rem] sm:py-[1.3rem] md:py-[0.975rem] lg:py-[1.3rem] space-y-[0.975rem] sm:space-y-[1.3rem] md:space-y-[0.975rem] lg:space-y-[1.3rem]">
               {/* Header Section */}
-              <div className="space-y-1">
-                <h2 className="text-lg sm:text-xl font-bold text-foreground">
+              <div className="space-y-[0.1625rem]">
+                <h2 className="text-[0.73125rem] sm:text-[0.8125rem] font-bold text-foreground">
                   Promotion Setup
                 </h2>
-                <p className="text-xs sm:text-sm text-muted-foreground">
+                <p className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground">
                   Configure discount details below
                 </p>
               </div>
 
               {/* Selected Count Card */}
-              <div className="rounded-lg p-5 bg-gradient-to-r from-primary/15 to-green-500/15 border border-primary/25 shadow-sm">
-                <div className="space-y-3">
-                  <p className="text-xs font-bold uppercase tracking-wider text-primary/70">
+              <div className="rounded-lg p-[0.8125rem] bg-gradient-to-r from-primary/15 to-green-500/15 border border-primary/25 shadow-sm">
+                <div className="space-y-[0.4875rem]">
+                  <p className="text-[0.4875rem] font-bold uppercase tracking-wider text-primary/70">
                     Selection Status
                   </p>
 
                   {/* Stats Row */}
-                  <div className="flex items-center gap-6 sm:gap-8">
+                  <div className="flex items-center gap-[0.975rem] sm:gap-[1.3rem]">
                     {/* Products Count */}
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-5xl sm:text-6xl font-black text-primary">
+                    <div className="flex items-baseline gap-[0.325rem]">
+                      <p className="text-[1.95rem] sm:text-[2.4375rem] font-black text-primary">
                         {selectedIds.length}
                       </p>
-                      <p className="text-xs sm:text-sm font-semibold text-foreground/60">
+                      <p className="text-[0.4875rem] sm:text-[0.56875rem] font-semibold text-foreground/60">
                         {selectedIds.length === 1 ? "Product" : "Products"}
                       </p>
                     </div>
 
                     {/* Divider */}
-                    <div className="h-12 w-px bg-primary/20" />
+                    <div className="h-[1.95rem] w-px bg-primary/20" />
 
                     {/* Sizes Count */}
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-3xl sm:text-4xl font-black text-green-600">
+                    <div className="flex items-baseline gap-[0.325rem]">
+                      <p className="text-[1.21875rem] sm:text-[1.4625rem] font-black text-green-600">
                         {Object.values(selectedSizesFromRedux).reduce(
                           (sum, sizeArray) => sum + sizeArray.length,
                           0,
                         )}
                       </p>
-                      <p className="text-xs sm:text-sm font-semibold text-foreground/60">
+                      <p className="text-[0.4875rem] sm:text-[0.56875rem] font-semibold text-foreground/60">
                         {Object.values(selectedSizesFromRedux).reduce(
                           (sum, sizeArray) => sum + sizeArray.length,
                           0,
@@ -1024,13 +1024,13 @@ export default function BulkPromotionPage() {
               </div>
 
               {/* Form Sections - Grouped */}
-              <div className="space-y-6 sm:space-y-7 md:space-y-6 lg:space-y-7">
+              <div className="space-y-[0.975rem] sm:space-y-[1.1375rem] md:space-y-[0.975rem] lg:space-y-[1.1375rem]">
                 {/* Discount Section */}
-                <div className="space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-4">
-                  <h3 className="text-sm font-bold text-foreground uppercase tracking-wider px-1">
+                <div className="space-y-[0.4875rem] sm:space-y-[0.65rem] md:space-y-[0.4875rem] lg:space-y-[0.65rem]">
+                  <h3 className="text-[0.56875rem] font-bold text-foreground uppercase tracking-wider px-[0.1625rem]">
                     Discount Settings
                   </h3>
-                  <div className="space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-4">
+                  <div className="space-y-[0.4875rem] sm:space-y-[0.65rem] md:space-y-[0.4875rem] lg:space-y-[0.65rem]">
                     <CustomSelect
                       placeholder="Choose discount type..."
                       label="Discount Type"
@@ -1046,7 +1046,7 @@ export default function BulkPromotionPage() {
                       required
                     />
                     {form.formState.errors.promotionType && (
-                      <p className="text-xs text-destructive font-medium px-1">
+                      <p className="text-[0.4875rem] text-destructive font-medium px-[0.1625rem]">
                         {form.formState.errors.promotionType.message}
                       </p>
                     )}
@@ -1068,11 +1068,11 @@ export default function BulkPromotionPage() {
                 </div>
 
                 {/* Duration Section */}
-                <div className="space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-4">
-                  <div className="space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-4">
+                <div className="space-y-[0.4875rem] sm:space-y-[0.65rem] md:space-y-[0.4875rem] lg:space-y-[0.65rem]">
+                  <div className="space-y-[0.4875rem] sm:space-y-[0.65rem] md:space-y-[0.4875rem] lg:space-y-[0.65rem]">
                     <DateTimePickerField
                       control={form.control}
-                      className="h-10"
+                      className="h-[1.625rem]"
                       name="promotionFromDate"
                       label="Start Date"
                       required
@@ -1082,7 +1082,7 @@ export default function BulkPromotionPage() {
 
                     <DateTimePickerField
                       control={form.control}
-                      className="h-10"
+                      className="h-[1.625rem]"
                       name="promotionToDate"
                       label="End Date"
                       required
@@ -1094,12 +1094,12 @@ export default function BulkPromotionPage() {
               </div>
 
               {/* Action Buttons - Modern Style */}
-              <div className="flex gap-3 sm:gap-4 md:gap-3 lg:gap-4 pt-2 sm:pt-4 md:pt-2 lg:pt-4">
+              <div className="flex gap-[0.4875rem] sm:gap-[0.65rem] md:gap-[0.4875rem] lg:gap-[0.65rem] pt-[0.325rem] sm:pt-[0.65rem] md:pt-[0.325rem] lg:pt-[0.65rem]">
                 <CustomButton
                   onClick={() => router.push(ROUTES.ADMIN.PRODUCTS_PROMOTION)}
                   disabled={isSubmitting}
                   variant="outline"
-                  className="flex-1 h-10 sm:h-11 md:h-10 lg:h-11 text-xs sm:text-sm md:text-xs lg:text-sm font-semibold rounded-lg border-2 hover:bg-muted/50"
+                  className="flex-1 h-[1.625rem] sm:h-[1.7875rem] md:h-[1.625rem] lg:h-[1.7875rem] text-[0.4875rem] sm:text-[0.56875rem] md:text-[0.4875rem] lg:text-[0.56875rem] font-semibold rounded-lg border-2 hover:bg-muted/50"
                 >
                   Cancel
                 </CustomButton>
@@ -1112,7 +1112,7 @@ export default function BulkPromotionPage() {
                   disabled={!isFormValid}
                   onClick={handleApplyClick}
                   variant="default"
-                  className="flex-1 h-10 sm:h-11 md:h-10 lg:h-11 text-xs sm:text-sm md:text-xs lg:text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-md hover:shadow-lg disabled:opacity-50"
+                  className="flex-1 h-[1.625rem] sm:h-[1.7875rem] md:h-[1.625rem] lg:h-[1.7875rem] text-[0.4875rem] sm:text-[0.56875rem] md:text-[0.4875rem] lg:text-[0.56875rem] font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-md hover:shadow-lg disabled:opacity-50"
                 />
               </div>
             </div>

@@ -30,17 +30,17 @@ const STEP_ORDER: Record<string, number> = {
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-2.5">
-      <h3 className="text-xs font-bold text-foreground">{children}</h3>
+    <div className="mb-[0.40625rem]">
+      <h3 className="text-[0.4875rem] font-bold text-foreground">{children}</h3>
     </div>
   );
 }
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-xs font-semibold text-muted-foreground">{label}</span>
-      <span className="text-xs text-foreground">{value || "-"}</span>
+    <div className="flex flex-col gap-[0.08125rem]">
+      <span className="text-[0.4875rem] font-semibold text-muted-foreground">{label}</span>
+      <span className="text-[0.4875rem] text-foreground">{value || "-"}</span>
     </div>
   );
 }
@@ -61,52 +61,52 @@ export function CustomerOrderDetailModal({
 
       <DialogContent className="w-full sm:max-w-6xl max-h-[95dvh] p-0 gap-0 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="px-4 py-3 border-b bg-muted/30 flex-shrink-0 flex items-center gap-3">
+        <div className="px-[0.65rem] py-[0.4875rem] border-b bg-muted/30 flex-shrink-0 flex items-center gap-[0.4875rem]">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-bold text-foreground font-mono truncate">
+            <div className="flex items-center gap-[0.325rem]">
+              <p className="text-[0.56875rem] font-bold text-foreground font-mono truncate">
                 {order.orderNumber}
               </p>
               <button
                 onClick={() => navigator.clipboard.writeText(order.orderNumber)}
-                className="p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                className="p-[0.08125rem] rounded-[0.1625rem] hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                 title="Copy order number"
               >
-                <Copy className="h-3 w-3" />
+                <Copy className="h-[0.4875rem] w-[0.4875rem]" />
               </button>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">Order Details</p>
+            <p className="text-[0.4875rem] text-muted-foreground mt-[0.08125rem]">Order Details</p>
           </div>
         </div>
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-3 grid grid-cols-1 lg:grid-cols-3 gap-3">
+          <div className="p-[0.4875rem] grid grid-cols-1 lg:grid-cols-3 gap-[0.4875rem]">
 
             {/* Left column */}
-            <div className="lg:col-span-2 space-y-3">
+            <div className="lg:col-span-2 space-y-[0.4875rem]">
 
               {/* Status Timeline */}
-              <div className="rounded border border-border/50 bg-card p-3">
+              <div className="rounded-[0.1625rem] border border-border/50 bg-card p-[0.4875rem]">
                 <SectionTitle>Order Progress</SectionTitle>
                 {isCancelled ? (
-                  <div className="flex items-center gap-2 px-2 py-2 rounded bg-red-50 border border-red-200">
-                    <XCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
-                    <span className="text-xs font-semibold text-red-700">
+                  <div className="flex items-center gap-[0.325rem] px-[0.325rem] py-[0.325rem] rounded-[0.1625rem] bg-red-50 border border-red-200">
+                    <XCircle className="h-[0.65rem] w-[0.65rem] text-red-500 flex-shrink-0" />
+                    <span className="text-[0.4875rem] font-semibold text-red-700">
                       This order has been cancelled
                     </span>
                   </div>
                 ) : (
-                  <div className="flex items-start overflow-x-auto px-2 py-2">
+                  <div className="flex items-start overflow-x-auto px-[0.325rem] py-[0.325rem]">
                     {ORDER_STEPS.map((step, idx) => {
                       const isDone = currentStep >= STEP_ORDER[step];
                       const isCurrent = currentStep === STEP_ORDER[step];
                       return (
                         <div key={step} className="flex items-start flex-shrink-0">
-                          <div className="flex flex-col items-center w-24">
+                          <div className="flex flex-col items-center w-[3.9rem]">
                             <div
                               className={cn(
-                                "w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ring-2 ring-offset-1 transition-all",
+                                "w-[1.3rem] h-[1.3rem] rounded-full flex items-center justify-center text-[0.4875rem] font-semibold ring-2 ring-offset-1 transition-all",
                                 isDone
                                   ? "bg-green-100 text-green-700 ring-green-200"
                                   : isCurrent
@@ -114,16 +114,16 @@ export function CustomerOrderDetailModal({
                                     : "bg-muted text-muted-foreground ring-muted",
                               )}
                             >
-                              {isDone ? <Check className="h-3 w-3" /> : idx + 1}
+                              {isDone ? <Check className="h-[0.4875rem] w-[0.4875rem]" /> : idx + 1}
                             </div>
-                            <span className="text-xs font-semibold text-foreground text-center mt-1.5 w-full">
+                            <span className="text-[0.4875rem] font-semibold text-foreground text-center mt-[0.24375rem] w-full">
                               {getOrderStatusLabel(step)}
                             </span>
                           </div>
                           {idx < ORDER_STEPS.length - 1 && (
                             <div
                               className={cn(
-                                "flex-shrink-0 mt-4 w-8 h-0.5 transition-colors",
+                                "flex-shrink-0 mt-[0.65rem] w-[1.3rem] h-[0.08125rem] transition-colors",
                                 currentStep > STEP_ORDER[step] ? "bg-green-300" : "bg-muted",
                               )}
                             />
@@ -137,16 +137,16 @@ export function CustomerOrderDetailModal({
 
               {/* Order Items */}
               {order.items && order.items.length > 0 && (
-                <div className="rounded border border-border/50 bg-card p-3">
+                <div className="rounded-[0.1625rem] border border-border/50 bg-card p-[0.4875rem]">
                   <SectionTitle>Order Items ({order.items.length})</SectionTitle>
-                  <div className="space-y-2">
+                  <div className="space-y-[0.325rem]">
                     {order.items.map((item) => (
                       <div
                         key={item.id}
-                        className="flex gap-3 p-2.5 rounded border border-border/50 bg-muted/20"
+                        className="flex gap-[0.4875rem] p-[0.40625rem] rounded-[0.1625rem] border border-border/50 bg-muted/20"
                       >
                         {/* Image */}
-                        <div className="relative flex-shrink-0 w-16 h-16 rounded-md overflow-hidden bg-muted border border-border/50">
+                        <div className="relative flex-shrink-0 w-[2.6rem] h-[2.6rem] rounded-md overflow-hidden bg-muted border border-border/50">
                           {item.productImageUrl ? (
                             <img
                               src={item.productImageUrl}
@@ -155,19 +155,19 @@ export function CustomerOrderDetailModal({
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <Package className="h-6 w-6 text-muted-foreground" />
+                              <Package className="h-[0.975rem] w-[0.975rem] text-muted-foreground" />
                             </div>
                           )}
                         </div>
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-1 mb-1">
-                            <p className="text-xs font-semibold text-foreground leading-tight truncate">
+                          <div className="flex items-start justify-between gap-[0.1625rem] mb-[0.1625rem]">
+                            <p className="text-[0.4875rem] font-semibold text-foreground leading-tight truncate">
                               {item.productName}
                             </p>
                             {item.hasActivePromotion && item.displayPromotionValue != null && (
-                              <span className="flex-shrink-0 px-1.5 py-0.5 bg-red-100 text-red-700 rounded text-xs font-bold leading-none">
+                              <span className="flex-shrink-0 px-[0.24375rem] py-[0.08125rem] bg-red-100 text-red-700 rounded-[0.1625rem] text-[0.4875rem] font-bold leading-none">
                                 {item.displayPromotionType === "PERCENTAGE"
                                   ? `${item.displayPromotionValue}% OFF`
                                   : `${formatCurrency(item.displayPromotionValue)} OFF`}
@@ -176,20 +176,20 @@ export function CustomerOrderDetailModal({
                           </div>
 
                           {item.sizeName && (
-                            <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded inline-block mb-1.5">
+                            <span className="text-[0.4875rem] text-muted-foreground bg-muted px-[0.24375rem] py-[0.08125rem] rounded-[0.1625rem] inline-block mb-[0.24375rem]">
                               {item.sizeName}
                             </span>
                           )}
 
-                          <div className="flex items-center justify-between text-xs gap-2">
-                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <div className="flex items-center justify-between text-[0.4875rem] gap-[0.325rem]">
+                            <div className="flex items-center gap-[0.24375rem] text-muted-foreground">
                               <span>{formatCurrency(item.displayPrice)}</span>
                               {item.hasActivePromotion && item.displayOriginPrice > item.displayPrice && (
                                 <span className="line-through text-muted-foreground/50">
                                   {formatCurrency(item.displayOriginPrice)}
                                 </span>
                               )}
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold text-[10px] leading-none">
+                              <span className="inline-flex items-center px-[0.24375rem] py-[0.08125rem] rounded-[0.1625rem] bg-primary/10 text-primary font-bold text-[10px] leading-none">
                                 ×{item.quantity}
                               </span>
                             </div>
@@ -205,10 +205,10 @@ export function CustomerOrderDetailModal({
               )}
 
               {/* Pricing Summary */}
-              <div className="rounded border border-border/50 bg-card p-3">
+              <div className="rounded-[0.1625rem] border border-border/50 bg-card p-[0.4875rem]">
                 <SectionTitle>Pricing Summary</SectionTitle>
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-xs">
+                <div className="space-y-[0.24375rem]">
+                  <div className="flex justify-between text-[0.4875rem]">
                     <span className="text-muted-foreground">
                       Subtotal ({order.items?.length || 0} items)
                     </span>
@@ -217,16 +217,16 @@ export function CustomerOrderDetailModal({
                     </span>
                   </div>
                   {(order.discountAmount ?? 0) > 0 && (
-                    <div className="flex justify-between text-xs">
+                    <div className="flex justify-between text-[0.4875rem]">
                       <span className="text-muted-foreground">Discount</span>
                       <span className="font-medium text-red-600">
                         -{formatCurrency(order.discountAmount)}
                       </span>
                     </div>
                   )}
-                  <div className="pt-2 mt-1 border-t border-border/50 flex justify-between">
-                    <span className="text-xs font-bold text-foreground">Total</span>
-                    <span className="text-sm font-bold text-primary">
+                  <div className="pt-[0.325rem] mt-[0.1625rem] border-t border-border/50 flex justify-between">
+                    <span className="text-[0.4875rem] font-bold text-foreground">Total</span>
+                    <span className="text-[0.56875rem] font-bold text-primary">
                       {formatCurrency(order.totalAmount || 0)}
                     </span>
                   </div>
@@ -235,12 +235,12 @@ export function CustomerOrderDetailModal({
             </div>
 
             {/* Right sidebar */}
-            <div className="space-y-3">
+            <div className="space-y-[0.4875rem]">
 
               {/* Order Info */}
-              <div className="rounded border border-border/50 bg-card p-3">
+              <div className="rounded-[0.1625rem] border border-border/50 bg-card p-[0.4875rem]">
                 <SectionTitle>Order Info</SectionTitle>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+                <div className="grid grid-cols-2 gap-x-[0.4875rem] gap-y-[0.325rem]">
                   <InfoRow label="Date" value={dateTimeFormat(order.createdAt)} />
                   <InfoRow label="Payment" value={order.paymentMethod || "-"} />
                   <InfoRow
@@ -264,9 +264,9 @@ export function CustomerOrderDetailModal({
               </div>
 
               {/* Customer Info */}
-              <div className="rounded border border-border/50 bg-card p-3">
+              <div className="rounded-[0.1625rem] border border-border/50 bg-card p-[0.4875rem]">
                 <SectionTitle>Customer</SectionTitle>
-                <div className="space-y-2">
+                <div className="space-y-[0.325rem]">
                   <InfoRow label="Name" value={order.customerName || "-"} />
                   {order.customerPhone && (
                     <InfoRow label="Phone" value={order.customerPhone} />
@@ -279,9 +279,9 @@ export function CustomerOrderDetailModal({
 
               {/* Customer Note */}
               {order.customerNote && (
-                <div className="rounded border border-border/50 bg-card p-3">
+                <div className="rounded-[0.1625rem] border border-border/50 bg-card p-[0.4875rem]">
                   <SectionTitle>Note</SectionTitle>
-                  <p className="text-xs text-foreground leading-relaxed">
+                  <p className="text-[0.4875rem] text-foreground leading-relaxed">
                     {order.customerNote}
                   </p>
                 </div>

@@ -81,9 +81,9 @@ export function UserBusinessDetailModal({
       <DialogTitle className="sr-only">User Details - {userData.fullName}</DialogTitle>
       <DialogContent className="w-full sm:max-w-6xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b bg-muted/30 flex-shrink-0">
-          <div className="flex items-start gap-6">
-            <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border bg-muted">
+        <div className="px-[0.975rem] py-[0.65rem] border-b bg-muted/30 flex-shrink-0">
+          <div className="flex items-start gap-[0.975rem]">
+            <div className="w-[3.25rem] h-[3.25rem] flex-shrink-0 rounded-lg overflow-hidden border bg-muted">
               {userData.profileImageUrl ? (
                 <img
                   src={userData.profileImageUrl}
@@ -92,17 +92,17 @@ export function UserBusinessDetailModal({
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-primary/10">
-                  <span className="text-2xl font-semibold text-primary">
+                  <span className="text-[0.975rem] font-semibold text-primary">
                     {userData.fullName?.charAt(0)?.toUpperCase() || "U"}
                   </span>
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-lg font-semibold text-foreground">
+              <h2 className="text-[0.73125rem] font-semibold text-foreground">
                 User Details
               </h2>
-              <p className="text-sm text-foreground mt-1">
+              <p className="text-[0.56875rem] text-foreground mt-[0.1625rem]">
                 View detailed information about the user
               </p>
             </div>
@@ -111,14 +111,14 @@ export function UserBusinessDetailModal({
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-6 space-y-6">
+          <div className="p-[0.975rem] space-y-[0.975rem]">
             {/* Personal Information */}
             <Card>
               <CardHeader>
                 <CardTitle>Personal Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="space-y-[0.65rem]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
                   <DisplayField label="First Name" value={userData.firstName} />
                   <DisplayField label="Last Name" value={userData.lastName} />
                   <DisplayField label="Nickname" value={userData.nickname} />
@@ -135,8 +135,8 @@ export function UserBusinessDetailModal({
               <CardHeader>
                 <CardTitle>Account Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="space-y-[0.65rem]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
                   <DisplayField label="User Identifier" value={userData.userIdentifier} />
                   <DisplayField label="User Type" value={formatEnumValue(userData.userType)} />
                   <DisplayField label="User Role" value={userData.userRole ? formatEnumValue(userData.userRole) : "-"} />
@@ -151,7 +151,7 @@ export function UserBusinessDetailModal({
                 <CardHeader>
                   <CardTitle>Remarks</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-[0.65rem]">
                   <DisplayField label="Remarks" value={userData.remark} />
                 </CardContent>
               </Card>
@@ -162,8 +162,8 @@ export function UserBusinessDetailModal({
               <CardHeader>
                 <CardTitle>System Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="space-y-[0.65rem]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
                   <DisplayField label="User ID" value={userData.id} />
                   <DisplayField label="Created At" value={dateTimeFormat(userData.createdAt ?? "")} />
                   <DisplayField label="Created By" value={userData.createdBy} />

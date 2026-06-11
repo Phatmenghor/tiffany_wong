@@ -105,21 +105,21 @@ export function CancelOrderModal({
           <FormBody>
             {/* Alert Box */}
             <Alert className="border-red-200 bg-red-50">
-              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <AlertTriangle className="h-[0.65rem] w-[0.65rem] text-red-600" />
               <AlertDescription className="text-red-700">
                 This action cannot be undone. The order will be marked as cancelled and no longer processing.
               </AlertDescription>
             </Alert>
 
             {/* Order Information Display */}
-            <div className="space-y-3 p-4 bg-muted rounded-lg border border-muted-foreground/20">
+            <div className="space-y-[0.4875rem] p-[0.65rem] bg-muted rounded-lg border border-muted-foreground/20">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Order Number:</span>
-                <span className="text-sm font-semibold text-foreground">#{orderNumber}</span>
+                <span className="text-[0.56875rem] text-muted-foreground">Order Number:</span>
+                <span className="text-[0.56875rem] font-semibold text-foreground">#{orderNumber}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">New Status:</span>
-                <span className="text-sm font-semibold px-2.5 py-1 rounded-md bg-red-100 text-red-800 border border-red-300">
+                <span className="text-[0.56875rem] text-muted-foreground">New Status:</span>
+                <span className="text-[0.56875rem] font-semibold px-[0.40625rem] py-[0.1625rem] rounded-md bg-red-100 text-red-800 border border-red-300">
                   CANCELLED
                 </span>
               </div>
@@ -128,13 +128,13 @@ export function CancelOrderModal({
             {/* Error Display */}
             {error && (
               <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
+                <AlertTriangle className="h-[0.65rem] w-[0.65rem]" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
             {/* Customer Note Field */}
-            <div className="space-y-2">
+            <div className="space-y-[0.325rem]">
               <TextAreaField
                 control={control}
                 name="customerNote"
@@ -144,7 +144,7 @@ export function CancelOrderModal({
                 rows={4}
                 error={errors.customerNote}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[0.4875rem] text-muted-foreground">
                 This note will be recorded with the cancellation and may help us improve our service.
               </p>
             </div>

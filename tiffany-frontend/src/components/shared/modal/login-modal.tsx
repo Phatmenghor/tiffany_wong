@@ -86,8 +86,8 @@ export function LoginModal({ open, onOpenChange, onRegisterClick }: LoginModalPr
         {/* Header */}
         <DialogHeader className="text-left">
           <div>
-            <DialogTitle className="text-2xl">{businessName}</DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1">
+            <DialogTitle className="text-[0.975rem]">{businessName}</DialogTitle>
+            <p className="text-[0.56875rem] text-muted-foreground mt-[0.1625rem]">
               Sign in to your account
             </p>
           </div>
@@ -96,7 +96,7 @@ export function LoginModal({ open, onOpenChange, onRegisterClick }: LoginModalPr
         <Separator />
 
         {/* Body - Login Form */}
-        <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+        <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-[0.65rem]">
           <TextField
             name="userIdentifier"
             label="Email or Username"
@@ -119,18 +119,18 @@ export function LoginModal({ open, onOpenChange, onRegisterClick }: LoginModalPr
           />
 
           {/* Footer - Submit Button */}
-          <DialogFooter className="pt-2">
+          <DialogFooter className="pt-[0.325rem]">
             <Button
               type="submit"
-              className="w-full h-11 font-semibold"
+              className="w-full h-[1.7875rem] font-semibold"
               disabled={isAnyLoading}
             >
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading && <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />}
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </DialogFooter>
 
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-[0.56875rem] text-muted-foreground">
             No account?{" "}
             <button
               type="button"

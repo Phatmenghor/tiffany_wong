@@ -25,7 +25,7 @@ const ProductFilters = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-72 h-96 bg-muted animate-pulse rounded-lg" />
+      <div className="w-[11.7rem] h-[15.6rem] bg-muted animate-pulse rounded-lg" />
     ),
   },
 );
@@ -205,16 +205,16 @@ export function ProductListPage({
       {/* Optional hero section */}
       {hero && (
         <div className="relative">
-          <PageContainer className="max-w-8xl pt-3 max sm:pt-6 pb-0">
-            <div className="mb-6">{hero}</div>
+          <PageContainer className="max-w-8xl pt-[0.4875rem] max sm:pt-[0.975rem] pb-0">
+            <div className="mb-[0.975rem]">{hero}</div>
           </PageContainer>
         </div>
       )}
 
       {/* Products Section with home page styling */}
-      <div className="relative py-6 sm:py-10">
+      <div className="relative py-[0.975rem] sm:py-[1.625rem]">
         <PageContainer className="max-w-8xl">
-          <div className="flex gap-6 lg:gap-8 flex-col lg:flex-row">
+          <div className="flex gap-[0.975rem] lg:gap-[1.3rem] flex-col lg:flex-row">
             {/* Filters - Single instance, responsive layout inside component */}
             <ProductFilters
               totalResults={pagination.totalElements}
@@ -227,7 +227,7 @@ export function ProductListPage({
 
               {/* Products Grid - with initial skeleton loading (like home page) */}
               {isInitialLoad ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-[0.4875rem] sm:gap-[0.65rem]">
                   {Array.from({ length: 12 }).map((_, i) => (
                     <ProductCardSkeleton key={`skeleton-initial-${i}`} />
                   ))}
@@ -240,7 +240,7 @@ export function ProductListPage({
                     hasMore={pagination.hasMore}
                     onLoadMore={debouncedLoadMore}
                     isInitialLoading={false}
-                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4"
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-[0.4875rem] sm:gap-[0.65rem]"
                     sectionKey={lockedPromotion ? "promotions" : "products"}
                   />
 
@@ -248,22 +248,22 @@ export function ProductListPage({
                   {!pagination.hasMore &&
                     products.length > 0 &&
                     !loading.list && (
-                      <div className="text-center py-4 text-sm text-muted-foreground">
+                      <div className="text-center py-[0.65rem] text-[0.56875rem] text-muted-foreground">
                         You've seen it all!
                       </div>
                     )}
                 </>
               ) : (
                 /* No Results */
-                <div className="text-center py-16">
-                  <div className="flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4 mx-auto">
+                <div className="text-center py-[2.6rem]">
+                  <div className="flex items-center justify-center w-[2.6rem] h-[2.6rem] rounded-full bg-muted mb-[0.65rem] mx-auto">
                     {lockedPromotion ? (
-                      <Flame className="h-8 w-8 text-muted-foreground" />
+                      <Flame className="h-[1.3rem] w-[1.3rem] text-muted-foreground" />
                     ) : (
-                      <span className="text-3xl">📦</span>
+                      <span className="text-[1.21875rem]">📦</span>
                     )}
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">
+                  <h3 className="text-[0.8125rem] font-semibold mb-[0.325rem]">
                     {lockedPromotion ? "No deals found" : "No products found"}
                   </h3>
                   <p className="text-muted-foreground">

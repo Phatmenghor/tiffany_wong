@@ -439,8 +439,8 @@ export default function ProductPromotionPage() {
   }), [filters.search, filters.status, selectedCategories, sizeFilter, sortBy, sortDirection]);
 
   return (
-    <div className="flex flex-1 flex-col gap-4 px-2">
-      <div className="space-y-4">
+    <div className="flex flex-1 flex-col gap-[0.65rem] px-[0.325rem]">
+      <div className="space-y-[0.65rem]">
         <CollapsibleFilterPanel
           config={filterConfig}
           essentialFilterIds={["category", "status"]}

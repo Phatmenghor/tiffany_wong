@@ -338,7 +338,7 @@ export default function ProductModal({
         />
 
         {!isCreate && isFetchingDetail ? (
-          <div className="p-6 flex items-center justify-center min-h-[400px] flex-1">
+          <div className="p-[0.975rem] flex items-center justify-center min-h-[400px] flex-1">
             <Loading />
           </div>
         ) : (
@@ -347,10 +347,10 @@ export default function ProductModal({
             className="flex flex-col flex-1 overflow-hidden"
           >
             <FormBody>
-              <div className="space-y-6">
+              <div className="space-y-[0.975rem]">
                 {reduxError && (
-                  <div className="p-4 bg-destructive/10 border border-destructive rounded-lg">
-                    <p className="text-sm text-destructive font-medium">
+                  <div className="p-[0.65rem] bg-destructive/10 border border-destructive rounded-lg">
+                    <p className="text-[0.56875rem] text-destructive font-medium">
                       {reduxError}
                     </p>
                   </div>

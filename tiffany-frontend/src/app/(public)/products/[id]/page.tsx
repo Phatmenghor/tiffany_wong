@@ -440,8 +440,8 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <PageContainer className="py-16 text-center">
-        <h2 className="text-xl font-bold mb-4">Product Not Found</h2>
+      <PageContainer className="py-[2.6rem] text-center">
+        <h2 className="text-[0.8125rem] font-bold mb-[0.65rem]">Product Not Found</h2>
         <Button onClick={() => router.back()}>Go Back</Button>
       </PageContainer>
     );
@@ -472,22 +472,22 @@ export default function ProductDetailPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <PageContainer className="py-4 sm:py-6">
+      <PageContainer className="py-[0.65rem] sm:py-[0.975rem]">
         {/* Back */}
         <CustomButton
           variant="ghost"
           size="sm"
           onClick={() => router.back()}
-          className="mb-5 -ml-1 gap-1.5 text-muted-foreground hover:text-foreground"
+          className="mb-[0.8125rem] -ml-[0.1625rem] gap-[0.24375rem] text-muted-foreground hover:text-foreground"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-[0.65rem] w-[0.65rem]" />
           Back
         </CustomButton>
 
         {/* ── Main grid ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8 lg:gap-10 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-[1.3rem] lg:gap-[1.625rem] mb-[2.6rem]">
           {/* ──── LEFT: Image Gallery — sticky so it stays visible while scrolling right ──── */}
-          <div className="lg:self-start lg:sticky lg:top-4">
+          <div className="lg:self-start lg:sticky lg:top-[0.65rem]">
             <ProductImageGallery
               mainImageUrl={product.mainImageUrl}
               images={product.images || []}
@@ -506,7 +506,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* ──── RIGHT: Product Info & Actions ──── */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-[0.65rem]">
             <ProductInfo
               categoryName={product.categoryName}
               brandName={product.brandName}

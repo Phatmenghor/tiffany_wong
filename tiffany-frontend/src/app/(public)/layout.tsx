@@ -52,7 +52,7 @@ export default function PublicLayout({
       <Navbar />
 
       {/* pb-nav-safe = nav height (2.6rem) + iPhone safe-area inset on mobile;
-          falls back to plain pb-16 via the sm: reset on larger screens. */}
+          falls back to plain pb-[2.6rem] via the sm: reset on larger screens. */}
       <main className="flex-1 pb-nav-safe sm:pb-0">
         <Suspense>{children}</Suspense>
       </main>

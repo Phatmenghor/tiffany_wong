@@ -73,19 +73,19 @@ export function DataTableWithPagination<T = any>({
 
   const sizeClasses = {
     sm: {
-      button: "h-8 px-3 text-xs",
-      icon: "h-3 w-3",
-      pageButton: "h-8 min-w-8 text-xs",
+      button: "h-[1.3rem] px-[0.4875rem] text-[0.4875rem]",
+      icon: "h-[0.4875rem] w-[0.4875rem]",
+      pageButton: "h-[1.3rem] min-w-[1.3rem] text-[0.4875rem]",
     },
     md: {
-      button: "h-9 px-4 text-sm",
-      icon: "h-4 w-4",
-      pageButton: "h-9 min-w-9 text-sm",
+      button: "h-[1.4625rem] px-[0.65rem] text-[0.56875rem]",
+      icon: "h-[0.65rem] w-[0.65rem]",
+      pageButton: "h-[1.4625rem] min-w-[1.4625rem] text-[0.56875rem]",
     },
     lg: {
-      button: "h-10 px-5 text-base",
-      icon: "h-5 w-5",
-      pageButton: "h-10 min-w-10 text-base",
+      button: "h-[1.625rem] px-[0.8125rem] text-[0.65rem]",
+      icon: "h-[0.8125rem] w-[0.8125rem]",
+      pageButton: "h-[1.625rem] min-w-[1.625rem] text-[0.65rem]",
     },
   };
 
@@ -135,10 +135,10 @@ export function DataTableWithPagination<T = any>({
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-[0.65rem]">
         <div className={`rounded-md border overflow-x-auto ${className}`}>
           <table
-            className="text-sm"
+            className="text-[0.56875rem]"
             style={{
               tableLayout: "fixed",
               minWidth: "100%",
@@ -150,7 +150,7 @@ export function DataTableWithPagination<T = any>({
                 {columns.map((column) => (
                   <th
                     key={column.key}
-                    className={`px-4 py-3 text-left font-semibold text-xs text-muted-foreground border-b border-border ${
+                    className={`px-[0.65rem] py-[0.4875rem] text-left font-semibold text-[0.4875rem] text-muted-foreground border-b border-border ${
                       column.className || ""
                     }`}
                     style={{
@@ -170,14 +170,14 @@ export function DataTableWithPagination<T = any>({
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className="px-4 py-3 border-b border-border/50"
+                      className="px-[0.65rem] py-[0.4875rem] border-b border-border/50"
                       style={{
                         ...(column.width && { width: column.width }),
                         ...(column.maxWidth && { maxWidth: column.maxWidth }),
                         ...(column.minWidth && { minWidth: column.minWidth }),
                       }}
                     >
-                      <div className="h-4 bg-muted animate-pulse rounded" />
+                      <div className="h-[0.65rem] bg-muted animate-pulse rounded-[0.1625rem]" />
                     </td>
                   ))}
                 </tr>
@@ -190,11 +190,11 @@ export function DataTableWithPagination<T = any>({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-[0.65rem]">
       {/* Data Table */}
       <div className={`rounded-md border overflow-x-auto ${className}`}>
         <table
-          className="text-sm"
+          className="text-[0.56875rem]"
           style={{
             tableLayout: "fixed",
             minWidth: "100%",
@@ -206,7 +206,7 @@ export function DataTableWithPagination<T = any>({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`px-4 py-3 text-left font-semibold text-xs text-muted-foreground border-b border-border ${
+                  className={`px-[0.65rem] py-[0.4875rem] text-left font-semibold text-[0.4875rem] text-muted-foreground border-b border-border ${
                     column.className || ""
                   }`}
                   style={{
@@ -225,7 +225,7 @@ export function DataTableWithPagination<T = any>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-8 text-center text-muted-foreground border-b border-border/50"
+                  className="px-[0.65rem] py-[1.3rem] text-center text-muted-foreground border-b border-border/50"
                 >
                   {emptyMessage}
                 </td>
@@ -234,7 +234,7 @@ export function DataTableWithPagination<T = any>({
               tableData.map((item, index) => (
                 <tr
                   key={getRowKey(item, index)}
-                  className={`text-sm transition-all duration-200 hover:bg-primary/5 ${
+                  className={`text-[0.56875rem] transition-all duration-200 hover:bg-primary/5 ${
                     onRowClick ? "cursor-pointer" : ""
                   }`}
                   onClick={() => onRowClick?.(item)}
@@ -247,7 +247,7 @@ export function DataTableWithPagination<T = any>({
                     return (
                       <td
                         key={column.key}
-                        className={`px-4 py-3 border-b border-border/50 ${
+                        className={`px-[0.65rem] py-[0.4875rem] border-b border-border/50 ${
                           column.className || ""
                         }`}
                         style={{
@@ -282,7 +282,7 @@ export function DataTableWithPagination<T = any>({
 
       {/* Pagination */}
       {showPagination && (
-        <div className="flex items-center justify-between gap-4 p-4 flex-wrap">
+        <div className="flex items-center justify-between gap-[0.65rem] p-[0.65rem] flex-wrap">
           {/* Page Size Selector */}
           {showPageSizeSelector && totalPages > 1 ? (
             <PageSizeSelectField
@@ -296,14 +296,14 @@ export function DataTableWithPagination<T = any>({
 
           {/* Page Navigation */}
           {totalPages > 1 && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-[0.325rem]">
               {/* Previous Button */}
               <button
                 onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className={`
                 ${classes.button}
-                flex items-center gap-2 rounded-lg border font-medium transition-all duration-200
+                flex items-center gap-[0.325rem] rounded-lg border font-medium transition-all duration-200
                 ${
                   currentPage === 1
                     ? "opacity-50 cursor-not-allowed text-muted-foreground border-border"
@@ -316,13 +316,13 @@ export function DataTableWithPagination<T = any>({
               </button>
 
               {/* Page Numbers */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-[0.1625rem]">
                 {getPaginationItems().map((item, index) => {
                   if (item === "ellipsis") {
                     return (
                       <span
                         key={`ellipsis-${index}`}
-                        className="px-2 text-muted-foreground"
+                        className="px-[0.325rem] text-muted-foreground"
                       >
                         ...
                       </span>
@@ -335,7 +335,7 @@ export function DataTableWithPagination<T = any>({
                       onClick={() => onPageChange(item)}
                       className={`
                       ${classes.pageButton}
-                      rounded-lg font-medium px-2 transition-all duration-200
+                      rounded-lg font-medium px-[0.325rem] transition-all duration-200
                       ${
                         currentPage === item
                           ? "bg-primary text-primary-foreground border-2 border-primary shadow-md font-bold"
@@ -357,7 +357,7 @@ export function DataTableWithPagination<T = any>({
                 disabled={currentPage === totalPages}
                 className={`
                 ${classes.button}
-                flex items-center gap-2 rounded-lg border font-medium transition-all duration-200
+                flex items-center gap-[0.325rem] rounded-lg border font-medium transition-all duration-200
                 ${
                   currentPage === totalPages
                     ? "opacity-50 cursor-not-allowed text-muted-foreground border-border"

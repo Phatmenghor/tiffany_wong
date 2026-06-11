@@ -68,19 +68,19 @@ export default function LoginPage() {
       </div>
 
       {/* Right side — login form */}
-      <div className="flex flex-1 items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+      <div className="flex flex-1 items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-[0.65rem]">
         <Card className="w-full max-w-md border border-gray-200 shadow-2xl">
-          <CardHeader className="space-y-1 pb-4 sm:pb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <CardHeader className="space-y-[0.1625rem] pb-[0.65rem] sm:pb-[0.975rem]">
+            <h1 className="text-[0.975rem] sm:text-[1.21875rem] font-bold text-gray-900">
               Admin Panel Login
             </h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-[0.56875rem] text-gray-600">
               Enter your credentials to continue
             </p>
           </CardHeader>
 
           <CardContent>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[0.65rem]">
               <TextField
                 name="userIdentifier"
                 label="Email or Username"
@@ -105,27 +105,27 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full h-11 mt-2 font-semibold"
+                className="w-full h-[1.7875rem] mt-[0.325rem] font-semibold"
                 disabled={isLoading}
               >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading && <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />}
                 {isLoading ? "Signing in..." : "Sign in"}
               </Button>
             </form>
 
             {/* Divider */}
-            <div className="relative my-5">
+            <div className="relative my-[0.8125rem]">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-gray-300" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">
+              <div className="relative flex justify-center text-[0.4875rem] uppercase">
+                <span className="bg-white px-[0.325rem] text-gray-500">
                   Or continue with
                 </span>
               </div>
             </div>
 
-            <p className="text-center text-xs text-gray-500 mt-5">
+            <p className="text-center text-[0.4875rem] text-gray-500 mt-[0.8125rem]">
               By signing in, you agree to our{" "}
               <a
                 href="#"

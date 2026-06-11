@@ -26,7 +26,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <PageContainer className="py-4 sm:py-8">
+      <PageContainer className="py-[0.65rem] sm:py-[1.3rem]">
         <PageHeader
           title="Categories"
           icon={LayoutGrid}
@@ -42,7 +42,7 @@ export default function CategoriesPage() {
 
         {/* Initial Loading */}
         {isInitialLoading && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-[0.4875rem] sm:gap-[0.65rem]">
             {Array.from({ length: skeletonCount }).map((_, i) => (
               <CategoryCardSkeleton key={i} />
             ))}
@@ -61,7 +61,7 @@ export default function CategoriesPage() {
 
         {/* Categories Grid */}
         {!isInitialLoading && categories.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-[0.4875rem] sm:gap-[0.65rem]">
             {categories.map((category) => (
               <CategoryCard key={category.id} category={category} />
             ))}

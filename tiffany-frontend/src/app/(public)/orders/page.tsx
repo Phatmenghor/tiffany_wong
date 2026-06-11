@@ -265,18 +265,18 @@ export default function OrdersPage() {
 
   if (!isAuthenticated) {
     return (
-      <PageContainer className="py-12">
+      <PageContainer className="py-[1.95rem]">
         <div className="max-w-sm mx-auto text-center">
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="h-8 w-8 text-primary" />
+          <div className="w-[2.6rem] h-[2.6rem] rounded-[0.65rem] bg-primary/10 flex items-center justify-center mx-auto mb-[0.65rem]">
+            <AlertCircle className="h-[1.3rem] w-[1.3rem] text-primary" />
           </div>
-          <h1 className="text-2xl font-bold mb-2">Sign In Required</h1>
-          <p className="text-muted-foreground mb-6">
+          <h1 className="text-[0.975rem] font-bold mb-[0.325rem]">Sign In Required</h1>
+          <p className="text-muted-foreground mb-[0.975rem]">
             Please sign in to view your orders.
           </p>
           <CustomButton
             onClick={() => router.push("/login")}
-            className="w-full h-11 rounded-xl"
+            className="w-full h-[1.7875rem] rounded-[0.4875rem]"
           >
             Sign In
           </CustomButton>
@@ -286,7 +286,7 @@ export default function OrdersPage() {
   }
 
   return (
-    <PageContainer className="py-6 sm:py-8">
+    <PageContainer className="py-[0.975rem] sm:py-[1.3rem]">
       {/* Header */}
       <PageHeader
         title="My Orders"

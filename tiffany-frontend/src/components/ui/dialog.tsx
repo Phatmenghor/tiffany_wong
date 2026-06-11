@@ -54,11 +54,11 @@ const DialogContent = React.forwardRef<
         // Mobile: bottom sheet — slides up from the bottom
         // max-h-[92dvh] + overflow-y-auto make long dialogs scrollable
         // pb-[...] clears the iPhone X+ home indicator via safe-area-inset-bottom
-        "bottom-0 left-0 right-0 max-h-[92dvh] overflow-y-auto rounded-t-2xl border-t",
+        "bottom-0 left-0 right-0 max-h-[92dvh] overflow-y-auto rounded-t-[0.65rem] border-t",
         "pb-[max(0.975rem,calc(0.975rem+env(safe-area-inset-bottom,0px)))]",
         // Desktop: centered modal (overflow also helps with tall modals)
         "sm:bottom-auto sm:right-auto sm:left-1/2 sm:top-1/2 sm:overflow-visible",
-        "sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl sm:border sm:pb-6",
+        "sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-[0.4875rem] sm:border sm:pb-[0.975rem]",
         // Desktop: constrain height so modal never bleeds off-screen at low zoom
         "sm:max-h-[calc(100dvh-2.6rem)]",
         // Animations — mobile: slide from bottom
@@ -69,16 +69,16 @@ const DialogContent = React.forwardRef<
         "sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:zoom-in-95",
         "sm:data-[state=closed]:slide-out-to-left-1/2 sm:data-[state=open]:slide-in-from-left-1/2",
         "sm:data-[state=closed]:slide-out-to-top-[48%] sm:data-[state=open]:slide-in-from-top-[48%]",
-        "gap-4 p-6",
+        "gap-[0.65rem] p-[0.975rem]",
         className
       )}
       {...props}
     >
       {/* Drag handle — visible only on mobile bottom sheet */}
-      <div className="mx-auto mb-1 h-1.5 w-12 flex-shrink-0 rounded-full bg-muted-foreground/20 sm:hidden" />
+      <div className="mx-auto mb-[0.1625rem] h-[0.24375rem] w-[1.95rem] flex-shrink-0 rounded-full bg-muted-foreground/20 sm:hidden" />
       {children}
-      <DialogPrimitive.Close className={`absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground ${closeButtonClassName}`}>
-        <X className="h-6 w-6" />
+      <DialogPrimitive.Close className={`absolute right-[0.65rem] top-[0.65rem] rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground ${closeButtonClassName}`}>
+        <X className="h-[0.975rem] w-[0.975rem]" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
@@ -93,7 +93,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col space-y-1.5 text-center sm:text-left",
+      "flex flex-col space-y-[0.24375rem] text-center sm:text-left",
       className
     )}
     {...props}
@@ -107,7 +107,7 @@ const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-[0.325rem]",
       className
     )}
     {...props}
@@ -122,7 +122,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
+      "text-[0.73125rem] font-semibold leading-none tracking-tight",
       className
     )}
     {...props}
@@ -136,7 +136,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-[0.56875rem] text-muted-foreground", className)}
     {...props}
   />
 ))

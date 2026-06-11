@@ -35,19 +35,19 @@ export function PromotionValueField<T extends FieldValues>({
   const placeholder = promotionType === "PERCENTAGE" ? "0-100" : "Amount";
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-[0.325rem]">
       <Label
         htmlFor={name}
-        className="text-xs sm:text-sm font-semibold text-foreground px-0.5"
+        className="text-[0.4875rem] sm:text-[0.56875rem] font-semibold text-foreground px-[0.08125rem]"
       >
-        {label} {required && <span className="text-destructive ml-1">*</span>}
+        {label} {required && <span className="text-destructive ml-[0.1625rem]">*</span>}
       </Label>
       <Controller
         control={control}
         name={name}
         render={({ field }) => (
           <div
-            className={`relative h-10 overflow-hidden rounded-md border border-border hover:border-primary/50 transition-colors duration-200 ${className}`}
+            className={`relative h-[1.625rem] overflow-hidden rounded-md border border-border hover:border-primary/50 transition-colors duration-200 ${className}`}
           >
             <input
               {...field}
@@ -58,10 +58,10 @@ export function PromotionValueField<T extends FieldValues>({
               min="0"
               max={promotionType === "PERCENTAGE" ? "100" : ""}
               disabled={disabled}
-              className="w-full h-full px-3 sm:px-4 py-2 sm:py-2.5 border-0 text-xs sm:text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset transition-all bg-background"
+              className="w-full h-full px-[0.4875rem] sm:px-[0.65rem] py-[0.325rem] sm:py-[0.40625rem] border-0 text-[0.4875rem] sm:text-[0.56875rem] font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset transition-all bg-background"
             />
             {promotionType && (
-              <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-xs sm:text-sm font-semibold text-muted-foreground pointer-events-none">
+              <span className="absolute right-[0.4875rem] sm:right-[0.65rem] top-1/2 -translate-y-1/2 text-[0.4875rem] sm:text-[0.56875rem] font-semibold text-muted-foreground pointer-events-none">
                 {suffix}
               </span>
             )}
@@ -69,7 +69,7 @@ export function PromotionValueField<T extends FieldValues>({
         )}
       />
       {error && (
-        <p className="text-xs text-destructive font-medium px-0.5">
+        <p className="text-[0.4875rem] text-destructive font-medium px-[0.08125rem]">
           {error?.message}
         </p>
       )}

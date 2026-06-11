@@ -60,19 +60,19 @@ export function ProductImageGallery({
   const visibleThumbs = allImages.slice(thumbOffset, thumbOffset + VISIBLE_THUMBS);
 
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-[0.4875rem]">
       {/* Vertical thumbnail strip */}
       {allImages.length > 1 && (
-        <div className="flex flex-col items-center gap-1.5 w-[60px] shrink-0">
+        <div className="flex flex-col items-center gap-[0.24375rem] w-[60px] shrink-0">
           <button
             onClick={() => setThumbOffset((p) => Math.max(0, p - 1))}
             disabled={!canScrollUp}
-            className="p-1 rounded-lg border border-border hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="p-[0.1625rem] rounded-lg border border-border hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
-            <ChevronUp className="h-3.5 w-3.5" />
+            <ChevronUp className="h-[0.56875rem] w-[0.56875rem]" />
           </button>
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-[0.24375rem]">
             {visibleThumbs.map((img, i) => {
               const absIndex = thumbOffset + i;
               const isActive = absIndex === currentImageIndex;
@@ -81,7 +81,7 @@ export function ProductImageGallery({
                   key={img.id}
                   onClick={() => onSelectImage(img.imageUrl, absIndex)}
                   className={cn(
-                    "relative w-[52px] h-[52px] rounded-xl overflow-hidden border-2 transition-all shrink-0",
+                    "relative w-[52px] h-[52px] rounded-[0.4875rem] overflow-hidden border-2 transition-all shrink-0",
                     isActive
                       ? "border-primary shadow-sm ring-1 ring-primary/20"
                       : "border-border hover:border-primary/40 opacity-70 hover:opacity-100"
@@ -101,17 +101,17 @@ export function ProductImageGallery({
           <button
             onClick={() => setThumbOffset((p) => Math.min(allImages.length - VISIBLE_THUMBS, p + 1))}
             disabled={!canScrollDown}
-            className="p-1 rounded-lg border border-border hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="p-[0.1625rem] rounded-lg border border-border hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
-            <ChevronDown className="h-3.5 w-3.5" />
+            <ChevronDown className="h-[0.56875rem] w-[0.56875rem]" />
           </button>
         </div>
       )}
 
       {/* Main image */}
-      <div className="relative flex-1 aspect-square rounded-2xl overflow-hidden bg-muted group cursor-zoom-in shadow-sm">
+      <div className="relative flex-1 aspect-square rounded-[0.65rem] overflow-hidden bg-muted group cursor-zoom-in shadow-sm">
         {!imageLoaded && (
-          <div className="absolute inset-0 bg-muted animate-pulse rounded-2xl" />
+          <div className="absolute inset-0 bg-muted animate-pulse rounded-[0.65rem]" />
         )}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -128,7 +128,7 @@ export function ProductImageGallery({
 
         {/* Discount badge */}
         {hasDiscount && discountPercent > 0 && (
-          <Badge className="absolute top-3 left-3 bg-rose-500 hover:bg-rose-500 text-white text-xs font-bold z-10 pointer-events-none">
+          <Badge className="absolute top-[0.4875rem] left-[0.4875rem] bg-rose-500 hover:bg-rose-500 text-white text-[0.4875rem] font-bold z-10 pointer-events-none">
             -{discountPercent}%
           </Badge>
         )}
@@ -136,14 +136,14 @@ export function ProductImageGallery({
         {/* Zoom button */}
         <button
           onClick={() => onOpenLightbox(currentImageIndex)}
-          className="absolute top-3 right-3 bg-white/80 hover:bg-white text-foreground p-2 rounded-xl shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute top-[0.4875rem] right-[0.4875rem] bg-white/80 hover:bg-white text-foreground p-[0.325rem] rounded-[0.4875rem] shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
         >
-          <ZoomIn className="h-4 w-4" />
+          <ZoomIn className="h-[0.65rem] w-[0.65rem]" />
         </button>
 
         {/* Image counter */}
         {allImages.length > 1 && (
-          <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2.5 py-1 rounded-full pointer-events-none">
+          <div className="absolute bottom-[0.4875rem] right-[0.4875rem] bg-black/50 text-white text-[0.4875rem] px-[0.40625rem] py-[0.1625rem] rounded-full pointer-events-none">
             {currentImageIndex + 1} / {allImages.length}
           </div>
         )}
@@ -153,15 +153,15 @@ export function ProductImageGallery({
           <>
             <button
               onClick={(e) => { e.stopPropagation(); onPrevImage(); }}
-              className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-foreground p-1.5 rounded-xl shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute left-[0.4875rem] top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-foreground p-[0.24375rem] rounded-[0.4875rem] shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-[0.65rem] w-[0.65rem]" />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onNextImage(); }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-foreground p-1.5 rounded-xl shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute right-[0.4875rem] top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-foreground p-[0.24375rem] rounded-[0.4875rem] shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-[0.65rem] w-[0.65rem]" />
             </button>
           </>
         )}

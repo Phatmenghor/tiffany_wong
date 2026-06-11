@@ -16,8 +16,8 @@ function formatHour(h: number): string {
 function HourlyTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-popover border rounded shadow-lg px-3 py-2 text-xs space-y-1">
-      <p className="font-semibold text-foreground mb-1">{label}</p>
+    <div className="bg-popover border rounded-[0.1625rem] shadow-lg px-[0.4875rem] py-[0.325rem] text-[0.4875rem] space-y-[0.1625rem]">
+      <p className="font-semibold text-foreground mb-[0.1625rem]">{label}</p>
       <p className="text-primary">Revenue: <span className="font-bold">{formatCurrency(payload[0]?.value ?? 0)}</span></p>
     </div>
   );
@@ -29,22 +29,22 @@ export function HourlySalesCard({ hourlySales, loading, currentHour }: { hourlyS
 
   return (
     <Card>
-      <CardHeader className="pb-1">
+      <CardHeader className="pb-[0.1625rem]">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-xs">Hourly Sales Pattern</CardTitle>
-            <CardDescription className="text-xs">Today's revenue by hour (current: {formatHour(currentHour)})</CardDescription>
+            <CardTitle className="text-[0.4875rem]">Hourly Sales Pattern</CardTitle>
+            <CardDescription className="text-[0.4875rem]">Today's revenue by hour (current: {formatHour(currentHour)})</CardDescription>
           </div>
           {hourlyData.length > 0 && (
-            <Badge variant="outline" className="gap-1 text-xs">
-              <Flame className="h-2 w-2 text-rose-500" />Peak: {formatHour(peakHour)}
+            <Badge variant="outline" className="gap-[0.1625rem] text-[0.4875rem]">
+              <Flame className="h-[0.325rem] w-[0.325rem] text-rose-500" />Peak: {formatHour(peakHour)}
             </Badge>
           )}
         </div>
       </CardHeader>
       <CardContent>
         {loading ? <ChartSkeleton height={200} /> : !hourlyData.length ? (
-          <div className="h-[200px] flex items-center justify-center text-muted-foreground text-xs">No hourly data</div>
+          <div className="h-[200px] flex items-center justify-center text-muted-foreground text-[0.4875rem]">No hourly data</div>
         ) : (
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={hourlyData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>

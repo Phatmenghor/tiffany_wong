@@ -74,7 +74,7 @@ export function LocationCard({
   return (
     <div
       className={cn(
-        "group relative rounded-xl border bg-background overflow-hidden transition-all duration-200 shadow-sm hover:shadow-md",
+        "group relative rounded-[0.4875rem] border bg-background overflow-hidden transition-all duration-200 shadow-sm hover:shadow-md",
         isPrimary
           ? "border-amber-300/70"
           : "border-border"
@@ -83,7 +83,7 @@ export function LocationCard({
       {/* Left accent strip */}
       <div
         className={cn(
-          "absolute left-0 top-0 bottom-0 w-1 rounded-l-xl",
+          "absolute left-0 top-0 bottom-0 w-[0.1625rem] rounded-l-[0.4875rem]",
           isPrimary
             ? "bg-gradient-to-b from-amber-400 to-amber-500"
             : theme
@@ -92,13 +92,13 @@ export function LocationCard({
         )}
       />
 
-      <div className="pl-4 pr-3 py-4">
+      <div className="pl-[0.65rem] pr-[0.4875rem] py-[0.65rem]">
         {/* Main row: icon + label + isDefault + actions */}
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-[0.4875rem]">
           {/* Icon bubble */}
           <div
             className={cn(
-              "p-2 rounded-lg shrink-0 mt-0.5",
+              "p-[0.325rem] rounded-lg shrink-0 mt-[0.08125rem]",
               isPrimary
                 ? "bg-amber-100 text-amber-600"
                 : theme
@@ -106,16 +106,16 @@ export function LocationCard({
                 : "bg-primary/10 text-primary"
             )}
           >
-            <LabelIcon className="h-4 w-4" />
+            <LabelIcon className="h-[0.65rem] w-[0.65rem]" />
           </div>
 
           {/* Content */}
           <div className="flex-1 min-w-0">
             {/* Label row */}
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <div className="flex items-center gap-[0.325rem] mb-[0.325rem] flex-wrap">
               <span
                 className={cn(
-                  "text-sm font-semibold leading-tight",
+                  "text-[0.56875rem] font-semibold leading-tight",
                   isPrimary
                     ? "text-amber-700"
                     : "text-foreground"
@@ -124,8 +124,8 @@ export function LocationCard({
                 {location.label || "Location"}
               </span>
               {isPrimary && (
-                <Badge className="h-5 px-2 text-[10px] font-bold tracking-wide bg-amber-100 text-amber-700 border-amber-200 shrink-0 flex items-center gap-1">
-                  <Crown className="h-3 w-3" />
+                <Badge className="h-[0.8125rem] px-[0.325rem] text-[10px] font-bold tracking-wide bg-amber-100 text-amber-700 border-amber-200 shrink-0 flex items-center gap-[0.1625rem]">
+                  <Crown className="h-[0.4875rem] w-[0.4875rem]" />
                   Default
                 </Badge>
               )}
@@ -142,7 +142,7 @@ export function LocationCard({
               )}
               title={hasCoordinates ? "Click to view on Google Maps" : ""}
             >
-              <p className="text-sm font-medium text-foreground line-clamp-2">
+              <p className="text-[0.56875rem] font-medium text-foreground line-clamp-2">
                 {location.fullAddress || "No address provided"}
               </p>
             </button>
@@ -151,16 +151,16 @@ export function LocationCard({
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+          <div className="flex items-center gap-[0.24375rem] shrink-0 flex-wrap justify-end">
             {!isPrimary && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => onSetPrimary(location)}
                 disabled={isSettingPrimary}
-                className="h-8 text-xs gap-1.5 rounded-lg"
+                className="h-[1.3rem] text-[0.4875rem] gap-[0.24375rem] rounded-lg"
               >
-                <Star className="h-3.5 w-3.5" />
+                <Star className="h-[0.56875rem] w-[0.56875rem]" />
                 <span className="hidden sm:inline">Default</span>
               </Button>
             )}
@@ -168,19 +168,19 @@ export function LocationCard({
               variant="outline"
               size="sm"
               onClick={() => onEdit(location)}
-              className="h-8 w-8 p-0 rounded-lg"
+              className="h-[1.3rem] w-[1.3rem] p-0 rounded-lg"
               title="Edit"
             >
-              <Edit2 className="h-3.5 w-3.5" />
+              <Edit2 className="h-[0.56875rem] w-[0.56875rem]" />
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => onDelete(location)}
-              className="h-8 w-8 p-0 rounded-lg"
+              className="h-[1.3rem] w-[1.3rem] p-0 rounded-lg"
               title="Delete"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-[0.56875rem] w-[0.56875rem]" />
             </Button>
           </div>
         </div>

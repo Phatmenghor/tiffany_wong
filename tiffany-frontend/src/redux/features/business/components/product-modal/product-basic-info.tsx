@@ -37,8 +37,8 @@ export function ProductBasicInfo({
       <CardHeader>
         <CardTitle>Basic Information</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-max">
+      <CardContent className="space-y-[0.65rem]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem] auto-rows-max">
           <div>
             <TextField
               control={control}

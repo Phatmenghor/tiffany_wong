@@ -111,9 +111,9 @@ export default function CartPage() {
 
   return (
     <>
-      {/* pb-40 covers: bottom-nav (4rem) + mobile checkout bar (~5rem) + breathing room.
-          lg:pb-8 resets once the sticky bar and bottom nav are both gone. */}
-      <PageContainer className="py-4 sm:py-8 pb-40 lg:pb-8">
+      {/* pb-[6.5rem] covers: bottom-nav (4rem) + mobile checkout bar (~5rem) + breathing room.
+          lg:pb-[1.3rem] resets once the sticky bar and bottom nav are both gone. */}
+      <PageContainer className="py-[0.65rem] sm:py-[1.3rem] pb-[6.5rem] lg:pb-[1.3rem]">
 
         <PageHeader
           title="Shopping Cart"
@@ -126,20 +126,20 @@ export default function CartPage() {
               size="sm"
               onClick={() => setClearCartModalOpen(true)}
               disabled={loading.clear}
-              className="gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10 text-xs rounded-xl"
+              className="gap-[0.24375rem] text-destructive hover:text-destructive hover:bg-destructive/10 text-[0.4875rem] rounded-[0.4875rem]"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-[0.56875rem] w-[0.56875rem]" />
               Clear All
             </CustomButton>
           }
         />
 
-        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid lg:grid-cols-3 gap-[0.65rem] sm:gap-[0.975rem]">
 
           {/* ── Cart Items ── */}
-          <div className="lg:col-span-2 space-y-3">
+          <div className="lg:col-span-2 space-y-[0.4875rem]">
             {items.length > 0 && (
-              <div className="text-xs text-muted-foreground">
+              <div className="text-[0.4875rem] text-muted-foreground">
                 Showing {items.length} items with total quantity {totalQuantity}
               </div>
             )}
@@ -174,61 +174,61 @@ export default function CartPage() {
 
           {/* ── Order Summary (desktop) ── */}
           <div className="hidden lg:block lg:col-span-1">
-            <div className="bg-card border rounded-2xl p-5 sticky top-24">
-              <h2 className="text-lg font-bold mb-4 flex items-center justify-between">
+            <div className="bg-card border rounded-[0.65rem] p-[0.8125rem] sticky top-[3.9rem]">
+              <h2 className="text-[0.73125rem] font-bold mb-[0.65rem] flex items-center justify-between">
                 <span>Order Summary</span>
-                <span className="text-xs font-normal text-muted-foreground bg-muted px-2 py-1 rounded-lg">
+                <span className="text-[0.4875rem] font-normal text-muted-foreground bg-muted px-[0.325rem] py-[0.1625rem] rounded-lg">
                   {totalItems} {totalItems === 1 ? 'item' : 'items'}
                 </span>
               </h2>
 
-              <div className="space-y-3 mb-5">
+              <div className="space-y-[0.4875rem] mb-[0.8125rem]">
                 {/* Items count with quantity */}
-                <div className="bg-muted/50 rounded-lg p-3 mb-4">
-                  <div className="text-xs text-muted-foreground mb-2">Items Breakdown</div>
+                <div className="bg-muted/50 rounded-lg p-[0.4875rem] mb-[0.65rem]">
+                  <div className="text-[0.4875rem] text-muted-foreground mb-[0.325rem]">Items Breakdown</div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">{totalItems} unique {totalItems === 1 ? 'product' : 'products'}</span>
-                    <span className="text-lg font-bold text-foreground">{totalQuantity}</span>
+                    <span className="text-[0.56875rem] font-medium">{totalItems} unique {totalItems === 1 ? 'product' : 'products'}</span>
+                    <span className="text-[0.73125rem] font-bold text-foreground">{totalQuantity}</span>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">total quantity</div>
+                  <div className="text-[0.4875rem] text-muted-foreground mt-[0.1625rem]">total quantity</div>
                 </div>
 
                 {/* Subtotal */}
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-[0.56875rem]">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span className="font-medium">{formatCurrency(subtotal)}</span>
                 </div>
 
                 {/* Discount */}
                 {discountAmount > 0 && (
-                  <div className="flex justify-between text-sm bg-red-50/30 p-2.5 rounded-lg border border-red-200/50">
+                  <div className="flex justify-between text-[0.56875rem] bg-red-50/30 p-[0.40625rem] rounded-lg border border-red-200/50">
                     <span className="text-red-700 font-medium">Discount Applied</span>
                     <span className="font-bold text-red-600">-{formatCurrency(discountAmount)}</span>
                   </div>
                 )}
 
                 {/* Shipping */}
-                <div className="flex justify-between text-sm pt-2 border-t">
+                <div className="flex justify-between text-[0.56875rem] pt-[0.325rem] border-t">
                   <span className="text-muted-foreground">Shipping & Fees</span>
-                  <span className="text-muted-foreground text-xs">Calculated at checkout</span>
+                  <span className="text-muted-foreground text-[0.4875rem]">Calculated at checkout</span>
                 </div>
 
                 {/* Total */}
-                <div className="bg-primary/10 rounded-lg p-3 border border-primary/20">
-                  <div className="flex justify-between items-center mb-2">
+                <div className="bg-primary/10 rounded-lg p-[0.4875rem] border border-primary/20">
+                  <div className="flex justify-between items-center mb-[0.325rem]">
                     <span className="font-bold text-foreground">Total Amount</span>
-                    <span className="text-2xl font-bold text-primary">{formatCurrency(finalTotal)}</span>
+                    <span className="text-[0.975rem] font-bold text-primary">{formatCurrency(finalTotal)}</span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="text-xs text-red-600 text-right pt-2 border-t border-primary/10">
+                    <div className="text-[0.4875rem] text-red-600 text-right pt-[0.325rem] border-t border-primary/10">
                       💰 You save <span className="font-bold">{formatCurrency(discountAmount)}</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <CustomButton className="w-full mb-2.5 gap-2 h-11 rounded-xl" onClick={handleCheckout}>
-                <CreditCard className="h-4 w-4" />
+              <CustomButton className="w-full mb-[0.40625rem] gap-[0.325rem] h-[1.7875rem] rounded-[0.4875rem]" onClick={handleCheckout}>
+                <CreditCard className="h-[0.65rem] w-[0.65rem]" />
                 Proceed to Checkout
               </CustomButton>
             </div>
@@ -237,25 +237,25 @@ export default function CartPage() {
       </PageContainer>
 
       {/* Mobile sticky checkout bar — sits above the bottom nav (4rem) + safe area */}
-      <div className="fixed bottom-nav-safe left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur-sm border-t px-4 py-3">
-        <div className="flex items-center justify-between mb-2.5">
-          <div className="text-xs">
+      <div className="fixed bottom-nav-safe left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur-sm border-t px-[0.65rem] py-[0.4875rem]">
+        <div className="flex items-center justify-between mb-[0.40625rem]">
+          <div className="text-[0.4875rem]">
             <div className="text-muted-foreground font-medium">{totalItems} items • {totalQuantity} qty</div>
             {discountAmount > 0 && (
-              <div className="text-red-600 font-semibold mt-0.5">
+              <div className="text-red-600 font-semibold mt-[0.08125rem]">
                 Save {formatCurrency(discountAmount)}
               </div>
             )}
           </div>
           <div className="text-right">
-            <div className="text-xs text-muted-foreground">Total</div>
-            <div className="text-xl font-bold text-primary">{formatCurrency(finalTotal)}</div>
+            <div className="text-[0.4875rem] text-muted-foreground">Total</div>
+            <div className="text-[0.8125rem] font-bold text-primary">{formatCurrency(finalTotal)}</div>
           </div>
         </div>
-        <CustomButton className="w-full gap-2 h-11 rounded-xl" onClick={handleCheckout}>
-          <CreditCard className="h-4 w-4" />
+        <CustomButton className="w-full gap-[0.325rem] h-[1.7875rem] rounded-[0.4875rem]" onClick={handleCheckout}>
+          <CreditCard className="h-[0.65rem] w-[0.65rem]" />
           Proceed to Checkout
-          <ArrowRight className="h-4 w-4 ml-auto" />
+          <ArrowRight className="h-[0.65rem] w-[0.65rem] ml-auto" />
         </CustomButton>
       </div>
 
