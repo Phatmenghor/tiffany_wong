@@ -124,14 +124,14 @@ export function ProfilePictureModal({
         </DialogDescription>
 
         {/* Header */}
-        <div className="px-6 py-4 border-b">
-          <h2 className="text-lg font-semibold">Update Profile Picture</h2>
+        <div className="px-[0.975rem] py-[0.65rem] border-b">
+          <h2 className="text-[0.73125rem] font-semibold">Update Profile Picture</h2>
         </div>
 
         {/* Body - Image Preview */}
-        <div className="p-6 flex flex-col items-center gap-4">
+        <div className="p-[0.975rem] flex flex-col items-center gap-[0.65rem]">
           <div
-            className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 flex items-center justify-center bg-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
+            className="w-[5.2rem] h-[5.2rem] rounded-full overflow-hidden border-4 border-gray-200 flex items-center justify-center bg-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
             onClick={() => {
               const imageUrl = selectedImage || currentImageUrl;
               if (imageUrl && !imageUrl.startsWith("data:")) {
@@ -155,27 +155,27 @@ export function ProfilePictureModal({
           </div>
 
           {selectedImage && selectedImage !== currentImageUrl && (
-            <p className="text-sm text-blue-600 font-medium">
+            <p className="text-[0.56875rem] text-blue-600 font-medium">
               ✓ New image selected
             </p>
           )}
 
           {(currentImageUrl || selectedImage) && !selectedImage?.startsWith("data:") && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[0.4875rem] text-muted-foreground">
               Click image to view in new tab
             </p>
           )}
         </div>
 
         {/* Footer - Action Buttons */}
-        <div className="border-t px-6 py-4 space-y-3">
+        <div className="border-t px-[0.975rem] py-[0.65rem] space-y-[0.4875rem]">
           {/* Select Photo Button */}
           <Button
             onClick={() => fileInputRef.current?.click()}
-            className="w-full gap-2 bg-primary hover:bg-primary/90"
+            className="w-full gap-[0.325rem] bg-primary hover:bg-primary/90"
             disabled={isBusy || isRemoving}
           >
-            <Camera className="h-4 w-4" />
+            <Camera className="h-[0.65rem] w-[0.65rem]" />
             Select Photo
           </Button>
 
@@ -184,10 +184,10 @@ export function ProfilePictureModal({
             <Button
               onClick={handleRemoveClick}
               variant="outline"
-              className="w-full gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+              className="w-full gap-[0.325rem] text-destructive hover:text-destructive hover:bg-destructive/10"
               disabled={isBusy}
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-[0.65rem] w-[0.65rem]" />
               Remove Photo
             </Button>
           )}
@@ -197,7 +197,7 @@ export function ProfilePictureModal({
             <Button
               onClick={handleRestoreClick}
               variant="outline"
-              className="w-full gap-2"
+              className="w-full gap-[0.325rem]"
               disabled={isBusy}
             >
               Restore Photo
@@ -205,7 +205,7 @@ export function ProfilePictureModal({
           )}
 
           {/* Footer Buttons - Cancel and Save */}
-          <div className="flex gap-2 pt-2">
+          <div className="flex gap-[0.325rem] pt-[0.325rem]">
             <Button
               onClick={handleCancel}
               variant="outline"
@@ -221,7 +221,7 @@ export function ProfilePictureModal({
             >
               {isBusy ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <Loader2 className="h-[0.65rem] w-[0.65rem] animate-spin mr-[0.325rem]" />
                   {isUploading ? "Uploading..." : "Saving..."}
                 </>
               ) : (

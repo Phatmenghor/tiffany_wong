@@ -149,19 +149,19 @@ export default function CustomerUsersPage() {
   const closeDeleteModal = () => setDeleteState({ isOpen: false, user: null });
 
   return (
-    <div className="flex flex-1 flex-col gap-4 px-2">
-      <div className="space-y-4">
+    <div className="flex flex-1 flex-col gap-[0.65rem] px-[0.325rem]">
+      <div className="space-y-[0.65rem]">
         <CardHeaderSection
           title="Customers"
           searchValue={filters.search}
           searchPlaceholder="Search customers..."
           buttonTooltip="Create a new customer"
-          buttonIcon={<Plus className="w-3 h-3" />}
+          buttonIcon={<Plus className="w-[0.4875rem] h-[0.4875rem]" />}
           buttonText="New"
           onSearchChange={(e) => dispatch(setSearchFilter(e.target.value))}
           openModal={handleCreateUser}
         >
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-[0.325rem]">
             <CustomSelect
               options={ACCOUNT_STATUS_FILTER}
               value={filters.accountStatus}

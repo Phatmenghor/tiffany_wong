@@ -50,9 +50,9 @@ export function TextField({
   onCustomChange,
 }: TextFieldProps) {
   return (
-    <div className={`space-y-2 ${className}`}>
-      <Label htmlFor={name} className="text-sm font-medium text-foreground">
-        {label} {required && <span className="text-red-500 ml-1">*</span>}
+    <div className={`space-y-[0.325rem] ${className}`}>
+      <Label htmlFor={name} className="text-[0.56875rem] font-medium text-foreground">
+        {label} {required && <span className="text-red-500 ml-[0.1625rem]">*</span>}
       </Label>
       <Controller
         control={control}
@@ -109,7 +109,7 @@ export function TextField({
               }
             }}
             pattern={pattern}
-            className={`h-10 transition-all duration-200 border ${disabled ? "bg-muted/50" : ""} ${
+            className={`h-[1.625rem] transition-all duration-200 border ${disabled ? "bg-muted/50" : ""} ${
               error
                 ? "border-red-500 focus:border-red-500"
                 : "border-input focus:border-primary focus:ring-2 focus:ring-primary/30"
@@ -117,7 +117,7 @@ export function TextField({
           />
         )}
       />
-      {error && <p className="text-xs text-red-500">{error.message}</p>}
+      {error && <p className="text-[0.4875rem] text-red-500">{error.message}</p>}
     </div>
   );
 }

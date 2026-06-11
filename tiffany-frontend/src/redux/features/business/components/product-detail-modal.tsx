@@ -83,9 +83,9 @@ export function ProductDetailModal({
       </DialogTitle>
       <DialogContent className="w-full sm:max-w-7xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b bg-muted/30 flex-shrink-0">
-          <div className="flex items-start gap-6">
-            <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border bg-muted">
+        <div className="px-[0.975rem] py-[0.65rem] border-b bg-muted/30 flex-shrink-0">
+          <div className="flex items-start gap-[0.975rem]">
+            <div className="w-[3.25rem] h-[3.25rem] flex-shrink-0 rounded-[0.325rem] overflow-hidden border bg-muted">
               {productData.mainImageUrl ? (
                 <img
                   src={productData.mainImageUrl}
@@ -94,17 +94,17 @@ export function ProductDetailModal({
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-[0.4875rem] text-muted-foreground">
                     No image
                   </span>
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-lg font-semibold text-foreground">
+              <h2 className="text-[0.73125rem] font-semibold text-foreground">
                 Product Details
               </h2>
-              <p className="text-sm text-foreground mt-1">
+              <p className="text-[0.56875rem] text-foreground mt-[0.1625rem]">
                 View detailed information about the product
               </p>
             </div>
@@ -113,14 +113,14 @@ export function ProductDetailModal({
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-6 space-y-6">
+          <div className="p-[0.975rem] space-y-[0.975rem]">
             {/* Product Information */}
             <Card>
               <CardHeader>
                 <CardTitle>Product Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="space-y-[0.65rem]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
                   <DisplayField label="Product Name" value={productData.name} />
                   <DisplayField
                     label="Description"
@@ -155,8 +155,8 @@ export function ProductDetailModal({
               <CardHeader>
                 <CardTitle>Pricing Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="space-y-[0.65rem]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
                   <DisplayField
                     label="Price"
                     value={formatCurrency(productData.displayPrice)}
@@ -202,11 +202,11 @@ export function ProductDetailModal({
                   <CardTitle>Product Images</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
+                  <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-[0.325rem]">
                     {productData.images.map((image, index) => (
                       <div
                         key={image.id}
-                        className="relative aspect-square rounded-md overflow-hidden border hover:shadow-md transition-shadow"
+                        className="relative aspect-square rounded-[0.24375rem] overflow-hidden border hover:shadow-md transition-shadow"
                       >
                         <img
                           src={image.imageUrl}
@@ -229,11 +229,11 @@ export function ProductDetailModal({
                     <CardTitle>Available Sizes</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.975rem]">
                       {productData.sizes.map((size) => (
                         <div
                           key={size.id}
-                          className="border rounded-lg p-4 space-y-4"
+                          className="border rounded-[0.325rem] p-[0.65rem] space-y-[0.65rem]"
                         >
                           <div className="flex justify-between items-center">
                             <h4 className="font-semibold text-foreground">
@@ -247,7 +247,7 @@ export function ProductDetailModal({
                               {size.hasPromotion ? "Promotion" : "Regular"}
                             </Badge>
                           </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.4875rem] text-[0.56875rem]">
                             <DisplayField
                               label="Price"
                               value={formatCurrency(size.price)}
@@ -301,8 +301,8 @@ export function ProductDetailModal({
               <CardHeader>
                 <CardTitle>Engagement Statistics</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="space-y-[0.65rem]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
                   <DisplayField
                     label="View Count"
                     value={
@@ -328,8 +328,8 @@ export function ProductDetailModal({
               <CardHeader>
                 <CardTitle>System Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="space-y-[0.65rem]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
                   <DisplayField label="Product ID" value={productData.id} />
                   <DisplayField
                     label="Created At"

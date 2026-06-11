@@ -167,9 +167,9 @@ export default function FavoritesPage() {
   // Loading skeleton (also shown on server to prevent hydration mismatch)
   if (!mounted || !authReady || (loading.fetch && !loaded)) {
     return (
-      <PageContainer className="py-4 sm:py-8">
-        <div className="h-7 w-40 bg-muted rounded mb-4 animate-pulse" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+      <PageContainer className="py-[0.65rem] sm:py-[1.3rem]">
+        <div className="h-[1.1375rem] w-[6.5rem] bg-muted rounded-[0.1625rem] mb-[0.65rem] animate-pulse" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-[0.4875rem] sm:gap-[0.65rem]">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <ProductCardSkeleton key={i} />
           ))}
@@ -182,29 +182,29 @@ export default function FavoritesPage() {
   if (!isAuthenticated) {
     return (
       <>
-        <PageContainer className="py-12 sm:py-20">
+        <PageContainer className="py-[1.95rem] sm:py-[3.25rem]">
           <div className="max-w-sm mx-auto text-center">
-            <div className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-50 mx-auto mb-4">
-              <Heart className="h-8 w-8 sm:h-10 sm:w-10 text-red-500" />
+            <div className="flex items-center justify-center w-[2.6rem] h-[2.6rem] sm:w-[3.25rem] sm:h-[3.25rem] rounded-full bg-red-50 mx-auto mb-[0.65rem]">
+              <Heart className="h-[1.3rem] w-[1.3rem] sm:h-[1.625rem] sm:w-[1.625rem] text-red-500" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold mb-2">My Favorites</h1>
-            <p className="text-sm text-muted-foreground mb-6">
+            <h1 className="text-[0.8125rem] sm:text-[0.975rem] font-bold mb-[0.325rem]">My Favorites</h1>
+            <p className="text-[0.56875rem] text-muted-foreground mb-[0.975rem]">
               Sign in to save and view your favorite items.
             </p>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-[0.4875rem]">
               <CustomButton
                 onClick={openLoginModal}
-                className="w-full gap-2"
+                className="w-full gap-[0.325rem]"
               >
-                <LogIn className="h-4 w-4" />
+                <LogIn className="h-[0.65rem] w-[0.65rem]" />
                 Sign In
               </CustomButton>
               <CustomButton
                 variant="outline"
                 onClick={() => router.push("/products")}
-                className="w-full gap-2"
+                className="w-full gap-[0.325rem]"
               >
-                <ShoppingCart className="h-4 w-4" />
+                <ShoppingCart className="h-[0.65rem] w-[0.65rem]" />
                 Browse Products
               </CustomButton>
             </div>
@@ -217,22 +217,22 @@ export default function FavoritesPage() {
   // Empty state
   if (items.length === 0) {
     return (
-      <PageContainer className="py-12 sm:py-20">
+      <PageContainer className="py-[1.95rem] sm:py-[3.25rem]">
         <div className="max-w-sm mx-auto text-center">
-          <div className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-50 mx-auto mb-4">
-            <Heart className="h-8 w-8 sm:h-10 sm:w-10 text-red-500" />
+          <div className="flex items-center justify-center w-[2.6rem] h-[2.6rem] sm:w-[3.25rem] sm:h-[3.25rem] rounded-full bg-red-50 mx-auto mb-[0.65rem]">
+            <Heart className="h-[1.3rem] w-[1.3rem] sm:h-[1.625rem] sm:w-[1.625rem] text-red-500" />
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold mb-2">
+          <h1 className="text-[0.8125rem] sm:text-[0.975rem] font-bold mb-[0.325rem]">
             No Favorites Yet
           </h1>
-          <p className="text-sm text-muted-foreground mb-6">
+          <p className="text-[0.56875rem] text-muted-foreground mb-[0.975rem]">
             Save your favorite items to find them quickly later.
           </p>
           <CustomButton
             onClick={() => router.push("/products")}
-            className="w-full gap-2"
+            className="w-full gap-[0.325rem]"
           >
-            <ShoppingCart className="h-4 w-4" />
+            <ShoppingCart className="h-[0.65rem] w-[0.65rem]" />
             Start Shopping
           </CustomButton>
         </div>
@@ -242,7 +242,7 @@ export default function FavoritesPage() {
 
   // Favorites with infinite scroll
   return (
-    <PageContainer className="py-4 sm:py-8">
+    <PageContainer className="py-[0.65rem] sm:py-[1.3rem]">
       <PageHeader
         title="My Favorites"
         icon={Heart}
@@ -255,16 +255,16 @@ export default function FavoritesPage() {
             size="sm"
             onClick={() => setClearAllModalOpen(true)}
             disabled={loading.fetch}
-            className="gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10 text-xs"
+            className="gap-[0.24375rem] text-destructive hover:text-destructive hover:bg-destructive/10 text-[0.4875rem]"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash2 className="h-[0.56875rem] w-[0.56875rem]" />
             Clear All
           </CustomButton>
         }
       />
 
       {/* Favorites Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-[0.4875rem] sm:gap-[0.65rem]">
         {items.map((product, index) => {
           const uniqueKey = `favorites-${product.id}-${index}`;
           return <ProductCard key={uniqueKey} product={product} />;
@@ -274,16 +274,16 @@ export default function FavoritesPage() {
       {/* Skeleton loaders ALWAYS show while hasMore: true */}
       {pagination.hasMore && (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 mt-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-[0.4875rem] sm:gap-[0.65rem] mt-[0.975rem]">
             {Array.from({ length: skeletonCount }).map((_, i) => (
               <ProductCardSkeleton key={`skeleton-${i}`} />
             ))}
           </div>
 
           {/* Loading spinner */}
-          <div className="flex flex-col items-center justify-center mt-6 py-6">
-            <Loader2 className="h-6 w-6 animate-spin text-primary mb-2" />
-            <p className="text-xs sm:text-sm text-muted-foreground">
+          <div className="flex flex-col items-center justify-center mt-[0.975rem] py-[0.975rem]">
+            <Loader2 className="h-[0.975rem] w-[0.975rem] animate-spin text-primary mb-[0.325rem]" />
+            <p className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground">
               Loading more favorites...
             </p>
           </div>
@@ -292,12 +292,12 @@ export default function FavoritesPage() {
 
       {/* Sentinel element for scroll detection */}
       {pagination.hasMore && !loading.fetch && (
-        <div ref={sentinelRef} className="h-10 w-full mt-6" />
+        <div ref={sentinelRef} className="h-[1.625rem] w-full mt-[0.975rem]" />
       )}
 
       {/* End of favorites message */}
       {!pagination.hasMore && items.length > 0 && (
-        <div className="text-center py-4 text-sm text-muted-foreground">
+        <div className="text-center py-[0.65rem] text-[0.56875rem] text-muted-foreground">
           You've seen it all!
         </div>
       )}

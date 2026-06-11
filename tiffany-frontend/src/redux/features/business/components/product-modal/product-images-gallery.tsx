@@ -114,7 +114,7 @@ export function ProductImagesGallery({
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>Product Images</CardTitle>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-[0.4875rem] text-muted-foreground mt-[0.1625rem]">
               {imageFields.length > 0
                 ? `${imageFields.length}/${MAX_PRODUCT_IMAGES} images added`
                 : `Upload up to ${MAX_PRODUCT_IMAGES} product images`}
@@ -138,7 +138,7 @@ export function ProductImagesGallery({
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isProcessing || isProcessingBatch}
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-[0.65rem] w-[0.65rem] mr-[0.325rem]" />
                 {isProcessingBatch ? "Loading..." : "Add Images"}
               </Button>
             </div>
@@ -147,17 +147,17 @@ export function ProductImagesGallery({
       </CardHeader>
       <CardContent>
         {imageFields.length === 0 ? (
-          <div className="text-center py-8 border-2 border-dashed rounded-lg">
-            <p className="text-sm text-muted-foreground">
+          <div className="text-center py-[1.3rem] border-2 border-dashed rounded-[0.325rem]">
+            <p className="text-[0.56875rem] text-muted-foreground">
               No images added yet
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-2">
+          <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-[0.325rem]">
             {imageFields.map((field, index) => (
               <div
                 key={field.id}
-                className="relative aspect-square rounded-md overflow-hidden border bg-muted"
+                className="relative aspect-square rounded-[0.24375rem] overflow-hidden border bg-muted"
               >
                 <div className="w-full h-full">
                   <SpacesImageUpload

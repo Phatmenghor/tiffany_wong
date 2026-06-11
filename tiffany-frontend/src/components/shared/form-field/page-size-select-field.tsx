@@ -33,9 +33,9 @@ export function PageSizeSelectField({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div className={`flex items-center gap-[0.325rem] ${className}`}>
       {label && (
-        <span className="text-xs sm:text-sm text-muted-foreground font-semibold whitespace-nowrap">
+        <span className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground font-semibold whitespace-nowrap">
           {label}
         </span>
       )}
@@ -45,17 +45,17 @@ export function PageSizeSelectField({
             variant="outline"
             role="combobox"
             className={cn(
-              "justify-between gap-2 min-w-[80px] h-10 px-3 transition-colors",
+              "justify-between gap-[0.325rem] min-w-[80px] h-[1.625rem] px-[0.4875rem] transition-colors",
               "hover:bg-accent/50 focus:ring-2 focus:ring-primary focus:ring-offset-2"
             )}
             aria-label={`Select rows per page, currently showing ${pageSize} rows`}
             aria-expanded={open}
             aria-haspopup="listbox"
           >
-            <span className="font-medium text-sm">{pageSize}</span>
+            <span className="font-medium text-[0.56875rem]">{pageSize}</span>
             <ChevronDown
               className={cn(
-                "h-4 w-4 opacity-50 shrink-0 transition-transform duration-200",
+                "h-[0.65rem] w-[0.65rem] opacity-50 shrink-0 transition-transform duration-200",
                 open && "rotate-180"
               )}
             />
@@ -66,7 +66,7 @@ export function PageSizeSelectField({
           align="start"
           side="bottom"
         >
-          <div className="space-y-1 p-1" role="listbox">
+          <div className="space-y-[0.1625rem] p-[0.1625rem]" role="listbox">
             {pageSizeOptions.map((size) => (
               <button
                 key={size}
@@ -78,7 +78,7 @@ export function PageSizeSelectField({
                   setOpen(false);
                 }}
                 className={cn(
-                  "w-full flex items-center gap-2 px-3 py-2 text-sm text-left rounded transition-colors",
+                  "w-full flex items-center gap-[0.325rem] px-[0.4875rem] py-[0.325rem] text-[0.56875rem] text-left rounded-[0.1625rem] transition-colors",
                   "hover:bg-accent hover:text-accent-foreground cursor-pointer",
                   pageSize === size
                     ? "bg-accent text-accent-foreground font-medium"
@@ -88,7 +88,7 @@ export function PageSizeSelectField({
               >
                 <Check
                   className={cn(
-                    "h-4 w-4 flex-shrink-0",
+                    "h-[0.65rem] w-[0.65rem] flex-shrink-0",
                     pageSize === size ? "opacity-100" : "opacity-0"
                   )}
                   aria-hidden="true"

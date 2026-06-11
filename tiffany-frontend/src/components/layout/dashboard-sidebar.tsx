@@ -63,7 +63,7 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
   };
 
   const renderNavItems = (isCollapsed = false) => (
-    <nav className="flex flex-col gap-1">
+    <nav className="flex flex-col gap-[0.1625rem]">
       {SIDEBAR_MENU.map((route) => {
         const hasSubItems = route.items && route.items.length > 0;
         const isActive = route.href ? pathname === route.href : false;
@@ -75,7 +75,7 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
             <div key={route.title} className="w-full">
               <Button
                 variant="ghost"
-                className="w-full justify-start hover:bg-primary/10 hover:text-primary rounded relative transition-all duration-200"
+                className="w-full justify-start hover:bg-primary/10 hover:text-primary rounded-[0.1625rem] relative transition-all duration-200"
                 onClick={() =>
                   route.title && !isCollapsed && toggleSection(route.title)
                 }
@@ -84,18 +84,18 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
               >
                 <div className="flex w-full items-center">
                   {route.icon && (
-                    <route.icon className="w-5 h-5 flex-shrink-0 transition-colors duration-200" />
+                    <route.icon className="w-[0.8125rem] h-[0.8125rem] flex-shrink-0 transition-colors duration-200" />
                   )}
                   {!isCollapsed && (
                     <>
-                      <span className="ml-3 truncate transition-colors duration-200">
+                      <span className="ml-[0.4875rem] truncate transition-colors duration-200">
                         {route.title}
                       </span>
                       <div className="ml-auto">
                         {isOpen ? (
-                          <ChevronDown className="h-4 w-4 transition-colors duration-200" />
+                          <ChevronDown className="h-[0.65rem] w-[0.65rem] transition-colors duration-200" />
                         ) : (
-                          <ChevronRight className="h-4 w-4 transition-colors duration-200" />
+                          <ChevronRight className="h-[0.65rem] w-[0.65rem] transition-colors duration-200" />
                         )}
                       </div>
                     </>
@@ -104,7 +104,7 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
               </Button>
 
               {!isCollapsed && isOpen && (
-                <div className="relative ml-6 mt-1 space-y-1">
+                <div className="relative ml-[0.975rem] mt-[0.1625rem] space-y-[0.1625rem]">
                   <div className="absolute left-0 top-0 bottom-0 w-px bg-gray-300 z-0"></div>
 
                   {route.items!.map((subItem) => {
@@ -114,32 +114,32 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
                       <div key={subItem.title} className="relative">
                         <div
                           className={cn(
-                            "absolute left-0 top-1/2 w-4 h-px z-0 transition-colors duration-200",
+                            "absolute left-0 top-1/2 w-[0.65rem] h-px z-0 transition-colors duration-200",
                             isSubItemActive ? "bg-primary/40" : "bg-gray-300",
                           )}
                         ></div>
 
                         <div
                           className={cn(
-                            "absolute left-0 top-1/2 w-1.5 h-1.5 rounded-full transform -translate-x-0.5 -translate-y-0.5 z-10 transition-colors duration-200",
+                            "absolute left-0 top-1/2 w-[0.24375rem] h-[0.24375rem] rounded-full transform -translate-x-[0.08125rem] -translate-y-[0.08125rem] z-10 transition-colors duration-200",
                             isSubItemActive ? "bg-primary" : "bg-gray-400",
                           )}
                         ></div>
 
-                        <div className="absolute left-4 top-1/2 w-2 h-px z-0 transition-colors duration-200 bg-gray-200"></div>
+                        <div className="absolute left-[0.65rem] top-1/2 w-[0.325rem] h-px z-0 transition-colors duration-200 bg-gray-200"></div>
 
                         <Button
                           variant="ghost"
                           asChild
                           className={cn(
-                            "relative w-full justify-start hover:bg-primary/10 hover:text-primary pl-6 rounded z-20 border-l border-transparent hover:border-l-primary/30 transition-all duration-200",
+                            "relative w-full justify-start hover:bg-primary/10 hover:text-primary pl-[0.975rem] rounded-[0.1625rem] z-20 border-l border-transparent hover:border-l-primary/30 transition-all duration-200",
                             isSubItemActive &&
                               "bg-primary/20 text-primary font-medium border-l-2 border-primary shadow-sm",
                           )}
                         >
                           <Link
                             href={subItem.href}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-[0.325rem]"
                           >
                             <span className="truncate">{subItem.title}</span>
                           </Link>
@@ -159,17 +159,17 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
             variant="ghost"
             asChild
             className={cn(
-              "w-full justify-start hover:bg-primary/10 hover:text-primary rounded transition-all duration-200",
+              "w-full justify-start hover:bg-primary/10 hover:text-primary rounded-[0.1625rem] transition-all duration-200",
               isActive &&
                 "bg-primary/20 text-primary font-medium border-l-2 border-primary",
             )}
           >
             <Link
               href={route.href || "#"}
-              className="flex items-center gap-3 px-3 py-2"
+              className="flex items-center gap-[0.4875rem] px-[0.4875rem] py-[0.325rem]"
               title={collapsed ? route.title : undefined}
             >
-              {route.icon && <route.icon className="w-5 h-5 flex-shrink-0" />}
+              {route.icon && <route.icon className="w-[0.8125rem] h-[0.8125rem] flex-shrink-0" />}
               {!collapsed && <span className="truncate">{route.title}</span>}
             </Link>
           </Button>
@@ -190,20 +190,20 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
       <div
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border/50 bg-background/95 backdrop-blur-xl transition-all duration-300 ease-out shadow-xl",
-          collapsed ? "w-16" : "w-60",
+          collapsed ? "w-[2.6rem]" : "w-[9.75rem]",
           isMobile && !isOpen && "hidden",
         )}
       >
-        <div className="relative flex h-20 items-center justify-between border-b border-border/50 px-4 bg-gradient-to-br from-primary/5 via-background/50 to-primary/5">
+        <div className="relative flex h-[3.25rem] items-center justify-between border-b border-border/50 px-[0.65rem] bg-gradient-to-br from-primary/5 via-background/50 to-primary/5">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/10 opacity-50 blur-3xl"></div>
 
           {!collapsed && (
             <Link
               href="/"
-              className="relative flex items-center gap-3 group transition-all duration-300 hover:scale-[1.02]"
+              className="relative flex items-center gap-[0.4875rem] group transition-all duration-300 hover:scale-[1.02]"
             >
               <div className="relative">
-                <div className="w-10 h-10 overflow-hidden">
+                <div className="w-[1.625rem] h-[1.625rem] overflow-hidden">
                   <Image
                     src="/assets/image/logo.png"
                     alt={businessName}
@@ -214,10 +214,10 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
                 </div>
               </div>
               <div className="flex flex-col">
-                <span className="text-foreground font-bold text-sm leading-tight tracking-tight">
+                <span className="text-foreground font-bold text-[0.56875rem] leading-tight tracking-tight">
                   {businessName}
                 </span>
-                <span className="text-muted-foreground text-xs font-medium tracking-wide">
+                <span className="text-muted-foreground text-[0.4875rem] font-medium tracking-wide">
                   Dashboard
                 </span>
               </div>
@@ -229,22 +229,22 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
             size="icon"
             onClick={toggleCollapsed}
             className={cn(
-              "relative h-9 w-9 rounded-xl transition-all duration-300 hover:bg-primary/10 hover:scale-110 group",
+              "relative h-[1.4625rem] w-[1.4625rem] rounded-[0.4875rem] transition-all duration-300 hover:bg-primary/10 hover:scale-110 group",
               collapsed && "ml-auto",
             )}
           >
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 rounded-[0.4875rem] bg-gradient-to-r from-primary/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <ChevronLeft
               className={cn(
-                "h-4 w-4 relative z-10 transition-transform duration-300",
+                "h-[0.65rem] w-[0.65rem] relative z-10 transition-transform duration-300",
                 collapsed && "rotate-180",
               )}
             />
           </Button>
         </div>
 
-        <ScrollArea className="flex-1 py-6">
-          <div className="px-4 space-y-2">{renderNavItems(collapsed)}</div>
+        <ScrollArea className="flex-1 py-[0.975rem]">
+          <div className="px-[0.65rem] space-y-[0.325rem]">{renderNavItems(collapsed)}</div>
         </ScrollArea>
 
         {profile && (

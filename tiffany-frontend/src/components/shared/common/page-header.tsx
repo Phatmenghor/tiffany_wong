@@ -17,7 +17,7 @@ interface PageHeaderProps {
 
 /**
  * Sticky page-level header used consistently across all public pages.
- * Sticks below the Navbar (top-16) with a frosted backdrop.
+ * Sticks below the Navbar (top-[2.6rem]) with a frosted backdrop.
  */
 export function PageHeader({
   title,
@@ -31,29 +31,29 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        "flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3",
-        "py-3 sm:py-4 mb-4 sm:mb-6 border-b",
+        "flex flex-col sm:flex-row sm:items-center justify-between gap-[0.325rem] sm:gap-[0.4875rem]",
+        "py-[0.4875rem] sm:py-[0.65rem] mb-[0.65rem] sm:mb-[0.975rem] border-b",
         className
       )}
     >
       <div className="min-w-0">
-        <div className="flex items-center gap-2">
-          {Icon && <Icon className="h-5 w-5 text-primary shrink-0" />}
-          <h1 className="text-xl sm:text-2xl font-bold truncate">{title}</h1>
+        <div className="flex items-center gap-[0.325rem]">
+          {Icon && <Icon className="h-[0.8125rem] w-[0.8125rem] text-primary shrink-0" />}
+          <h1 className="text-[0.8125rem] sm:text-[0.975rem] font-bold truncate">{title}</h1>
           {count !== undefined && count > 0 && (
-            <span className="shrink-0 text-xs font-semibold bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+            <span className="shrink-0 text-[0.4875rem] font-semibold bg-muted text-muted-foreground px-[0.325rem] py-[0.08125rem] rounded-full">
               {count.toLocaleString()}
             </span>
           )}
         </div>
         {subtitle && (
-          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 truncate">
+          <p className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground mt-[0.08125rem] truncate">
             {subtitle}
           </p>
         )}
       </div>
 
-      {actions && <div className="shrink-0 flex items-center gap-2">{actions}</div>}
+      {actions && <div className="shrink-0 flex items-center gap-[0.325rem]">{actions}</div>}
     </div>
   );
 }

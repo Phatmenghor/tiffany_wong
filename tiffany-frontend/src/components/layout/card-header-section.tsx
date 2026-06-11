@@ -57,34 +57,34 @@ export const CardHeaderSection: React.FC<CardHeaderSectionProps> = ({
   return (
     <div>
       <Card>
-        <CardContent className="py-3 sm:py-5">
+        <CardContent className="py-[0.4875rem] sm:py-[0.8125rem]">
           {/* Title Section with Back Button */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-[0.325rem] mb-[0.4875rem]">
             {(back || isMobile) && (
               <ActionButton
                 size="icon"
-                icon={<ArrowLeft className="w-10 h-10" />}
+                icon={<ArrowLeft className="w-[1.625rem] h-[1.625rem]" />}
                 tooltip="Back"
                 onClick={() => router.back()}
                 variant="ghost"
               />
             )}
             {title && (
-              <h1 className="text-base sm:text-lg font-bold">{title}</h1>
+              <h1 className="text-[0.65rem] sm:text-[0.73125rem] font-bold">{title}</h1>
             )}
           </div>
 
           {/* Search, Filters, and Actions */}
-          <div className="flex flex-wrap items-end gap-2">
+          <div className="flex flex-wrap items-end gap-[0.325rem]">
             {/* Search input - stays left */}
             {onSearchChange && (
               <div className="w-full sm:w-auto sm:min-w-[370px] sm:max-w-[430px] flex-shrink-0">
                 <div className="relative w-full group">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  <Search className="absolute left-[0.4875rem] top-1/2 -translate-y-1/2 h-[0.65rem] w-[0.65rem] text-gray-400 pointer-events-none" />
                   <Input
                     type="search"
                     placeholder={searchPlaceholder}
-                    className="pl-10 w-full placeholder:text-gray-500 focus:border-pink-500 focus:ring-pink-500/20 hover:border-gray-600 transition-all duration-200"
+                    className="pl-[1.625rem] w-full placeholder:text-gray-500 focus:border-pink-500 focus:ring-pink-500/20 hover:border-gray-600 transition-all duration-200"
                     value={searchValue}
                     onChange={onSearchChange}
                   />
@@ -93,12 +93,12 @@ export const CardHeaderSection: React.FC<CardHeaderSectionProps> = ({
             )}
 
             {/* Filters + Button - pushed to the right */}
-            <div className="flex flex-wrap items-end gap-2 ml-auto">
+            <div className="flex flex-wrap items-end gap-[0.325rem] ml-auto">
               {/* Filters via customSelect */}
               {customSelect && (
-                <div className="flex flex-wrap gap-2 items-end
+                <div className="flex flex-wrap gap-[0.325rem] items-end
                   [&>*]:w-auto [&>*]:flex-shrink-0
-                  [&>*>label]:whitespace-nowrap [&>*>label]:text-xs [&>*>label]:font-medium">
+                  [&>*>label]:whitespace-nowrap [&>*>label]:text-[0.4875rem] [&>*>label]:font-medium">
                   {customSelect}
                 </div>
               )}
@@ -107,7 +107,7 @@ export const CardHeaderSection: React.FC<CardHeaderSectionProps> = ({
               {children &&
                 React.Children.map(children, (child) => (
                   <div className="w-auto flex-shrink-0
-                    [&>.space-y-2]:!w-auto [&>.space-y-2]:!flex [&>.space-y-2]:!flex-col [&>.space-y-2]:!gap-1
+                    [&>.space-y-2]:!w-auto [&>.space-y-2]:!flex [&>.space-y-2]:!flex-col [&>.space-y-2]:!gap-[0.1625rem]
                     [&_button[role=combobox]]:!w-auto [&_button[role=combobox]]:min-w-[140px]
                     [&_.w-full]:!w-auto">
                     {child}
@@ -147,7 +147,7 @@ export const CardHeaderSection: React.FC<CardHeaderSectionProps> = ({
                     <TooltipTrigger asChild>
                       <Button
                         variant="default"
-                        className="text-white border-0 flex gap-2 font-medium transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/25 group"
+                        className="text-white border-0 flex gap-[0.325rem] font-medium transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/25 group"
                         onClick={openModal}
                       >
                         {buttonIcon && (
@@ -176,7 +176,7 @@ export const CardHeaderSection: React.FC<CardHeaderSectionProps> = ({
 
         {/* Tabs Section */}
         {tabs && (
-          <div className="border-t border-gray-800 px-6 bg-gray-850">
+          <div className="border-t border-gray-800 px-[0.975rem] bg-gray-850">
             <div className="[&>*]:text-gray-300 [&>*:hover]:text-gray-100 [&>*[data-state=active]]:text-pink-400 [&>*[data-state=active]]:border-pink-400">
               {tabs}
             </div>

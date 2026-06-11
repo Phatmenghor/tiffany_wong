@@ -41,9 +41,9 @@ function ProductImagePreview({
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <div className="relative w-14 h-14 flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300">
+    <div className="relative w-[2.275rem] h-[2.275rem] flex items-center justify-center overflow-hidden rounded-[0.325rem] bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300">
       {!imageLoaded && (
-        <Skeleton className="absolute inset-0 w-full h-full rounded-lg" />
+        <Skeleton className="absolute inset-0 w-full h-full rounded-[0.325rem]" />
       )}
       <Image
         src={getImageWithFallback(product?.mainImageUrl, "product")}
@@ -66,22 +66,22 @@ function ProductImagePreview({
  */
 function SizesDisplay({ sizes }: { sizes: any[] | undefined }) {
   if (!sizes || sizes.length === 0) {
-    return <span className="text-xs text-muted-foreground">No sizes</span>;
+    return <span className="text-[0.4875rem] text-muted-foreground">No sizes</span>;
   }
 
   return (
-    <div className="flex flex-nowrap gap-2 overflow-x-auto pb-1">
+    <div className="flex flex-nowrap gap-[0.325rem] overflow-x-auto pb-[0.1625rem]">
       {sizes.map((size) => (
         <div
           key={size.id}
-          className="px-2 py-1 rounded bg-gray-50 text-xs text-foreground whitespace-nowrap"
+          className="px-[0.325rem] py-[0.1625rem] rounded-[0.1625rem] bg-gray-50 text-[0.4875rem] text-foreground whitespace-nowrap"
           style={{
             border: "0.5px solid #FCD34D",
           }}
         >
           {size.name} ${size.finalPrice}
           {size.hasPromotion && (
-            <span className="text-red-600 font-semibold ml-1">
+            <span className="text-red-600 font-semibold ml-[0.1625rem]">
               {size.promotionType === "FIXED_AMOUNT"
                 ? `-$${size.promotionValue}`
                 : `-${size.promotionValue}%`}
@@ -108,7 +108,7 @@ function StatusSwitch({
   const isActive = value === "ACTIVE";
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-[0.325rem]">
       <Switch
         checked={isActive}
         onCheckedChange={(checked) =>
@@ -117,7 +117,7 @@ function StatusSwitch({
       />
       <span
         className={cn(
-          "text-xs font-medium",
+          "text-[0.4875rem] font-medium",
           isActive ? "text-green-600" : "text-muted-foreground",
         )}
       >
@@ -168,7 +168,7 @@ export const productTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (product) => (
-        <span className="text-xs text-muted-foreground">
+        <span className="text-[0.4875rem] text-muted-foreground">
           {product?.name || "---"}
         </span>
       ),
@@ -181,7 +181,7 @@ export const productTableColumns = ({
       maxWidth: "150px",
       truncate: true,
       render: (product) => (
-        <span className="text-xs text-muted-foreground">
+        <span className="text-[0.4875rem] text-muted-foreground">
           {product?.categoryName || "---"}
         </span>
       ),
@@ -193,12 +193,12 @@ export const productTableColumns = ({
       minWidth: "150px",
       maxWidth: "200px",
       render: (product) => (
-        <div className="flex flex-col gap-1">
-          <span className="text-sm font-semibold text-foreground">
+        <div className="flex flex-col gap-[0.1625rem]">
+          <span className="text-[0.56875rem] font-semibold text-foreground">
             ${parseFloat(product?.displayPrice?.toString() || "0").toFixed(2)}
           </span>
           {product?.hasPromotion && product?.displayOriginPrice && (
-            <span className="text-xs text-muted-foreground line-through">
+            <span className="text-[0.4875rem] text-muted-foreground line-through">
               ${parseFloat(product.displayOriginPrice.toString()).toFixed(2)}
             </span>
           )}
@@ -236,7 +236,7 @@ export const productTableColumns = ({
         }
 
         return (
-          <span className="text-xs font-semibold text-red-600">
+          <span className="text-[0.4875rem] font-semibold text-red-600">
             {displayValue}
           </span>
         );
@@ -263,7 +263,7 @@ export const productTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (banner) => (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-[0.56875rem] text-muted-foreground">
           {dateTimeFormat(banner?.createdAt)}
         </span>
       ),
@@ -275,27 +275,27 @@ export const productTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (brand) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-[0.325rem]">
           <ActionButton
-            icon={<Eye className="w-4 h-4" />}
+            icon={<Eye className="w-[0.65rem] h-[0.65rem]" />}
             tooltip="View Details"
             onClick={() => handleProductViewDetail(brand)}
           />
           <ActionButton
-            icon={<Edit className="w-4 h-4" />}
+            icon={<Edit className="w-[0.65rem] h-[0.65rem]" />}
             tooltip="Edit Product"
             onClick={() => handleEditProduct(brand)}
           />
           {brand?.hasPromotion && (
             <ActionButton
-              icon={<RotateCcw className="w-4 h-4" />}
+              icon={<RotateCcw className="w-[0.65rem] h-[0.65rem]" />}
               tooltip="Reset Promotion"
               onClick={() => handleResetPromotion?.(brand)}
               variant="outline"
             />
           )}
           <ActionButton
-            icon={<Trash className="w-4 h-4" />}
+            icon={<Trash className="w-[0.65rem] h-[0.65rem]" />}
             tooltip="Delete Product"
             onClick={() => handleDeleteProduct(brand)}
             variant="destructive"

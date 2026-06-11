@@ -439,15 +439,15 @@ export default function ProductPromotionPage() {
   }), [filters.search, filters.status, selectedCategories, sizeFilter, sortBy, sortDirection]);
 
   return (
-    <div className="flex flex-1 flex-col gap-4 px-2">
-      <div className="space-y-4">
+    <div className="flex flex-1 flex-col gap-[0.65rem] px-[0.325rem]">
+      <div className="space-y-[0.65rem]">
         <CollapsibleFilterPanel
           config={filterConfig}
           essentialFilterIds={["category", "status"]}
         />
 
         {/* Data Table with Your Custom Pagination */}
-        <div className="overflow-x-auto max-w-full rounded-lg border">
+        <div className="overflow-x-auto max-w-full rounded-[0.325rem] border">
           <DataTableWithPagination
           data={productContent}
           columns={columns}

@@ -37,12 +37,12 @@ export function CategoriesDetailModal({
       <DialogTitle className="sr-only">Category Details - {categories?.name}</DialogTitle>
       <DialogContent className="w-full sm:max-w-7xl max-h-[92dvh] p-0 gap-0 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b bg-muted/30 flex-shrink-0">
+        <div className="px-[0.975rem] py-[0.65rem] border-b bg-muted/30 flex-shrink-0">
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-semibold text-foreground">
+            <h2 className="text-[0.73125rem] font-semibold text-foreground">
               Category Details
             </h2>
-            <p className="text-sm text-foreground mt-1">
+            <p className="text-[0.56875rem] text-foreground mt-[0.1625rem]">
               Detailed information about the selected category
             </p>
           </div>
@@ -50,31 +50,31 @@ export function CategoriesDetailModal({
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-6 space-y-6">
+          <div className="p-[0.975rem] space-y-[0.975rem]">
             {/* Category Information */}
             <Card>
               <CardHeader>
                 <CardTitle>Category Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-[0.65rem]">
                 {/* Labels Row - Top alignment */}
-                <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex flex-col md:flex-row gap-[0.975rem]">
                   {/* Left label - Category Name */}
                   <div className="w-full md:w-1/2">
-                    <p className="text-sm font-medium text-foreground">Category Name</p>
+                    <p className="text-[0.56875rem] font-medium text-foreground">Category Name</p>
                   </div>
                   {/* Right label - Category Image */}
                   {categories.imageUrl && (
                     <div className="w-full md:w-1/2">
-                      <p className="text-sm font-medium text-foreground">Category Image</p>
+                      <p className="text-[0.56875rem] font-medium text-foreground">Category Image</p>
                     </div>
                   )}
                 </div>
 
                 {/* Content Row - Fields and Image */}
-                <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex flex-col md:flex-row gap-[0.975rem]">
                   {/* Basic Info - Left Side (50%) */}
-                  <div className="w-full md:w-1/2 space-y-4">
+                  <div className="w-full md:w-1/2 space-y-[0.65rem]">
                     <p className="text-foreground">{categories.name || "---"}</p>
                     <DisplayField label="Status" value={categories.status ? formatEnumValue(categories.status) : "---"} />
                     <DisplayField label="Total Products" value={formatProductCount(categories.totalProducts)} />
@@ -84,7 +84,7 @@ export function CategoriesDetailModal({
                   {/* Category Image - Right Side (50%) */}
                   {categories.imageUrl && (
                     <div className="w-full md:w-1/2">
-                      <div className="h-40 w-40 rounded-md overflow-hidden bg-muted border border-border flex-shrink-0">
+                      <div className="h-[6.5rem] w-[6.5rem] rounded-[0.24375rem] overflow-hidden bg-muted border border-border flex-shrink-0">
                         <img
                           src={categories.imageUrl}
                           alt={categories.name}
@@ -102,8 +102,8 @@ export function CategoriesDetailModal({
               <CardHeader>
                 <CardTitle>System Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="space-y-[0.65rem]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
                   <DisplayField label="Category ID" value={categories.id} />
                   <DisplayField label="Created At" value={dateTimeFormat(categories.createdAt ?? "")} />
                   <DisplayField label="Created By" value={categories.createdBy || "---"} />

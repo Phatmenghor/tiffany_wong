@@ -104,18 +104,18 @@ export default function BusinessProfileEditorPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8">
-        <Skeleton className="h-32 w-full mb-4" />
-        <Skeleton className="h-96 w-full" />
+      <div className="container mx-auto py-[1.3rem]">
+        <Skeleton className="h-[5.2rem] w-full mb-[0.65rem]" />
+        <Skeleton className="h-[15.6rem] w-full" />
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-[1.3rem]">
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-[0.975rem]">
             <p className="text-red-600">Failed to load business settings. Please try again.</p>
           </CardContent>
         </Card>
@@ -166,19 +166,19 @@ export default function BusinessProfileEditorPage() {
   ];
 
   return (
-    <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl">
+    <div className="container mx-auto px-[0.4875rem] sm:px-[0.65rem] py-[0.65rem] sm:py-[1.3rem] max-w-7xl">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-[0.4875rem] mb-[0.65rem] sm:mb-[1.3rem]">
         <div>
-          <h1 className="text-xl sm:text-3xl font-bold">Business Profile</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-[0.8125rem] sm:text-[1.21875rem] font-bold">Business Profile</h1>
+          <p className="text-[0.56875rem] text-gray-600 mt-[0.1625rem]">
             Customize your business portfolio and showcase your brand
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-[0.325rem]">
           <Link href="/business-profile" target="_blank">
-            <Button variant="outline" size="sm" className="gap-2">
-              <Eye className="w-4 h-4" />
+            <Button variant="outline" size="sm" className="gap-[0.325rem]">
+              <Eye className="w-[0.65rem] h-[0.65rem]" />
               Preview
             </Button>
           </Link>
@@ -186,29 +186,29 @@ export default function BusinessProfileEditorPage() {
             size="sm"
             onClick={handleSubmit(onSubmit)}
             disabled={!isDirty}
-            className="gap-2"
+            className="gap-[0.325rem]"
           >
-            <Save className="w-4 h-4" />
+            <Save className="w-[0.65rem] h-[0.65rem]" />
             Save Changes
           </Button>
         </div>
       </div>
 
       {/* Status Badge */}
-      <div className="mb-6">
+      <div className="mb-[0.975rem]">
         <Badge variant={profile.isPublished ? "default" : "secondary"}>
           {profile.isPublished ? "✓ Published" : "Draft"}
         </Badge>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="flex gap-4 overflow-x-auto">
+      <div className="border-b border-gray-200 mb-[0.975rem]">
+        <nav className="flex gap-[0.65rem] overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-3 px-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+              className={`py-[0.4875rem] px-[0.65rem] text-[0.56875rem] font-medium whitespace-nowrap border-b-2 transition-colors ${
                 activeTab === tab.id
                   ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-600 hover:text-gray-900"
@@ -220,17 +220,17 @@ export default function BusinessProfileEditorPage() {
         </nav>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-[0.975rem]">
         {/* Basic Info Tab */}
         {activeTab === "basic" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-[0.975rem]">
             <Card className="lg:col-span-2">
               <CardHeader>
                 <CardTitle>Basic Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-[0.65rem]">
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                     Business Name *
                   </label>
                   <Controller
@@ -242,14 +242,14 @@ export default function BusinessProfileEditorPage() {
                     )}
                   />
                   {errors.businessName && (
-                    <p className="text-red-600 text-sm mt-1">
+                    <p className="text-red-600 text-[0.56875rem] mt-[0.1625rem]">
                       {errors.businessName.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                     Tagline
                   </label>
                   <Controller
@@ -261,9 +261,9 @@ export default function BusinessProfileEditorPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-[0.65rem]">
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                       Business Type *
                     </label>
                     <Controller
@@ -272,7 +272,7 @@ export default function BusinessProfileEditorPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full border rounded-md px-3 py-2"
+                          className="w-full border rounded-[0.24375rem] px-[0.4875rem] py-[0.325rem]"
                         >
                           {Object.values(BusinessType).map((type) => (
                             <option key={type} value={type}>
@@ -285,7 +285,7 @@ export default function BusinessProfileEditorPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                       Industry *
                     </label>
                     <Controller
@@ -300,7 +300,7 @@ export default function BusinessProfileEditorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                     About Your Business *
                   </label>
                   <Controller
@@ -316,7 +316,7 @@ export default function BusinessProfileEditorPage() {
                     )}
                   />
                   {errors.description && (
-                    <p className="text-red-600 text-sm mt-1">
+                    <p className="text-red-600 text-[0.56875rem] mt-[0.1625rem]">
                       {errors.description.message}
                     </p>
                   )}
@@ -328,14 +328,14 @@ export default function BusinessProfileEditorPage() {
 
         {/* Contact & Hours Tab */}
         {activeTab === "contact" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-[0.975rem]">
             <Card>
               <CardHeader>
                 <CardTitle>Contact Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-[0.65rem]">
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                     Email *
                   </label>
                   <Controller
@@ -357,14 +357,14 @@ export default function BusinessProfileEditorPage() {
                     )}
                   />
                   {errors.email && (
-                    <p className="text-red-600 text-sm mt-1">
+                    <p className="text-red-600 text-[0.56875rem] mt-[0.1625rem]">
                       {errors.email.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                     Phone *
                   </label>
                   <Controller
@@ -378,7 +378,7 @@ export default function BusinessProfileEditorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                     WhatsApp (optional)
                   </label>
                   <Controller
@@ -391,7 +391,7 @@ export default function BusinessProfileEditorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                     Street Address *
                   </label>
                   <Controller
@@ -404,9 +404,9 @@ export default function BusinessProfileEditorPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-[0.65rem]">
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                       City *
                     </label>
                     <Controller
@@ -419,7 +419,7 @@ export default function BusinessProfileEditorPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                       State/Province
                     </label>
                     <Controller
@@ -432,9 +432,9 @@ export default function BusinessProfileEditorPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-[0.65rem]">
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                       Country *
                     </label>
                     <Controller
@@ -447,7 +447,7 @@ export default function BusinessProfileEditorPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                       Postal Code
                     </label>
                     <Controller
@@ -467,16 +467,16 @@ export default function BusinessProfileEditorPage() {
                 <CardTitle>Business Hours</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-[0.4875rem]">
                   {profile.businessHours?.map((hours, index) => (
-                    <div key={hours.day} className="flex flex-wrap items-center gap-2">
-                      <div className="w-24 font-medium text-sm">
+                    <div key={hours.day} className="flex flex-wrap items-center gap-[0.325rem]">
+                      <div className="w-[3.9rem] font-medium text-[0.56875rem]">
                         {hours.day.charAt(0) + hours.day.slice(1).toLowerCase()}
                       </div>
                       <input
                         type="checkbox"
                         checked={hours.isOpen}
-                        className="rounded"
+                        className="rounded-[0.1625rem]"
                         onChange={() => {
                           // Handle toggle
                         }}
@@ -486,18 +486,18 @@ export default function BusinessProfileEditorPage() {
                           <Input
                             type="time"
                             value={hours.openTime}
-                            className="w-32"
+                            className="w-[5.2rem]"
                           />
                           <span>to</span>
                           <Input
                             type="time"
                             value={hours.closeTime}
-                            className="w-32"
+                            className="w-[5.2rem]"
                           />
                         </>
                       )}
                       {!hours.isOpen && (
-                        <span className="text-gray-500 text-sm">Closed</span>
+                        <span className="text-gray-500 text-[0.56875rem]">Closed</span>
                       )}
                     </div>
                   ))}
@@ -509,37 +509,37 @@ export default function BusinessProfileEditorPage() {
 
         {/* Images & Gallery Tab */}
         {activeTab === "media" && (
-          <div className="grid grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 gap-[0.975rem]">
             <Card>
               <CardHeader>
                 <CardTitle>Cover Image & Logo</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-[0.975rem]">
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                     Cover Image
                   </label>
-                  <div className="border-2 border-dashed rounded-lg p-8 text-center hover:border-orange-500 transition-colors cursor-pointer">
-                    <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-600">
+                  <div className="border-2 border-dashed rounded-[0.325rem] p-[1.3rem] text-center hover:border-orange-500 transition-colors cursor-pointer">
+                    <Upload className="w-[1.3rem] h-[1.3rem] mx-auto text-gray-400 mb-[0.325rem]" />
+                    <p className="text-[0.56875rem] text-gray-600">
                       Click to upload or drag and drop
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-[0.4875rem] text-gray-500 mt-[0.1625rem]">
                       Recommended: 1200x400px
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                     Business Logo
                   </label>
-                  <div className="border-2 border-dashed rounded-lg p-8 text-center hover:border-orange-500 transition-colors cursor-pointer">
-                    <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-600">
+                  <div className="border-2 border-dashed rounded-[0.325rem] p-[1.3rem] text-center hover:border-orange-500 transition-colors cursor-pointer">
+                    <Upload className="w-[1.3rem] h-[1.3rem] mx-auto text-gray-400 mb-[0.325rem]" />
+                    <p className="text-[0.56875rem] text-gray-600">
                       Click to upload or drag and drop
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-[0.4875rem] text-gray-500 mt-[0.1625rem]">
                       Recommended: Square image, 400x400px
                     </p>
                   </div>
@@ -551,30 +551,30 @@ export default function BusinessProfileEditorPage() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Gallery</span>
-                  <Button size="sm" className="gap-2">
-                    <Plus className="w-4 h-4" />
+                  <Button size="sm" className="gap-[0.325rem]">
+                    <Plus className="w-[0.65rem] h-[0.65rem]" />
                     Add Photo
                   </Button>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-3 md:grid-cols-4 gap-[0.65rem]">
                   {profile.gallery?.map((item, index) => (
                     <div key={item.id} className="relative group aspect-square">
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors rounded-lg flex items-center justify-center">
-                        <button className="opacity-0 group-hover:opacity-100 transition-opacity p-2 bg-red-500 rounded-full text-white">
-                          <Trash2 className="w-4 h-4" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors rounded-[0.325rem] flex items-center justify-center">
+                        <button className="opacity-0 group-hover:opacity-100 transition-opacity p-[0.325rem] bg-red-500 rounded-full text-white">
+                          <Trash2 className="w-[0.65rem] h-[0.65rem]" />
                         </button>
                       </div>
-                      <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
-                        <ImageIcon className="w-8 h-8 text-gray-400" />
+                      <div className="w-full h-full bg-gray-100 rounded-[0.325rem] flex items-center justify-center">
+                        <ImageIcon className="w-[1.3rem] h-[1.3rem] text-gray-400" />
                       </div>
                     </div>
                   ))}
-                  <div className="aspect-square border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer hover:border-orange-500 transition-colors">
+                  <div className="aspect-square border-2 border-dashed rounded-[0.325rem] flex items-center justify-center cursor-pointer hover:border-orange-500 transition-colors">
                     <div className="text-center">
-                      <Plus className="w-6 h-6 mx-auto text-gray-400" />
-                      <p className="text-xs text-gray-500 mt-1">Add Photo</p>
+                      <Plus className="w-[0.975rem] h-[0.975rem] mx-auto text-gray-400" />
+                      <p className="text-[0.4875rem] text-gray-500 mt-[0.1625rem]">Add Photo</p>
                     </div>
                   </div>
                 </div>
@@ -589,17 +589,17 @@ export default function BusinessProfileEditorPage() {
             <CardHeader>
               <CardTitle>Social Media Links</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 max-w-2xl">
+            <CardContent className="space-y-[0.65rem] max-w-2xl">
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                   Website
                 </label>
                 <Controller
                   name="website"
                   control={control}
                   render={({ field }) => (
-                    <div className="flex items-center gap-2">
-                      <Globe className="w-5 h-5 text-gray-400" />
+                    <div className="flex items-center gap-[0.325rem]">
+                      <Globe className="w-[0.8125rem] h-[0.8125rem] text-gray-400" />
                       <Input {...field} placeholder="https://yourwebsite.com" />
                     </div>
                   )}
@@ -607,7 +607,7 @@ export default function BusinessProfileEditorPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                   Facebook
                 </label>
                 <Controller
@@ -623,7 +623,7 @@ export default function BusinessProfileEditorPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                   Instagram
                 </label>
                 <Controller
@@ -639,7 +639,7 @@ export default function BusinessProfileEditorPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                   Twitter
                 </label>
                 <Controller
@@ -655,7 +655,7 @@ export default function BusinessProfileEditorPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
                   LinkedIn
                 </label>
                 <Controller
@@ -684,7 +684,7 @@ export default function BusinessProfileEditorPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-12">
+              <div className="text-center py-[1.95rem]">
                 <p className="text-gray-500">
                   This section will allow you to manage your{" "}
                   {activeTab === "services"
@@ -692,8 +692,8 @@ export default function BusinessProfileEditorPage() {
                     : "team members and customer testimonials"}
                   .
                 </p>
-                <Button className="mt-4 gap-2">
-                  <Plus className="w-4 h-4" />
+                <Button className="mt-[0.65rem] gap-[0.325rem]">
+                  <Plus className="w-[0.65rem] h-[0.65rem]" />
                   Add {activeTab === "services" ? "Service" : "Team Member"}
                 </Button>
               </div>

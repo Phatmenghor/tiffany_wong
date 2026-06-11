@@ -40,19 +40,19 @@ export function TablePagination({
 }: TablePaginationProps) {
   const sizeClasses = {
     sm: {
-      button: "h-8 px-3 text-xs",
-      icon: "h-3 w-3",
-      pageButton: "h-8 min-w-8 text-xs",
+      button: "h-[1.3rem] px-[0.4875rem] text-[0.4875rem]",
+      icon: "h-[0.4875rem] w-[0.4875rem]",
+      pageButton: "h-[1.3rem] min-w-[1.3rem] text-[0.4875rem]",
     },
     md: {
-      button: "h-9 px-4 text-sm",
-      icon: "h-4 w-4",
-      pageButton: "h-9 min-w-9 text-sm",
+      button: "h-[1.4625rem] px-[0.65rem] text-[0.56875rem]",
+      icon: "h-[0.65rem] w-[0.65rem]",
+      pageButton: "h-[1.4625rem] min-w-[1.4625rem] text-[0.56875rem]",
     },
     lg: {
-      button: "h-10 px-5 text-base",
-      icon: "h-5 w-5",
-      pageButton: "h-10 min-w-10 text-base",
+      button: "h-[1.625rem] px-[0.8125rem] text-[0.65rem]",
+      icon: "h-[0.8125rem] w-[0.8125rem]",
+      pageButton: "h-[1.625rem] min-w-[1.625rem] text-[0.65rem]",
     },
   };
 
@@ -104,14 +104,14 @@ export function TablePagination({
   const items = getPaginationItems();
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 border-t">
-      <div className="text-xs sm:text-sm text-muted-foreground">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-[0.65rem] px-[0.65rem] py-[0.4875rem] border-t">
+      <div className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground">
         Showing {(currentPage - 1) * pageSize + 1} to{" "}
         {Math.min(currentPage * pageSize, totalElements)} of{" "}
         {totalElements} results
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-[0.325rem]">
         {showPageSizeSelector && (
           <PageSizeSelectField
             value={pageSize}
@@ -122,7 +122,7 @@ export function TablePagination({
         )}
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-[0.1625rem]">
         <Button
           variant="outline"
           size="sm"
@@ -136,7 +136,7 @@ export function TablePagination({
         {items.map((item, index) => (
           <div key={index}>
             {item === "ellipsis" ? (
-              <div className="px-2 py-1 text-muted-foreground">...</div>
+              <div className="px-[0.325rem] py-[0.1625rem] text-muted-foreground">...</div>
             ) : (
               <Button
                 variant={item === currentPage ? "default" : "outline"}

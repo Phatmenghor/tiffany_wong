@@ -78,7 +78,7 @@ const ProductsSectionComponent = ({
 
       {/* End of products state */}
       {!hasMore && products.length > 0 && !loading && (
-        <div className="text-center py-4 text-sm text-muted-foreground">
+        <div className="text-center py-[0.65rem] text-[0.56875rem] text-muted-foreground">
           You've seen it all!
         </div>
       )}

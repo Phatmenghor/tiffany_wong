@@ -54,7 +54,7 @@ function ComboboxSelectCategoriesPublicComponent({
 
   const fetchedRef = useRef(false);
 
-  const sizeClasses = { sm: "h-8 text-xs", md: "h-9 text-sm", lg: "h-10 text-base" };
+  const sizeClasses = { sm: "h-[1.3rem] text-[0.4875rem]", md: "h-[1.4625rem] text-[0.56875rem]", lg: "h-[1.625rem] text-[0.65rem]" };
 
   // Fetch all categories once on mount — backend returns a flat array
   useEffect(() => {
@@ -93,13 +93,13 @@ function ComboboxSelectCategoriesPublicComponent({
   };
 
   return (
-    <div className="flex flex-col gap-1 w-full">
+    <div className="flex flex-col gap-[0.1625rem] w-full">
       {label && (
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500/10">
-            <Package className="h-3.5 w-3.5 text-blue-500" />
+        <div className="flex items-center gap-[0.325rem]">
+          <div className="flex items-center justify-center w-[1.1375rem] h-[1.1375rem] rounded-[0.325rem] bg-blue-500/10">
+            <Package className="h-[0.56875rem] w-[0.56875rem] text-blue-500" />
           </div>
-          <Label className="text-xs font-medium text-foreground">{label}</Label>
+          <Label className="text-[0.4875rem] font-medium text-foreground">{label}</Label>
         </div>
       )}
       <Popover open={open} onOpenChange={setOpen} modal={true}>
@@ -109,7 +109,7 @@ function ComboboxSelectCategoriesPublicComponent({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "w-full justify-between min-w-[150px] px-3 py-2 transition-all duration-200 border-input",
+              "w-full justify-between min-w-[150px] px-[0.4875rem] py-[0.325rem] transition-all duration-200 border-input",
               sizeClasses[size],
               !selectedCategory && "text-muted-foreground",
               "hover:bg-primary/10 hover:border-primary hover:text-primary",
@@ -122,7 +122,7 @@ function ComboboxSelectCategoriesPublicComponent({
             <span className="truncate">{selectedCategoryName || placeholder}</span>
             <ChevronsUpDown
               className={cn(
-                "ml-2 h-4 w-4 shrink-0 transition-all duration-200",
+                "ml-[0.325rem] h-[0.65rem] w-[0.65rem] shrink-0 transition-all duration-200",
                 open ? "opacity-100 text-primary rotate-180" : "opacity-50",
               )}
             />
@@ -142,10 +142,10 @@ function ComboboxSelectCategoriesPublicComponent({
               value={searchTerm}
               onValueChange={setSearchTerm}
             />
-            <CommandList className="max-h-60 overflow-y-auto">
+            <CommandList className="max-h-[9.75rem] overflow-y-auto">
               {loading ? (
-                <div className="flex justify-center py-4">
-                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                <div className="flex justify-center py-[0.65rem]">
+                  <Loader2 className="h-[0.8125rem] w-[0.8125rem] animate-spin text-primary" />
                 </div>
               ) : (
                 <>
@@ -165,7 +165,7 @@ function ComboboxSelectCategoriesPublicComponent({
                       >
                         <Check
                           className={cn(
-                            "mr-2 h-4 w-4",
+                            "mr-[0.325rem] h-[0.65rem] w-[0.65rem]",
                             (selectedCategory === item.id || (!selectedCategory && item.id === ""))
                               ? "opacity-100"
                               : "opacity-0",

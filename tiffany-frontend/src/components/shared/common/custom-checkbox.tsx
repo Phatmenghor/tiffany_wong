@@ -48,25 +48,25 @@ export function CustomCheckbox({
       box: "w-[12.8px] h-[12.8px]",
       innerBox: "w-[6.4px] h-[6.4px]",
       icon: "w-[9.6px] h-[9.6px]",
-      text: "text-xs",
+      text: "text-[0.4875rem]",
     },
     md: {
-      box: "w-4 h-4",
-      innerBox: "w-2 h-2",
-      icon: "w-3 h-3",
-      text: "text-sm",
+      box: "w-[0.65rem] h-[0.65rem]",
+      innerBox: "w-[0.325rem] h-[0.325rem]",
+      icon: "w-[0.4875rem] h-[0.4875rem]",
+      text: "text-[0.56875rem]",
     },
     lg: {
       box: "w-[19.2px] h-[19.2px]",
       innerBox: "w-[9.6px] h-[9.6px]",
-      icon: "w-4 h-4",
-      text: "text-base",
+      icon: "w-[0.65rem] h-[0.65rem]",
+      text: "text-[0.65rem]",
     },
     xl: {
       box: "w-[25.6px] h-[25.6px]",
       innerBox: "w-[12.8px] h-[12.8px]",
-      icon: "w-5 h-5",
-      text: "text-lg",
+      icon: "w-[0.8125rem] h-[0.8125rem]",
+      text: "text-[0.73125rem]",
     },
   };
 
@@ -108,7 +108,7 @@ export function CustomCheckbox({
 
   const baseCheckboxClass = cn(
     // Base styles
-    "relative inline-flex items-center justify-center rounded-md",
+    "relative inline-flex items-center justify-center rounded-[0.24375rem]",
     // Smooth transitions and animations
     "transition-all duration-200 ease-out",
     // Size
@@ -148,7 +148,7 @@ export function CustomCheckbox({
         <div
           className={cn(
             config.innerBox,
-            "bg-input rounded-sm transition-all duration-200 pointer-events-none"
+            "bg-input rounded-[0.08125rem] transition-all duration-200 pointer-events-none"
           )}
         />
       )}
@@ -158,7 +158,7 @@ export function CustomCheckbox({
   // Wrapper for label (if provided)
   if (label) {
     return (
-      <label className="flex items-center gap-2 cursor-pointer group">
+      <label className="flex items-center gap-[0.325rem] cursor-pointer group">
         <div className={baseCheckboxClass} title={title}>
           {checkboxContent}
         </div>

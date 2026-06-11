@@ -384,24 +384,24 @@ export function SizeSelectionModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-full sm:max-w-[480px] p-0 overflow-hidden">
         {/* Header */}
-        <DialogHeader className="p-4 pb-0">
-          <DialogTitle className="text-lg font-bold">Choose Size</DialogTitle>
+        <DialogHeader className="p-[0.65rem] pb-0">
+          <DialogTitle className="text-[0.73125rem] font-bold">Choose Size</DialogTitle>
         </DialogHeader>
 
-        <div className="p-4 pt-2">
+        <div className="p-[0.65rem] pt-[0.325rem]">
           {/* Loading State */}
           {isLoadingDetail ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary mb-3" />
-              <p className="text-sm text-muted-foreground">
+            <div className="flex flex-col items-center justify-center py-[1.95rem]">
+              <Loader2 className="h-[1.3rem] w-[1.3rem] animate-spin text-primary mb-[0.4875rem]" />
+              <p className="text-[0.56875rem] text-muted-foreground">
                 Loading product details...
               </p>
             </div>
           ) : (
             <>
               {/* Product Info */}
-              <div className="flex gap-4 mb-4">
-                <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+              <div className="flex gap-[0.65rem] mb-[0.65rem]">
+                <div className="relative w-[3.25rem] h-[3.25rem] rounded-[0.325rem] overflow-hidden bg-muted flex-shrink-0">
                   <Image
                     src={displayProduct?.mainImageUrl || appImages.NoImage}
                     alt={displayProduct?.name || "Product"}
@@ -410,21 +410,21 @@ export function SizeSelectionModal({
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-sm line-clamp-2 mb-1">
+                  <h3 className="font-semibold text-[0.56875rem] line-clamp-2 mb-[0.1625rem]">
                     {displayProduct?.name}
                   </h3>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-primary">
+                  <div className="flex items-center gap-[0.325rem]">
+                    <span className="text-[0.73125rem] font-bold text-primary">
                       {formatCurrency(displayPrice)}
                     </span>
                     {hasDiscount && originalPrice && (
-                      <span className="text-xs text-muted-foreground line-through">
+                      <span className="text-[0.4875rem] text-muted-foreground line-through">
                         {formatCurrency(originalPrice)}
                       </span>
                     )}
                   </div>
                   {hasDiscount && (
-                    <Badge variant="destructive" className="text-xs mt-1">
+                    <Badge variant="destructive" className="text-[0.4875rem] mt-[0.1625rem]">
                       {selectedSize?.hasPromotion
                         ? `-${Math.round(
                             ((selectedSize.price - selectedSize.finalPrice) /
@@ -445,9 +445,9 @@ export function SizeSelectionModal({
               {displayProduct?.hasSizes &&
                 displayProduct?.sizes &&
                 displayProduct.sizes.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="font-semibold mb-2 text-sm">Choose Size</h4>
-                    <div className="flex flex-wrap gap-2">
+                  <div className="mb-[0.65rem]">
+                    <h4 className="font-semibold mb-[0.325rem] text-[0.56875rem]">Choose Size</h4>
+                    <div className="flex flex-wrap gap-[0.325rem]">
                       {displayProduct.sizes.map((size) => {
                         const sizeDisplayQty = getDisplayQuantity(size.id);
                         const sizeCartQty = getQuantityForSize(size.id);
@@ -459,32 +459,32 @@ export function SizeSelectionModal({
                             key={size.id}
                             onClick={() => setSelectedSize(size)}
                             className={cn(
-                              "relative border-2 rounded-lg px-3 py-2 transition-all cursor-pointer hover:border-primary",
+                              "relative border-2 rounded-[0.325rem] px-[0.4875rem] py-[0.325rem] transition-all cursor-pointer hover:border-primary",
                               selectedSize?.id === size.id
                                 ? "border-primary bg-primary/5 ring-2 ring-primary/20"
                                 : "border-border",
                               isModified && "ring-2 ring-amber-400/50",
                             )}
                           >
-                            <div className="font-semibold text-xs text-left">
+                            <div className="font-semibold text-[0.4875rem] text-left">
                               {size.name}
                             </div>
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-primary font-bold text-sm">{formatCurrency(size.finalPrice)}</span>
+                            <div className="flex items-center gap-[0.24375rem]">
+                              <span className="text-primary font-bold text-[0.56875rem]">{formatCurrency(size.finalPrice)}</span>
                               {size.hasPromotion && (
                                 <span className="text-[10px] text-muted-foreground line-through">{formatCurrency(size.price)}</span>
                               )}
                             </div>
                             {selectedSize?.id === size.id && (
-                              <div className="absolute -top-1.5 -right-1.5 bg-primary text-primary-foreground rounded-full p-0.5">
-                                <Check className="h-2.5 w-2.5" />
+                              <div className="absolute -top-[0.24375rem] -right-[0.24375rem] bg-primary text-primary-foreground rounded-full p-[0.08125rem]">
+                                <Check className="h-[0.40625rem] w-[0.40625rem]" />
                               </div>
                             )}
                             {/* Show quantity badge */}
                             {sizeDisplayQty > 0 && (
                               <div
                                 className={cn(
-                                  "absolute -top-1.5 -left-1.5 text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold",
+                                  "absolute -top-[0.24375rem] -left-[0.24375rem] text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold",
                                   isModified ? "bg-amber-500" : "bg-green-500",
                                 )}
                               >
@@ -499,9 +499,9 @@ export function SizeSelectionModal({
                 )}
 
               {/* Quantity Selector + Clear button */}
-              <div className="mb-4">
-                <h4 className="font-semibold mb-2 text-sm">Quantity</h4>
-                <div className="flex items-center gap-2">
+              <div className="mb-[0.65rem]">
+                <h4 className="font-semibold mb-[0.325rem] text-[0.56875rem]">Quantity</h4>
+                <div className="flex items-center gap-[0.325rem]">
                   <QuantitySelector
                     value={currentQuantity}
                     onChange={handleQuantityChange}
@@ -513,16 +513,16 @@ export function SizeSelectionModal({
                     <CustomButton
                       variant="outline"
                       size="sm"
-                      className="h-8 px-2 text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground"
+                      className="h-[1.3rem] px-[0.325rem] text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground"
                       disabled={clearingSize === (selectedSize?.id || "no_size")}
                       onClick={() =>
                         handleClearSize(selectedSize?.id || null)
                       }
                     >
                       {clearingSize === (selectedSize?.id || "no_size") ? (
-                        <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+                        <Loader2 className="h-[0.56875rem] w-[0.56875rem] mr-[0.1625rem] animate-spin" />
                       ) : (
-                        <Trash2 className="h-3.5 w-3.5 mr-1" />
+                        <Trash2 className="h-[0.56875rem] w-[0.56875rem] mr-[0.1625rem]" />
                       )}
                       Clear
                     </CustomButton>
@@ -531,22 +531,22 @@ export function SizeSelectionModal({
               </div>
 
               {/* Total */}
-              <div className="flex justify-between items-center py-3 border-t mb-4">
+              <div className="flex justify-between items-center py-[0.4875rem] border-t mb-[0.65rem]">
                 <span className="text-muted-foreground">Total</span>
-                <span className="text-xl font-bold text-primary">
+                <span className="text-[0.8125rem] font-bold text-primary">
                   {formatCurrency(displayPrice * currentQuantity)}
                 </span>
               </div>
 
               {/* Action buttons: Discard & Add to Cart */}
-              <div className="flex gap-3">
+              <div className="flex gap-[0.4875rem]">
                 <CustomButton
                   variant="outline"
                   className="flex-1"
                   onClick={handleDiscard}
                   disabled={isSaving}
                 >
-                  <X className="h-4 w-4 mr-1.5" />
+                  <X className="h-[0.65rem] w-[0.65rem] mr-[0.24375rem]" />
                   Discard
                 </CustomButton>
                 <CustomButton
@@ -556,12 +556,12 @@ export function SizeSelectionModal({
                 >
                   {isSaving ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+                      <Loader2 className="h-[0.65rem] w-[0.65rem] mr-[0.24375rem] animate-spin" />
                       Saving...
                     </>
                   ) : (
                     <>
-                      <ShoppingCart className="h-4 w-4 mr-1.5" />
+                      <ShoppingCart className="h-[0.65rem] w-[0.65rem] mr-[0.24375rem]" />
                       Add to Cart
                     </>
                   )}

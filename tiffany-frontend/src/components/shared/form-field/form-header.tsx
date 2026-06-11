@@ -34,23 +34,23 @@ export function FormHeader({
 
   return (
     <DialogHeader
-      className={cn("px-6 pt-6 pb-4 border-b flex-shrink-0", className)}
+      className={cn("px-[0.975rem] pt-[0.975rem] pb-[0.65rem] border-b flex-shrink-0", className)}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-[0.65rem]">
         {/* Avatar or Icon - Left side */}
         {showAvatar ? (
           <CustomAvatar size="xl" name={avatarName} imageUrl={avatarImageUrl} />
         ) : (
-          <div className="p-3 bg-primary/10 border border-primary rounded-lg shrink-0">
-            <Icon className="h-6 w-6 text-primary" />
+          <div className="p-[0.4875rem] bg-primary/10 border border-primary rounded-[0.325rem] shrink-0">
+            <Icon className="h-[0.975rem] w-[0.975rem] text-primary" />
           </div>
         )}
 
         {/* Header Content */}
-        <div className="flex flex-col gap-1.5 flex-1 min-w-0">
-          <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
+        <div className="flex flex-col gap-[0.24375rem] flex-1 min-w-0">
+          <DialogTitle className="text-[0.8125rem] font-semibold">{title}</DialogTitle>
           {description && (
-            <DialogDescription className="text-sm">
+            <DialogDescription className="text-[0.56875rem]">
               {description}
             </DialogDescription>
           )}

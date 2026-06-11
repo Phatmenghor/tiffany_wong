@@ -11,11 +11,11 @@ export function DashboardHeader({ today, onRefresh }: DashboardHeaderProps) {
   return (
     <div className="flex items-center justify-between">
       <div>
-        <h1 className="text-sm font-bold tracking-tight text-foreground">Dashboard</h1>
-        <p className="text-xs text-muted-foreground mt-0.5">{today}</p>
+        <h1 className="text-[0.56875rem] font-bold tracking-tight text-foreground">Dashboard</h1>
+        <p className="text-[0.4875rem] text-muted-foreground mt-[0.08125rem]">{today}</p>
       </div>
-      <Button variant="outline" size="sm" className="gap-1.5 h-8" onClick={onRefresh}>
-        <RefreshCw className="h-3.5 w-3.5" />
+      <Button variant="outline" size="sm" className="gap-[0.24375rem] h-[1.3rem]" onClick={onRefresh}>
+        <RefreshCw className="h-[0.56875rem] w-[0.56875rem]" />
         Refresh
       </Button>
     </div>

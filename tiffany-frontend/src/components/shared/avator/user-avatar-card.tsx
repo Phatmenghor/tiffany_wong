@@ -43,10 +43,10 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
   const justOpenedRef = useRef(false);
 
     const sizeClasses = {
-      sm: { avatar: "h-8 w-8", indicator: "w-2 h-2" },
-      md: { avatar: "h-10 w-10", indicator: "w-3 h-3" },
-      lg: { avatar: "h-12 w-12", indicator: "w-3.5 h-3.5" },
-      xl: { avatar: "h-16 w-16", indicator: "w-4 h-4" },
+      sm: { avatar: "h-[1.3rem] w-[1.3rem]", indicator: "w-[0.325rem] h-[0.325rem]" },
+      md: { avatar: "h-[1.625rem] w-[1.625rem]", indicator: "w-[0.4875rem] h-[0.4875rem]" },
+      lg: { avatar: "h-[1.95rem] w-[1.95rem]", indicator: "w-[0.56875rem] h-[0.56875rem]" },
+      xl: { avatar: "h-[2.6rem] w-[2.6rem]", indicator: "w-[0.65rem] h-[0.65rem]" },
     };
 
   const size = collapsed ? "sm" : avatarSize;
@@ -122,7 +122,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
             >
               <AvatarImage src={getImageWithFallback(user.profileImageUrl, "profile")} alt={displayName} />
               <AvatarFallback
-                className={`${sizes.avatar} rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white text-sm font-bold shadow-sm`}
+                className={`${sizes.avatar} rounded-[0.325rem] bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white text-[0.56875rem] font-bold shadow-sm`}
               >
                 {fallbackLetter}
               </AvatarFallback>
@@ -137,14 +137,14 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
             onMouseLeave={handleMouseLeave}
           >
             <DialogTitle className="sr-only">{displayName || "Image Preview"}</DialogTitle>
-            <div className="relative bg-white p-6 rounded-2xl shadow-2xl border border-border">
-              <div className="flex flex-col items-center gap-4">
+            <div className="relative bg-white p-[0.975rem] rounded-[0.65rem] shadow-2xl border border-border">
+              <div className="flex flex-col items-center gap-[0.65rem]">
                 {/* Loading spinner */}
                 {imageLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-2xl z-10">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-                      <p className="text-sm text-muted-foreground">
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-[0.65rem] z-10">
+                    <div className="flex flex-col items-center gap-[0.4875rem]">
+                      <div className="w-[1.95rem] h-[1.95rem] border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                      <p className="text-[0.56875rem] text-muted-foreground">
                         Loading image...
                       </p>
                     </div>
@@ -154,7 +154,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
                 <img
                   src={getImageWithFallback(user.profileImageUrl, "profile")}
                   alt={displayName}
-                  className="max-w-[70vw] max-h-[70vh] w-auto h-auto object-contain rounded-lg"
+                  className="max-w-[70vw] max-h-[70vh] w-auto h-auto object-contain rounded-[0.325rem]"
                   onLoad={() => setImageLoading(false)}
                   onError={() => setImageLoading(false)}
                   style={{
@@ -162,7 +162,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
                     transition: "opacity 0.3s",
                   }}
                 />
-                <p className="text-lg font-semibold text-center text-gray-900">
+                <p className="text-[0.73125rem] font-semibold text-center text-gray-900">
                   {displayName}
                 </p>
               </div>
@@ -174,7 +174,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
       {/* Online/Offline indicator */}
       {showOnlineIndicator && (
         <div
-          className={`absolute -bottom-0.5 -right-0.5 ${
+          className={`absolute -bottom-[0.08125rem] -right-[0.08125rem] ${
             sizes.indicator
           } rounded-full ${
             isOnline ? "bg-green-500 shadow-green-500/50" : "bg-gray-400"
@@ -187,7 +187,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
   // Collapsed view
   if (collapsed) {
     return (
-      <div className={`border-t border-border/50 p-2 ${className}`}>
+      <div className={`border-t border-border/50 p-[0.325rem] ${className}`}>
         <div className="flex justify-center">{AvatarComponent}</div>
       </div>
     );
@@ -196,18 +196,18 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
   // Expanded view
   const CardContent = (
     <div
-      className={`flex items-center gap-3 p-3 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors duration-300 ${
+      className={`flex items-center gap-[0.4875rem] p-[0.4875rem] rounded-[0.4875rem] bg-primary/10 hover:bg-primary/20 transition-colors duration-300 ${
         profileLink ? "cursor-pointer" : ""
       } group ${className}`}
     >
       {AvatarComponent}
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-foreground truncate">
+        <p className="text-[0.56875rem] font-semibold text-foreground truncate">
           {displayName}
         </p>
         {showEmail && (
-          <p className="text-xs text-muted-foreground truncate">
+          <p className="text-[0.4875rem] text-muted-foreground truncate">
             {user.email || "user@example.com"}
           </p>
         )}
@@ -215,13 +215,13 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
 
       {/* Loading indicator */}
       {isLoading && (
-        <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse shadow-sm shadow-yellow-500/50"></div>
+        <div className="w-[0.325rem] h-[0.325rem] rounded-full bg-yellow-500 animate-pulse shadow-sm shadow-yellow-500/50"></div>
       )}
     </div>
   );
 
   return (
-    <div className={`border-t border-border/50 p-4 ${className}`}>
+    <div className={`border-t border-border/50 p-[0.65rem] ${className}`}>
       {profileLink ? (
         <Link href={profileLink}>{CardContent}</Link>
       ) : (

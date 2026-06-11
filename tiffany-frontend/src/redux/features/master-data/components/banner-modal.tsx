@@ -174,16 +174,16 @@ export default function BannerModal({
             <FormBody>
               {/* Display Redux errors */}
               {reduxError && (
-                <div className="p-4 bg-destructive/10 border border-destructive rounded-lg mb-4">
-                  <p className="text-sm text-destructive font-medium">
+                <div className="p-[0.65rem] bg-destructive/10 border border-destructive rounded-[0.325rem] mb-[0.65rem]">
+                  <p className="text-[0.56875rem] text-destructive font-medium">
                     {reduxError}
                   </p>
                 </div>
               )}
 
-              <div className="space-y-6">
+              <div className="space-y-[0.975rem]">
                 {/* Banner Image Section */}
-                <div className="space-y-3">
+                <div className="space-y-[0.4875rem]">
                   <SpacesImageUpload
                     label="Banner Image"
                     value={imageUrl}
@@ -197,13 +197,13 @@ export default function BannerModal({
                 </div>
 
                 {/* Divider */}
-                <div className="border-t pt-6">
-                  <h3 className="text-sm font-semibold text-foreground mb-4">
+                <div className="border-t pt-[0.975rem]">
+                  <h3 className="text-[0.56875rem] font-semibold text-foreground mb-[0.65rem]">
                     Banner Details
                   </h3>
 
                   {/* Banner Description */}
-                  <div className="grid grid-cols-1 gap-4 mb-4">
+                  <div className="grid grid-cols-1 gap-[0.65rem] mb-[0.65rem]">
                     <TextAreaField
                       control={control}
                       name="description"
@@ -216,7 +216,7 @@ export default function BannerModal({
                   </div>
 
                   {/* Link & Status Grid */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-[0.65rem]">
                     <TextField
                       control={control}
                       name="linkUrl"

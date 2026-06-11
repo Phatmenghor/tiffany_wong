@@ -69,17 +69,17 @@ export function ConfirmationModal({
         <VisuallyHidden asChild>
           <DialogTitle>{title}</DialogTitle>
         </VisuallyHidden>
-        <div className={`p-6 border-b border-border ${headerBgColor}`}>
-          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-          <p className="text-sm text-muted-foreground mt-2">{description}</p>
+        <div className={`p-[0.975rem] border-b border-border ${headerBgColor}`}>
+          <h2 className="text-[0.73125rem] font-semibold text-foreground">{title}</h2>
+          <p className="text-[0.56875rem] text-muted-foreground mt-[0.325rem]">{description}</p>
         </div>
 
         <FormBody>
           {itemName && (
-            <div className="p-3 bg-muted rounded-lg border border-muted-foreground/20">
-              <p className="text-sm">
+            <div className="p-[0.4875rem] bg-muted rounded-[0.325rem] border border-muted-foreground/20">
+              <p className="text-[0.56875rem]">
                 <span className="text-muted-foreground">Item:</span>
-                <span className="font-semibold text-foreground ml-2">
+                <span className="font-semibold text-foreground ml-[0.325rem]">
                   "{itemName}"
                 </span>
               </p>
@@ -88,7 +88,7 @@ export function ConfirmationModal({
 
           {isDangerous && (
             <Alert className="border-red-200 bg-red-50">
-              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <AlertTriangle className="h-[0.65rem] w-[0.65rem] text-red-600" />
               <AlertDescription className="text-red-700">
                 This action cannot be undone.
               </AlertDescription>
@@ -98,7 +98,7 @@ export function ConfirmationModal({
           {/* Error Alert */}
           {error && (
             <Alert variant="destructive">
-              <AlertTriangle className="h-4 w-4" />
+              <AlertTriangle className="h-[0.65rem] w-[0.65rem]" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -117,16 +117,16 @@ export function ConfirmationModal({
             variant={actionVariant}
             onClick={handleConfirm}
             disabled={isDisabled}
-            className={`flex-1 sm:flex-initial gap-2 ${buttonColor}`}
+            className={`flex-1 sm:flex-initial gap-[0.325rem] ${buttonColor}`}
           >
             {isProcessing || isSubmitting ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-[0.65rem] h-[0.65rem] animate-spin" />
                 <span>Processing...</span>
               </>
             ) : (
               <>
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="w-[0.65rem] h-[0.65rem]" />
                 <span>{actionLabel}</span>
               </>
             )}

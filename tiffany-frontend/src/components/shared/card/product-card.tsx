@@ -327,7 +327,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
       <Link href={`/products/${product.id}`}>
         <div
           className={cn(
-            "group relative bg-card rounded-xl border border-border hover:border-primary/30 hover:shadow-lg overflow-hidden transition-all duration-300 flex flex-col cursor-pointer hover-scale-102 hover-lift",
+            "group relative bg-card rounded-[0.4875rem] border border-border hover:border-primary/30 hover:shadow-lg overflow-hidden transition-all duration-300 flex flex-col cursor-pointer hover-scale-102 hover-lift",
             isOutOfStock && "opacity-70",
             product?.hasActivePromotion && "ring-1 ring-amber-500/20",
             className,
@@ -356,10 +356,10 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
 
             {/* Promo badge */}
             {product?.hasActivePromotion && (
-              <div className="absolute top-2 left-2 z-10 pointer-events-none">
+              <div className="absolute top-[0.325rem] left-[0.325rem] z-10 pointer-events-none">
                 <Badge
                   variant="destructive"
-                  className="text-xs font-bold px-2 py-0.5 shadow-md"
+                  className="text-[0.4875rem] font-bold px-[0.325rem] py-[0.08125rem] shadow-md"
                 >
                   {product.displayPromotionType === "PERCENTAGE"
                     ? `${product.displayPromotionValue}%`
@@ -373,7 +373,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
               <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center pointer-events-none">
                 <Badge
                   variant="secondary"
-                  className="text-xs font-semibold px-3 py-1"
+                  className="text-[0.4875rem] font-semibold px-[0.4875rem] py-[0.1625rem]"
                 >
                   Out of Stock
                 </Badge>
@@ -381,12 +381,12 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
             )}
 
             {/* Favorite button */}
-            <div className="absolute top-2 right-2 z-20">
+            <div className="absolute top-[0.325rem] right-[0.325rem] z-20">
               <CustomButton
                 size="icon"
                 variant="secondary"
                 className={cn(
-                  "h-8 w-8 rounded-full shadow-md transition-all duration-150",
+                  "h-[1.3rem] w-[1.3rem] rounded-full shadow-md transition-all duration-150",
                   isFavorited
                     ? "bg-red-500 text-white hover:bg-red-600"
                     : "bg-white/90 hover:bg-red-50 hover:text-red-500",
@@ -395,7 +395,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
               >
                 <Heart
                   className={cn(
-                    "h-4 w-4 transition-all duration-150",
+                    "h-[0.65rem] w-[0.65rem] transition-all duration-150",
                     isFavorited && "fill-current",
                   )}
                 />
@@ -404,12 +404,12 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
 
             {/* Sizes badge */}
             {product.hasSizes && (
-              <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
+              <div className="absolute bottom-[0.325rem] left-[0.325rem] z-10 pointer-events-none">
                 <Badge
                   variant="secondary"
-                  className="text-xs font-medium px-1.5 py-0.5 shadow-sm bg-background/90 backdrop-blur-sm gap-1"
+                  className="text-[0.4875rem] font-medium px-[0.24375rem] py-[0.08125rem] shadow-sm bg-background/90 backdrop-blur-sm gap-[0.1625rem]"
                 >
-                  <Ruler className="h-3 w-3" />
+                  <Ruler className="h-[0.4875rem] w-[0.4875rem]" />
                   Sizes
                 </Badge>
               </div>
@@ -417,56 +417,56 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
           </div>
 
           {/* Info */}
-          <div className="p-3 flex flex-col flex-1">
-            <h3 className="font-medium text-sm line-clamp-2 mb-2 leading-snug min-h-[40px]">
+          <div className="p-[0.4875rem] flex flex-col flex-1">
+            <h3 className="font-medium text-[0.56875rem] line-clamp-2 mb-[0.325rem] leading-snug min-h-[40px]">
               {product.name}
             </h3>
 
             <div className="mt-auto">
-              <div className="flex flex-col mb-2.5">
+              <div className="flex flex-col mb-[0.40625rem]">
                 <span
                   className={cn(
-                    "text-xs text-muted-foreground line-through",
+                    "text-[0.4875rem] text-muted-foreground line-through",
                     !product.hasActivePromotion && "invisible",
                   )}
                 >
                   {formatCurrency(product.displayOriginPrice)}
                 </span>
-                <span className="text-base font-bold text-primary">
+                <span className="text-[0.65rem] font-bold text-primary">
                   {formatCurrency(product.displayPrice)}
                 </span>
               </div>
 
               {isInCart ? (
-                <div className="flex items-center gap-1.5 w-full">
+                <div className="flex items-center gap-[0.24375rem] w-full">
                   <CustomButton
                     size="icon"
                     variant="outline"
-                    className="h-8 w-8 shrink-0 hover:bg-destructive hover:text-destructive-foreground"
+                    className="h-[1.3rem] w-[1.3rem] shrink-0 hover:bg-destructive hover:text-destructive-foreground"
                     onClick={handleDecrement}
                   >
-                    <Minus className="h-3 w-3" />
+                    <Minus className="h-[0.4875rem] w-[0.4875rem]" />
                   </CustomButton>
-                  <div className="flex-1 text-center h-8 bg-primary/10 text-primary font-semibold text-sm rounded-lg border border-primary/20 flex items-center justify-center">
+                  <div className="flex-1 text-center h-[1.3rem] bg-primary/10 text-primary font-semibold text-[0.56875rem] rounded-[0.325rem] border border-primary/20 flex items-center justify-center">
                     {displayQuantity}
                   </div>
                   <CustomButton
                     size="icon"
                     variant="outline"
-                    className="h-8 w-8 shrink-0 hover:bg-primary hover:text-primary-foreground"
+                    className="h-[1.3rem] w-[1.3rem] shrink-0 hover:bg-primary hover:text-primary-foreground"
                     onClick={handleIncrement}
                   >
-                    <Plus className="h-3 w-3" />
+                    <Plus className="h-[0.4875rem] w-[0.4875rem]" />
                   </CustomButton>
                 </div>
               ) : (
                 <CustomButton
-                  className="w-full gap-1.5 h-8 text-xs font-semibold"
+                  className="w-full gap-[0.24375rem] h-[1.3rem] text-[0.4875rem] font-semibold"
                   onClick={handleAddToCart}
                   disabled={isOutOfStock}
                   size="sm"
                 >
-                  <ShoppingCart className="h-3.5 w-3.5" />
+                  <ShoppingCart className="h-[0.56875rem] w-[0.56875rem]" />
                   Add to Cart
                 </CustomButton>
               )}

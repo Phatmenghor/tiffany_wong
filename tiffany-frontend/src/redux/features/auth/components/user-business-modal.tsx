@@ -301,7 +301,7 @@ export default function UserBusinessModal({
         />
 
         {!isCreate && isFetchingDetail ? (
-          <div className="p-6 flex items-center justify-center min-h-[400px] flex-1">
+          <div className="p-[0.975rem] flex items-center justify-center min-h-[400px] flex-1">
             <Loading />
           </div>
         ) : (
@@ -311,21 +311,21 @@ export default function UserBusinessModal({
           >
             <FormBody>
               {reduxError && (
-                <div className="p-4 bg-destructive/10 border border-destructive rounded-lg mb-4">
-                  <p className="text-sm text-destructive font-medium">
+                <div className="p-[0.65rem] bg-destructive/10 border border-destructive rounded-[0.325rem] mb-[0.65rem]">
+                  <p className="text-[0.56875rem] text-destructive font-medium">
                     {reduxError}
                   </p>
                 </div>
               )}
 
-              <div className="space-y-6">
+              <div className="space-y-[0.975rem]">
                 {/* Account Credentials - CREATE MODE */}
                 {isCreate && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">
+                  <div className="space-y-[0.65rem]">
+                    <h3 className="text-[0.73125rem] font-semibold">
                       Account Credentials <span className="text-red-500">*</span>
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
                       <TextField
                         control={control}
                         name="userIdentifier"
@@ -384,14 +384,14 @@ export default function UserBusinessModal({
                 )}
 
                 {/* Personal Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">
+                <div className="space-y-[0.65rem]">
+                  <h3 className="text-[0.73125rem] font-semibold">
                     Personal Information
                   </h3>
-                  <div className="space-y-4">
+                  <div className="space-y-[0.65rem]">
                     {/* User Role and Account Status - EDIT MODE ONLY */}
                     {!isCreate && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
                         <SelectField
                           control={control}
                           name="userRole"
@@ -417,7 +417,7 @@ export default function UserBusinessModal({
                     )}
 
                     {/* Personal Details Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
                       <TextField
                         control={control}
                         name="firstName"
@@ -493,7 +493,7 @@ export default function UserBusinessModal({
                           })
                         }
                         aspectRatio="square"
-                        height="h-40"
+                        height="h-[6.5rem]"
                         maxSize={5}
                         disabled={isSubmitting}
                         error={errors.profileImageUrl as any}
@@ -503,7 +503,7 @@ export default function UserBusinessModal({
                 </div>
 
                 {/* Remarks */}
-                <div className="space-y-4">
+                <div className="space-y-[0.65rem]">
                   <TextareaField
                     control={control}
                     name="remark"
