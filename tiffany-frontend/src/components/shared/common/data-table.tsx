@@ -150,7 +150,7 @@ export function DataTableWithPagination<T = any>({
                 {columns.map((column) => (
                   <th
                     key={column.key}
-                    className={`px-[0.65rem] py-[0.4875rem] text-left font-semibold text-[0.4875rem] text-muted-foreground border-b border-border ${
+                    className={`px-[0.65rem] py-[0.4875rem] text-left font-semibold text-[0.4375rem] text-muted-foreground border-b border-border ${
                       column.className || ""
                     }`}
                     style={{
@@ -206,7 +206,7 @@ export function DataTableWithPagination<T = any>({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`px-[0.65rem] py-[0.4875rem] text-left font-semibold text-[0.4875rem] text-muted-foreground border-b border-border ${
+                  className={`px-[0.65rem] py-[0.4875rem] text-left font-semibold text-[0.4375rem] text-muted-foreground border-b border-border ${
                     column.className || ""
                   }`}
                   style={{

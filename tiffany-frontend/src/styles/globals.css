@@ -536,7 +536,7 @@
 }
 
 .data-table {
-  font-size: 0.5rem;
+  font-size: 0.4375rem;
 }
 
 @layer base {
@@ -545,6 +545,10 @@
     /* Prevent Safari from auto-scaling text when orientation changes */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+  }
+
+  body {
+    font-size: 0.56875rem;
   }
 
   :root {
