@@ -214,10 +214,10 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
                 </div>
               </div>
               <div className="flex flex-col">
-                <span className="text-foreground font-bold text-[0.56875rem] leading-tight tracking-tight">
+                <span className="text-foreground font-bold text-[13px] leading-tight tracking-tight">
                   {businessName}
                 </span>
-                <span className="text-muted-foreground text-[0.4875rem] font-medium tracking-wide">
+                <span className="text-muted-foreground text-[11px] font-medium tracking-wide">
                   Dashboard
                 </span>
               </div>
