@@ -535,7 +535,10 @@
   grid-template-columns: repeat(var(--cols), minmax(min(200px, 100%), 1fr));
 }
 
-.data-table {
+.data-table,
+.data-table td,
+.data-table td > div,
+.data-table td span {
   font-size: 8px;
 }
 
