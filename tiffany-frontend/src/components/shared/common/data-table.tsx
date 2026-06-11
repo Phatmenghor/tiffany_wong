@@ -170,7 +170,7 @@ export function DataTableWithPagination<T = any>({
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className="px-[0.65rem] py-[0.4875rem] border-b border-border/50 text-[8px]"
+                      className="px-[0.65rem] py-[0.4875rem] border-b border-border/50 text-[14px]"
                       style={{
                         ...(column.width && { width: column.width }),
                         ...(column.maxWidth && { maxWidth: column.maxWidth }),
@@ -247,7 +247,7 @@ export function DataTableWithPagination<T = any>({
                     return (
                       <td
                         key={column.key}
-                        className={`px-[0.65rem] py-[0.4875rem] border-b border-border/50 text-[8px] ${
+                        className={`px-[0.65rem] py-[0.4875rem] border-b border-border/50 text-[14px] ${
                           column.className || ""
                         }`}
                         style={{
