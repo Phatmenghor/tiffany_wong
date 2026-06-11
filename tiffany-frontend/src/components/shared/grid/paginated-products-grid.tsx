@@ -32,7 +32,7 @@ const PaginatedProductsGridComponent = ({
   hasMore,
   onLoadMore,
   isInitialLoading = false,
-  className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-[0.4875rem] sm:gap-[0.65rem]",
+  className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4",
   sectionKey = "product", // Default section identifier
 }: PaginatedProductsGridProps) => {
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -139,9 +139,9 @@ const PaginatedProductsGridComponent = ({
 
         {/* Loading spinner ALWAYS show while hasMore: true - never hide */}
         {hasMore && (
-          <div className="col-span-full flex flex-col items-center justify-center py-[1.3rem]">
-            <Loader2 className="h-[0.975rem] w-[0.975rem] animate-spin text-primary mb-[0.325rem]" />
-            <p className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground">
+          <div className="col-span-full flex flex-col items-center justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-primary mb-2" />
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Loading more products...
             </p>
           </div>
@@ -151,7 +151,7 @@ const PaginatedProductsGridComponent = ({
         {hasMore && !loading && (
           <div
             ref={sentinelRef}
-            className="h-[1.625rem]"
+            className="h-10"
             aria-label="Load more products trigger"
           />
         )}

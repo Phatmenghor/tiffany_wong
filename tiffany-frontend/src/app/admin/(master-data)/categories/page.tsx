@@ -198,19 +198,19 @@ export default function CategoriesPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-[0.65rem] px-[0.325rem]">
-      <div className="space-y-[0.65rem]">
+    <div className="flex flex-1 flex-col gap-4 px-2">
+      <div className="space-y-4">
         <CardHeaderSection
           title="Categories Information"
           searchValue={filters.search}
           searchPlaceholder="Search categories..."
           buttonTooltip="Create a new banner"
-          buttonIcon={<Plus className="w-[0.4875rem] h-[0.4875rem]" />}
+          buttonIcon={<Plus className="w-3 h-3" />}
           buttonText="New"
           onSearchChange={handleSearchChange}
           openModal={handleCreateCategories}
         >
-          <div className="flex flex-wrap items-center gap-[0.325rem]">
+          <div className="flex flex-wrap items-center gap-2">
             <CustomSelect
               options={STATUS_FILTER}
               value={filters.status}

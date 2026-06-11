@@ -55,7 +55,7 @@ export const categoriesTableColumns = ({
       maxWidth: "400px",
       render: (categories) => {
         return (
-          <div className="h-[1.95rem] w-[1.95rem] rounded-md overflow-hidden bg-muted border border-border flex-shrink-0">
+          <div className="h-12 w-12 rounded-md overflow-hidden bg-muted border border-border flex-shrink-0">
             <img
               src={getImageWithFallback(categories.imageUrl, "category")}
               alt={categories?.name}
@@ -76,7 +76,7 @@ export const categoriesTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (categories) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-xs text-muted-foreground">
           {categories?.name || "---"}
         </span>
       ),
@@ -91,7 +91,7 @@ export const categoriesTableColumns = ({
       render: (categories) => {
         const total = categories?.totalProducts ?? 0;
         return (
-          <span className="text-[0.4875rem] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {formatProductCount(total)}
           </span>
         );
@@ -107,7 +107,7 @@ export const categoriesTableColumns = ({
       render: (categories) => {
         const active = categories?.activeProducts ?? 0;
         return (
-          <span className="text-[0.4875rem] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {formatProductCount(active)}
           </span>
         );
@@ -121,12 +121,12 @@ export const categoriesTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (categories) => (
-        <div className="flex items-center gap-[0.325rem]">
+        <div className="flex items-center gap-2">
           <Switch
             checked={categories?.status === "ACTIVE"}
             onCheckedChange={() => handleToggleCategoryStatus(categories)}
           />
-          <span className="text-[0.4875rem] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {categories?.status ? formatEnumValue(categories.status) : "---"}
           </span>
         </div>
@@ -139,7 +139,7 @@ export const categoriesTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (categories) => (
-        <span className="text-[0.56875rem] text-muted-foreground">
+        <span className="text-sm text-muted-foreground">
           {dateTimeFormat(categories?.createdAt)}
         </span>
       ),
@@ -151,19 +151,19 @@ export const categoriesTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (categories) => (
-        <div className="flex items-center gap-[0.325rem]">
+        <div className="flex items-center gap-2">
           <ActionButton
-            icon={<Eye className="w-[0.65rem] h-[0.65rem]" />}
+            icon={<Eye className="w-4 h-4" />}
             tooltip="View Details"
             onClick={() => handleCategoriesViewDetail(categories)}
           />
           <ActionButton
-            icon={<Edit className="w-[0.65rem] h-[0.65rem]" />}
+            icon={<Edit className="w-4 h-4" />}
             tooltip="Edit Brand"
             onClick={() => handleEditCategories(categories)}
           />
           <ActionButton
-            icon={<Trash className="w-[0.65rem] h-[0.65rem]" />}
+            icon={<Trash className="w-4 h-4" />}
             tooltip="Delete Brand"
             onClick={() => handleDeleteCategories(categories)}
             variant="destructive"

@@ -110,46 +110,46 @@ export function ModernToastContent({
 
   return (
     <div
-      className={`${getBgColor()} ${getBorderLeftColor()} border-l-4 border-t border-r border-b rounded-md p-[0.65rem] w-[15.6rem] shadow-lg`}
+      className={`${getBgColor()} ${getBorderLeftColor()} border-l-4 border-t border-r border-b rounded-md p-4 w-96 shadow-lg`}
     >
       {/* Header with Title and ID */}
-      <div className="flex justify-between items-start mb-[0.4875rem] pb-[0.4875rem] border-b border-gray-200">
+      <div className="flex justify-between items-start mb-3 pb-3 border-b border-gray-200">
         <div className="flex-1">
-          <h4 className={`${getTitleColor()} font-semibold text-[0.65rem] leading-tight`}>
+          <h4 className={`${getTitleColor()} font-semibold text-base leading-tight`}>
             {title}
           </h4>
         </div>
       </div>
 
       {/* Message */}
-      <p className="text-gray-700 text-[0.56875rem] leading-relaxed mb-[0.4875rem]">
+      <p className="text-gray-700 text-sm leading-relaxed mb-3">
         {message}
       </p>
 
       {/* Validation Data if provided */}
       {validationData && (
-        <div className="border-t border-gray-200 pt-[0.4875rem] mb-[0.4875rem]">
-          <div className="space-y-[0.325rem]">
-            <div className="flex justify-between text-[0.4875rem] mb-[0.325rem]">
+        <div className="border-t border-gray-200 pt-3 mb-3">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs mb-2">
               <span className="text-gray-600 font-medium">NID:</span>
               <span className="text-gray-800 font-mono">{validationData.nid}</span>
             </div>
-            <div className="flex justify-between text-[0.4875rem]">
+            <div className="flex justify-between text-xs">
               <span className="text-gray-600 font-medium">Score:</span>
               <span className="text-gray-800 font-mono">{validationData.score}</span>
             </div>
             {validationData.incorrectFields && validationData.incorrectFields.length > 0 && (
-              <div className="text-[0.4875rem] mt-[0.325rem]">
+              <div className="text-xs mt-2">
                 <span className="text-gray-600 font-medium">Incorrect Fields:</span>
                 <ul className="list-disc list-inside text-gray-700">
                   {validationData.incorrectFields.map((field, idx) => (
-                    <li key={idx} className="text-[0.4875rem] text-gray-700">{field}</li>
+                    <li key={idx} className="text-xs text-gray-700">{field}</li>
                   ))}
                 </ul>
               </div>
             )}
-            <div className="border-t border-gray-200 pt-[0.325rem] mt-[0.325rem]">
-              <div className="text-[0.4875rem] space-y-[0.1625rem]">
+            <div className="border-t border-gray-200 pt-2 mt-2">
+              <div className="text-xs space-y-1">
                 {validationData.nameKH && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Name KH:</span>
@@ -200,10 +200,10 @@ export function ModernToastContent({
 
       {/* Regular Details if provided */}
       {details && Object.keys(details).length > 0 && !validationData && (
-        <div className="border-t border-gray-200 pt-[0.4875rem] mb-[0.4875rem]">
-          <div className="grid grid-cols-1 gap-[0.325rem]">
+        <div className="border-t border-gray-200 pt-3 mb-3">
+          <div className="grid grid-cols-1 gap-2">
             {Object.entries(details).map(([key, value]) => (
-              <div key={key} className="flex justify-between text-[0.4875rem]">
+              <div key={key} className="flex justify-between text-xs">
                 <span className="text-gray-600 font-medium">{key}:</span>
                 <span className="text-gray-800 font-mono">{String(value)}</span>
               </div>
@@ -213,10 +213,10 @@ export function ModernToastContent({
       )}
 
       {/* Footer with Timestamp */}
-      <div className="border-t border-gray-200 pt-[0.325rem] mt-[0.4875rem]">
-        <div className="flex justify-between text-[0.4875rem]">
+      <div className="border-t border-gray-200 pt-2 mt-3">
+        <div className="flex justify-between text-xs">
           <span className="text-gray-500">Time</span>
-          <span className="text-gray-700 text-[0.4875rem]">{timestamp}</span>
+          <span className="text-gray-700 text-xs">{timestamp}</span>
         </div>
       </div>
     </div>

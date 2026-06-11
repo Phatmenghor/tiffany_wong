@@ -32,7 +32,7 @@ export function ProductMainImage({
           value={mainImageUrl}
           onChange={onImageChange}
           aspectRatio="square"
-          height="h-[7.8rem]"
+          height="h-48"
           maxSize={5}
           required
           error={errors.mainImageUrl}

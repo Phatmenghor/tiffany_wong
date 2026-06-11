@@ -212,35 +212,35 @@ export default function PublicProfilePage() {
 
   return (
     <PageContainer>
-      <div className="flex flex-1 flex-col gap-[0.65rem] py-[0.65rem]">
+      <div className="flex flex-1 flex-col gap-4 py-4">
         {/* Page Header */}
-        <div className="w-full mb-[0.325rem]">
-          <h1 className="text-[1.21875rem] font-bold text-foreground">
+        <div className="w-full mb-2">
+          <h1 className="text-3xl font-bold text-foreground">
             Customer Profile
           </h1>
-          <p className="text-muted-foreground text-[0.56875rem] mt-[0.1625rem]">
+          <p className="text-muted-foreground text-sm mt-1">
             Manage your personal information and account settings
           </p>
         </div>
 
-        <div className="space-y-[0.65rem] w-full">
-          <Card className="mb-[0.975rem] border-primary/30 bg-gradient-to-br from-primary/5 via-background to-primary/5 shadow-md">
-            <CardContent className="p-[0.975rem]">
-              <div className="flex items-center gap-[0.65rem]">
+        <div className="space-y-4 w-full">
+          <Card className="mb-6 border-primary/30 bg-gradient-to-br from-primary/5 via-background to-primary/5 shadow-md">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
                 {/* Profile Image - Camera Icon */}
                 <div
                   className="relative group cursor-pointer"
                   onClick={() => setIsProfilePictureModalOpen(true)}
                 >
-                  <div className="relative ring-2 ring-primary/20 rounded-[0.65rem]">
+                  <div className="relative ring-2 ring-primary/20 rounded-2xl">
                     <CustomAvatar
                       imageUrl={userProfile?.profileImageUrl || undefined}
                       name={userProfile?.fullName}
                       size="xxl"
                     />
                     {/* Camera Icon Overlay */}
-                    <div className="absolute bottom-[0.1625rem] right-[0.1625rem] bg-primary rounded-full p-[0.325rem] opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:shadow-primary/50 hover:bg-primary/80">
-                      <Camera className="h-[0.65rem] w-[0.65rem] text-white" />
+                    <div className="absolute bottom-1 right-1 bg-primary rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:shadow-primary/50 hover:bg-primary/80">
+                      <Camera className="h-4 w-4 text-white" />
                     </div>
                   </div>
                 </div>
@@ -248,20 +248,20 @@ export default function PublicProfilePage() {
                 <div className="flex-1">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h2 className="text-[0.975rem] font-bold text-foreground">
+                      <h2 className="text-2xl font-bold text-foreground">
                         {userProfile?.fullName}
                       </h2>
-                      <p className="text-primary/70 text-[0.56875rem] font-medium">
+                      <p className="text-primary/70 text-sm font-medium">
                         {userProfile?.email}
                       </p>
-                      <div className="flex items-center gap-[0.325rem] mt-[0.325rem]">
-                        <span className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-primary text-[0.4875rem] font-semibold">
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-semibold">
                           {userProfile?.accountStatus}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex gap-[0.325rem]">
+                    <div className="flex gap-2">
                       {isEditing ? (
                         <>
                           <Button
@@ -283,7 +283,7 @@ export default function PublicProfilePage() {
                           >
                             {isProfileLoading || isUploadingImage ? (
                               <>
-                                <Loader2 className="h-[0.4875rem] w-[0.4875rem] mr-[0.1625rem] animate-spin" />
+                                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                                 {isUploadingImage
                                   ? "Uploading..."
                                   : "Saving..."}
@@ -299,7 +299,7 @@ export default function PublicProfilePage() {
                           onClick={() => setIsEditing(true)}
                           className="bg-primary hover:bg-primary/90 text-white"
                         >
-                          <Edit className="h-[0.4875rem] w-[0.4875rem] mr-[0.1625rem]" />
+                          <Edit className="h-3 w-3 mr-1" />
                           Edit
                         </Button>
                       )}
@@ -311,7 +311,7 @@ export default function PublicProfilePage() {
           </Card>
 
           {/* Navigation Tabs - Premium Clean Design */}
-          <div className="flex gap-0 mb-[1.3rem] w-full relative group border border-primary/30 rounded-[0.4875rem] overflow-hidden">
+          <div className="flex gap-0 mb-8 w-full relative group border border-primary/30 rounded-xl overflow-hidden">
             {/* Background indicator */}
             <div
               className={cn(
@@ -327,8 +327,8 @@ export default function PublicProfilePage() {
             <button
               onClick={() => setActiveSection("profile")}
               className={cn(
-                "flex-1 flex items-center justify-center gap-[0.40625rem] py-[0.65rem] px-[0.975rem] relative z-10",
-                "text-[0.56875rem] font-semibold transition-all duration-300",
+                "flex-1 flex items-center justify-center gap-2.5 py-4 px-6 relative z-10",
+                "text-sm font-semibold transition-all duration-300",
                 "border-r border-primary/20",
                 activeSection === "profile"
                   ? "text-foreground"
@@ -337,7 +337,7 @@ export default function PublicProfilePage() {
             >
               <User
                 className={cn(
-                  "h-[0.65rem] w-[0.65rem] transition-all duration-300",
+                  "h-4 w-4 transition-all duration-300",
                   activeSection === "profile" ? "scale-110" : "scale-100",
                 )}
               />
@@ -348,8 +348,8 @@ export default function PublicProfilePage() {
             <button
               onClick={() => setActiveSection("security")}
               className={cn(
-                "flex-1 flex items-center justify-center gap-[0.40625rem] py-[0.65rem] px-[0.975rem] relative z-10",
-                "text-[0.56875rem] font-semibold transition-all duration-300",
+                "flex-1 flex items-center justify-center gap-2.5 py-4 px-6 relative z-10",
+                "text-sm font-semibold transition-all duration-300",
                 activeSection === "security"
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground/70",
@@ -357,7 +357,7 @@ export default function PublicProfilePage() {
             >
               <Lock
                 className={cn(
-                  "h-[0.65rem] w-[0.65rem] transition-all duration-300",
+                  "h-4 w-4 transition-all duration-300",
                   activeSection === "security" ? "scale-110" : "scale-100",
                 )}
               />
@@ -368,14 +368,14 @@ export default function PublicProfilePage() {
           {/* Profile Section */}
           {activeSection === "profile" && (
             <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-              <div className="w-full space-y-[0.975rem]">
+              <div className="w-full space-y-6">
                 {/* Personal Information */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Personal Information</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-[0.65rem]">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {isEditing ? (
                         <>
                           <TextField
@@ -479,16 +479,16 @@ export default function PublicProfilePage() {
 
           {/* Security Section */}
           {activeSection === "security" && (
-            <div className="space-y-[0.65rem]">
+            <div className="space-y-4">
               {/* Change Password */}
               <Card>
-                <CardContent className="p-[0.65rem] sm:p-[0.975rem]">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-[0.4875rem]">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                       <h3 className="font-semibold text-foreground">
                         Change Password
                       </h3>
-                      <p className="text-[0.56875rem] text-muted-foreground mt-[0.1625rem]">
+                      <p className="text-sm text-muted-foreground mt-1">
                         Update your password to keep your account secure
                       </p>
                     </div>
@@ -498,7 +498,7 @@ export default function PublicProfilePage() {
                       onClick={() => setIsChangePasswordModalOpen(true)}
                       className="w-full sm:w-auto"
                     >
-                      <Lock className="h-[0.65rem] w-[0.65rem] mr-[0.325rem]" />
+                      <Lock className="h-4 w-4 mr-2" />
                       Change Password
                     </Button>
                   </div>
@@ -507,13 +507,13 @@ export default function PublicProfilePage() {
 
               {/* Delete Account */}
               <Card className="border-destructive/50">
-                <CardContent className="p-[0.65rem] sm:p-[0.975rem]">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-[0.4875rem]">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                       <h3 className="font-semibold text-destructive">
                         Delete Account
                       </h3>
-                      <p className="text-[0.56875rem] text-muted-foreground mt-[0.1625rem]">
+                      <p className="text-sm text-muted-foreground mt-1">
                         Permanently delete your account and all associated data
                       </p>
                     </div>
@@ -523,7 +523,7 @@ export default function PublicProfilePage() {
                       onClick={() => setIsDeleteDialogOpen(true)}
                       className="w-full sm:w-auto"
                     >
-                      <Trash2 className="h-[0.65rem] w-[0.65rem] mr-[0.325rem]" />
+                      <Trash2 className="h-4 w-4 mr-2" />
                       Delete Account
                     </Button>
                   </div>

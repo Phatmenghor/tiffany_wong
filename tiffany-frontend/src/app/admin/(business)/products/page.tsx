@@ -398,8 +398,8 @@ export default function ProductPage() {
   }), [filters.search, filters.status, selectedCategories, sizeFilter, sortBy, sortDirection]);
 
   return (
-    <div className="flex flex-1 flex-col gap-[0.65rem] px-[0.325rem]">
-      <div className="space-y-[0.65rem]">
+    <div className="flex flex-1 flex-col gap-4 px-2">
+      <div className="space-y-4">
         <CollapsibleFilterPanel
           config={filterConfig}
           essentialFilterIds={["category", "status"]}

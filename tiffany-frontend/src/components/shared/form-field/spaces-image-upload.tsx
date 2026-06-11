@@ -60,9 +60,9 @@ export function SpacesImageUpload({
 
   const getHeightClass = () => {
     if (height) return height;
-    if (aspectRatio === "banner") return "h-[7.8rem]";
-    if (aspectRatio === "auto") return "h-[10.4rem]";
-    return "h-[9.1rem]";
+    if (aspectRatio === "banner") return "h-48";
+    if (aspectRatio === "auto") return "h-64";
+    return "h-56";
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,13 +105,13 @@ export function SpacesImageUpload({
   };
 
   return (
-    <div className="space-y-[0.325rem]">
-      <Label className="text-[0.56875rem] font-medium">
+    <div className="space-y-2">
+      <Label className="text-sm font-medium">
         {label}
-        {required && <span className="text-red-500 ml-[0.1625rem]">*</span>}
+        {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
 
-      <div className="space-y-[0.4875rem]">
+      <div className="space-y-3">
         <div
           onClick={handleClick}
           className={cn(
@@ -145,9 +145,9 @@ export function SpacesImageUpload({
               />
 
               <div className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
-                <div className="opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-[0.325rem] text-white">
-                  <Upload className="h-[1.3rem] w-[1.3rem]" />
-                  <p className="text-[0.56875rem] font-medium">Click to change image</p>
+                <div className="opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2 text-white">
+                  <Upload className="h-8 w-8" />
+                  <p className="text-sm font-medium">Click to change image</p>
                 </div>
               </div>
 
@@ -156,23 +156,23 @@ export function SpacesImageUpload({
                   type="button"
                   variant="destructive"
                   size="sm"
-                  className="absolute top-[0.4875rem] right-[0.4875rem] z-10"
+                  className="absolute top-3 right-3 z-10"
                   onClick={handleRemove}
                 >
-                  <X className="h-[0.65rem] w-[0.65rem]" />
+                  <X className="h-4 w-4" />
                 </Button>
               )}
             </>
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-[0.4875rem] bg-muted/30">
-              <div className="p-[0.65rem] bg-muted rounded-full">
-                <ImageIcon className="h-[1.625rem] w-[1.625rem] text-muted-foreground" />
+            <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-muted/30">
+              <div className="p-4 bg-muted rounded-full">
+                <ImageIcon className="h-10 w-10 text-muted-foreground" />
               </div>
-              <div className="text-center px-[0.65rem]">
-                <p className="text-[0.56875rem] font-medium text-foreground">
+              <div className="text-center px-4">
+                <p className="text-sm font-medium text-foreground">
                   {placeholder}
                 </p>
-                <p className="text-[0.4875rem] text-muted-foreground mt-[0.1625rem]">
+                <p className="text-xs text-muted-foreground mt-1">
                   {helperText || `PNG, JPG, GIF up to ${maxSize}MB`}
                 </p>
               </div>
@@ -181,13 +181,13 @@ export function SpacesImageUpload({
         </div>
 
         {value && !disabled && showPreviewText && (
-          <p className="text-[0.4875rem] text-muted-foreground text-center">
+          <p className="text-xs text-muted-foreground text-center">
             Click on the image to change it
           </p>
         )}
       </div>
 
-      {error && <p className="text-[0.4875rem] text-red-500">{error.message}</p>}
+      {error && <p className="text-xs text-red-500">{error.message}</p>}
     </div>
   );
 }

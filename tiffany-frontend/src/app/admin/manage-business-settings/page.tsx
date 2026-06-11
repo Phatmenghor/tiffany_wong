@@ -116,28 +116,28 @@ export default function BusinessSettingsPage() {
   if (isLoading && isHydrated) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-[1.3rem] w-[1.3rem] animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-[0.975rem] px-[0.65rem] py-[0.975rem]">
-      <div className="space-y-[0.325rem]">
-        <h1 className="text-[1.21875rem] font-bold">System Settings</h1>
+    <div className="flex flex-1 flex-col gap-6 px-4 py-6">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold">System Settings</h1>
         <p className="text-muted-foreground">
           Manage your business configuration and social media links
         </p>
       </div>
 
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[0.975rem]">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {/* Basic Settings */}
         <Card>
           <CardHeader>
             <CardTitle>Basic Settings</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-[0.975rem]">
-            <div className="space-y-[0.325rem]">
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
@@ -145,7 +145,7 @@ export default function BusinessSettingsPage() {
                 {...form.register("description")}
                 rows={3}
               />
-              <p className="text-[0.4875rem] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 Brief description shown in the footer under the business name
               </p>
             </div>
@@ -157,8 +157,8 @@ export default function BusinessSettingsPage() {
           <CardHeader>
             <CardTitle>Contact Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-[0.65rem]">
-            <div className="space-y-[0.325rem]">
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
               <Label htmlFor="contactAddress">Contact Address</Label>
               <Input
                 id="contactAddress"
@@ -167,8 +167,8 @@ export default function BusinessSettingsPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[0.65rem]">
-              <div className="space-y-[0.325rem]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label htmlFor="contactPhone">Contact Phone</Label>
                 <Input
                   id="contactPhone"
@@ -177,7 +177,7 @@ export default function BusinessSettingsPage() {
                 />
               </div>
 
-              <div className="space-y-[0.325rem]">
+              <div className="space-y-2">
                 <Label htmlFor="contactEmail">Contact Email</Label>
                 <Input
                   id="contactEmail"
@@ -186,7 +186,7 @@ export default function BusinessSettingsPage() {
                   {...form.register("contactEmail")}
                 />
                 {form.formState.errors.contactEmail && (
-                  <p className="text-[0.4875rem] text-destructive">
+                  <p className="text-xs text-destructive">
                     {form.formState.errors.contactEmail.message}
                   </p>
                 )}
@@ -200,10 +200,10 @@ export default function BusinessSettingsPage() {
           <CardHeader>
             <CardTitle>Social Media</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-[0.65rem]">
-            <div className="space-y-[0.325rem]">
-              <Label htmlFor="facebookUrl" className="flex items-center gap-[0.325rem]">
-                <Facebook className="h-[0.65rem] w-[0.65rem] text-blue-600" />
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="facebookUrl" className="flex items-center gap-2">
+                <Facebook className="h-4 w-4 text-blue-600" />
                 Facebook
               </Label>
               <Input
@@ -215,9 +215,9 @@ export default function BusinessSettingsPage() {
               />
             </div>
 
-            <div className="space-y-[0.325rem]">
-              <Label htmlFor="instagramUrl" className="flex items-center gap-[0.325rem]">
-                <Instagram className="h-[0.65rem] w-[0.65rem] text-pink-500" />
+            <div className="space-y-2">
+              <Label htmlFor="instagramUrl" className="flex items-center gap-2">
+                <Instagram className="h-4 w-4 text-pink-500" />
                 Instagram
               </Label>
               <Input
@@ -229,9 +229,9 @@ export default function BusinessSettingsPage() {
               />
             </div>
 
-            <div className="space-y-[0.325rem]">
-              <Label htmlFor="telegramUrl" className="flex items-center gap-[0.325rem]">
-                <Send className="h-[0.65rem] w-[0.65rem] text-sky-500" />
+            <div className="space-y-2">
+              <Label htmlFor="telegramUrl" className="flex items-center gap-2">
+                <Send className="h-4 w-4 text-sky-500" />
                 Telegram
               </Label>
               <Input
@@ -246,7 +246,7 @@ export default function BusinessSettingsPage() {
         </Card>
 
         {/* Action Buttons */}
-        <div className="flex gap-[0.4875rem] justify-end pt-[0.65rem] border-t">
+        <div className="flex gap-3 justify-end pt-4 border-t">
           <Button
             type="button"
             variant="outline"
@@ -263,12 +263,12 @@ export default function BusinessSettingsPage() {
           >
             {isSaving ? (
               <>
-                <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Saving...
               </>
             ) : (
               <>
-                <Save className="mr-[0.325rem] h-[0.65rem] w-[0.65rem]" />
+                <Save className="mr-2 h-4 w-4" />
                 Save Changes
               </>
             )}

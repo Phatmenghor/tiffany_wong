@@ -74,21 +74,21 @@ const PromotionsSectionComponent = ({
    * Features: gradient background, decorative blur, responsive sizing
    */
   const PromotionHeader = ({ showDecoration = false }) => (
-    <div className="relative overflow-hidden rounded-[0.65rem] bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 p-[0.65rem] sm:p-[0.975rem] md:p-[1.3rem] mb-[0.975rem] shadow-sm">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 p-4 sm:p-6 md:p-8 mb-6 shadow-sm">
       {/* Decorative blur effect - only on content view */}
       {showDecoration && (
-        <div className="absolute top-0 right-0 w-[5.2rem] h-[5.2rem] sm:w-[10.4rem] sm:h-[10.4rem] bg-gradient-to-br from-red-200/20 to-orange-200/20 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-32 h-32 sm:w-64 sm:h-64 bg-gradient-to-br from-red-200/20 to-orange-200/20 rounded-full blur-3xl" />
       )}
 
       <div className="relative">
-        <h2 className="text-[0.8125rem] sm:text-[0.975rem] md:text-[1.21875rem] font-bold tracking-tight flex items-center gap-[0.325rem] mb-[0.325rem]">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-2 mb-2">
           <Flame
-            className="h-[0.8125rem] w-[0.8125rem] sm:h-[0.975rem] sm:w-[0.975rem] md:h-[1.1375rem] md:w-[1.1375rem] text-red-500 flex-shrink-0"
+            className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-red-500 flex-shrink-0"
             aria-label="Hot deals icon"
           />
           {title}
         </h2>
-        <p className="text-muted-foreground text-[0.4875rem] sm:text-[0.56875rem]">
+        <p className="text-muted-foreground text-xs sm:text-sm">
           Limited time offers - Don't miss out! 🎁
         </p>
       </div>
@@ -119,7 +119,7 @@ const PromotionsSectionComponent = ({
       <PromotionHeader showDecoration={true} />
 
       {/* Responsive Product Grid: 2 cols (mobile) to 6 cols (desktop) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-[0.4875rem] sm:gap-[0.65rem]">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
         {displayProducts.map((product) => (
           <ProductCard
             key={`promotion-product-${product.id}`}

@@ -27,7 +27,7 @@ interface BulkPromotionTableOptions {
 }
 
 /**
- * ProductImagePreview - Display product image with square rounded-[0.1625rem] styling
+ * ProductImagePreview - Display product image with square rounded styling
  */
 function ProductImagePreview({
   product,
@@ -38,7 +38,7 @@ function ProductImagePreview({
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <div className="relative w-[1.95rem] h-[1.95rem] flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300">
+    <div className="relative w-12 h-12 flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300">
       {!imageError && product?.mainImageUrl ? (
         <>
           {!imageLoaded && (
@@ -58,7 +58,7 @@ function ProductImagePreview({
           />
         </>
       ) : (
-        <span className="text-[0.73125rem] font-bold text-primary/80 hover:text-primary transition-colors">
+        <span className="text-lg font-bold text-primary/80 hover:text-primary transition-colors">
           {product?.name?.charAt(0).toUpperCase() || "P"}
         </span>
       )}
@@ -88,9 +88,9 @@ export const bulkPromotionTableColumns = ({
       width: "50px",
       minWidth: "10px",
       maxWidth: "120px",
-      className: "pr-[0.325rem]",
+      className: "pr-2",
       render: (_, index) => (
-        <span className="font-medium text-[0.4875rem] pointer-events-none">
+        <span className="font-medium text-xs pointer-events-none">
           {indexDisplay(pageNo || 1, pageSize || 10, index + 1)}
         </span>
       ),
@@ -100,9 +100,9 @@ export const bulkPromotionTableColumns = ({
       label: "Actions",
       minWidth: "10px",
       maxWidth: "120px",
-      className: "px-[0.325rem]",
+      className: "px-2",
       render: (product) => (
-        <div className="flex items-center gap-[0.325rem]">
+        <div className="flex items-center gap-2">
           <CustomCheckbox
             checked={selectedProductIds.has(product.id)}
             onCheckedChange={() => onSelectProduct(product.id)}
@@ -113,13 +113,13 @@ export const bulkPromotionTableColumns = ({
           />
 
           <ActionButton
-            icon={<Eye className="w-[0.65rem] h-[0.65rem]" />}
+            icon={<Eye className="w-4 h-4" />}
             tooltip="View Details"
             onClick={() => onViewDetails?.(product)}
           />
           {product?.hasPromotion && (
             <ActionButton
-              icon={<RotateCcw className="w-[0.65rem] h-[0.65rem]" />}
+              icon={<RotateCcw className="w-4 h-4" />}
               tooltip="Reset Promotion"
               onClick={() => onResetPromotion?.(product)}
             />
@@ -134,7 +134,7 @@ export const bulkPromotionTableColumns = ({
       width: "60px",
       minWidth: "10px",
       maxWidth: "120px",
-      className: "px-[0.325rem]",
+      className: "px-2",
       render: (product) => <ProductImagePreview product={product} />,
     },
     {
@@ -143,9 +143,9 @@ export const bulkPromotionTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       truncate: true,
-      className: "px-[0.65rem]",
+      className: "px-4",
       render: (product) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-xs text-muted-foreground">
           {product?.name || "---"}
         </span>
       ),
@@ -156,14 +156,14 @@ export const bulkPromotionTableColumns = ({
       label: "Promotion",
       minWidth: "10px",
       maxWidth: "120px",
-      className: "px-[0.65rem]",
+      className: "px-4",
       render: (product) => {
         if (!product.hasPromotion) {
-          return <span className="text-[0.56875rem] text-foreground">No Promotion</span>;
+          return <span className="text-sm text-foreground">No Promotion</span>;
         }
 
         return (
-          <span className="text-[0.56875rem] font-medium text-green-600">Active</span>
+          <span className="text-sm font-medium text-green-600">Active</span>
         );
       },
     },
@@ -172,14 +172,14 @@ export const bulkPromotionTableColumns = ({
       label: "Sizes",
       minWidth: "10px",
       maxWidth: "400px",
-      className: "px-[0.65rem]",
+      className: "px-4",
       render: (product) => {
         if (!product.hasSizes || !product.sizes || product.sizes.length === 0) {
-          return <span className="text-[0.4875rem] text-muted-foreground">- - -</span>;
+          return <span className="text-xs text-muted-foreground">- - -</span>;
         }
 
         return (
-          <div className="flex flex-row gap-[0.24375rem] items-center flex-nowrap overflow-x-auto max-w-full pb-[0.1625rem]">
+          <div className="flex flex-row gap-1.5 items-center flex-nowrap overflow-x-auto max-w-full pb-1">
             {product.sizes.map((size) => {
               const isSelected =
                 selectedSizes.get(product.id)?.has(size.id) || false;
@@ -189,7 +189,7 @@ export const bulkPromotionTableColumns = ({
                 <label
                   key={size.id}
                   className={cn(
-                    "flex items-center gap-[0.24375rem] px-[0.325rem] py-[0.1625rem] rounded-md border text-[0.4875rem] transition-all duration-150 cursor-pointer group whitespace-nowrap flex-shrink-0",
+                    "flex items-center gap-1.5 px-2 py-1 rounded-md border text-xs transition-all duration-150 cursor-pointer group whitespace-nowrap flex-shrink-0",
                     isSelected
                       ? "bg-primary/15 border-primary/50 hover:bg-primary/20 hover:border-primary/70 shadow-sm"
                       : "bg-white border-border/50 hover:bg-gray-50 hover:border-border/70",
@@ -211,7 +211,7 @@ export const bulkPromotionTableColumns = ({
 
                   {/* Size Promotion Status Badge */}
                   {hasPromotion && (
-                    <span className="bg-green-100/70 text-green-700 text-[0.4875rem] h-fit px-[0.1625rem] py-[0.08125rem] rounded-[0.1625rem] inline-block font-semibold">
+                    <span className="bg-green-100/70 text-green-700 text-xs h-fit px-1 py-0.5 rounded inline-block font-semibold">
                       {size.promotionType === "PERCENTAGE"
                         ? `${size.promotionValue}%`
                         : `$${size.promotionValue}`}
@@ -229,22 +229,22 @@ export const bulkPromotionTableColumns = ({
       label: "Display Price",
       minWidth: "100px",
       maxWidth: "150px",
-      className: "px-[0.65rem]",
+      className: "px-4",
       render: (product) => {
         // Only show for products WITHOUT sizes
         if (product.hasSizes) {
-          return <span className="text-[0.4875rem] text-muted-foreground">---</span>;
+          return <span className="text-xs text-muted-foreground">---</span>;
         }
 
         return (
-          <div className="flex flex-col gap-[0.1625rem]">
-            <span className="text-[0.56875rem] font-semibold text-foreground">
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-semibold text-foreground">
               ${Number(product.displayPrice || 0).toFixed(2)}
             </span>
             {product.displayOriginPrice &&
               product.displayPrice <
                 Number(product.displayOriginPrice || 0) && (
-                <span className="text-[0.4875rem] text-muted-foreground line-through">
+                <span className="text-xs text-muted-foreground line-through">
                   ${Number(product.displayOriginPrice).toFixed(2)}
                 </span>
               )}
@@ -257,19 +257,19 @@ export const bulkPromotionTableColumns = ({
       label: "Discount",
       minWidth: "100px",
       maxWidth: "150px",
-      className: "px-[0.65rem]",
+      className: "px-4",
       render: (product) => {
         // Only show for products WITHOUT sizes
         if (product.hasSizes) {
-          return <span className="text-[0.4875rem] text-muted-foreground">---</span>;
+          return <span className="text-xs text-muted-foreground">---</span>;
         }
 
         if (!product.hasPromotion || !product.displayPromotionType) {
-          return <span className="text-[0.4875rem] text-muted-foreground">---</span>;
+          return <span className="text-xs text-muted-foreground">---</span>;
         }
 
         return (
-          <span className="bg-green-100/70 text-green-700 text-[0.4875rem] h-fit px-[0.325rem] py-[0.08125rem] rounded-[0.1625rem] inline-block font-semibold">
+          <span className="bg-green-100/70 text-green-700 text-xs h-fit px-2 py-0.5 rounded inline-block font-semibold">
             {product.displayPromotionType === "PERCENTAGE"
               ? `${product.displayPromotionValue}%`
               : `$${Number(product.displayPromotionValue || 0).toFixed(2)}`}

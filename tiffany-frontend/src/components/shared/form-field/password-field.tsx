@@ -20,8 +20,8 @@ export function PasswordField({
   className = "",
 }: PasswordFieldProps) {
   return (
-    <div className={`space-y-[0.325rem] ${className}`}>
-      <Label htmlFor={name} className="text-[0.56875rem] font-medium">
+    <div className={`space-y-2 ${className}`}>
+      <Label htmlFor={name} className="text-sm font-medium">
         {label} {required && <span className="text-red-500">*</span>}
       </Label>
       <div className="relative">
@@ -37,7 +37,7 @@ export function PasswordField({
               placeholder={placeholder}
               disabled={disabled}
               autoComplete="new-password"
-              className={`h-[1.625rem] pr-[1.95rem] transition-all duration-200 ${
+              className={`h-10 pr-12 transition-all duration-200 ${
                 error
                   ? "border-red-500 focus:border-red-500"
                   : "focus:bg-primary/10 focus:border-primary focus:ring-2 focus:ring-primary/30"
@@ -49,18 +49,18 @@ export function PasswordField({
           <button
             type="button"
             onClick={onTogglePassword}
-            className="absolute inset-y-0 right-0 flex items-center pr-[0.4875rem]"
+            className="absolute inset-y-0 right-0 flex items-center pr-3"
             tabIndex={-1}
           >
             {showPassword ? (
-              <EyeOff className="h-[0.65rem] w-[0.65rem] text-gray-500" />
+              <EyeOff className="h-4 w-4 text-gray-500" />
             ) : (
-              <Eye className="h-[0.65rem] w-[0.65rem] text-gray-500" />
+              <Eye className="h-4 w-4 text-gray-500" />
             )}
           </button>
         )}
       </div>
-      {error && <p className="text-[0.56875rem] text-red-600">{error.message}</p>}
+      {error && <p className="text-sm text-red-600">{error.message}</p>}
     </div>
   );
 }

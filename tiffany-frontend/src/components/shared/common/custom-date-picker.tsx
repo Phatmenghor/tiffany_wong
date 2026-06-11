@@ -254,7 +254,7 @@ export function CustomDateTimePicker({
           id={id}
           variant="outline"
           className={cn(
-            "w-full justify-start text-left font-normal h-[1.625rem] px-[0.4875rem] text-[0.56875rem] transition-all duration-200 border-input",
+            "w-full justify-start text-left font-normal h-10 px-3 text-sm transition-all duration-200 border-input",
             !selectedDate && "text-muted-foreground",
             // Hover state
             "hover:bg-primary/10 hover:border-primary hover:text-primary",
@@ -270,16 +270,16 @@ export function CustomDateTimePicker({
           disabled={disabled}
         >
           {mode === "datetime" ? (
-            <Clock className="mr-[0.325rem] h-[0.65rem] w-[0.65rem]" />
+            <Clock className="mr-2 h-4 w-4" />
           ) : (
-            <Calendar className="mr-[0.325rem] h-[0.65rem] w-[0.65rem]" />
+            <Calendar className="mr-2 h-4 w-4" />
           )}
           <span className="flex-1">
             {selectedDate ? formatDate(selectedDate) : placeholder}
           </span>
           {selectedDate && !disabled && (
             <div
-              className="ml-[0.1625rem] h-[0.975rem] w-[0.975rem] p-0 flex items-center justify-center rounded-[0.1625rem] hover:bg-destructive/10 hover:text-destructive cursor-pointer transition-colors"
+              className="ml-1 h-6 w-6 p-0 flex items-center justify-center rounded hover:bg-destructive/10 hover:text-destructive cursor-pointer transition-colors"
               onClick={clearSelection}
               role="button"
               tabIndex={0}
@@ -290,30 +290,30 @@ export function CustomDateTimePicker({
                 }
               }}
             >
-              <X className="h-[0.4875rem] w-[0.4875rem]" />
+              <X className="h-3 w-3" />
             </div>
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[11.7rem] p-0" align="start">
+      <PopoverContent className="w-72 p-0" align="start">
         {/* Header */}
-        <div className="flex items-center justify-between p-[0.4875rem] border-b bg-muted/30">
-          <div className="flex items-center gap-[0.325rem]">
+        <div className="flex items-center justify-between p-3 border-b bg-muted/30">
+          <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigateMonth("prev")}
-              className="h-[0.975rem] w-[0.975rem] p-0 hover:bg-accent"
+              className="h-6 w-6 p-0 hover:bg-accent"
             >
-              <ChevronLeft className="h-[0.4875rem] w-[0.4875rem]" />
+              <ChevronLeft className="h-3 w-3" />
             </Button>
 
-            <div className="flex gap-[0.1625rem]">
+            <div className="flex gap-1">
               <Select
                 value={MONTHS[viewDate.getMonth()]}
                 onValueChange={handleMonthChange}
               >
-                <SelectTrigger className="h-[1.3rem] text-[0.56875rem] w-auto min-w-[60px] border-0 bg-transparent hover:bg-primary/10 hover:text-primary transition-colors">
+                <SelectTrigger className="h-8 text-sm w-auto min-w-[60px] border-0 bg-transparent hover:bg-primary/10 hover:text-primary transition-colors">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -329,7 +329,7 @@ export function CustomDateTimePicker({
                 value={viewDate.getFullYear().toString()}
                 onValueChange={handleYearChange}
               >
-                <SelectTrigger className="h-[1.3rem] text-[0.56875rem] w-auto min-w-[65px] border-0 bg-transparent hover:bg-primary/10 hover:text-primary transition-colors">
+                <SelectTrigger className="h-8 text-sm w-auto min-w-[65px] border-0 bg-transparent hover:bg-primary/10 hover:text-primary transition-colors">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -346,9 +346,9 @@ export function CustomDateTimePicker({
               variant="ghost"
               size="sm"
               onClick={() => navigateMonth("next")}
-              className="h-[0.975rem] w-[0.975rem] p-0 hover:bg-accent"
+              className="h-6 w-6 p-0 hover:bg-accent"
             >
-              <ChevronRight className="h-[0.4875rem] w-[0.4875rem]" />
+              <ChevronRight className="h-3 w-3" />
             </Button>
           </div>
 
@@ -356,26 +356,26 @@ export function CustomDateTimePicker({
             variant="ghost"
             size="sm"
             onClick={() => setIsOpen(false)}
-            className="h-[0.975rem] w-[0.975rem] p-0 opacity-50 hover:opacity-100 hover:bg-accent"
+            className="h-6 w-6 p-0 opacity-50 hover:opacity-100 hover:bg-accent"
           >
-            <X className="h-[0.4875rem] w-[0.4875rem]" />
+            <X className="h-3 w-3" />
           </Button>
         </div>
 
         {/* Calendar Grid */}
-        <div className="p-[0.4875rem]">
-          <div className="grid grid-cols-7 gap-[0.1625rem] mb-[0.325rem]">
+        <div className="p-3">
+          <div className="grid grid-cols-7 gap-1 mb-2">
             {DAYS.map((day, index) => (
               <div
                 key={index}
-                className="h-[1.3rem] w-[1.3rem] flex items-center justify-center text-[0.4875rem] font-medium text-muted-foreground"
+                className="h-8 w-8 flex items-center justify-center text-xs font-medium text-muted-foreground"
               >
                 {day}
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-[0.1625rem]">
+          <div className="grid grid-cols-7 gap-1">
             {calendarDays.map((dayObj, index) => (
               <Button
                 key={index}
@@ -384,7 +384,7 @@ export function CustomDateTimePicker({
                 onClick={() => handleDateSelect(dayObj.day)}
                 disabled={!dayObj.isCurrentMonth}
                 className={cn(
-                  "h-[1.3rem] w-[1.3rem] p-0 text-[0.4875rem] font-normal transition-all hover:bg-primary/10 hover:text-primary",
+                  "h-8 w-8 p-0 text-xs font-normal transition-all hover:bg-primary/10 hover:text-primary",
                   !dayObj.isCurrentMonth &&
                     "text-muted-foreground/30 hover:text-muted-foreground/30 hover:bg-transparent cursor-not-allowed",
                   dayObj.isSelected &&
@@ -402,11 +402,11 @@ export function CustomDateTimePicker({
 
         {/* Time Picker (only for datetime mode) */}
         {mode === "datetime" && (
-          <div className="p-[0.4875rem] border-t">
-            <div className="flex items-center justify-center gap-[0.325rem]">
-              <Clock className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
+          <div className="p-3 border-t">
+            <div className="flex items-center justify-center gap-2">
+              <Clock className="h-4 w-4 text-muted-foreground" />
               <Select value={selectedHour} onValueChange={setSelectedHour}>
-                <SelectTrigger className="h-[1.4625rem] w-[2.6rem] text-[0.56875rem] border-input hover:bg-primary/10 hover:border-primary hover:text-primary transition-colors">
+                <SelectTrigger className="h-9 w-16 text-sm border-input hover:bg-primary/10 hover:border-primary hover:text-primary transition-colors">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -417,9 +417,9 @@ export function CustomDateTimePicker({
                   ))}
                 </SelectContent>
               </Select>
-              <span className="text-[0.73125rem] font-medium">:</span>
+              <span className="text-lg font-medium">:</span>
               <Select value={selectedMinute} onValueChange={setSelectedMinute}>
-                <SelectTrigger className="h-[1.4625rem] w-[2.6rem] text-[0.56875rem] border-input hover:bg-primary/10 hover:border-primary hover:text-primary transition-colors">
+                <SelectTrigger className="h-9 w-16 text-sm border-input hover:bg-primary/10 hover:border-primary hover:text-primary transition-colors">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -434,7 +434,7 @@ export function CustomDateTimePicker({
                 value={selectedPeriod}
                 onValueChange={(val) => setSelectedPeriod(val as "AM" | "PM")}
               >
-                <SelectTrigger className="h-[1.4625rem] w-[2.6rem] text-[0.56875rem] border-input hover:bg-primary/10 hover:border-primary hover:text-primary transition-colors">
+                <SelectTrigger className="h-9 w-16 text-sm border-input hover:bg-primary/10 hover:border-primary hover:text-primary transition-colors">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -447,7 +447,7 @@ export function CustomDateTimePicker({
         )}
 
         {/* Footer */}
-        <div className="p-[0.4875rem] border-t bg-muted/30 flex gap-[0.325rem]">
+        <div className="p-3 border-t bg-muted/30 flex gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -467,7 +467,7 @@ export function CustomDateTimePicker({
               onChange(formatDateForForm(today));
               setIsOpen(false);
             }}
-            className="flex-1 h-[1.3rem] text-[0.4875rem] hover:bg-primary/10 hover:border-primary hover:text-primary transition-colors"
+            className="flex-1 h-8 text-xs hover:bg-primary/10 hover:border-primary hover:text-primary transition-colors"
           >
             Now
           </Button>
@@ -478,7 +478,7 @@ export function CustomDateTimePicker({
               size="sm"
               onClick={applyDateTime}
               disabled={!selectedDate}
-              className="flex-1 h-[1.3rem] text-[0.4875rem] bg-primary hover:bg-primary/90"
+              className="flex-1 h-8 text-xs bg-primary hover:bg-primary/90"
             >
               Apply
             </Button>

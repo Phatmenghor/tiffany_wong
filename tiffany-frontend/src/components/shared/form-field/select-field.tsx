@@ -30,8 +30,8 @@ export function SelectField<T extends FieldValues = any>({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className={`space-y-[0.325rem] ${className}`}>
-      <Label htmlFor={name} className="text-[0.56875rem] font-medium">
+    <div className={`space-y-2 ${className}`}>
+      <Label htmlFor={name} className="text-sm font-medium">
         {label} {required && <span className="text-red-500">*</span>}
       </Label>
       <Controller
@@ -54,7 +54,7 @@ export function SelectField<T extends FieldValues = any>({
                   role="combobox"
                   disabled={disabled || loading}
                   className={cn(
-                    "w-full justify-between h-[1.625rem] px-[0.4875rem] transition-all duration-200 border-input",
+                    "w-full justify-between h-10 px-3 transition-all duration-200 border-input",
                     // Hover state
                     "hover:bg-primary/10 hover:border-primary hover:text-primary",
                     // Focus state
@@ -78,7 +78,7 @@ export function SelectField<T extends FieldValues = any>({
                       : selectedOption?.label || placeholder}
                   </span>
                   <ChevronDown className={cn(
-                    "ml-[0.325rem] h-[0.65rem] w-[0.65rem] shrink-0 transition-all duration-200",
+                    "ml-2 h-4 w-4 shrink-0 transition-all duration-200",
                     !open && "opacity-50",
                     open && "opacity-100 text-primary rotate-180"
                   )} />
@@ -99,7 +99,7 @@ export function SelectField<T extends FieldValues = any>({
                         setOpen(false);
                       }}
                       className={cn(
-                        "w-full flex items-center gap-[0.325rem] px-[0.4875rem] py-[0.325rem] text-[0.56875rem] text-left cursor-pointer transition-colors",
+                        "w-full flex items-center gap-2 px-3 py-2 text-sm text-left cursor-pointer transition-colors",
                         "hover:bg-primary/10 hover:text-primary/50",
                         currentValue === option.value
                           ? "bg-primary/20 text-primary/50 font-medium"
@@ -108,7 +108,7 @@ export function SelectField<T extends FieldValues = any>({
                     >
                       <Check
                         className={cn(
-                          "h-[0.65rem] w-[0.65rem]",
+                          "h-4 w-4",
                           currentValue === option.value ? "opacity-100" : "opacity-0"
                         )}
                       />
@@ -121,7 +121,7 @@ export function SelectField<T extends FieldValues = any>({
           );
         }}
       />
-      {error && <p className="text-[0.56875rem] text-red-600">{error?.message}</p>}
+      {error && <p className="text-sm text-red-600">{error?.message}</p>}
     </div>
   );
 }

@@ -227,12 +227,12 @@ export function Navbar() {
       items: [
         {
           label: "My Profile",
-          icon: <UserCircle className="h-[0.65rem] w-[0.65rem]" />,
+          icon: <UserCircle className="h-4 w-4" />,
           onClick: () => router.push("/profile"),
         },
         {
           label: "Location",
-          icon: <MapPin className="h-[0.65rem] w-[0.65rem]" />,
+          icon: <MapPin className="h-4 w-4" />,
           onClick: () => router.push(ROUTES.LOCATION),
         },
       ],
@@ -242,17 +242,17 @@ export function Navbar() {
       items: [
         {
           label: "Cart",
-          icon: <CarTaxiFront className="h-[0.65rem] w-[0.65rem]" />,
+          icon: <CarTaxiFront className="h-4 w-4" />,
           onClick: () => router.push("/cart"),
         },
         {
           label: "Favorites",
-          icon: <Heart className="h-[0.65rem] w-[0.65rem]" />,
+          icon: <Heart className="h-4 w-4" />,
           onClick: () => router.push("/favorites"),
         },
         {
           label: "My Orders",
-          icon: <Package className="h-[0.65rem] w-[0.65rem]" />,
+          icon: <Package className="h-4 w-4" />,
           onClick: () => router.push("/orders"),
         },
       ],
@@ -261,7 +261,7 @@ export function Navbar() {
       items: [
         {
           label: "Logout",
-          icon: <LogOut className="h-[0.65rem] w-[0.65rem]" />,
+          icon: <LogOut className="h-4 w-4" />,
           onClick: handleLogout,
           variant: "destructive" as const,
         },
@@ -270,17 +270,17 @@ export function Navbar() {
   ];
 
   const dropdownHeader = (
-    <div className="flex items-center gap-[0.4875rem]">
+    <div className="flex items-center gap-3">
       <CustomAvatar
         imageUrl={profileImage || profile?.profileImageUrl}
         name={fullName || profile?.fullName || "User"}
         size="lg"
       />
-      <div className="flex flex-col space-y-[0.08125rem] flex-1 min-w-0">
-        <p className="text-[0.56875rem] font-semibold line-clamp-1">
+      <div className="flex flex-col space-y-0.5 flex-1 min-w-0">
+        <p className="text-sm font-semibold line-clamp-1">
           {fullName || profile?.fullName || "User"}
         </p>
-        <p className="text-[0.4875rem] text-muted-foreground line-clamp-1">
+        <p className="text-xs text-muted-foreground line-clamp-1">
           {email || profile?.email || ""}
         </p>
       </div>
@@ -300,21 +300,21 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full h-[2.275rem] border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm flex items-center">
+      <nav className="sticky top-0 z-50 w-full h-14 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm flex items-center">
         <PageContainer className="max-w-8xl w-full">
           {/* ── Mobile: expanded search overlay ── */}
           {mobileSearchOpen && showSearch ? (
             <form
               onSubmit={handleSearchSubmit}
-              className="sm:hidden flex items-center gap-[0.325rem] w-full h-[2.275rem]"
+              className="sm:hidden flex items-center gap-2 w-full h-14"
             >
               <div className="relative flex-1">
-                <Search className="absolute left-[0.4875rem] top-1/2 -translate-y-1/2 h-[0.65rem] w-[0.65rem] text-muted-foreground pointer-events-none" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                 <Input
                   ref={mobileSearchRef}
                   type="search"
                   placeholder={searchPlaceholder}
-                  className="pl-[1.625rem] w-full h-[1.625rem] bg-muted/50"
+                  className="pl-10 w-full h-10 bg-muted/50"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -326,14 +326,14 @@ export function Navbar() {
                 className="shrink-0"
                 onClick={() => setMobileSearchOpen(false)}
               >
-                <X className="h-[0.8125rem] w-[0.8125rem]" />
+                <X className="h-5 w-5" />
               </Button>
             </form>
           ) : (
             /* ── Mobile: compact top bar ── */
-            <div className="sm:hidden flex items-center justify-between w-full h-[2.275rem] gap-[0.325rem]">
-              <button onClick={handleNavigateToHome} className="flex items-center gap-[0.325rem] shrink-0">
-                <div className="relative w-[1.3rem] h-[1.3rem] rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="sm:hidden flex items-center justify-between w-full h-14 gap-2">
+              <button onClick={handleNavigateToHome} className="flex items-center gap-2 shrink-0">
+                <div className="relative w-8 h-8 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                   <Image
                     src="/assets/image/logo.png"
                     alt={businessName}
@@ -343,38 +343,38 @@ export function Navbar() {
                   />
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="font-bold text-[0.56875rem] text-foreground leading-tight">
+                  <span className="font-bold text-sm text-foreground leading-tight">
                     {isHydrated ? businessName : ""}
                   </span>
-                  <span className="text-[0.4875rem] text-muted-foreground font-medium">
+                  <span className="text-xs text-muted-foreground font-medium">
                     Shop Online
                   </span>
                 </div>
               </button>
 
-              <div className="flex items-center gap-[0.08125rem]">
+              <div className="flex items-center gap-0.5">
                 {showSearch && (
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-[1.4625rem] w-[1.4625rem]"
+                    className="h-9 w-9"
                     onClick={() => setMobileSearchOpen(true)}
                   >
-                    <Search className="h-[0.8125rem] w-[0.8125rem]" />
+                    <Search className="h-5 w-5" />
                   </Button>
                 )}
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="relative h-[1.625rem] w-[1.625rem]"
+                  className="relative h-10 w-10"
                   onClick={() => router.push("/favorites")}
                 >
-                  <Heart className="h-[1.1375rem] w-[1.1375rem]" />
+                  <Heart className="h-7 w-7" />
                   {favoriteItemCount > 0 && (
                     <Badge
                       variant="destructive"
                       className={cn(
-                        "absolute -top-[0.1625rem] -right-[0.1625rem] h-[0.8125rem] min-w-[20px] max-w-[28px] px-[0.1625rem] flex items-center justify-center text-[11px] font-semibold leading-none transition-transform duration-300",
+                        "absolute -top-1 -right-1 h-5 min-w-[20px] max-w-[28px] px-1 flex items-center justify-center text-[11px] font-semibold leading-none transition-transform duration-300",
                         favoriteAnimating && "animate-slide-down",
                       )}
                     >
@@ -385,7 +385,7 @@ export function Navbar() {
                 {isAuthenticated ? (
                   <CustomDropdownMenu
                     trigger={
-                      <div className="h-[1.4625rem] w-[1.4625rem] flex items-center justify-center rounded-full hover:ring-2 hover:ring-primary/20 transition-all">
+                      <div className="h-9 w-9 flex items-center justify-center rounded-full hover:ring-2 hover:ring-primary/20 transition-all">
                         <CustomAvatar
                           imageUrl={profileImage || profile?.profileImageUrl}
                           name={fullName || profile?.fullName || "User"}
@@ -403,10 +403,10 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-[1.4625rem] w-[1.4625rem]"
+                    className="h-9 w-9"
                     onClick={() => openLoginModal()}
                   >
-                    <User className="h-[0.8125rem] w-[0.8125rem]" />
+                    <User className="h-5 w-5" />
                   </Button>
                 )}
               </div>
@@ -414,10 +414,10 @@ export function Navbar() {
           )}
 
           {/* ── Desktop top bar ── */}
-          <div className="hidden sm:flex h-full w-full items-center justify-between gap-[0.65rem]">
-            <div className="flex items-center gap-[1.3rem]">
-              <button onClick={handleNavigateToHome} className="flex items-center gap-[0.325rem] group">
-                <div className="relative w-[1.625rem] h-[1.625rem] rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+          <div className="hidden sm:flex h-full w-full items-center justify-between gap-4">
+            <div className="flex items-center gap-8">
+              <button onClick={handleNavigateToHome} className="flex items-center gap-2 group">
+                <div className="relative w-10 h-10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                   <Image
                     src="/assets/image/logo.png"
                     alt={businessName}
@@ -427,16 +427,16 @@ export function Navbar() {
                   />
                 </div>
                 <div className="hidden md:flex flex-col text-left">
-                  <span className="text-foreground font-bold text-[0.56875rem] leading-tight">
+                  <span className="text-foreground font-bold text-sm leading-tight">
                     {isHydrated ? businessName : ""}
                   </span>
-                  <span className="text-muted-foreground text-[0.4875rem] font-medium">
+                  <span className="text-muted-foreground text-xs font-medium">
                     Shop Online
                   </span>
                 </div>
               </button>
 
-              <div className="hidden lg:flex items-center gap-[0.1625rem]">
+              <div className="hidden lg:flex items-center gap-1">
                 {navigationLinks.map((link) => {
                   const active =
                     pathname === link.href ||
@@ -452,7 +452,7 @@ export function Navbar() {
                         className={cn(
                           "text-foreground hover:text-primary hover:bg-primary/10 relative",
                           active &&
-                            "text-primary after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-3/4 after:h-[0.08125rem] after:bg-primary after:rounded-full",
+                            "text-primary after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-3/4 after:h-0.5 after:bg-primary after:rounded-full",
                         )}
                         onClick={handleNavigateToHome}
                       >
@@ -469,7 +469,7 @@ export function Navbar() {
                       className={cn(
                         "text-foreground hover:text-primary hover:bg-primary/10 relative",
                         active &&
-                          "text-primary after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-3/4 after:h-[0.08125rem] after:bg-primary after:rounded-full",
+                          "text-primary after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-3/4 after:h-0.5 after:bg-primary after:rounded-full",
                       )}
                       onClick={() => handleNavigateToPage(link.href)}
                     >
@@ -486,11 +486,11 @@ export function Navbar() {
                 className="flex flex-1 max-w-xl"
               >
                 <div className="relative w-full">
-                  <Search className="absolute left-[0.4875rem] top-1/2 -translate-y-1/2 h-[0.65rem] w-[0.65rem] text-muted-foreground pointer-events-none" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                   <Input
                     type="search"
                     placeholder={searchPlaceholder}
-                    className="pl-[1.625rem] w-full bg-muted/50"
+                    className="pl-10 w-full bg-muted/50"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -498,19 +498,19 @@ export function Navbar() {
               </form>
             )}
 
-            <div className="flex items-center gap-[0.325rem]">
+            <div className="flex items-center gap-2">
               <CustomButton
                 variant="ghost"
                 size="icon"
-                className="relative h-[1.625rem] w-[1.625rem] hover:text-primary flex items-center justify-center"
+                className="relative h-10 w-10 hover:text-primary flex items-center justify-center"
                 onClick={() => router.push("/favorites")}
               >
-                <Heart className="h-[1.1375rem] w-[1.1375rem]" />
+                <Heart className="h-7 w-7" />
                 {favoriteItemCount > 0 && (
                   <Badge
                     variant="destructive"
                     className={cn(
-                      "absolute -top-[0.1625rem] -right-[0.1625rem] h-[0.8125rem] min-w-[20px] max-w-[28px] px-[0.1625rem] flex items-center justify-center text-[0.4875rem] font-semibold leading-none transition-transform duration-300",
+                      "absolute -top-1 -right-1 h-5 min-w-[20px] max-w-[28px] px-1 flex items-center justify-center text-xs font-semibold leading-none transition-transform duration-300",
                       favoriteAnimating && "animate-slide-down",
                     )}
                   >
@@ -522,14 +522,14 @@ export function Navbar() {
               <CustomButton
                 variant="ghost"
                 size="icon"
-                className="relative h-[1.625rem] w-[1.625rem] hover:text-primary flex items-center justify-center"
+                className="relative h-10 w-10 hover:text-primary flex items-center justify-center"
                 onClick={() => router.push("/cart")}
               >
-                <ShoppingCart className="h-[1.1375rem] w-[1.1375rem]" />
+                <ShoppingCart className="h-7 w-7" />
                 {cartItemCount > 0 && (
                   <Badge
                     variant="destructive"
-                    className="absolute -top-[0.1625rem] -right-[0.1625rem] min-w-[20px] max-w-[28px] h-[0.8125rem] px-[0.1625rem] flex items-center justify-center text-[0.4875rem] font-semibold leading-none"
+                    className="absolute -top-1 -right-1 min-w-[20px] max-w-[28px] h-5 px-1 flex items-center justify-center text-xs font-semibold leading-none"
                   >
                     {cartItemCount > 99 ? "99+" : cartItemCount}
                   </Badge>
@@ -539,7 +539,7 @@ export function Navbar() {
               {isAuthenticated ? (
                 <CustomDropdownMenu
                   trigger={
-                    <div className="relative h-[1.625rem] w-[1.625rem] rounded-full hover:ring-2 hover:ring-primary/20 transition-all">
+                    <div className="relative h-10 w-10 rounded-full hover:ring-2 hover:ring-primary/20 transition-all">
                       <CustomAvatar
                         imageUrl={profileImage || profile?.profileImageUrl}
                         name={fullName || profile?.fullName || "User"}
@@ -560,7 +560,7 @@ export function Navbar() {
                   onClick={() => openLoginModal()}
                   className="hover:bg-primary/10 hover:text-primary transition-colors"
                 >
-                  <User className="h-[0.8125rem] w-[0.8125rem]" />
+                  <User className="h-5 w-5" />
                 </CustomButton>
               )}
             </div>

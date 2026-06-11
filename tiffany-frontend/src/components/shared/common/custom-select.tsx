@@ -33,24 +33,24 @@ interface CustomSelectProps {
 
 const CUSTOM_SELECT_SIZES = {
   sm: {
-    button: "h-[1.3rem] text-[0.4875rem]",
-    icon: "h-[0.4875rem] w-[0.4875rem]",
-    item: "text-[0.4875rem] py-[0.1625rem] px-[0.325rem]",
+    button: "h-8 text-xs",
+    icon: "h-3 w-3",
+    item: "text-xs py-1 px-2",
   },
   md: {
-    button: "h-[1.4625rem] text-[0.56875rem]",
-    icon: "h-[0.65rem] w-[0.65rem]",
-    item: "text-[0.56875rem] py-[0.325rem] px-[0.4875rem]",
+    button: "h-9 text-sm",
+    icon: "h-4 w-4",
+    item: "text-sm py-2 px-3",
   },
   lg: {
-    button: "h-[1.625rem] text-[0.65rem]",
-    icon: "h-[0.8125rem] w-[0.8125rem]",
-    item: "text-[0.65rem] py-[0.325rem] px-[0.4875rem]",
+    button: "h-10 text-base",
+    icon: "h-5 w-5",
+    item: "text-base py-2 px-3",
   },
   xl: {
-    button: "h-[1.7875rem] text-[0.65rem]",
-    icon: "h-[0.8125rem] w-[0.8125rem]",
-    item: "text-[0.65rem] py-[0.325rem] px-[0.4875rem]",
+    button: "h-11 text-base",
+    icon: "h-5 w-5",
+    item: "text-base py-2 px-3",
   },
 } as const;
 
@@ -77,21 +77,21 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   const selectedOption = options.find((opt) => opt.value === value);
 
   const labelSizeClass = {
-    xs: "text-[0.4875rem]",
-    sm: "text-[0.56875rem]",
-    md: "text-[0.65rem]",
+    xs: "text-xs",
+    sm: "text-sm",
+    md: "text-base",
   }[labelSize];
 
   const wrapperClass = layout === "vertical"
-    ? "flex flex-col gap-[0.1625rem] w-full"
-    : "flex flex-row items-center gap-[0.325rem] w-full";
+    ? "flex flex-col gap-1 w-full"
+    : "flex flex-row items-center gap-2 w-full";
 
   return (
     <div className={wrapperClass}>
       {label && (
         <Label className={cn(labelSizeClass, "font-semibold text-foreground")}>
           {label}
-          {required && <span className="text-destructive ml-[0.1625rem]">*</span>}
+          {required && <span className="text-destructive ml-1">*</span>}
         </Label>
       )}
       <Popover open={open} onOpenChange={setOpen}>
@@ -101,7 +101,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             role="combobox"
             disabled={disabled}
             className={cn(
-              "w-full justify-between gap-[0.325rem] transition-all duration-200",
+              "w-full justify-between gap-2 transition-all duration-200",
               // Default state
               "border-input",
               // Hover state
@@ -144,7 +144,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         >
           <div className="max-h-[300px] overflow-y-auto" role="listbox">
             {options.length === 0 ? (
-              <div className="p-[0.4875rem] text-[0.56875rem] text-muted-foreground text-center">
+              <div className="p-3 text-sm text-muted-foreground text-center">
                 No options available
               </div>
             ) : (
@@ -162,7 +162,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                     }
                   }}
                   className={cn(
-                    "w-full flex items-center gap-[0.325rem] text-left transition-colors",
+                    "w-full flex items-center gap-2 text-left transition-colors",
                     sizeConfig.item,
                     "hover:bg-primary/10 hover:text-primary",
                     value === option.value
@@ -173,7 +173,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                 >
                   <Check
                     className={cn(
-                      "h-[0.65rem] w-[0.65rem] flex-shrink-0",
+                      "h-4 w-4 flex-shrink-0",
                       value === option.value ? "opacity-100" : "opacity-0"
                     )}
                     aria-hidden="true"

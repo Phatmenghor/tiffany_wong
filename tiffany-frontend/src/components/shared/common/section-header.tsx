@@ -18,13 +18,13 @@ export const SectionHeader = ({
   className,
 }: SectionHeaderProps) => {
   return (
-    <div className={cn("mb-[0.65rem] sm:mb-[0.975rem]", className)}>
-      <h2 className="text-[0.8125rem] sm:text-[0.975rem] md:text-[1.21875rem] font-bold tracking-tight flex items-center gap-[0.325rem]">
-        {Icon && <Icon className="h-[0.8125rem] w-[0.8125rem] sm:h-[0.975rem] sm:w-[0.975rem] md:h-[1.1375rem] md:w-[1.1375rem] text-primary" />}
+    <div className={cn("mb-4 sm:mb-6", className)}>
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-2">
+        {Icon && <Icon className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-primary" />}
         {title}
       </h2>
       {subtitle && (
-        <p className="text-muted-foreground text-[0.4875rem] sm:text-[0.56875rem] mt-[0.1625rem]">{subtitle}</p>
+        <p className="text-muted-foreground text-xs sm:text-sm mt-1">{subtitle}</p>
       )}
     </div>
   );
@@ -39,7 +39,7 @@ export const SectionWrapper = ({
   children,
   className,
 }: SectionWrapperProps) => {
-  return <section className={cn("mb-[1.3rem] sm:mb-[1.95rem]", className)}>{children}</section>;
+  return <section className={cn("mb-8 sm:mb-12", className)}>{children}</section>;
 };
 
 interface ViewAllButtonProps {
@@ -54,15 +54,15 @@ export const ViewAllButton = ({
   className,
 }: ViewAllButtonProps) => {
   return (
-    <div className={cn("flex justify-center mt-[0.975rem] sm:mt-[1.3rem]", className)}>
+    <div className={cn("flex justify-center mt-6 sm:mt-8", className)}>
       <Link href={href}>
         <Button
           size="default"
           variant="outline"
-          className="gap-[0.325rem] group border-2 hover:border-primary hover:bg-primary hover:text-primary-foreground transition-all px-[0.975rem] sm:px-[1.3rem]"
+          className="gap-2 group border-2 hover:border-primary hover:bg-primary hover:text-primary-foreground transition-all px-6 sm:px-8"
         >
           {text}
-          <ArrowRight className="h-[0.65rem] w-[0.65rem] sm:h-[0.8125rem] sm:w-[0.8125rem] transition-transform group-hover:translate-x-[0.1625rem]" />
+          <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
         </Button>
       </Link>
     </div>

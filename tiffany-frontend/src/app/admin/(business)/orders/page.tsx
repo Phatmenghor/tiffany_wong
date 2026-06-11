@@ -178,8 +178,8 @@ export default function OrdersAdminPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-[0.65rem] px-[0.325rem]">
-      <div className="space-y-[0.65rem]">
+    <div className="flex flex-1 flex-col gap-4 px-2">
+      <div className="space-y-4">
         <CardHeaderSection
           title="Order Management"
           searchValue={filters.search}

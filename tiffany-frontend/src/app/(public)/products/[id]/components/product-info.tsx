@@ -27,36 +27,36 @@ export function ProductInfo({
   const savings = originalPrice ? Math.round(((originalPrice - displayPrice) / originalPrice) * 100) : 0;
 
   return (
-    <div className="flex flex-col gap-[0.65rem]">
+    <div className="flex flex-col gap-4">
       {/* Badges */}
-      <div className="flex flex-wrap items-center gap-[0.325rem]">
+      <div className="flex flex-wrap items-center gap-2">
         {categoryName && (
-          <Badge variant="secondary" className="gap-[0.1625rem] text-[0.4875rem]">
-            <Tag className="h-[0.4875rem] w-[0.4875rem]" />
+          <Badge variant="secondary" className="gap-1 text-xs">
+            <Tag className="h-3 w-3" />
             {categoryName}
           </Badge>
         )}
         {brandName && (
-          <Badge variant="outline" className="gap-[0.1625rem] text-[0.4875rem]">
-            <Store className="h-[0.4875rem] w-[0.4875rem]" />
+          <Badge variant="outline" className="gap-1 text-xs">
+            <Store className="h-3 w-3" />
             {brandName}
           </Badge>
         )}
-        <Badge className={cn("text-[0.4875rem]", status === "ACTIVE" ? "bg-emerald-500 hover:bg-emerald-600" : "bg-muted text-muted-foreground hover:bg-muted")}>
+        <Badge className={cn("text-xs", status === "ACTIVE" ? "bg-emerald-500 hover:bg-emerald-600" : "bg-muted text-muted-foreground hover:bg-muted")}>
           {status === "ACTIVE" ? "In Stock" : "Inactive"}
         </Badge>
       </div>
 
       {/* Title */}
-      <h1 className="text-[0.975rem] sm:text-[1.21875rem] font-bold leading-snug tracking-tight">{name}</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold leading-snug tracking-tight">{name}</h1>
 
       {/* Price */}
-      <div className="flex flex-wrap items-baseline gap-x-[0.325rem] gap-y-[0.1625rem]">
-        <span className="text-[1.21875rem] sm:text-[1.4625rem] font-bold text-primary leading-none">{formatCurrency(displayPrice)}</span>
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span className="text-3xl sm:text-4xl font-bold text-primary leading-none">{formatCurrency(displayPrice)}</span>
         {originalPrice && (
           <>
-            <span className="text-[0.73125rem] text-muted-foreground line-through leading-none">{formatCurrency(originalPrice)}</span>
-            <span className="text-[0.4875rem] font-semibold text-emerald-600 bg-emerald-50 px-[0.40625rem] py-[0.1625rem] rounded-full">
+            <span className="text-lg text-muted-foreground line-through leading-none">{formatCurrency(originalPrice)}</span>
+            <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
               Save {formatCurrency(originalPrice - displayPrice)}
             </span>
           </>
@@ -64,7 +64,7 @@ export function ProductInfo({
       </div>
 
       {/* Description */}
-      {description && <p className="text-[0.56875rem] sm:text-[0.65rem] text-muted-foreground leading-relaxed">{description}</p>}
+      {description && <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{description}</p>}
     </div>
   );
 }

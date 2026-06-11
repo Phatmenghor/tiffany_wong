@@ -38,44 +38,44 @@ export const BulkPromotionProductTable: React.FC<Props> = ({
   }, [allSelected, onSelectAll]);
 
   return (
-    <div className="space-y-[0.65rem] border rounded-lg p-[0.65rem] bg-white">
+    <div className="space-y-4 border rounded-lg p-4 bg-white">
       <div className="flex items-center justify-between">
-        <h3 className="text-[0.56875rem] font-semibold">
+        <h3 className="text-sm font-semibold">
           Select Products ({selectedProductIds.size} selected)
         </h3>
-        <div className="flex items-center gap-[0.325rem]">
-          <span className="text-[0.4875rem] text-muted-foreground">Page {currentPage} of {totalPages}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Page {currentPage} of {totalPages}</span>
         </div>
       </div>
 
       {/* Select All Checkbox */}
-      <div className="flex items-center gap-[0.4875rem] pb-[0.4875rem] border-b">
+      <div className="flex items-center gap-3 pb-3 border-b">
         <Checkbox
           checked={allSelected}
           indeterminate={someSelected ? "indeterminate" : undefined}
           onCheckedChange={handleSelectAll}
           disabled={isLoading}
         />
-        <label className="text-[0.56875rem] font-medium cursor-pointer">
+        <label className="text-sm font-medium cursor-pointer">
           Select all products on this page
         </label>
       </div>
 
       {/* Products List */}
-      <div className="space-y-[0.325rem] max-h-[15.6rem] overflow-y-auto">
+      <div className="space-y-2 max-h-96 overflow-y-auto">
         {isLoading ? (
-          <div className="flex items-center justify-center py-[1.3rem]">
-            <p className="text-[0.56875rem] text-muted-foreground">Loading products...</p>
+          <div className="flex items-center justify-center py-8">
+            <p className="text-sm text-muted-foreground">Loading products...</p>
           </div>
         ) : products.length === 0 ? (
-          <div className="flex items-center justify-center py-[1.3rem]">
-            <p className="text-[0.56875rem] text-muted-foreground">No products found</p>
+          <div className="flex items-center justify-center py-8">
+            <p className="text-sm text-muted-foreground">No products found</p>
           </div>
         ) : (
           products.map((product) => (
             <div
               key={product.id}
-              className="flex items-center gap-[0.4875rem] p-[0.4875rem] rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <Checkbox
                 checked={selectedProductIds.has(product.id)}
@@ -88,8 +88,8 @@ export const BulkPromotionProductTable: React.FC<Props> = ({
                 size="md"
               />
               <div className="flex-1 min-w-0">
-                <p className="text-[0.4875rem] font-medium truncate">{product.name}</p>
-                <p className="text-[0.4875rem] text-muted-foreground">
+                <p className="text-xs font-medium truncate">{product.name}</p>
+                <p className="text-xs text-muted-foreground">
                   {product.categoryName} • ${parseFloat(product.displayPrice?.toString() || "0").toFixed(2)}
                 </p>
               </div>
@@ -100,18 +100,18 @@ export const BulkPromotionProductTable: React.FC<Props> = ({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-[0.4875rem] border-t">
+        <div className="flex items-center justify-between pt-3 border-t">
           <Button
             variant="outline"
             size="sm"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1 || isLoading}
-            className="gap-[0.1625rem]"
+            className="gap-1"
           >
-            <ChevronLeft className="w-[0.65rem] h-[0.65rem]" />
+            <ChevronLeft className="w-4 h-4" />
             Previous
           </Button>
-          <span className="text-[0.4875rem] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             Page {currentPage} of {totalPages}
           </span>
           <Button
@@ -119,10 +119,10 @@ export const BulkPromotionProductTable: React.FC<Props> = ({
             size="sm"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages || isLoading}
-            className="gap-[0.1625rem]"
+            className="gap-1"
           >
             Next
-            <ChevronRight className="w-[0.65rem] h-[0.65rem]" />
+            <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
       )}

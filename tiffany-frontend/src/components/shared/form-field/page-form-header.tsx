@@ -29,23 +29,23 @@ export function PageFormHeader({
 
   return (
     <div
-      className={cn("px-[0.975rem] pt-[0.975rem] pb-[0.65rem] border-b flex-shrink-0 bg-white rounded-lg", className)}
+      className={cn("px-6 pt-6 pb-4 border-b flex-shrink-0 bg-white rounded-lg", className)}
     >
-      <div className="flex items-start gap-[0.65rem]">
+      <div className="flex items-start gap-4">
         {/* Avatar or Icon - Left side */}
         {showAvatar ? (
           <CustomAvatar size="xl" name={avatarName} imageUrl={avatarImageUrl} />
         ) : (
-          <div className="p-[0.4875rem] bg-brand-100 rounded-lg shrink-0">
-            <Icon className="h-[0.975rem] w-[0.975rem] text-brand-600" />
+          <div className="p-3 bg-brand-100 rounded-lg shrink-0">
+            <Icon className="h-6 w-6 text-brand-600" />
           </div>
         )}
 
         {/* Header Content */}
-        <div className="flex flex-col gap-[0.24375rem] flex-1 min-w-0">
-          <h1 className="text-[0.8125rem] font-semibold">{title}</h1>
+        <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+          <h1 className="text-xl font-semibold">{title}</h1>
           {description && (
-            <p className="text-[0.56875rem] text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {description}
             </p>
           )}

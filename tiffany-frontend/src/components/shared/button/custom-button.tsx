@@ -64,12 +64,12 @@ export const CustomButton = React.forwardRef<
 
     const buttonContent = isFormSubmitButton && isSubmitting ? (
       <>
-        <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         {getButtonText()}
       </>
     ) : (
       <>
-        {icon && <span className="mr-[0.325rem]">{icon}</span>}
+        {icon && <span className="mr-2">{icon}</span>}
         {getButtonText()}
       </>
     );

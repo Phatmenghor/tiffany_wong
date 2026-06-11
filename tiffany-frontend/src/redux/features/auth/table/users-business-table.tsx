@@ -56,7 +56,7 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       render: (user) => {
         return (
-          <div className="h-[1.95rem] w-[1.95rem] rounded-md overflow-hidden bg-muted border border-border flex-shrink-0">
+          <div className="h-12 w-12 rounded-md overflow-hidden bg-muted border border-border flex-shrink-0">
             <img
               src={getImageWithFallback(user.profileImageUrl, "profile")}
               alt={user?.firstName}
@@ -76,7 +76,7 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-xs text-muted-foreground">
           {user?.userIdentifier || "---"}
         </span>
       ),
@@ -88,7 +88,7 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-xs text-muted-foreground">
           {user?.phoneNumber || "---"}
         </span>
       ),
@@ -100,7 +100,7 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-xs text-muted-foreground">
           {user?.email || "---"}
         </span>
       ),
@@ -112,7 +112,7 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-xs text-muted-foreground">
           {user?.fullName || `${user.firstName} ${user.lastName}`}
         </span>
       ),
@@ -124,7 +124,7 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-xs text-muted-foreground">
           {user.userRole ? formatEnumValue(user.userRole) : "---"}
         </span>
       ),
@@ -136,12 +136,12 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
-        <div className="flex items-center gap-[0.325rem]">
+        <div className="flex items-center gap-2">
           <Switch
             checked={user?.accountStatus === "ACTIVE"}
             onCheckedChange={() => handleToggleStatus(user)}
           />
-          <span className="text-[0.4875rem] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {user?.accountStatus ? formatEnumValue(user.accountStatus) : "---"}
           </span>
         </div>
@@ -153,7 +153,7 @@ export const userBusinessTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (user) => (
-        <span className="text-[0.56875rem] text-muted-foreground">
+        <span className="text-sm text-muted-foreground">
           {dateTimeFormat(user?.createdAt)}
         </span>
       ),
@@ -164,24 +164,24 @@ export const userBusinessTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (user) => (
-        <div className="flex items-center gap-[0.325rem]">
+        <div className="flex items-center gap-2">
           <ActionButton
-            icon={<Eye className="w-[0.65rem] h-[0.65rem]" />}
+            icon={<Eye className="w-4 h-4" />}
             tooltip="View Details"
             onClick={() => handleViewUserDetail(user)}
           />
           <ActionButton
-            icon={<Edit className="w-[0.65rem] h-[0.65rem]" />}
+            icon={<Edit className="w-4 h-4" />}
             tooltip="Edit User"
             onClick={() => handleEditUser(user)}
           />
           <ActionButton
-            icon={<RotateCw className="w-[0.65rem] h-[0.65rem]" />}
+            icon={<RotateCw className="w-4 h-4" />}
             tooltip="Reset Password"
             onClick={() => handleResetPassword(user)}
           />
           <ActionButton
-            icon={<Trash className="w-[0.65rem] h-[0.65rem]" />}
+            icon={<Trash className="w-4 h-4" />}
             tooltip="Delete User"
             onClick={() => handleDeleteUser(user)}
             variant="destructive"

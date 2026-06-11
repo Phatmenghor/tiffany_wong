@@ -33,20 +33,20 @@ const HourlySalesCard = dynamic(
 
 function DashboardSkeleton() {
   return (
-    <div className="flex flex-col gap-[0.65rem] p-[0.65rem]">
+    <div className="flex flex-col gap-4 p-4">
       <div className="flex items-center justify-between">
-        <div className="space-y-[0.1625rem]">
-          <Skeleton className="h-[0.65rem] w-[3.9rem]" />
-          <Skeleton className="h-[0.4875rem] w-[6.5rem]" />
+        <div className="space-y-1">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-3 w-40" />
         </div>
-        <Skeleton className="h-[1.3rem] w-[3.25rem] rounded-md" />
+        <Skeleton className="h-8 w-20 rounded-md" />
       </div>
       <KpiSectionSkeleton />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-[0.4875rem]">
-        <Card className="lg:col-span-2"><CardContent className="p-[0.65rem]"><ChartSkeleton /></CardContent></Card>
-        <Card><CardContent className="p-[0.65rem]"><ChartSkeleton height={240} /></CardContent></Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <Card className="lg:col-span-2"><CardContent className="p-4"><ChartSkeleton /></CardContent></Card>
+        <Card><CardContent className="p-4"><ChartSkeleton height={240} /></CardContent></Card>
       </div>
-      <Card><CardContent className="p-[0.65rem]"><ChartSkeleton height={200} /></CardContent></Card>
+      <Card><CardContent className="p-4"><ChartSkeleton height={200} /></CardContent></Card>
     </div>
   );
 }
@@ -82,10 +82,10 @@ export default function AdminDashboardPage() {
   const currentHour = hourlySales?.currentHour ?? new Date().getHours();
 
   return (
-    <div className="flex flex-col gap-[0.65rem] p-[0.65rem]">
+    <div className="flex flex-col gap-4 p-4">
       <DashboardHeader today={today} onRefresh={fetchAll} />
       <KpiSection summary={summary} loading={loading.summary} />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-[0.4875rem]">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <SalesAnalyticsCard sales={sales} loading={loading.sales} />
         <PaymentMethodsCard payments={payments} loading={loading.payments} />
       </div>

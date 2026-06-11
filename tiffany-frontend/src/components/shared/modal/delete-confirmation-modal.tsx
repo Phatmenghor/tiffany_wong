@@ -75,17 +75,17 @@ export function DeleteConfirmationModal({
         <VisuallyHidden asChild>
           <DialogTitle>{title}</DialogTitle>
         </VisuallyHidden>
-        <div className="p-[0.975rem] border-b border-border bg-destructive/5">
-          <h2 className="text-[0.73125rem] font-semibold text-foreground">{title}</h2>
-          <p className="text-[0.56875rem] text-muted-foreground mt-[0.325rem]">{description}</p>
+        <div className="p-6 border-b border-border bg-destructive/5">
+          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+          <p className="text-sm text-muted-foreground mt-2">{description}</p>
         </div>
 
         <FormBody>
           {itemName && (
-            <div className="p-[0.4875rem] bg-muted rounded-lg border border-muted-foreground/20">
-              <p className="text-[0.56875rem]">
+            <div className="p-3 bg-muted rounded-lg border border-muted-foreground/20">
+              <p className="text-sm">
                 <span className="text-muted-foreground">Item to delete:</span>
-                <span className="font-semibold text-foreground ml-[0.325rem]">
+                <span className="font-semibold text-foreground ml-2">
                   "{itemName}"
                 </span>
               </p>
@@ -94,7 +94,7 @@ export function DeleteConfirmationModal({
 
           {isCritical && (
             <Alert className="border-red-200 bg-red-50">
-              <AlertTriangle className="h-[0.65rem] w-[0.65rem] text-red-600" />
+              <AlertTriangle className="h-4 w-4 text-red-600" />
               <AlertDescription className="text-red-700">
                 This action cannot be undone.
               </AlertDescription>
@@ -103,10 +103,10 @@ export function DeleteConfirmationModal({
 
           {/* Confirmation Input for Critical Actions */}
           {requireConfirmation && (
-            <div className="space-y-[0.325rem]">
-              <Label htmlFor="confirmation" className="text-[0.56875rem] font-medium">
+            <div className="space-y-2">
+              <Label htmlFor="confirmation" className="text-sm font-medium">
                 Type{" "}
-                <code className="bg-muted px-[0.1625rem] py-[0.08125rem] rounded-[0.1625rem] text-red-600 font-mono text-[0.4875rem]">
+                <code className="bg-muted px-1 py-0.5 rounded text-red-600 font-mono text-xs">
                   {confirmationText}
                 </code>{" "}
                 to confirm:
@@ -126,7 +126,7 @@ export function DeleteConfirmationModal({
           {/* Error Alert */}
           {(error || errorMessage) && (
             <Alert variant="destructive">
-              <AlertTriangle className="h-[0.65rem] w-[0.65rem]" />
+              <AlertTriangle className="h-4 w-4" />
               <AlertDescription>{error || errorMessage}</AlertDescription>
             </Alert>
           )}

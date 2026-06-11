@@ -193,11 +193,11 @@ export default function LocationPage() {
   // Loading skeleton
   if (isInitialLoading) {
     return (
-      <PageContainer className="py-[0.65rem] sm:py-[1.3rem]">
-        <div className="h-[1.3rem] w-[7.8rem] bg-muted rounded-[0.1625rem] mb-[0.975rem] animate-pulse" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
+      <PageContainer className="py-4 sm:py-8">
+        <div className="h-8 w-48 bg-muted rounded mb-6 animate-pulse" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-[7.8rem] rounded-[0.65rem]" />
+            <Skeleton key={i} className="h-48 rounded-2xl" />
           ))}
         </div>
       </PageContainer>
@@ -222,7 +222,7 @@ export default function LocationPage() {
 
   // Locations grid with infinite scroll
   return (
-    <PageContainer className="py-[0.65rem] sm:py-[1.3rem]">
+    <PageContainer className="py-4 sm:py-8">
       <PageHeader
         title="My Locations"
         icon={MapPin}
@@ -233,16 +233,16 @@ export default function LocationPage() {
           <Button
             onClick={handleAddLocation}
             size="sm"
-            className="gap-[0.325rem] h-[1.4625rem] rounded-lg"
+            className="gap-2 h-9 rounded-lg"
           >
-            <Plus className="h-[0.65rem] w-[0.65rem]" />
+            <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">Add Location</span>
           </Button>
         }
       />
 
       {/* Locations Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {locations.map((location, index) => {
           const uniqueKey = `location-${location.id}-${index}`;
           return (
@@ -261,16 +261,16 @@ export default function LocationPage() {
       {/* Skeleton loaders ALWAYS show while hasMore: true */}
       {locationPagination.hasMore && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem] mt-[0.65rem]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             {Array.from({ length: skeletonCount }).map((_, i) => (
-              <Skeleton key={`skeleton-${i}`} className="h-[7.8rem] rounded-[0.65rem]" />
+              <Skeleton key={`skeleton-${i}`} className="h-48 rounded-2xl" />
             ))}
           </div>
 
           {/* Loading spinner */}
-          <div className="flex flex-col items-center justify-center mt-[0.975rem] py-[0.975rem]">
-            <Loader2 className="h-[0.975rem] w-[0.975rem] animate-spin text-primary mb-[0.325rem]" />
-            <p className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground">
+          <div className="flex flex-col items-center justify-center mt-6 py-6">
+            <Loader2 className="h-6 w-6 animate-spin text-primary mb-2" />
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Loading more locations...
             </p>
           </div>
@@ -279,12 +279,12 @@ export default function LocationPage() {
 
       {/* Sentinel element for scroll detection */}
       {locationPagination.hasMore && !isLoading.fetch && (
-        <div ref={sentinelRef} className="h-[1.625rem] w-full mt-[0.65rem]" />
+        <div ref={sentinelRef} className="h-10 w-full mt-4" />
       )}
 
       {/* End of locations message */}
       {!locationPagination.hasMore && locations.length > 0 && (
-        <div className="text-center py-[0.65rem] text-[0.56875rem] text-muted-foreground">
+        <div className="text-center py-4 text-sm text-muted-foreground">
           You've seen it all!
         </div>
       )}

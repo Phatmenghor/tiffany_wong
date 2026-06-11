@@ -22,19 +22,19 @@ export const CustomAvatar: React.FC<CustomerAvatarProps> = ({
 }) => {
   // Avatar sizes (square)
   const avatarSizes = {
-    sm: { avatar: "h-[1.3rem] w-[1.3rem]", indicator: "w-[0.325rem] h-[0.325rem]" },
-    md: { avatar: "h-[1.625rem] w-[1.625rem]", indicator: "w-[0.4875rem] h-[0.4875rem]" },
-    lg: { avatar: "h-[1.95rem] w-[1.95rem]", indicator: "w-[0.56875rem] h-[0.56875rem]" },
-    xl: { avatar: "h-[2.6rem] w-[2.6rem]", indicator: "w-[0.65rem] h-[0.65rem]" },
-    xxl: { avatar: "h-[3.25rem] w-[3.25rem]", indicator: "w-[0.8125rem] h-[0.8125rem]" },
+    sm: { avatar: "h-8 w-8", indicator: "w-2 h-2" },
+    md: { avatar: "h-10 w-10", indicator: "w-3 h-3" },
+    lg: { avatar: "h-12 w-12", indicator: "w-3.5 h-3.5" },
+    xl: { avatar: "h-16 w-16", indicator: "w-4 h-4" },
+    xxl: { avatar: "h-20 w-20", indicator: "w-5 h-5" },
   };
 
   // Banner sizes (rectangular - good for table display)
   const bannerSizes = {
-    sm: "h-[1.3rem]",
-    md: "h-[1.95rem]",
-    lg: "h-[2.6rem]",
-    xl: "h-[3.25rem]",
+    sm: "h-8",
+    md: "h-12",
+    lg: "h-16",
+    xl: "h-20",
   };
 
   const fallbackText = name?.charAt(0)?.toUpperCase() || "B";

@@ -155,19 +155,19 @@ export default function UserBusinessPage() {
   const closeDeleteModal = () => setDeleteState({ isOpen: false, user: null });
 
   return (
-    <div className="flex flex-1 flex-col gap-[0.65rem] px-[0.325rem]">
-      <div className="space-y-[0.65rem]">
+    <div className="flex flex-1 flex-col gap-4 px-2">
+      <div className="space-y-4">
         <CardHeaderSection
           title="Business Users (Owner & Staff)"
           searchValue={filters.search}
           searchPlaceholder="Search business users..."
           buttonTooltip="Create a new business user"
-          buttonIcon={<Plus className="w-[0.4875rem] h-[0.4875rem]" />}
+          buttonIcon={<Plus className="w-3 h-3" />}
           buttonText="New"
           onSearchChange={(e) => dispatch(setSearchFilter(e.target.value))}
           openModal={handleCreateUser}
         >
-          <div className="flex flex-wrap items-center gap-[0.325rem]">
+          <div className="flex flex-wrap items-center gap-2">
             <CustomSelect
               options={ACCOUNT_STATUS_FILTER}
               value={filters.accountStatus}

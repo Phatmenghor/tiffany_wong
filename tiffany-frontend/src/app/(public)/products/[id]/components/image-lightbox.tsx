@@ -30,16 +30,16 @@ export function ImageLightbox({ isOpen, currentIndex, images, productName, onClo
 
   return (
     <div className="fixed inset-0 z-[200] bg-black/95 flex flex-col items-center justify-between" onClick={onClose}>
-      <div className="w-full flex items-center justify-between px-[0.65rem] py-[0.4875rem] shrink-0" onClick={(e) => e.stopPropagation()}>
-        <span className="text-white/70 text-[0.56875rem] font-medium">
+      <div className="w-full flex items-center justify-between px-4 py-3 shrink-0" onClick={(e) => e.stopPropagation()}>
+        <span className="text-white/70 text-sm font-medium">
           {currentIndex + 1} / {images.length}
         </span>
-        <button onClick={onClose} className="bg-white/10 hover:bg-white/20 text-white p-[0.325rem] rounded-full transition-colors">
-          <X className="h-[0.8125rem] w-[0.8125rem]" />
+        <button onClick={onClose} className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors">
+          <X className="h-5 w-5" />
         </button>
       </div>
 
-      <div className="relative flex-1 w-full flex items-center justify-center px-[2.275rem]" onClick={(e) => e.stopPropagation()}>
+      <div className="relative flex-1 w-full flex items-center justify-center px-14" onClick={(e) => e.stopPropagation()}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           key={`lightbox-${currentIndex}`}
@@ -51,27 +51,27 @@ export function ImageLightbox({ isOpen, currentIndex, images, productName, onClo
           <>
             <button
               onClick={onPrevImage}
-              className="absolute left-[0.325rem] top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/25 text-white p-[0.4875rem] rounded-full transition-colors"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/25 text-white p-3 rounded-full transition-colors"
             >
-              <ChevronLeft className="h-[0.975rem] w-[0.975rem]" />
+              <ChevronLeft className="h-6 w-6" />
             </button>
             <button
               onClick={onNextImage}
-              className="absolute right-[0.325rem] top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/25 text-white p-[0.4875rem] rounded-full transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/25 text-white p-3 rounded-full transition-colors"
             >
-              <ChevronRight className="h-[0.975rem] w-[0.975rem]" />
+              <ChevronRight className="h-6 w-6" />
             </button>
           </>
         )}
       </div>
 
-      <div className="w-full flex justify-center gap-[0.325rem] px-[0.65rem] py-[0.4875rem] overflow-x-auto shrink-0" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full flex justify-center gap-2 px-4 py-3 overflow-x-auto shrink-0" onClick={(e) => e.stopPropagation()}>
         {images.map((img, i) => (
           <button
             key={`lb-thumb-${i}`}
             onClick={() => onSelectImage(i)}
             className={cn(
-              "relative flex-shrink-0 w-[2.275rem] h-[2.275rem] rounded-lg overflow-hidden transition-all",
+              "relative flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden transition-all",
               i === currentIndex ? "ring-2 ring-white scale-110" : "opacity-40 hover:opacity-80"
             )}
           >

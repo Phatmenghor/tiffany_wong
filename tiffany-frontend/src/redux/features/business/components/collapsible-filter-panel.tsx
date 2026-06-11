@@ -88,8 +88,8 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
 
       case "input-number":
         return (
-          <div key={filter.id} className="flex flex-col gap-[0.1625rem]">
-            <label className="text-[0.4875rem] font-medium whitespace-nowrap">
+          <div key={filter.id} className="flex flex-col gap-1">
+            <label className="text-xs font-medium whitespace-nowrap">
               {filter.label}
             </label>
             <Input
@@ -105,7 +105,7 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
               }}
               min={(filter as any).min || "0"}
               max={(filter as any).max}
-              className="h-[1.625rem] text-[0.4875rem] w-full"
+              className="h-10 text-xs w-full"
               disabled={filter.disabled}
             />
           </div>
@@ -113,8 +113,8 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
 
       case "input-text":
         return (
-          <div key={filter.id} className="flex flex-col gap-[0.1625rem]">
-            <label className="text-[0.4875rem] font-medium whitespace-nowrap">
+          <div key={filter.id} className="flex flex-col gap-1">
+            <label className="text-xs font-medium whitespace-nowrap">
               {filter.label}
             </label>
             <Input
@@ -122,7 +122,7 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
               placeholder={filter.placeholder || "Enter text..."}
               value={filter.value?.toString() || ""}
               onChange={(e) => filter.onChange(e.target.value)}
-              className="h-[1.625rem] text-[0.4875rem] w-full"
+              className="h-10 text-xs w-full"
               disabled={filter.disabled}
             />
           </div>
@@ -134,24 +134,24 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
   };
 
   return (
-    <div className="space-y-[0.4875rem]">
+    <div className="space-y-3">
       <Card>
-        <CardContent className="py-[0.4875rem] sm:py-[0.8125rem] space-y-[0.4875rem]">
+        <CardContent className="py-3 sm:py-5 space-y-3">
           {/* Title Section */}
-          <div className="flex items-center gap-[0.325rem] mb-0">
-            <h1 className="text-[0.65rem] sm:text-[0.73125rem] font-bold">{config.title}</h1>
+          <div className="flex items-center gap-2 mb-0">
+            <h1 className="text-base sm:text-lg font-bold">{config.title}</h1>
           </div>
 
           {/* Row 1: Search (left) + Filters & Add Button (right, grouped) */}
-          <div className="flex flex-wrap items-end gap-[0.4875rem]">
-            {/* Search - Left side, h-[1.625rem] same as filters */}
-            <div className="w-[300px] h-[1.625rem]">
+          <div className="flex flex-wrap items-end gap-3">
+            {/* Search - Left side, h-10 same as filters */}
+            <div className="w-[300px] h-10">
               <div className="relative w-full h-full group">
-                <Search className="absolute left-[0.4875rem] top-1/2 -translate-y-1/2 h-[0.65rem] w-[0.65rem] text-gray-400 pointer-events-none" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                 <Input
                   type="search"
                   placeholder={config.searchPlaceholder}
-                  className="pl-[1.625rem] w-full h-full placeholder:text-gray-500 focus:border-primary focus:ring-primary/30 hover:border-primary transition-all duration-200"
+                  className="pl-10 w-full h-full placeholder:text-gray-500 focus:border-primary focus:ring-primary/30 hover:border-primary transition-all duration-200"
                   value={config.searchValue}
                   onChange={config.onSearchChange}
                 />
@@ -159,10 +159,10 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
             </div>
 
             {/* Right side: Filters + Add Button (grouped together, pushed right, scrollable) */}
-            <div className="flex flex-wrap items-end gap-[0.4875rem] ml-auto overflow-x-auto max-w-[calc(100vw-330px)] pb-[0.325rem]">
+            <div className="flex flex-wrap items-end gap-3 ml-auto overflow-x-auto max-w-[calc(100vw-330px)] pb-2">
               {/* Essential Filters - Right side */}
               {essentialFilters.length > 0 && (
-                <div className="grid gap-[0.4875rem] flex-shrink-0"
+                <div className="grid gap-3 flex-shrink-0"
                   style={{
                     gridTemplateColumns: 'repeat(2, minmax(120px, 1fr))',
                     maxWidth: '300px',
@@ -171,15 +171,15 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
                 </div>
               )}
 
-              {/* Add Button - Far right, h-[1.625rem] same as filters */}
+              {/* Add Button - Far right, h-10 same as filters */}
               {config.buttonText && (
                 <Button
                   disabled={config.buttonDisabled}
                   variant="default"
                   onClick={config.onButtonClick}
-                  className="gap-[0.325rem] flex-shrink-0 h-[1.625rem] px-[0.65rem]"
+                  className="gap-2 flex-shrink-0 h-10 px-4"
                 >
-                  <Plus className="w-[0.65rem] h-[0.65rem]" />
+                  <Plus className="w-4 h-4" />
                   {config.buttonText}
                 </Button>
               )}
@@ -190,21 +190,21 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
 
       {/* Advanced Filters Section */}
       {advancedFilters.length > 0 && (
-        <div className="bg-primary/5 rounded-lg border border-primary/20 p-[0.4875rem]">
+        <div className="bg-primary/5 rounded-lg border border-primary/20 p-3">
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex items-center justify-between w-full hover:text-primary hover:bg-primary/10 px-[0.325rem] py-[0.1625rem] rounded-[0.1625rem] transition-all duration-200"
+            className="flex items-center justify-between w-full hover:text-primary hover:bg-primary/10 px-2 py-1 rounded transition-all duration-200"
           >
-            <div className="flex items-center gap-[0.325rem]">
-              <span className="text-[0.56875rem] font-bold text-primary">Advanced Filters</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-primary">Advanced Filters</span>
               {activeFiltersCount > 0 && (
-                <Badge variant="secondary" className="text-[0.4875rem] bg-primary/10 text-primary border border-primary">
+                <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border border-primary">
                   {activeFiltersCount} active
                 </Badge>
               )}
             </div>
             <ChevronDown
-              className={`w-[0.65rem] h-[0.65rem] transition-transform ${
+              className={`w-4 h-4 transition-transform ${
                 showAdvanced ? "rotate-180" : ""
               }`}
             />
@@ -212,9 +212,9 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
 
           {/* Advanced Filters Content - Responsive grid layout */}
           {showAdvanced && (
-            <div className="mt-[0.4875rem] pt-[0.4875rem] border-t border-primary/20">
+            <div className="mt-3 pt-3 border-t border-primary/20">
               <div
-                className="grid gap-[0.4875rem] w-full"
+                className="grid gap-3 w-full"
                 style={{
                   gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
                 }}>

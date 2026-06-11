@@ -92,13 +92,13 @@ interface LocationModalProps {
 // ---------------------------------------------------------------------------
 // Center pin
 // ---------------------------------------------------------------------------
-function CenterPin({ size = "h-[1.4625rem] w-[1.4625rem]", isDragging }: { size?: string; isDragging: boolean }) {
+function CenterPin({ size = "h-9 w-9", isDragging }: { size?: string; isDragging: boolean }) {
   return (
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full pointer-events-none z-10">
-      <div className={`transition-transform duration-150 ${isDragging ? "-translate-y-[0.4875rem] scale-110" : ""}`}>
+      <div className={`transition-transform duration-150 ${isDragging ? "-translate-y-3 scale-110" : ""}`}>
         <MapPin className={`${size} text-red-500 drop-shadow-lg`} fill="currentColor" strokeWidth={1.5} />
       </div>
-      <div className={`h-[0.1625rem] bg-black/30 rounded-full mx-auto transition-all duration-150 ${isDragging ? "w-[0.4875rem] opacity-40" : "w-[0.325rem] opacity-60"}`} />
+      <div className={`h-1 bg-black/30 rounded-full mx-auto transition-all duration-150 ${isDragging ? "w-3 opacity-40" : "w-2 opacity-60"}`} />
     </div>
   );
 }
@@ -415,38 +415,38 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
     return (
       <div className="fixed inset-0 z-[201] flex flex-col bg-white">
         {/* Toolbar */}
-        <div className="flex items-center justify-between px-[0.65rem] py-[0.4875rem] border-b bg-background shrink-0 gap-[0.4875rem] shadow-sm">
-          <div className="flex items-center gap-[0.4875rem] min-w-0">
-            <div className="p-[0.325rem] rounded-lg bg-primary/10 shrink-0">
-              <MapPin className="h-[0.65rem] w-[0.65rem] text-primary" />
+        <div className="flex items-center justify-between px-4 py-3 border-b bg-background shrink-0 gap-3 shadow-sm">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+              <MapPin className="h-4 w-4 text-primary" />
             </div>
             <div className="min-w-0">
-              <span className="text-[0.56875rem] font-semibold block">Select on Map</span>
+              <span className="text-sm font-semibold block">Select on Map</span>
               {hasCoords && (
-                <span className="text-[0.4875rem] font-mono text-muted-foreground">
+                <span className="text-xs font-mono text-muted-foreground">
                   {latitude.toFixed(5)}, {longitude.toFixed(5)}
-                  {isReverseGeocoding && <Loader2 className="inline-block h-[0.4875rem] w-[0.4875rem] ml-[0.1625rem] animate-spin" />}
+                  {isReverseGeocoding && <Loader2 className="inline-block h-3 w-3 ml-1 animate-spin" />}
                 </span>
               )}
             </div>
           </div>
-          <div className="flex items-center gap-[0.325rem] shrink-0">
-            <Button type="button" variant="outline" size="sm" onClick={handleMyLocation} className="gap-[0.1625rem] h-[1.4625rem]">
-              <LocateFixed className="h-[0.65rem] w-[0.65rem]" />
+          <div className="flex items-center gap-2 shrink-0">
+            <Button type="button" variant="outline" size="sm" onClick={handleMyLocation} className="gap-1 h-9">
+              <LocateFixed className="h-4 w-4" />
               <span className="hidden sm:inline">My Location</span>
             </Button>
-            <Button type="button" variant="default" size="sm" onClick={() => setIsFullScreen(false)} className="gap-[0.1625rem] h-[1.4625rem]">
-              <Minimize2 className="h-[0.65rem] w-[0.65rem]" />
+            <Button type="button" variant="default" size="sm" onClick={() => setIsFullScreen(false)} className="gap-1 h-9">
+              <Minimize2 className="h-4 w-4" />
               <span className="hidden sm:inline">Done</span>
             </Button>
           </div>
         </div>
 
         {/* Search bar */}
-        <div className="px-[0.65rem] py-[0.4875rem] border-b bg-background/95 backdrop-blur shrink-0">
+        <div className="px-4 py-3 border-b bg-background/95 backdrop-blur shrink-0">
           <div className="relative w-full">
-            <Search className="absolute left-[0.4875rem] top-1/2 -translate-y-1/2 h-[0.65rem] w-[0.65rem] text-muted-foreground" />
-            <Input ref={fullscreenSearchRef} type="text" placeholder="Search for a place, address…" className="pl-[1.4625rem] h-[1.625rem] rounded-lg text-[0.56875rem] w-full" autoComplete="off" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input ref={fullscreenSearchRef} type="text" placeholder="Search for a place, address…" className="pl-9 h-10 rounded-lg text-sm w-full" autoComplete="off" />
           </div>
         </div>
 
@@ -454,27 +454,27 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
         <div className="flex-1 relative bg-gray-100">
           {!isFullScreenMapReady && (
             <div className="absolute inset-0 flex items-center justify-center bg-muted/80 z-10">
-              <div className="flex flex-col items-center gap-[0.325rem]">
-                <Loader2 className="h-[1.3rem] w-[1.3rem] animate-spin text-primary" />
-                <span className="text-[0.56875rem] text-muted-foreground">Loading map…</span>
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="text-sm text-muted-foreground">Loading map…</span>
               </div>
             </div>
           )}
-          <CenterPin isDragging={isDragging} size="h-[1.625rem] w-[1.625rem]" />
+          <CenterPin isDragging={isDragging} size="h-10 w-10" />
           <div ref={fullscreenMapContainerRef} className="w-full h-full bg-white" />
           {/* Address display */}
-          <div className="absolute bottom-[0.65rem] left-1/2 -translate-x-1/2 bg-background/95 backdrop-blur-sm border rounded-[0.4875rem] px-[0.975rem] py-[0.65rem] shadow-lg w-[90%] max-w-2xl">
-            <div className="flex items-start gap-[0.4875rem]">
-              <MapPin className="h-[0.8125rem] w-[0.8125rem] text-red-500 shrink-0 mt-[0.08125rem]" />
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-background/95 backdrop-blur-sm border rounded-xl px-6 py-4 shadow-lg w-[90%] max-w-2xl">
+            <div className="flex items-start gap-3">
+              <MapPin className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
               <div className="min-w-0 flex-1">
                 {addressPreview && (
-                  <p className="text-[0.65rem] font-semibold text-foreground leading-relaxed break-words">
+                  <p className="text-base font-semibold text-foreground leading-relaxed break-words">
                     {addressPreview}
                   </p>
                 )}
-                <p className="text-[0.56875rem] font-mono text-muted-foreground mt-[0.325rem] flex items-center gap-[0.325rem]">
+                <p className="text-sm font-mono text-muted-foreground mt-2 flex items-center gap-2">
                   {latitude.toFixed(6)}, {longitude.toFixed(6)}
-                  {isReverseGeocoding && <Loader2 className="h-[0.4875rem] w-[0.4875rem] animate-spin shrink-0" />}
+                  {isReverseGeocoding && <Loader2 className="h-3 w-3 animate-spin shrink-0" />}
                 </p>
               </div>
             </div>
@@ -490,7 +490,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
-        className="p-0 overflow-hidden flex flex-col w-full sm:max-w-3xl lg:max-w-5xl max-h-[95dvh] rounded-[0.65rem]"
+        className="p-0 overflow-hidden flex flex-col w-full sm:max-w-3xl lg:max-w-5xl max-h-[95dvh] rounded-2xl"
         onInteractOutside={(e) => { if ((e.target as HTMLElement).closest(".pac-container")) e.preventDefault(); }}
         onPointerDownOutside={(e) => { if ((e.target as HTMLElement).closest(".pac-container")) e.preventDefault(); }}
       >
@@ -501,65 +501,65 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
         />
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 overflow-hidden">
-          <FormBody contentClassName="space-y-[0.8125rem]">
+          <FormBody contentClassName="space-y-5">
             {/* Error banner */}
             {reduxError && (
-              <div className="p-[0.4875rem] bg-destructive/10 border border-destructive/30 rounded-lg text-[0.56875rem] text-destructive font-medium">
+              <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-sm text-destructive font-medium">
                 {reduxError}
               </div>
             )}
 
             {/* Map section */}
             <div>
-              <div className="space-y-[0.4875rem]">
-                <div className="relative h-[10.4rem] rounded-lg overflow-hidden border bg-muted">
+              <div className="space-y-3">
+                <div className="relative h-64 rounded-lg overflow-hidden border bg-muted">
                   <div ref={mapContainerRef} className="w-full h-full" />
                   {!isMapReady && !mapError && (
                     <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
-                      <div className="flex flex-col items-center gap-[0.325rem]">
-                        <Loader2 className="h-[0.975rem] w-[0.975rem] animate-spin text-primary" />
-                        <span className="text-[0.56875rem] text-muted-foreground">Loading map…</span>
+                      <div className="flex flex-col items-center gap-2">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                        <span className="text-sm text-muted-foreground">Loading map…</span>
                       </div>
                     </div>
                   )}
                   {mapError && (
                     <div className="absolute inset-0 flex items-center justify-center bg-yellow-50/90">
                       <div className="text-center">
-                        <AlertTriangle className="h-[0.8125rem] w-[0.8125rem] text-yellow-600 mx-auto mb-[0.1625rem]" />
-                        <p className="text-[0.56875rem] font-medium text-yellow-800">Map unavailable</p>
+                        <AlertTriangle className="h-5 w-5 text-yellow-600 mx-auto mb-1" />
+                        <p className="text-sm font-medium text-yellow-800">Map unavailable</p>
                       </div>
                     </div>
                   )}
                   <div className="absolute inset-0 group cursor-pointer" onClick={() => setIsFullScreen(true)}>
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
-                    <div className="absolute bottom-[0.4875rem] left-1/2 -translate-x-1/2 bg-background/90 backdrop-blur-sm border rounded-lg px-[0.4875rem] py-[0.24375rem] text-[0.4875rem] text-foreground flex items-center gap-[0.24375rem] shadow-sm group-hover:shadow-md transition-all">
-                      <Maximize2 className="h-[0.56875rem] w-[0.56875rem] text-primary" />
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-background/90 backdrop-blur-sm border rounded-lg px-3 py-1.5 text-xs text-foreground flex items-center gap-1.5 shadow-sm group-hover:shadow-md transition-all">
+                      <Maximize2 className="h-3.5 w-3.5 text-primary" />
                       Click to expand
                     </div>
                   </div>
-                  <CenterPin isDragging={isDragging} size="h-[1.3rem] w-[1.3rem]" />
+                  <CenterPin isDragging={isDragging} size="h-8 w-8" />
                 </div>
 
                 {hasCoords && (
-                  <div className="flex items-center gap-[0.325rem] bg-green-50 border border-green-200 rounded-lg px-[0.4875rem] py-[0.325rem]">
-                    <CheckCircle2 className="h-[0.65rem] w-[0.65rem] text-green-600 shrink-0" />
-                    <span className="text-[0.4875rem] font-mono text-green-700 flex-1">{latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
-                    <Badge variant="secondary" className="text-[0.4875rem]">Set</Badge>
+                  <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                    <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                    <span className="text-xs font-mono text-green-700 flex-1">{latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
+                    <Badge variant="secondary" className="text-xs">Set</Badge>
                   </div>
                 )}
 
-                <Button type="button" variant="outline" onClick={handleMyLocation} className="w-full gap-[0.325rem]" disabled={isSubmitting}>
-                  <LocateFixed className="h-[0.65rem] w-[0.65rem]" />
+                <Button type="button" variant="outline" onClick={handleMyLocation} className="w-full gap-2" disabled={isSubmitting}>
+                  <LocateFixed className="h-4 w-4" />
                   Use My Location
                 </Button>
               </div>
             </div>
 
             {/* Address details section */}
-            <div className="space-y-[0.65rem] pt-[0.4875rem] border-t">
+            <div className="space-y-4 pt-3 border-t">
               <TextField control={control} name="label" label="Label" placeholder="e.g., Home, Office, Shop" required disabled={isSubmitting} error={errors.label} />
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[0.65rem]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <TextField control={control} name="houseNumber" label="House Number" placeholder="Enter house number" disabled={isSubmitting} error={errors.houseNumber} />
                 <TextField control={control} name="streetNumber" label="Street" placeholder="Enter street" disabled={isSubmitting} error={errors.streetNumber} />
                 <TextField control={control} name="village" label="Village / Sangkat" placeholder="Auto-filled" disabled={isSubmitting} error={errors.village} />
@@ -576,22 +576,22 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
                 onClick={() => setValue("isDefault", !isDefaultValue, { shouldDirty: true })}
                 disabled={isSubmitting}
                 className={cn(
-                  "w-full flex items-center gap-[0.4875rem] rounded-lg border-2 p-[0.4875rem] text-left transition-all focus:outline-none",
+                  "w-full flex items-center gap-3 rounded-lg border-2 p-3 text-left transition-all focus:outline-none",
                   isDefaultValue
                     ? "border-amber-300 bg-amber-50/50"
                     : "border-border hover:border-primary/30 hover:bg-muted/30"
                 )}
               >
-                <div className={cn("p-[0.325rem] rounded-lg shrink-0", isDefaultValue ? "bg-amber-100" : "bg-muted")}>
-                  <Star className={cn("h-[0.65rem] w-[0.65rem]", isDefaultValue ? "text-amber-500 fill-amber-500" : "text-muted-foreground")} />
+                <div className={cn("p-2 rounded-lg shrink-0", isDefaultValue ? "bg-amber-100" : "bg-muted")}>
+                  <Star className={cn("h-4 w-4", isDefaultValue ? "text-amber-500 fill-amber-500" : "text-muted-foreground")} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={cn("text-[0.56875rem] font-semibold", isDefaultValue ? "text-amber-700" : "text-foreground")}>
+                  <p className={cn("text-sm font-semibold", isDefaultValue ? "text-amber-700" : "text-foreground")}>
                     {isDefaultValue ? "Default Location" : "Set as Default"}
                   </p>
-                  <p className="text-[0.4875rem] text-muted-foreground">Default address for deliveries</p>
+                  <p className="text-xs text-muted-foreground">Default address for deliveries</p>
                 </div>
-                {isDefaultValue && <CheckCircle2 className="h-[0.65rem] w-[0.65rem] text-amber-500 shrink-0" />}
+                {isDefaultValue && <CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" />}
               </button>
             </div>
           </FormBody>

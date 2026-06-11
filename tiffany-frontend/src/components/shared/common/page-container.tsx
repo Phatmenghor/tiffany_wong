@@ -22,7 +22,7 @@ export const PageContainer = ({
 }: PageContainerProps) => {
   return (
     <Component
-      className={cn("max-w-7xl mx-auto px-[0.65rem] sm:px-[0.975rem] lg:px-[1.3rem]", className)}
+      className={cn("max-w-7xl mx-auto px-4 sm:px-6 lg:px-8", className)}
     >
       {children}
     </Component>

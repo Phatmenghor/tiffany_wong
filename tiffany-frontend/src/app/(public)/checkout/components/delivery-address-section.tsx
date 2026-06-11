@@ -15,19 +15,19 @@ export function DeliveryAddressSection({
   onAddLocation,
 }: DeliveryAddressSectionProps) {
   return (
-    <div className="bg-card border rounded-[0.65rem] p-[0.65rem] sm:p-[0.8125rem]">
-      <div className="flex items-center justify-between mb-[0.65rem]">
-        <h2 className="text-[0.73125rem] font-bold flex items-center gap-[0.325rem]">
-          <MapPin className="h-[0.8125rem] w-[0.8125rem]" />
+    <div className="bg-card border rounded-2xl p-4 sm:p-5">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-bold flex items-center gap-2">
+          <MapPin className="h-5 w-5" />
           Delivery / Pickup
         </h2>
         <Button
           onClick={onAddLocation}
           size="sm"
           variant="outline"
-          className="gap-[0.24375rem] h-[1.3rem]"
+          className="gap-1.5 h-8"
         >
-          <Plus className="h-[0.65rem] w-[0.65rem]" />
+          <Plus className="h-4 w-4" />
           Add Address
         </Button>
       </div>

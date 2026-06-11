@@ -113,17 +113,17 @@ export function QuantitySelector({
   const displayValue = latestCommittedRef.current;
 
   return (
-    <div className={cn("flex items-center gap-[0.325rem]", className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       <CustomButton
         variant="outline"
         size="icon"
         onClick={handleDecrement}
         className={cn(
-          isSmall ? "h-[1.3rem] w-[1.3rem]" : "h-[1.625rem] w-[1.625rem]",
+          isSmall ? "h-8 w-8" : "h-10 w-10",
           displayValue <= min && "opacity-40",
         )}
       >
-        <Minus className={cn(isSmall ? "h-[0.4875rem] w-[0.4875rem]" : "h-[0.65rem] w-[0.65rem]")} />
+        <Minus className={cn(isSmall ? "h-3 w-3" : "h-4 w-4")} />
       </CustomButton>
 
       <input
@@ -135,11 +135,11 @@ export function QuantitySelector({
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         className={cn(
-          "text-center font-bold rounded-[0.1625rem] border focus:outline-none focus:ring-2",
+          "text-center font-bold rounded border focus:outline-none focus:ring-2",
           pending
             ? "bg-amber-50 text-amber-600 border-amber-200 focus:ring-amber-300"
             : "bg-primary/10 text-primary border-primary/20 focus:ring-primary/30",
-          isSmall ? "w-[1.95rem] h-[1.3rem] text-[0.56875rem]" : "w-[2.6rem] h-[1.625rem] text-[0.73125rem]",
+          isSmall ? "w-12 h-8 text-sm" : "w-16 h-10 text-lg",
         )}
       />
 
@@ -147,9 +147,9 @@ export function QuantitySelector({
         variant="outline"
         size="icon"
         onClick={handleIncrement}
-        className={cn(isSmall ? "h-[1.3rem] w-[1.3rem]" : "h-[1.625rem] w-[1.625rem]")}
+        className={cn(isSmall ? "h-8 w-8" : "h-10 w-10")}
       >
-        <Plus className={cn(isSmall ? "h-[0.4875rem] w-[0.4875rem]" : "h-[0.65rem] w-[0.65rem]")} />
+        <Plus className={cn(isSmall ? "h-3 w-3" : "h-4 w-4")} />
       </CustomButton>
     </div>
   );

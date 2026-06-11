@@ -9,8 +9,8 @@ import type { DashboardSalesResponse } from "@/redux/features/dashboard/store/mo
 function SalesTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-popover border rounded-[0.1625rem] shadow-lg px-[0.4875rem] py-[0.325rem] text-[0.4875rem] space-y-[0.1625rem]">
-      <p className="font-semibold text-foreground mb-[0.1625rem]">{label}</p>
+    <div className="bg-popover border rounded shadow-lg px-3 py-2 text-xs space-y-1">
+      <p className="font-semibold text-foreground mb-1">{label}</p>
       <p className="text-primary">Revenue: <span className="font-bold">{formatCurrency(payload[0]?.value ?? 0)}</span></p>
       <p className="text-muted-foreground">Orders: <span className="font-medium text-foreground">{payload[1]?.value ?? 0}</span></p>
     </div>
@@ -20,23 +20,23 @@ function SalesTooltip({ active, payload, label }: any) {
 export function SalesAnalyticsCard({ sales, loading }: { sales: DashboardSalesResponse | null; loading: boolean }) {
   return (
     <Card className="lg:col-span-2">
-      <CardHeader className="pb-[0.1625rem]">
+      <CardHeader className="pb-1">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-[0.4875rem]">Sales Analytics</CardTitle>
-            <CardDescription className="text-[0.4875rem]">Revenue &amp; orders over time — last 7 days</CardDescription>
+            <CardTitle className="text-xs">Sales Analytics</CardTitle>
+            <CardDescription className="text-xs">Revenue &amp; orders over time — last 7 days</CardDescription>
           </div>
           {sales && (
             <div className="text-right">
-              <p className="text-[0.4875rem] font-bold text-primary">{formatCurrency(sales.totalRevenue)}</p>
-              <p className="text-[0.4875rem] text-muted-foreground">{sales.totalOrders} orders</p>
+              <p className="text-xs font-bold text-primary">{formatCurrency(sales.totalRevenue)}</p>
+              <p className="text-xs text-muted-foreground">{sales.totalOrders} orders</p>
             </div>
           )}
         </div>
       </CardHeader>
       <CardContent>
         {loading ? <ChartSkeleton /> : !sales?.data?.length ? (
-          <div className="h-[280px] flex items-center justify-center text-muted-foreground text-[0.4875rem]">No sales data</div>
+          <div className="h-[280px] flex items-center justify-center text-muted-foreground text-xs">No sales data</div>
         ) : (
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={sales.data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>

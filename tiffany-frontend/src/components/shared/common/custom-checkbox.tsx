@@ -48,25 +48,25 @@ export function CustomCheckbox({
       box: "w-[12.8px] h-[12.8px]",
       innerBox: "w-[6.4px] h-[6.4px]",
       icon: "w-[9.6px] h-[9.6px]",
-      text: "text-[0.4875rem]",
+      text: "text-xs",
     },
     md: {
-      box: "w-[0.65rem] h-[0.65rem]",
-      innerBox: "w-[0.325rem] h-[0.325rem]",
-      icon: "w-[0.4875rem] h-[0.4875rem]",
-      text: "text-[0.56875rem]",
+      box: "w-4 h-4",
+      innerBox: "w-2 h-2",
+      icon: "w-3 h-3",
+      text: "text-sm",
     },
     lg: {
       box: "w-[19.2px] h-[19.2px]",
       innerBox: "w-[9.6px] h-[9.6px]",
-      icon: "w-[0.65rem] h-[0.65rem]",
-      text: "text-[0.65rem]",
+      icon: "w-4 h-4",
+      text: "text-base",
     },
     xl: {
       box: "w-[25.6px] h-[25.6px]",
       innerBox: "w-[12.8px] h-[12.8px]",
-      icon: "w-[0.8125rem] h-[0.8125rem]",
-      text: "text-[0.73125rem]",
+      icon: "w-5 h-5",
+      text: "text-lg",
     },
   };
 
@@ -158,7 +158,7 @@ export function CustomCheckbox({
   // Wrapper for label (if provided)
   if (label) {
     return (
-      <label className="flex items-center gap-[0.325rem] cursor-pointer group">
+      <label className="flex items-center gap-2 cursor-pointer group">
         <div className={baseCheckboxClass} title={title}>
           {checkboxContent}
         </div>

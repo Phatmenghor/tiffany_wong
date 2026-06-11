@@ -88,8 +88,8 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
         {/* Header */}
         <DialogHeader className="text-left">
           <div>
-            <DialogTitle className="text-[0.975rem]">{businessName}</DialogTitle>
-            <p className="text-[0.56875rem] text-muted-foreground mt-[0.1625rem]">
+            <DialogTitle className="text-2xl">{businessName}</DialogTitle>
+            <p className="text-sm text-muted-foreground mt-1">
               Create a new account
             </p>
           </div>
@@ -98,9 +98,9 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
         <Separator />
 
         {/* Body - Register Form */}
-        <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-[0.65rem]">
+        <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
           {/* First and Last Name Row */}
-          <div className="grid grid-cols-2 gap-[0.4875rem]">
+          <div className="grid grid-cols-2 gap-3">
             <TextField
               name="firstName"
               label="First Name"
@@ -166,18 +166,18 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
           />
 
           {/* Footer - Submit Button */}
-          <DialogFooter className="pt-[0.325rem]">
+          <DialogFooter className="pt-2">
             <Button
               type="submit"
-              className="w-full h-[1.7875rem] font-semibold"
+              className="w-full h-11 font-semibold"
               disabled={isAnyLoading}
             >
-              {isLoading && <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />}
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isLoading ? "Creating account..." : "Create Account"}
             </Button>
           </DialogFooter>
 
-          <p className="text-center text-[0.56875rem] text-muted-foreground">
+          <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <button
               type="button"
