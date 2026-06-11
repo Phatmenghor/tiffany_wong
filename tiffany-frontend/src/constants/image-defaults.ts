@@ -5,7 +5,7 @@
 
 export const IMAGE_DEFAULTS = {
   // Local fallback image (no external dependencies)
-  NO_IMAGE: "/assets/image/no-image.png",
+  NO_IMAGE: "/assets/image/no-image.svg",
 };
 
 /**
