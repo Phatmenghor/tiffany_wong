@@ -75,20 +75,20 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
             <div key={route.title} className="w-full">
               <Button
                 variant="ghost"
-                className="w-full justify-start hover:bg-primary/10 hover:text-primary rounded-[0.1625rem] relative transition-all duration-200"
+                className="w-full justify-start hover:bg-primary/10 hover:text-primary rounded-[0.1625rem] relative transition-all duration-200 text-[11px] overflow-hidden"
                 onClick={() =>
                   route.title && !isCollapsed && toggleSection(route.title)
                 }
                 aria-expanded={isOpen}
                 title={isCollapsed ? route.title : undefined}
               >
-                <div className="flex w-full items-center">
+                <div className="flex w-full items-center min-w-0">
                   {route.icon && (
                     <route.icon className="w-[0.8125rem] h-[0.8125rem] flex-shrink-0 transition-colors duration-200" />
                   )}
                   {!isCollapsed && (
                     <>
-                      <span className="ml-[0.4875rem] truncate transition-colors duration-200">
+                      <span className="ml-[0.4875rem] truncate transition-colors duration-200 min-w-0">
                         {route.title}
                       </span>
                       <div className="ml-auto">
@@ -132,16 +132,16 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
                           variant="ghost"
                           asChild
                           className={cn(
-                            "relative w-full justify-start hover:bg-primary/10 hover:text-primary pl-[0.975rem] rounded-[0.1625rem] z-20 border-l border-transparent hover:border-l-primary/30 transition-all duration-200",
+                            "relative w-full justify-start hover:bg-primary/10 hover:text-primary pl-[0.975rem] rounded-[0.1625rem] z-20 border-l border-transparent hover:border-l-primary/30 transition-all duration-200 text-[11px] overflow-hidden",
                             isSubItemActive &&
                               "bg-primary/20 text-primary font-medium border-l-2 border-primary shadow-sm",
                           )}
                         >
                           <Link
                             href={subItem.href}
-                            className="flex items-center gap-[0.325rem]"
+                            className="flex items-center gap-[0.325rem] min-w-0 overflow-hidden"
                           >
-                            <span className="truncate">{subItem.title}</span>
+                            <span className="truncate min-w-0">{subItem.title}</span>
                           </Link>
                         </Button>
                       </div>
@@ -159,18 +159,18 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
             variant="ghost"
             asChild
             className={cn(
-              "w-full justify-start hover:bg-primary/10 hover:text-primary rounded-[0.1625rem] transition-all duration-200",
+              "w-full justify-start hover:bg-primary/10 hover:text-primary rounded-[0.1625rem] transition-all duration-200 text-[11px] overflow-hidden",
               isActive &&
                 "bg-primary/20 text-primary font-medium border-l-2 border-primary",
             )}
           >
             <Link
               href={route.href || "#"}
-              className="flex items-center gap-[0.4875rem] px-[0.4875rem] py-[0.325rem]"
+              className="flex items-center gap-[0.4875rem] px-[0.4875rem] py-[0.325rem] min-w-0 overflow-hidden"
               title={collapsed ? route.title : undefined}
             >
               {route.icon && <route.icon className="w-[0.8125rem] h-[0.8125rem] flex-shrink-0" />}
-              {!collapsed && <span className="truncate">{route.title}</span>}
+              {!collapsed && <span className="truncate min-w-0">{route.title}</span>}
             </Link>
           </Button>
         );
@@ -214,10 +214,10 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
                 </div>
               </div>
               <div className="flex flex-col">
-                <span className="text-foreground font-bold text-[13px] leading-tight tracking-tight">
+                <span className="text-foreground font-bold text-[11px] leading-tight tracking-tight truncate">
                   {businessName}
                 </span>
-                <span className="text-muted-foreground text-[11px] font-medium tracking-wide">
+                <span className="text-muted-foreground text-[10px] font-medium tracking-wide truncate">
                   Dashboard
                 </span>
               </div>
