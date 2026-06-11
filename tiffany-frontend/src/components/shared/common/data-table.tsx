@@ -150,7 +150,7 @@ export function DataTableWithPagination<T = any>({
                 {columns.map((column) => (
                   <th
                     key={column.key}
-                    className={`px-[0.65rem] py-[0.4875rem] text-left font-semibold text-[13px] text-muted-foreground border-b border-border ${
+                    className={`px-[0.65rem] py-[0.4875rem] text-left font-semibold text-[12px] text-muted-foreground border-b border-border ${
                       column.className || ""
                     }`}
                     style={{
@@ -170,7 +170,7 @@ export function DataTableWithPagination<T = any>({
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className="px-[0.65rem] py-[0.4875rem] border-b border-border/50 text-[14px]"
+                      className="px-[0.65rem] py-[0.4875rem] border-b border-border/50 text-[12px]"
                       style={{
                         ...(column.width && { width: column.width }),
                         ...(column.maxWidth && { maxWidth: column.maxWidth }),
@@ -206,7 +206,7 @@ export function DataTableWithPagination<T = any>({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`px-[0.65rem] py-[0.4875rem] text-left font-semibold text-[13px] text-muted-foreground border-b border-border ${
+                  className={`px-[0.65rem] py-[0.4875rem] text-left font-semibold text-[12px] text-muted-foreground border-b border-border ${
                     column.className || ""
                   }`}
                   style={{
@@ -247,7 +247,7 @@ export function DataTableWithPagination<T = any>({
                     return (
                       <td
                         key={column.key}
-                        className={`px-[0.65rem] py-[0.4875rem] border-b border-border/50 text-[14px] ${
+                        className={`px-[0.65rem] py-[0.4875rem] border-b border-border/50 text-[12px] ${
                           column.className || ""
                         }`}
                         style={{
