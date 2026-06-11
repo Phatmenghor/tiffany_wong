@@ -138,7 +138,7 @@ export function DataTableWithPagination<T = any>({
       <div className="space-y-[0.65rem]">
         <div className={`rounded-[0.24375rem] border overflow-x-auto ${className}`}>
           <table
-            className="text-[0.56875rem]"
+            className="data-table"
             style={{
               tableLayout: "fixed",
               minWidth: "100%",
@@ -194,7 +194,7 @@ export function DataTableWithPagination<T = any>({
       {/* Data Table */}
       <div className={`rounded-[0.24375rem] border overflow-x-auto ${className}`}>
         <table
-          className="text-[0.56875rem]"
+          className="data-table"
           style={{
             tableLayout: "fixed",
             minWidth: "100%",
@@ -234,7 +234,7 @@ export function DataTableWithPagination<T = any>({
               tableData.map((item, index) => (
                 <tr
                   key={getRowKey(item, index)}
-                  className={`text-[0.56875rem] transition-all duration-200 hover:bg-primary/5 ${
+                  className={`transition-all duration-200 hover:bg-primary/5 ${
                     onRowClick ? "cursor-pointer" : ""
                   }`}
                   onClick={() => onRowClick?.(item)}

@@ -3,18 +3,14 @@ import { dateTimeFormat } from "@/utils/date/date-time-format";
 import { Edit, Eye, Trash, Package, RotateCcw, Zap, Check } from "lucide-react";
 import { TableColumn } from "@/components/shared/common/data-table";
 import { ActionButton } from "@/components/shared/button/action-button";
-import { CustomAvatar } from "@/components/shared/avator/custom-avator";
+import { TableThumbnail } from "@/components/shared/common/table-thumbnail";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import Image from "next/image";
-import { useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import {
   AllProductResponseModel,
   ProductDetailResponseModel,
 } from "../store/models/response/product-response";
-import { getImageWithFallback } from "@/constants/image-defaults";
 
 interface ProductTableHandlers {
   handleEditProduct: (brand: ProductDetailResponseModel) => void;
@@ -29,44 +25,13 @@ interface ProductTableOptions {
   handlers: ProductTableHandlers;
 }
 
-/**
- * ProductImagePreview - Display product image with preview styling
- */
-function ProductImagePreview({
-  product,
-}: {
-  product: ProductDetailResponseModel;
-}) {
-  const [imageError, setImageError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  return (
-    <div className="relative w-[2.275rem] h-[2.275rem] flex items-center justify-center overflow-hidden rounded-[0.325rem] bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300">
-      {!imageLoaded && (
-        <Skeleton className="absolute inset-0 w-full h-full rounded-[0.325rem]" />
-      )}
-      <Image
-        src={getImageWithFallback(product?.mainImageUrl, "product")}
-        alt={product.name}
-        width={56}
-        height={56}
-        className={cn(
-          "w-full h-full object-cover transition-all duration-300 hover:scale-105",
-          imageLoaded ? "opacity-100" : "opacity-0",
-        )}
-        onLoad={() => setImageLoaded(true)}
-        onError={() => setImageError(true)}
-      />
-    </div>
-  );
-}
 
 /**
  * SizesDisplay - Display product sizes in simple bordered boxes
  */
 function SizesDisplay({ sizes }: { sizes: any[] | undefined }) {
   if (!sizes || sizes.length === 0) {
-    return <span className="text-[0.4875rem] text-muted-foreground">No sizes</span>;
+    return <span className="text-muted-foreground">No sizes</span>;
   }
 
   return (
@@ -74,7 +39,7 @@ function SizesDisplay({ sizes }: { sizes: any[] | undefined }) {
       {sizes.map((size) => (
         <div
           key={size.id}
-          className="px-[0.325rem] py-[0.1625rem] rounded-[0.1625rem] bg-gray-50 text-[0.4875rem] text-foreground whitespace-nowrap"
+          className="px-[0.325rem] py-[0.1625rem] rounded-[0.1625rem] bg-gray-50 text-foreground whitespace-nowrap"
           style={{
             border: "0.5px solid #FCD34D",
           }}
@@ -117,7 +82,7 @@ function StatusSwitch({
       />
       <span
         className={cn(
-          "text-[0.4875rem] font-medium",
+          "font-medium",
           isActive ? "text-green-600" : "text-muted-foreground",
         )}
       >
@@ -156,9 +121,13 @@ export const productTableColumns = ({
       label: "Image",
       minWidth: "10px",
       maxWidth: "400px",
-      render: (product) => {
-        return <ProductImagePreview product={product} />;
-      },
+      render: (product) => (
+        <TableThumbnail
+          src={product?.mainImageUrl}
+          alt={product.name}
+          className="w-[2.275rem] h-[2.275rem] rounded-[0.325rem]"
+        />
+      ),
     },
 
     {
@@ -168,7 +137,7 @@ export const productTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (product) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {product?.name || "---"}
         </span>
       ),
@@ -181,7 +150,7 @@ export const productTableColumns = ({
       maxWidth: "150px",
       truncate: true,
       render: (product) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {product?.categoryName || "---"}
         </span>
       ),
@@ -194,11 +163,11 @@ export const productTableColumns = ({
       maxWidth: "200px",
       render: (product) => (
         <div className="flex flex-col gap-[0.1625rem]">
-          <span className="text-[0.56875rem] font-semibold text-foreground">
+          <span className="font-semibold text-foreground">
             ${parseFloat(product?.displayPrice?.toString() || "0").toFixed(2)}
           </span>
           {product?.hasPromotion && product?.displayOriginPrice && (
-            <span className="text-[0.4875rem] text-muted-foreground line-through">
+            <span className="text-muted-foreground line-through">
               ${parseFloat(product.displayOriginPrice.toString()).toFixed(2)}
             </span>
           )}
@@ -236,7 +205,7 @@ export const productTableColumns = ({
         }
 
         return (
-          <span className="text-[0.4875rem] font-semibold text-red-600">
+          <span className="font-semibold text-red-600">
             {displayValue}
           </span>
         );
@@ -263,7 +232,7 @@ export const productTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (banner) => (
-        <span className="text-[0.56875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {dateTimeFormat(banner?.createdAt)}
         </span>
       ),

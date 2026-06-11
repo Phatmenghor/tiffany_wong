@@ -3,7 +3,7 @@ import { dateTimeFormat } from "@/utils/date/date-time-format";
 import { Edit, Eye, Trash } from "lucide-react";
 import { TableColumn } from "@/components/shared/common/data-table";
 import { ActionButton } from "@/components/shared/button/action-button";
-import { CustomAvatar } from "@/components/shared/avator/custom-avator";
+import { TableThumbnail } from "@/components/shared/common/table-thumbnail";
 import { Switch } from "@/components/ui/switch";
 import { formatEnumValue } from "@/utils/format/enum-formatter";
 import { formatProductCount } from "@/utils/format/product-count-formatter";
@@ -11,7 +11,6 @@ import {
   AllCategoriesResponseModel,
   CategoriesResponseModel,
 } from "../store/models/response/categories-response";
-import { getImageWithFallback } from "@/constants/image-defaults";
 
 interface CategoriesTableHandlers {
   handleEditCategories: (brand: CategoriesResponseModel) => void;
@@ -53,20 +52,13 @@ export const categoriesTableColumns = ({
       label: "Categories Image",
       minWidth: "10px",
       maxWidth: "400px",
-      render: (categories) => {
-        return (
-          <div className="h-[1.95rem] w-[1.95rem] rounded-[0.24375rem] overflow-hidden bg-muted border border-border flex-shrink-0">
-            <img
-              src={getImageWithFallback(categories.imageUrl, "category")}
-              alt={categories?.name}
-              className="h-full w-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = getImageWithFallback(undefined, "category");
-              }}
-            />
-          </div>
-        );
-      },
+      render: (categories) => (
+        <TableThumbnail
+          src={categories.imageUrl}
+          alt={categories?.name || "Category"}
+          className="h-[1.95rem] w-[1.95rem] rounded-[0.24375rem]"
+        />
+      ),
     },
 
     {
@@ -76,7 +68,7 @@ export const categoriesTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (categories) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {categories?.name || "---"}
         </span>
       ),
@@ -91,7 +83,7 @@ export const categoriesTableColumns = ({
       render: (categories) => {
         const total = categories?.totalProducts ?? 0;
         return (
-          <span className="text-[0.4875rem] text-muted-foreground">
+          <span className="text-muted-foreground">
             {formatProductCount(total)}
           </span>
         );
@@ -107,7 +99,7 @@ export const categoriesTableColumns = ({
       render: (categories) => {
         const active = categories?.activeProducts ?? 0;
         return (
-          <span className="text-[0.4875rem] text-muted-foreground">
+          <span className="text-muted-foreground">
             {formatProductCount(active)}
           </span>
         );
@@ -126,7 +118,7 @@ export const categoriesTableColumns = ({
             checked={categories?.status === "ACTIVE"}
             onCheckedChange={() => handleToggleCategoryStatus(categories)}
           />
-          <span className="text-[0.4875rem] text-muted-foreground">
+          <span className="text-muted-foreground">
             {categories?.status ? formatEnumValue(categories.status) : "---"}
           </span>
         </div>
@@ -139,7 +131,7 @@ export const categoriesTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (categories) => (
-        <span className="text-[0.56875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {dateTimeFormat(categories?.createdAt)}
         </span>
       ),

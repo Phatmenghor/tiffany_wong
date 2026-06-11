@@ -7,10 +7,8 @@ import {
   BannerResponseModel,
 } from "../store/models/response/banner-response";
 import { ActionButton } from "@/components/shared/button/action-button";
-import { CustomAvatar } from "@/components/shared/avator/custom-avator";
-import { Badge } from "@/components/ui/badge";
+import { TableThumbnail } from "@/components/shared/common/table-thumbnail";
 import { Switch } from "@/components/ui/switch";
-import { cn } from "@/lib/utils";
 
 interface BannerTableHandlers {
   handleEditBanner: (banner: BannerResponseModel) => void;
@@ -48,20 +46,13 @@ export const bannerTableColumns = ({
       label: "Banner Image",
       minWidth: "200px",
       maxWidth: "280px",
-      render: (banner) => {
-        return (
-          <div className="flex-shrink-0 w-[10.4rem] h-[5.2rem] rounded-[0.325rem] overflow-hidden bg-muted border border-border shadow-sm">
-            <img
-              src={banner.imageUrl}
-              alt="Banner"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = "/assets/image/no-image.png";
-              }}
-            />
-          </div>
-        );
-      },
+      render: (banner) => (
+        <TableThumbnail
+          src={banner.imageUrl}
+          alt="Banner"
+          className="w-[10.4rem] h-[5.2rem] rounded-[0.325rem] shadow-sm"
+        />
+      ),
     },
     {
       key: "description",
@@ -69,7 +60,7 @@ export const bannerTableColumns = ({
       minWidth: "300px",
       maxWidth: "500px",
       render: (banner) => (
-        <h3 className="font-semibold text-[0.56875rem] text-foreground line-clamp-3">
+        <h3 className="font-semibold text-foreground line-clamp-3">
           {banner.description || "---"}
         </h3>
       ),
@@ -81,7 +72,7 @@ export const bannerTableColumns = ({
       maxWidth: "250px",
       truncate: true,
       render: (banner) => (
-        <span className="text-[0.4875rem] text-muted-foreground truncate">
+        <span className="text-muted-foreground truncate">
           {banner?.linkUrl || "---"}
         </span>
       ),
@@ -97,7 +88,7 @@ export const bannerTableColumns = ({
             checked={banner?.status === "ACTIVE"}
             onCheckedChange={() => handleToggleBannerStatus(banner)}
           />
-          <span className="text-[0.4875rem] text-muted-foreground">
+          <span className="text-muted-foreground">
             {banner?.status === "ACTIVE" ? "Active" : "Inactive"}
           </span>
         </div>
@@ -110,7 +101,7 @@ export const bannerTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (banner) => (
-        <span className="text-[0.56875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {dateTimeFormat(banner?.createdAt)}
         </span>
       ),

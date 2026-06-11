@@ -1,9 +1,8 @@
 import { indexDisplay } from "@/utils/common/common";
 import { dateTimeFormat } from "@/utils/date/date-time-format";
 import { Edit, Eye, RotateCw, Trash } from "lucide-react";
-import { CustomAvatar } from "@/components/shared/avator/custom-avator";
 import { TableColumn } from "@/components/shared/common/data-table";
-import { getImageWithFallback } from "@/constants/image-defaults";
+import { TableThumbnail } from "@/components/shared/common/table-thumbnail";
 import {
   AllUserResponseModel,
   UserResponseModel,
@@ -54,20 +53,13 @@ export const userBusinessTableColumns = ({
       label: "Avatar",
       minWidth: "10px",
       maxWidth: "400px",
-      render: (user) => {
-        return (
-          <div className="h-[1.95rem] w-[1.95rem] rounded-[0.24375rem] overflow-hidden bg-muted border border-border flex-shrink-0">
-            <img
-              src={getImageWithFallback(user.profileImageUrl, "profile")}
-              alt={user?.firstName}
-              className="h-full w-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = getImageWithFallback(undefined, "profile");
-              }}
-            />
-          </div>
-        );
-      },
+      render: (user) => (
+        <TableThumbnail
+          src={user.profileImageUrl}
+          alt={user?.firstName || "User"}
+          className="h-[1.95rem] w-[1.95rem] rounded-[0.24375rem]"
+        />
+      ),
     },
     {
       key: "userIdentifier",
@@ -76,7 +68,7 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {user?.userIdentifier || "---"}
         </span>
       ),
@@ -88,7 +80,7 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {user?.phoneNumber || "---"}
         </span>
       ),
@@ -100,7 +92,7 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {user?.email || "---"}
         </span>
       ),
@@ -112,7 +104,7 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {user?.fullName || `${user.firstName} ${user.lastName}`}
         </span>
       ),
@@ -124,7 +116,7 @@ export const userBusinessTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (user) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {user.userRole ? formatEnumValue(user.userRole) : "---"}
         </span>
       ),
@@ -141,7 +133,7 @@ export const userBusinessTableColumns = ({
             checked={user?.accountStatus === "ACTIVE"}
             onCheckedChange={() => handleToggleStatus(user)}
           />
-          <span className="text-[0.4875rem] text-muted-foreground">
+          <span className="text-muted-foreground">
             {user?.accountStatus ? formatEnumValue(user.accountStatus) : "---"}
           </span>
         </div>
@@ -153,7 +145,7 @@ export const userBusinessTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (user) => (
-        <span className="text-[0.56875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {dateTimeFormat(user?.createdAt)}
         </span>
       ),

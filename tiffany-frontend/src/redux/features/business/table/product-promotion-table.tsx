@@ -3,11 +3,8 @@ import { dateTimeFormat } from "@/utils/date/date-time-format";
 import { Edit, Eye, Trash, RotateCcw, Zap } from "lucide-react";
 import { TableColumn } from "@/components/shared/common/data-table";
 import { ActionButton } from "@/components/shared/button/action-button";
-import { CustomAvatar } from "@/components/shared/avator/custom-avator";
+import { TableThumbnail } from "@/components/shared/common/table-thumbnail";
 import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
-import { useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useBusinessColors } from "@/hooks/use-business-colors";
 import { cn } from "@/lib/utils";
 import {
@@ -27,45 +24,6 @@ interface ProductPromotionTableOptions {
   handlers: ProductTableHandlers;
 }
 
-/**
- * ProductImagePreview - Display product image with preview styling
- */
-function ProductImagePreview({
-  product,
-}: {
-  product: ProductDetailResponseModel;
-}) {
-  const [imageError, setImageError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  return (
-    <div className="relative w-[2.275rem] h-[2.275rem] flex items-center justify-center overflow-hidden rounded-[0.325rem] bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300">
-      {!imageError && product?.mainImageUrl ? (
-        <>
-          {!imageLoaded && (
-            <Skeleton className="absolute inset-0 w-full h-full rounded-[0.325rem]" />
-          )}
-          <Image
-            src={product.mainImageUrl}
-            alt={product.name}
-            width={56}
-            height={56}
-            className={cn(
-              "w-full h-full object-cover transition-all duration-300 hover:scale-105",
-              imageLoaded ? "opacity-100" : "opacity-0",
-            )}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
-          />
-        </>
-      ) : (
-        <span className="text-[0.73125rem] font-bold text-primary/80 hover:text-primary transition-colors">
-          {product?.name?.charAt(0).toUpperCase() || "P"}
-        </span>
-      )}
-    </div>
-  );
-}
 
 /**
  * SizesDisplay - Display product sizes in simple bordered boxes
@@ -75,7 +33,7 @@ function SizesDisplay({ sizes }: { sizes: any[] | undefined }) {
   const { secondary } = useBusinessColors();
 
   if (!sizes || sizes.length === 0) {
-    return <span className="text-[0.4875rem] text-muted-foreground">No sizes</span>;
+    return <span className="text-muted-foreground">No sizes</span>;
   }
 
   return (
@@ -83,7 +41,7 @@ function SizesDisplay({ sizes }: { sizes: any[] | undefined }) {
       {sizes.map((size) => (
         <div
           key={size.id}
-          className="px-[0.325rem] py-[0.1625rem] rounded-[0.1625rem] bg-gray-50 text-[0.4875rem] text-foreground whitespace-nowrap"
+          className="px-[0.325rem] py-[0.1625rem] rounded-[0.1625rem] bg-gray-50 text-foreground whitespace-nowrap"
           style={{
             border: `0.5px solid ${secondary}`,
           }}
@@ -111,7 +69,7 @@ function StatusDisplay({ value }: { value: string }) {
   return (
     <Badge
       className={cn(
-        "text-[0.4875rem] font-medium",
+        "font-medium",
         isActive
           ? "bg-green-100 text-green-700 hover:bg-green-100 border-green-200"
           : "bg-gray-100 text-gray-600 hover:bg-gray-100 border-gray-200",
@@ -151,9 +109,13 @@ export const productPromotionTableColumns = ({
       label: "Image",
       minWidth: "10px",
       maxWidth: "400px",
-      render: (product) => {
-        return <ProductImagePreview product={product} />;
-      },
+      render: (product) => (
+        <TableThumbnail
+          src={product?.mainImageUrl}
+          alt={product.name}
+          className="w-[2.275rem] h-[2.275rem] rounded-[0.325rem]"
+        />
+      ),
     },
 
     {
@@ -163,7 +125,7 @@ export const productPromotionTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (product) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {product?.name || "---"}
         </span>
       ),
@@ -176,7 +138,7 @@ export const productPromotionTableColumns = ({
       maxWidth: "150px",
       truncate: true,
       render: (product) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {product?.categoryName || "---"}
         </span>
       ),
@@ -189,11 +151,11 @@ export const productPromotionTableColumns = ({
       maxWidth: "200px",
       render: (product) => (
         <div className="flex flex-col gap-[0.1625rem]">
-          <span className="text-[0.56875rem] font-semibold text-foreground">
+          <span className="font-semibold text-foreground">
             ${parseFloat(product?.displayPrice?.toString() || "0").toFixed(2)}
           </span>
           {product?.hasPromotion && product?.displayOriginPrice && (
-            <span className="text-[0.4875rem] text-muted-foreground line-through">
+            <span className="text-muted-foreground line-through">
               ${parseFloat(product.displayOriginPrice.toString()).toFixed(2)}
             </span>
           )}
@@ -231,7 +193,7 @@ export const productPromotionTableColumns = ({
         }
 
         return (
-          <span className="text-[0.4875rem] font-semibold text-red-600">
+          <span className="font-semibold text-red-600">
             {displayValue}
           </span>
         );
@@ -245,7 +207,7 @@ export const productPromotionTableColumns = ({
       maxWidth: "150px",
       truncate: true,
       render: (product) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {dateTimeFormat(product?.displayPromotionFromDate) || "---"}
         </span>
       ),
@@ -258,7 +220,7 @@ export const productPromotionTableColumns = ({
       maxWidth: "150px",
       truncate: true,
       render: (product) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {dateTimeFormat(product?.displayPromotionToDate) || "---"}
         </span>
       ),
@@ -280,7 +242,7 @@ export const productPromotionTableColumns = ({
       minWidth: "10px",
       maxWidth: "400px",
       render: (banner) => (
-        <span className="text-[0.56875rem] text-muted-foreground">
+        <span className="text-muted-foreground">
           {dateTimeFormat(banner?.createdAt)}
         </span>
       ),
