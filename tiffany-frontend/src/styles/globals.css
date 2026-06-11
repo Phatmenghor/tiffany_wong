@@ -537,7 +537,7 @@
 
 @layer base {
   html {
-    font-size: 100%;
+    font-size: 65%;
     /* Prevent Safari from auto-scaling text when orientation changes */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
