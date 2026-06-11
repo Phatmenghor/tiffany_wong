@@ -17,19 +17,19 @@ function KpiCard({ title, value, change, icon, iconBg, description }: KpiCardPro
     <Card className="transition-shadow hover:shadow-md">
       <CardContent className="p-[0.4875rem]">
         <div className="flex items-center justify-between mb-[0.325rem]">
-          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">{title}</p>
+          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">{title}</p>
           <div className={cn("h-[1.1375rem] w-[1.1375rem] rounded-[0.24375rem] flex items-center justify-center shrink-0", iconBg)}>{icon}</div>
         </div>
-        <p className="text-[0.65rem] font-bold text-foreground tracking-tight tabular-nums">{value}</p>
+        <p className="text-[14px] font-bold text-foreground tracking-tight tabular-nums">{value}</p>
         {change !== undefined && (
           <div className="flex items-center gap-[0.1625rem] mt-[0.1625rem]">
             {isPositive ? <TrendingUp className="h-[0.4875rem] w-[0.4875rem] text-emerald-500" /> : <TrendingDown className="h-[0.4875rem] w-[0.4875rem] text-rose-500" />}
-            <span className={cn("text-[10px] font-medium", isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400")}>
+            <span className={cn("text-[11px] font-medium", isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400")}>
               {isPositive ? "+" : ""}{change.toFixed(1)}% vs yesterday
             </span>
           </div>
         )}
-        {description && change === undefined && <p className="text-[10px] text-muted-foreground mt-[0.1625rem]">{description}</p>}
+        {description && change === undefined && <p className="text-[11px] text-muted-foreground mt-[0.1625rem]">{description}</p>}
       </CardContent>
     </Card>
   );
