@@ -57,6 +57,7 @@ type Props = {
   userId?: string;
   onClose: () => void;
   isOpen: boolean;
+  hideUserRole?: boolean;
 };
 
 export default function UserBusinessModal({
@@ -64,6 +65,7 @@ export default function UserBusinessModal({
   onClose,
   userId,
   mode,
+  hideUserRole = false,
 }: Props) {
   const isCreate = mode === ModalMode.CREATE_MODE;
   const [showPassword, setShowPassword] = useState(false);
@@ -395,16 +397,18 @@ export default function UserBusinessModal({
                     {/* User Role and Account Status - EDIT MODE ONLY */}
                     {!isCreate && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
-                        <SelectField
-                          control={control}
-                          name="userRole"
-                          label="User Role"
-                          placeholder="Select user role"
-                          options={roleOptions}
-                          required
-                          disabled={isSubmitting || roleOptions.length === 0}
-                          error={errors.userRole}
-                        />
+                        {!hideUserRole && (
+                          <SelectField
+                            control={control}
+                            name="userRole"
+                            label="User Role"
+                            placeholder="Select user role"
+                            options={roleOptions}
+                            required
+                            disabled={isSubmitting || roleOptions.length === 0}
+                            error={errors.userRole}
+                          />
+                        )}
 
                         <SelectField
                           control={control}

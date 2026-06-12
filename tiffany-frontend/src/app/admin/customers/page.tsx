@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus } from "lucide-react";
 import { useDebounce } from "@/utils/debounce/debounce";
 import { ROUTES } from "@/constants/app-routes/routes";
 import { CardHeaderSection } from "@/components/layout/card-header-section";
@@ -91,7 +90,6 @@ export default function CustomerUsersPage() {
     user: null as UserResponseModel | null,
   });
 
-  const handleCreateUser = () => setModalState({ isOpen: true, mode: ModalMode.CREATE_MODE, userId: "" });
   const handleEditUser = (user: UserResponseModel) => setModalState({ isOpen: true, mode: ModalMode.UPDATE_MODE, userId: user?.id || "" });
   const handleViewDetail = (user: UserResponseModel) => setDetailModalState({ isOpen: true, userBusinessId: user.id || "" });
   const handleResetPassword = (user: UserResponseModel) => setResetPasswordState({ isOpen: true, userBusinessId: user.id || "", userName: user.userIdentifier || "", userRole: user.userRole ? [user.userRole] : [], profileImageUrl: user.profileImageUrl || "" });
@@ -155,11 +153,7 @@ export default function CustomerUsersPage() {
           title="Customers"
           searchValue={filters.search}
           searchPlaceholder="Search customers..."
-          buttonTooltip="Create a new customer"
-          buttonIcon={<Plus className="w-[0.4875rem] h-[0.4875rem]" />}
-          buttonText="New"
           onSearchChange={(e) => dispatch(setSearchFilter(e.target.value))}
-          openModal={handleCreateUser}
         >
           <div className="flex flex-wrap items-center gap-[0.325rem]">
             <CustomSelect
@@ -188,7 +182,7 @@ export default function CustomerUsersPage() {
         />
       </div>
 
-      <UserBusinessModal isOpen={modalState.isOpen} onClose={closeModal} userId={modalState.userId} mode={modalState.mode} />
+      <UserBusinessModal isOpen={modalState.isOpen} onClose={closeModal} userId={modalState.userId} mode={modalState.mode} hideUserRole />
       <UserBusinessDetailModal userId={detailModalState.userBusinessId} isOpen={detailModalState.isOpen} onClose={closeDetailModal} />
       <ResetPasswordModal isOpen={resetPasswordState.isOpen} userName={resetPasswordState.userName} userRole={resetPasswordState.userRole} profileImageUrl={resetPasswordState.profileImageUrl} onClose={closeResetPasswordModal} userId={resetPasswordState.userBusinessId} />
       <DeleteConfirmationModal
