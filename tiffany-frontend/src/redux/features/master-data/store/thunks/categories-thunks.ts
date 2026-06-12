@@ -27,21 +27,20 @@ export const fetchAllCategoriesService = createApiThunk<
 });
 
 /**
- * Fetch all categories (for admin page)
- * Uses public endpoint to get all categories without pagination
+ * Fetch all categories with product count (for admin page)
  */
 export const fetchAllCategoriesWithProductCountService = createApiThunk<
   any,
   AllCategoriesRequest
 >("categories/fetchAllWithProductCount", async (params) => {
   const response = await axiosClientWithAuth.post(
-    "/api/v1/public/categories/all-data",
+    "/api/v1/categories/product/all",
     {
       status: params?.status,
       search: params?.search,
     }
   );
-  return response.data.data || [];
+  return response.data.data;
 });
 
 /**

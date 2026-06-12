@@ -123,14 +123,7 @@ const categoriesSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchAllCategoriesWithProductCountService.fulfilled, (state, action) => {
-        // Response is now a direct array
-        state.dataWithProductCount = {
-          content: action.payload,
-          pageNo: 1,
-          pageSize: action.payload.length,
-          totalPages: 1,
-          totalElements: action.payload.length,
-        };
+        state.dataWithProductCount = action.payload;
         state.isLoading = false;
       })
       .addCase(fetchAllCategoriesWithProductCountService.rejected, (state, action) => {
