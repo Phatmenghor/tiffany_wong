@@ -69,6 +69,11 @@ const myOrdersSlice = createSlice({
       state.error.statuses = action.payload;
     },
 
+    updateOrderInList: (state, action: PayloadAction<OrderResponse>) => {
+      const idx = state.orders.findIndex((o) => o.id === action.payload.id);
+      if (idx !== -1) state.orders[idx] = action.payload;
+    },
+
     clearOrders: (state) => {
       state.orders = [];
       state.pagination = initialState.pagination;
@@ -112,6 +117,7 @@ export const {
   setStatusTabs,
   setStatusesLoading,
   setStatusesError,
+  updateOrderInList,
   clearOrders,
   resetMyOrdersState,
 } = myOrdersSlice.actions;

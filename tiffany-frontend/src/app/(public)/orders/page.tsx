@@ -9,6 +9,7 @@ import { fetchMyOrdersService } from "@/redux/features/main/store/thunks/my-orde
 import {
   setLoadedFilters,
   clearOrders,
+  updateOrderInList,
 } from "@/redux/features/main/store/slice/my-orders-slice";
 import { PageContainer } from "@/components/shared/common/page-container";
 import { PageHeader } from "@/components/shared/common/page-header";
@@ -172,15 +173,11 @@ export default function OrdersPage() {
     try {
       setCancelingOrderId(orderId);
 
-      await reduxDispatch(cancelOrderService({ orderId, customerNote: data.customerNote })).unwrap();
+      const updatedOrder = await reduxDispatch(cancelOrderService({ orderId, customerNote: data.customerNote })).unwrap();
 
+      reduxDispatch(updateOrderInList(updatedOrder));
       showToast.success("Order cancelled successfully");
-
-      // Close the modal
       setCancelModalState({ isOpen: false, orderId: "", orderNumber: "" });
-
-      // Reload orders to reflect the cancellation
-      loadOrders(currentPage);
     } catch (error: any) {
       const errorMessage =
         error?.message || "Failed to cancel order. Please try again.";
