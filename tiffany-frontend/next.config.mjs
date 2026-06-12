@@ -2,6 +2,12 @@
 const nextConfig = {
   output: "standalone",
 
+  // Disable React Strict Mode. In development Strict Mode intentionally
+  // mounts every component twice, which makes every data-fetching useEffect
+  // fire twice and shows up as duplicate requests in the backend logs.
+  // Turning it off makes dev request counts match production (single call).
+  reactStrictMode: false,
+
   allowedDevOrigins: ["e422-203-147-134-26.ngrok-free.app"],
 
   typescript: {
