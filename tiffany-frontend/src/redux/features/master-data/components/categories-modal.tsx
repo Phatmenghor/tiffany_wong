@@ -189,7 +189,7 @@ export default function CategoriesModal({
             <SpacesImageUpload
               label="Category Image"
               value={imageUrl}
-              onChange={(url) => setValue("imageUrl", url)}
+              onChange={(url) => setValue("imageUrl", url, { shouldDirty: true })}
               aspectRatio="square"
               required
               error={errors.imageUrl}
