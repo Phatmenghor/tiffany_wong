@@ -131,36 +131,17 @@ export default function OrdersPage() {
   // Main fetch effect
   useEffect(() => {
     if (!authReady || !isAuthenticated || !mounted) return;
+    if (loadedFilters === currentFilters) return;
 
-    const hasOrdersInStore = orders.length > 0;
-    const filtersMatch = loadedFilters === currentFilters;
-
-    // If data exists and filters match, don't fetch
-    if (hasOrdersInStore && filtersMatch) {
-      return;
+    if (orders.length > 0) {
+      dispatch(clearOrders());
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    // Need to fetch if filters changed or no data
-    if (!filtersMatch || !hasOrdersInStore) {
-      // Clear old data if filters changed
-      if (!filtersMatch && hasOrdersInStore) {
-        dispatch(clearOrders());
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      setCurrentPage(1);
-      dispatch(setLoadedFilters(currentFilters));
-      loadOrders(1);
-    }
-  }, [
-    currentFilters,
-    loadedFilters,
-    orders.length,
-    dispatch,
-    authReady,
-    isAuthenticated,
-    mounted,
-  ]);
+    setCurrentPage(1);
+    dispatch(setLoadedFilters(currentFilters));
+    loadOrders(1);
+  }, [currentFilters, loadedFilters, authReady, isAuthenticated, mounted]);
 
   const handleViewOrder = (order: Order) => {
     setDetailModalState({ isOpen: true, order });
