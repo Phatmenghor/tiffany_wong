@@ -9,6 +9,7 @@ import {
   FieldError,
 } from "react-hook-form";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface PromotionValueFieldProps<T extends FieldValues> {
   name: Path<T>;
@@ -46,22 +47,30 @@ export function PromotionValueField<T extends FieldValues>({
         control={control}
         name={name}
         render={({ field }) => (
-          <div
-            className={`relative h-[1.625rem] overflow-hidden rounded-[0.24375rem] border border-border hover:border-primary/50 transition-colors duration-200 ${className}`}
-          >
-            <input
-              {...field}
+          <div className={`relative ${className}`}>
+            <Input
               id={name}
-              type="number"
+              type="text"
+              inputMode="decimal"
               placeholder={placeholder}
-              step="0.01"
-              min="0"
-              max={promotionType === "PERCENTAGE" ? "100" : ""}
               disabled={disabled}
-              className="w-full h-full px-[0.4875rem] sm:px-[0.65rem] py-[0.325rem] sm:py-[0.40625rem] border-0 text-[12px] font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset transition-all bg-background"
+              value={field.value === undefined || field.value === null ? "" : String(field.value)}
+              onChange={(e) => {
+                const raw = e.target.value;
+                if (raw === "") {
+                  field.onChange(undefined);
+                } else if (/^-?\d*\.?\d*$/.test(raw)) {
+                  const num = parseFloat(raw);
+                  field.onChange(isNaN(num) ? undefined : num);
+                }
+              }}
+              onBlur={field.onBlur}
+              className={`h-[1.625rem] text-[12px] ${promotionType ? "pr-[1.625rem]" : ""} ${
+                error ? "border-red-500 focus:border-red-500" : "border-input focus:border-primary focus:ring-2 focus:ring-primary/30"
+              }`}
             />
             {promotionType && (
-              <span className="absolute right-[0.4875rem] sm:right-[0.65rem] top-1/2 -translate-y-1/2 text-[12px] font-semibold text-muted-foreground pointer-events-none">
+              <span className="absolute right-[0.4875rem] top-1/2 -translate-y-1/2 text-[12px] font-semibold text-muted-foreground pointer-events-none">
                 {suffix}
               </span>
             )}
