@@ -72,6 +72,20 @@ const bannerSlice = createSlice({
     resetState: () => {
       return initialState;
     },
+
+    toggleBannerStatusOptimistic: (state, action: PayloadAction<{ id: string; newStatus: string }>) => {
+      if (state.data?.content) {
+        const banner = state.data.content.find((b) => b.id === action.payload.id);
+        if (banner) banner.status = action.payload.newStatus;
+      }
+    },
+
+    revertBannerStatusOptimistic: (state, action: PayloadAction<{ id: string; oldStatus: string }>) => {
+      if (state.data?.content) {
+        const banner = state.data.content.find((b) => b.id === action.payload.id);
+        if (banner) banner.status = action.payload.oldStatus;
+      }
+    },
   },
 
   extraReducers: (builder) => {
@@ -212,6 +226,8 @@ export const {
   clearSelectedBanner,
   resetFilters,
   resetState,
+  toggleBannerStatusOptimistic,
+  revertBannerStatusOptimistic,
 } = bannerSlice.actions;
 
 export default bannerSlice.reducer;

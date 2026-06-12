@@ -18,6 +18,8 @@ import {
   setSearchFilter,
   setStatusFilter,
   resetState,
+  toggleBannerStatusOptimistic,
+  revertBannerStatusOptimistic,
 } from "@/redux/features/master-data/store/slice/banner-slice";
 import {
   deleteBannerService,
@@ -125,14 +127,22 @@ export default function BannerPage() {
     });
   };
 
-  const handleToggleBannerStatus = async (banner: BannerResponseModel) => {
+  const handleToggleBannerStatus = (banner: BannerResponseModel) => {
     if (!banner?.id) return;
-    try {
-      await dispatch(toggleBannerStatusService(banner)).unwrap();
-      showToast.success("Banner status updated successfully");
-    } catch (error: any) {
-      showToast.error(error || "Failed to update banner status");
-    }
+    const newStatus = banner.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+    const oldStatus = banner.status;
+
+    dispatch(toggleBannerStatusOptimistic({ id: banner.id, newStatus }));
+
+    dispatch(toggleBannerStatusService(banner))
+      .unwrap()
+      .then(() => {
+        showToast.success("Banner status updated");
+      })
+      .catch((error: any) => {
+        dispatch(revertBannerStatusOptimistic({ id: banner.id, oldStatus }));
+        showToast.error(error || "Failed to update banner status");
+      });
   };
 
   const tableHandlers = useMemo(
