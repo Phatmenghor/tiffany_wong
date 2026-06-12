@@ -8,7 +8,7 @@
  * - Skeleton loading placeholders
  */
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { ProductCard } from "@/components/shared/card/product-card";
 import { ProductGridSkeleton } from "@/components/shared/skeletons/product-card-skeleton";
 import { ProductDetailResponseModel } from "@/redux/features/business/store/models/response/product-response";
@@ -38,36 +38,10 @@ const PromotionsSectionComponent = ({
   error,
   title = DEFAULT_TITLE,
 }: PromotionsSectionProps) => {
-  const [limit, setLimit] = useState(24);
-
-  /**
-   * Calculate max products to display based on screen size
-   * Always shows 4 rows to maintain consistent home page layout
-   */
-  useEffect(() => {
-    const updateLimit = () => {
-      const width = window.innerWidth;
-
-      // Calculate: columns × 4 rows
-      if (width < 640) {
-        setLimit(8); // 2 cols × 4 rows (mobile)
-      } else if (width < 768) {
-        setLimit(12); // 3 cols × 4 rows (small tablet)
-      } else if (width < 1024) {
-        setLimit(16); // 4 cols × 4 rows (tablet)
-      } else if (width < 1280) {
-        setLimit(20); // 5 cols × 4 rows (desktop)
-      } else {
-        setLimit(24); // 6 cols × 4 rows (large desktop)
-      }
-    };
-
-    updateLimit();
-    window.addEventListener("resize", updateLimit);
-    return () => window.removeEventListener("resize", updateLimit);
-  }, []);
-
-  const displayProducts = products?.slice(0, limit) || [];
+  // Show up to 12 promotions; link to the full list only when there are more
+  const PROMOTION_LIMIT = 12;
+  const displayProducts = products?.slice(0, PROMOTION_LIMIT) || [];
+  const hasMorePromotions = (products?.length || 0) > PROMOTION_LIMIT;
 
   /**
    * Header Component - Reusable for both loading and content states
@@ -100,7 +74,7 @@ const PromotionsSectionComponent = ({
     return (
       <SectionWrapper>
         <PromotionHeader showDecoration={false} />
-        <ProductGridSkeleton count={limit} />
+        <ProductGridSkeleton count={PROMOTION_LIMIT} />
       </SectionWrapper>
     );
   }
@@ -128,8 +102,10 @@ const PromotionsSectionComponent = ({
         ))}
       </div>
 
-      {/* Always show "View More Promotions" button */}
-      <ViewAllButton href="/promotions" text="View More Promotions" />
+      {/* Show "View More" only when there are more than the limit */}
+      {hasMorePromotions && (
+        <ViewAllButton href="/promotions" text="View More Promotions" />
+      )}
     </SectionWrapper>
   );
 };

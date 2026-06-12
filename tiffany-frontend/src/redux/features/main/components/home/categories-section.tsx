@@ -7,7 +7,7 @@
  * - Skeleton loading placeholders
  */
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { CategoryCard } from "@/components/shared/card/category-card";
 import { CategoryGridSkeleton } from "@/components/shared/skeletons/category-card-skeleton";
 import { CategoriesResponseModel } from "@/redux/features/master-data/store/models/response/categories-response";
@@ -38,8 +38,11 @@ const CategoriesSectionComponent = ({
   error,
   title = DEFAULT_TITLE,
 }: CategoriesSectionProps) => {
-  // Display all categories - no limit
-  const displayCategories = categories || [];
+  // Show up to 6 categories; link to the full list only when there are more
+  const CATEGORY_LIMIT = 6;
+  const allCategories = categories || [];
+  const displayCategories = allCategories.slice(0, CATEGORY_LIMIT);
+  const hasMoreCategories = allCategories.length > CATEGORY_LIMIT;
 
   // Loading state - show skeleton placeholders
   if (loading) {
@@ -80,8 +83,10 @@ const CategoriesSectionComponent = ({
         ))}
       </div>
 
-      {/* Show "View All" button - always display for categories */}
-      <ViewAllButton href="/categories" text="View All Categories" />
+      {/* Show "View All" button only when there are more than the limit */}
+      {hasMoreCategories && (
+        <ViewAllButton href="/categories" text="View All Categories" />
+      )}
     </SectionWrapper>
   );
 };

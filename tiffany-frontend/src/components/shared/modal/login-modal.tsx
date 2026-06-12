@@ -82,7 +82,7 @@ export function LoginModal({ open, onOpenChange, onRegisterClick }: LoginModalPr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="sm:max-w-md">
         {/* Header */}
         <DialogHeader className="text-left">
           <div>
