@@ -5,7 +5,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FormHeader } from "@/components/shared/form-field/form-header";
 import { FormBody } from "@/components/shared/form-field/form-body";
@@ -166,6 +166,7 @@ export function CancelOrderModal({
               disabled={isSubmitting}
               className="flex-1 sm:flex-initial bg-red-600 hover:bg-red-700 focus:ring-red-600"
             >
+              {isSubmitting && <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />}
               {isSubmitting ? "Cancelling..." : "Cancel Order"}
             </Button>
           </FormFooter>

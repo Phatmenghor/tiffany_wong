@@ -45,14 +45,20 @@ export const fetchOrderDetailsService = createApiThunk<any, string>(
   }
 );
 
+export interface CancelOrderParams {
+  orderId: string;
+  customerNote?: string;
+}
+
 /**
- * Cancel order
+ * Cancel order via the generic update endpoint
  */
-export const cancelOrderService = createApiThunk<any, string>(
+export const cancelOrderService = createApiThunk<any, CancelOrderParams>(
   "myOrders/cancel",
-  async (orderId) => {
+  async ({ orderId, customerNote }) => {
     const response = await axiosClientWithAuth.put(
-      `/api/v1/orders/${orderId}/cancel`
+      `/api/v1/orders/${orderId}`,
+      { orderStatus: "CANCELLED", customerNote: customerNote || "" }
     );
     return response.data.data;
   }

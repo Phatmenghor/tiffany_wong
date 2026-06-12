@@ -191,8 +191,7 @@ export default function OrdersPage() {
     try {
       setCancelingOrderId(orderId);
 
-      // Call the cancel order service from Redux
-      await reduxDispatch(cancelOrderService(orderId)).unwrap();
+      await reduxDispatch(cancelOrderService({ orderId, customerNote: data.customerNote })).unwrap();
 
       showToast.success("Order cancelled successfully");
 
