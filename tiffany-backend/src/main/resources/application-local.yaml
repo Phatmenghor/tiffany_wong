@@ -27,5 +27,20 @@ logging:
   level:
     root: INFO
     com.tiffany: INFO
+    # Spring framework
     org.springframework: WARN
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    # Hibernate / JPA
     org.hibernate: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql: WARN
+    # Tomcat / Catalina
+    org.apache.catalina: WARN
+    org.apache.tomcat: WARN
+    org.apache.coyote: WARN
+    # Cache / Redis
+    com.github.benmanes.caffeine: WARN
+    io.lettuce.core: WARN
+    # Connection pool
+    com.zaxxer.hikari: WARN

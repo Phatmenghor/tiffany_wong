@@ -1,61 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <property name="LOG_PATH" value="logs" />
-    <property name="LOG_FILE_NAME" value="tiffany-cambodia" />
-    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
-    <property name="MAX_FILE_SIZE" value="512MB" />
-    <timestamp key="byDay" datePattern="yyyy-MM-dd" />
+<configuration scan="true" scanPeriod="30 seconds">
 
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- ─── Spring properties ──────────────────────────────────────────────────── -->
+    <springProperty scope="context" name="appName"    source="spring.application.name" defaultValue="tiffany-cambodia"/>
+    <springProperty scope="context" name="appVersion" source="app.version"             defaultValue="1.0.0"/>
+
+    <!-- ─── Shared patterns ────────────────────────────────────────────────────── -->
+    <!--  Console  : colorized, human-readable                                       -->
+    <property name="CONSOLE_PATTERN"
+              value="%clr(%d{HH:mm:ss.SSS}){faint} %clr(%-5level){highlight} %clr(%-35.35logger{35}){cyan} %clr([%X{traceId:--}]){blue} %msg%n"/>
+
+    <!--  File INFO : plain text, no ANSI codes                                      -->
+    <property name="FILE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %-35.35logger{35} [%X{traceId:--}] %msg%n"/>
+
+    <!--  File ERROR : same as above + full stack trace                              -->
+    <property name="FILE_ERROR_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} ERROR  %-35.35logger{35} [%X{traceId:--}] %msg%n%ex{full}%n"/>
+
+    <!-- ─── Console Appender ───────────────────────────────────────────────────── -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n</pattern>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${CONSOLE_PATTERN}</pattern>
+            <charset>UTF-8</charset>
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/${LOG_FILE_NAME}-${byDay}.log</file>
-        <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
-            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
-            <maxHistory>10</maxHistory>
-            <totalSizeCap>5GB</totalSizeCap>
-        </rollingPolicy>
-    </appender>
+    <!-- ─── INFO File Appender (INFO + WARN, excludes ERROR) ──────────────────── -->
+    <!--     Active file  : logs/tiffany-info.log                                   -->
+    <!--     Rolled files : logs/yyyy-MM-dd/tiffany-info-yyyy-MM-dd-hh-a.log        -->
+    <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/tiffany-info.log</file>
 
-    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/${LOG_FILE_NAME}-error-${byDay}.log</file>
+        <!-- Exclude ERROR so only INFO/WARN land here -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
         </filter>
-        <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}-error-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
-            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Daily folder + hourly file: e.g. logs/2026-06-12/tiffany-info-2026-06-12-03-PM.log -->
+            <fileNamePattern>logs/%d{yyyy-MM-dd}/tiffany-info-%d{yyyy-MM-dd-hh-a}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
-            <totalSizeCap>5GB</totalSizeCap>
+            <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${FILE_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
     </appender>
 
-    <logger name="com.internal" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="ERROR_FILE" />
-        <appender-ref ref="CONSOLE" />
-    </logger>
+    <!-- ─── ERROR File Appender (ERROR only + full stack trace) ───────────────── -->
+    <!--     Active file  : logs/tiffany-error.log                                  -->
+    <!--     Rolled files : logs/yyyy-MM-dd/tiffany-error-yyyy-MM-dd-hh-a.log       -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/tiffany-error.log</file>
 
-    <logger name="org.springframework" level="WARN" />
-    <logger name="org.hibernate" level="WARN" />
-    <logger name="com.zaxxer.hikari" level="WARN" />
+        <!-- Accept ERROR only -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
 
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Daily folder + hourly file: e.g. logs/2026-06-12/tiffany-error-2026-06-12-03-PM.log -->
+            <fileNamePattern>logs/%d{yyyy-MM-dd}/tiffany-error-%d{yyyy-MM-dd-hh-a}.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${FILE_ERROR_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ─── Async wrappers (non-blocking I/O for file writes) ─────────────────── -->
+    <appender name="ASYNC_INFO" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="INFO_FILE"/>
+    </appender>
+
+    <appender name="ASYNC_ERROR" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>256</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="ERROR_FILE"/>
+    </appender>
+
+    <!-- ─── Application package ────────────────────────────────────────────────── -->
+    <logger name="com.tiffany" level="INFO" additivity="true"/>
+
+    <!-- ─── Framework noise suppression ───────────────────────────────────────── -->
+    <logger name="org.springframework"                 level="WARN"/>
+    <logger name="org.springframework.web"             level="WARN"/>
+    <logger name="org.springframework.security"        level="WARN"/>
+    <logger name="org.springframework.data"            level="WARN"/>
+    <logger name="org.hibernate"                       level="WARN"/>
+    <logger name="org.hibernate.SQL"                   level="WARN"/>
+    <logger name="org.hibernate.type.descriptor.sql"   level="WARN"/>
+    <logger name="org.apache.catalina"                 level="WARN"/>
+    <logger name="org.apache.tomcat"                   level="WARN"/>
+    <logger name="org.apache.coyote"                   level="WARN"/>
+    <logger name="com.github.benmanes.caffeine"        level="WARN"/>
+    <logger name="io.lettuce.core"                     level="WARN"/>
+    <logger name="org.springframework.data.redis"      level="WARN"/>
+    <logger name="com.zaxxer.hikari"                   level="WARN"/>
+    <logger name="liquibase"                           level="WARN"/>
+    <logger name="org.flywaydb"                        level="WARN"/>
+
+    <!-- ─── Root Logger ────────────────────────────────────────────────────────── -->
+    <!--     All 3 appenders: console + async info file + async error file          -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-        <appender-ref ref="ERROR_FILE" />
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_INFO"/>
+        <appender-ref ref="ASYNC_ERROR"/>
     </root>
+
 </configuration>
