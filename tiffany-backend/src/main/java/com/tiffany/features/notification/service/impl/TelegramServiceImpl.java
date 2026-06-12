@@ -17,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +42,6 @@ public class TelegramServiceImpl implements TelegramService {
 
     private static final String TELEGRAM_API_URL = "https://api.telegram.org/bot{token}/sendMessage";
     private static final String SEP = "────────────────────";
-    private static final ZoneId CAMBODIA_ZONE = ZoneId.of("Asia/Phnom_Penh");
     private static final DateTimeFormatter KH_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a");
 
     @Override
@@ -236,11 +234,9 @@ public class TelegramServiceImpl implements TelegramService {
         return result.isEmpty() ? "Pickup" : result;
     }
 
-    private String formatKhTime(LocalDateTime storedTime) {
-        if (storedTime == null) return "N/A";
-        return storedTime.atZone(ZoneId.systemDefault())
-                .withZoneSameInstant(CAMBODIA_ZONE)
-                .format(KH_FORMATTER);
+    private String formatKhTime(LocalDateTime time) {
+        if (time == null) return "N/A";
+        return time.format(KH_FORMATTER);
     }
 
     private String formatPrice(BigDecimal amount) {

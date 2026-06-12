@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.TimeZone;
+
 @SpringBootApplication
 @EnableScheduling
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class TiffanyApplication {
 
 	public static void main(String[] args) {
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Phnom_Penh"));
 		SpringApplication.run(TiffanyApplication.class, args);
 		System.out.println("""
             
