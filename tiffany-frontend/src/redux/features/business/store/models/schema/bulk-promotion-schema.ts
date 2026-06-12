@@ -40,13 +40,13 @@ export const bulkPromotionSchema = z
       try {
         const fromDate = new Date(data.promotionFromDate);
         const toDate = new Date(data.promotionToDate);
-        return toDate > fromDate;
+        return toDate >= fromDate;
       } catch {
         return false;
       }
     },
     {
-      message: "Promotion end date must be after start date",
+      message: "Promotion end date must be on or after the start date",
       path: ["promotionToDate"],
     }
   )

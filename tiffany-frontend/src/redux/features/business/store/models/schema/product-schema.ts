@@ -59,13 +59,13 @@ export const sizeSchema = z
         data.promotionToDate
       ) {
         return (
-          new Date(data.promotionToDate) > new Date(data.promotionFromDate)
+          new Date(data.promotionToDate) >= new Date(data.promotionFromDate)
         );
       }
       return true;
     },
     {
-      message: "Promotion end date must be after start date",
+      message: "Promotion end date must be on or after the start date",
       path: ["promotionToDate"],
     }
   );
@@ -152,13 +152,13 @@ export const createProductSchema = baseProductSchema
         data.promotionToDate
       ) {
         return (
-          new Date(data.promotionToDate) > new Date(data.promotionFromDate)
+          new Date(data.promotionToDate) >= new Date(data.promotionFromDate)
         );
       }
       return true;
     },
     {
-      message: "Promotion end date must be after start date",
+      message: "Promotion end date must be on or after the start date",
       path: ["promotionToDate"],
     }
   );
@@ -219,13 +219,13 @@ export const updateProductSchema = baseProductSchema
         data.promotionToDate
       ) {
         return (
-          new Date(data.promotionToDate) > new Date(data.promotionFromDate)
+          new Date(data.promotionToDate) >= new Date(data.promotionFromDate)
         );
       }
       return true;
     },
     {
-      message: "Promotion end date must be after start date",
+      message: "Promotion end date must be on or after the start date",
       path: ["promotionToDate"],
     }
   );
