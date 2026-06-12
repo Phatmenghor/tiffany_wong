@@ -230,7 +230,10 @@ export function ProductDetailModal({
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.975rem]">
-                      {productData.sizes.map((size) => (
+                      {productData.sizes.map((size) => {
+                        const isUpcoming = !size.hasPromotion && size.promotionType != null;
+                        const hasAnyPromotion = size.hasPromotion || isUpcoming;
+                        return (
                         <div
                           key={size.id}
                           className="border rounded-[0.325rem] p-[0.65rem] space-y-[0.65rem]"
@@ -241,10 +244,10 @@ export function ProductDetailModal({
                             </h4>
                             <Badge
                               variant={
-                                size.hasPromotion ? "default" : "outline"
+                                size.hasPromotion ? "default" : isUpcoming ? "secondary" : "outline"
                               }
                             >
-                              {size.hasPromotion ? "Promotion" : "Regular"}
+                              {size.hasPromotion ? "Promotion" : isUpcoming ? "Upcoming" : "Regular"}
                             </Badge>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.4875rem] text-[11px]">
@@ -256,7 +259,7 @@ export function ProductDetailModal({
                               label="Final Price"
                               value={formatCurrency(size.finalPrice)}
                             />
-                            {size.hasPromotion && (
+                            {hasAnyPromotion && (
                               <>
                                 <DisplayField
                                   label="Promotion Value"
@@ -282,7 +285,8 @@ export function ProductDetailModal({
                             )}
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </CardContent>
                 </Card>
