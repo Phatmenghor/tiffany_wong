@@ -233,13 +233,13 @@ export default function ProductDetailPage() {
   const discountLabel = (() => {
     if (!hasDiscount) return "";
     if (selectedSize?.hasPromotion) {
-      if (selectedSize.promotionType === "PERCENTAGE") return `-${selectedSize.promotionValue}%`;
+      if (selectedSize.promotionType === "PERCENTAGE") return `${selectedSize.promotionValue}%`;
       if (selectedSize.promotionType === "FIXED_AMOUNT") return `-$${selectedSize.promotionValue}`;
       const orig = getOriginalPrice();
       if (orig) return `-${Math.round(((orig - getDisplayPrice()) / orig) * 100)}%`;
       return "";
     }
-    if (product?.displayPromotionType === "PERCENTAGE") return `-${product.displayPromotionValue}%`;
+    if (product?.displayPromotionType === "PERCENTAGE") return `${product.displayPromotionValue}%`;
     if (product?.displayPromotionType === "FIXED_AMOUNT") return `-$${product.displayPromotionValue}`;
     return "";
   })();

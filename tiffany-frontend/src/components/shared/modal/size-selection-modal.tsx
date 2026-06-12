@@ -408,7 +408,7 @@ export function SizeSelectionModal({
                               100,
                           )}%`
                         : displayProduct?.displayPromotionType === "PERCENTAGE"
-                          ? `-${displayProduct?.displayPromotionValue}%`
+                          ? `${displayProduct?.displayPromotionValue}%`
                           : `-${formatCurrency(
                               displayProduct?.displayPromotionValue || 0,
                             )}`}
