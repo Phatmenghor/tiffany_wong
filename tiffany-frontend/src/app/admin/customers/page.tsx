@@ -22,6 +22,8 @@ import {
   setPageNo,
   setSearchFilter,
   resetState,
+  toggleUserStatusOptimistic,
+  revertUserStatusOptimistic,
 } from "@/redux/features/auth/store/slice/users-slice";
 import { UserResponseModel } from "@/redux/features/auth/store/models/response/users-response";
 import {
@@ -95,14 +97,22 @@ export default function CustomerUsersPage() {
   const handleResetPassword = (user: UserResponseModel) => setResetPasswordState({ isOpen: true, userBusinessId: user.id || "", userName: user.userIdentifier || "", userRole: user.userRole ? [user.userRole] : [], profileImageUrl: user.profileImageUrl || "" });
   const handleDeleteUser = (user: UserResponseModel) => setDeleteState({ isOpen: true, user });
 
-  const handleToggleStatus = async (user: UserResponseModel) => {
+  const handleToggleStatus = (user: UserResponseModel) => {
     if (!user?.id) return;
-    try {
-      await dispatch(toggleUserStatusService(user)).unwrap();
-      showToast.success("Customer status updated successfully");
-    } catch (error: any) {
-      showToast.error(error || "Failed to update customer status");
-    }
+    const newStatus = user.accountStatus === "ACTIVE" ? "LOCKED" : "ACTIVE";
+    const oldStatus = user.accountStatus;
+
+    dispatch(toggleUserStatusOptimistic({ userId: user.id, newStatus }));
+
+    dispatch(toggleUserStatusService(user))
+      .unwrap()
+      .then(() => {
+        showToast.success("Customer status updated");
+      })
+      .catch((error: any) => {
+        dispatch(revertUserStatusOptimistic({ userId: user.id, oldStatus }));
+        showToast.error(error || "Failed to update customer status");
+      });
   };
 
   const tableHandlers = useMemo(
