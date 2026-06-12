@@ -105,6 +105,8 @@ interface TextFieldProps {
   pattern?: string;
   onCustomChange?: (value: string) => void;
   autoComplete?: string;
+  /** Optional element (e.g. password eye toggle) stacked inside the input, right-aligned. */
+  rightElement?: React.ReactNode;
 }
 
 export function TextField({
@@ -125,6 +127,7 @@ export function TextField({
   pattern,
   onCustomChange,
   autoComplete = "off",
+  rightElement,
 }: TextFieldProps) {
   return (
     <div className={`space-y-[0.325rem] ${className}`}>
@@ -160,7 +163,7 @@ export function TextField({
             );
           }
 
-          return (
+          const input = (
             <Input
               {...field}
               value={field.value ?? ""}
@@ -184,9 +187,22 @@ export function TextField({
                 }
               }}
               pattern={pattern}
-              className={inputClass}
+              className={`${inputClass} ${rightElement ? "pr-[1.625rem]" : ""}`}
             />
           );
+
+          if (rightElement) {
+            return (
+              <div className="relative">
+                {input}
+                <div className="absolute right-[0.32rem] top-0 h-[1.625rem] flex items-center">
+                  {rightElement}
+                </div>
+              </div>
+            );
+          }
+
+          return input;
         }}
       />
       {error && <p className="text-[11px] text-red-500">{error.message}</p>}

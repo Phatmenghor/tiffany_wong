@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Eye, EyeOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/shared/form-field/text-field";
 import { FormHeader } from "@/components/shared/form-field/form-header";
 import { FormBody } from "@/components/shared/form-field/form-body";
@@ -15,10 +14,7 @@ import { CancelButton } from "@/components/shared/form-field/cancel-button";
 import { SubmitButton } from "@/components/shared/form-field/submid-button";
 import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { changePasswordService } from "@/redux/features/auth/store/thunks/auth-thunks";
-import {
-  selectIsProfileLoading,
-  selectError,
-} from "@/redux/features/auth/store/selectors/auth-selectors";
+import { selectError } from "@/redux/features/auth/store/selectors/auth-selectors";
 import { clearError } from "@/redux/features/auth/store/slice/auth-slice";
 import { showToast } from "@/components/shared/common/show-toast";
 import { getFieldError } from "@/utils/common/get-field-error";
@@ -34,7 +30,6 @@ type Props = {
 export default function ChangePasswordModal({ isOpen, onClose }: Props) {
   const dispatch = useAppDispatch();
 
-  const isProfileLoading = useAppSelector(selectIsProfileLoading);
   const reduxError = useAppSelector(selectError);
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -45,7 +40,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isSubmitting },
   } = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
@@ -123,106 +118,97 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
             {/* Form Fields */}
             <div className="space-y-[0.65rem]">
               {/* Current Password */}
-              <div className="relative">
-                <TextField
-                  control={control}
-                  name="currentPassword"
-                  label="Current Password"
-                  type={showCurrentPassword ? "text" : "password"}
-                  placeholder="Enter your current password"
-                  disabled={isProfileLoading}
-                  required
-                  error={errors.currentPassword}
-                  className="pr-[1.625rem]"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-[28px] h-[1.625rem] px-[0.4875rem] hover:bg-transparent"
-                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  disabled={isProfileLoading}
-                >
-                  {showCurrentPassword ? (
-                    <EyeOff className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
-                  )}
-                </Button>
-              </div>
+              <TextField
+                control={control}
+                name="currentPassword"
+                label="Current Password"
+                type={showCurrentPassword ? "text" : "password"}
+                placeholder="Enter your current password"
+                disabled={isSubmitting}
+                required
+                error={errors.currentPassword}
+                rightElement={
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    disabled={isSubmitting}
+                    className="text-muted-foreground hover:text-foreground disabled:opacity-50"
+                  >
+                    {showCurrentPassword ? (
+                      <EyeOff className="h-[0.65rem] w-[0.65rem]" />
+                    ) : (
+                      <Eye className="h-[0.65rem] w-[0.65rem]" />
+                    )}
+                  </button>
+                }
+              />
 
               {/* New Password */}
-              <div className="relative">
-                <TextField
-                  control={control}
-                  name="newPassword"
-                  label="New Password"
-                  type={showNewPassword ? "text" : "password"}
-                  placeholder="Enter your new password"
-                  disabled={isProfileLoading}
-                  required
-                  error={errors.newPassword}
-                  className="pr-[1.625rem]"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-[28px] h-[1.625rem] px-[0.4875rem] hover:bg-transparent"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  disabled={isProfileLoading}
-                >
-                  {showNewPassword ? (
-                    <EyeOff className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
-                  )}
-                </Button>
-              </div>
+              <TextField
+                control={control}
+                name="newPassword"
+                label="New Password"
+                type={showNewPassword ? "text" : "password"}
+                placeholder="Enter your new password"
+                disabled={isSubmitting}
+                required
+                error={errors.newPassword}
+                rightElement={
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    disabled={isSubmitting}
+                    className="text-muted-foreground hover:text-foreground disabled:opacity-50"
+                  >
+                    {showNewPassword ? (
+                      <EyeOff className="h-[0.65rem] w-[0.65rem]" />
+                    ) : (
+                      <Eye className="h-[0.65rem] w-[0.65rem]" />
+                    )}
+                  </button>
+                }
+              />
 
               {/* Confirm Password */}
-              <div className="relative">
-                <TextField
-                  control={control}
-                  name="confirmPassword"
-                  label="Confirm Password"
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Confirm your new password"
-                  disabled={isProfileLoading}
-                  required
-                  error={errors.confirmPassword}
-                  className="pr-[1.625rem]"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-[28px] h-[1.625rem] px-[0.4875rem] hover:bg-transparent"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  disabled={isProfileLoading}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
-                  )}
-                </Button>
-              </div>
+              <TextField
+                control={control}
+                name="confirmPassword"
+                label="Confirm Password"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm your new password"
+                disabled={isSubmitting}
+                required
+                error={errors.confirmPassword}
+                rightElement={
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    disabled={isSubmitting}
+                    className="text-muted-foreground hover:text-foreground disabled:opacity-50"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-[0.65rem] w-[0.65rem]" />
+                    ) : (
+                      <Eye className="h-[0.65rem] w-[0.65rem]" />
+                    )}
+                  </button>
+                }
+              />
             </div>
           </FormBody>
 
           {/* Footer */}
           <FormFooter
-            isSubmitting={isProfileLoading}
+            isSubmitting={isSubmitting}
             isDirty={isDirty}
             isCreate={true}
             createMessage="Changing password..."
             updateMessage=""
           >
-            <CancelButton onClick={handleClose} disabled={isProfileLoading} />
+            <CancelButton onClick={handleClose} disabled={isSubmitting} />
 
             <SubmitButton
-              isSubmitting={isProfileLoading}
+              isSubmitting={isSubmitting}
               isDirty={isDirty}
               isCreate={true}
               createText="Change Password"
