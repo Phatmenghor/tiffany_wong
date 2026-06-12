@@ -30,12 +30,10 @@ interface RegisterModalProps {
 }
 
 const registerSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(1, "Phone number is required"),
+  userIdentifier: z.string().min(1, "Email or username is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Password confirmation is required"),
+  phone: z.string().min(1, "Phone number is required"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -53,18 +51,15 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
 
   const registerForm = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { firstName: "", lastName: "", email: "", phone: "", password: "", confirmPassword: "" },
+    defaultValues: { userIdentifier: "", password: "", confirmPassword: "", phone: "" },
   });
 
   async function onRegisterSubmit(values: RegisterFormData) {
     try {
       const result = await dispatch(
         registerCustomerService({
-          userIdentifier: values.email,
-          email: values.email,
+          userIdentifier: values.userIdentifier,
           password: values.password,
-          firstName: values.firstName,
-          lastName: values.lastName,
           phoneNumber: values.phone,
           userType: "CUSTOMER",
         }),
@@ -80,7 +75,6 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
       showToast.error(err || "Registration failed. Please try again.");
     }
   }
-
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -99,34 +93,12 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
 
         {/* Body - Register Form */}
         <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-[0.65rem]">
-          {/* First and Last Name Row */}
-          <div className="grid grid-cols-2 gap-[0.4875rem]">
-            <TextField
-              name="firstName"
-              label="First Name"
-              placeholder="John"
-              control={registerForm.control}
-              error={registerForm.formState.errors.firstName}
-              disabled={isAnyLoading}
-              required
-            />
-            <TextField
-              name="lastName"
-              label="Last Name"
-              placeholder="Doe"
-              control={registerForm.control}
-              error={registerForm.formState.errors.lastName}
-              disabled={isAnyLoading}
-              required
-            />
-          </div>
-
           <TextField
-            name="email"
-            label="Email"
+            name="userIdentifier"
+            label="Email or Username"
             placeholder="name@example.com"
             control={registerForm.control}
-            error={registerForm.formState.errors.email}
+            error={registerForm.formState.errors.userIdentifier}
             disabled={isAnyLoading}
             required
           />
