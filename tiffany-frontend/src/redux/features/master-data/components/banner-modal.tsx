@@ -198,10 +198,6 @@ export default function BannerModal({
 
                 {/* Divider */}
                 <div className="border-t pt-[0.975rem]">
-                  <h3 className="text-[11px] font-semibold text-foreground mb-[0.65rem]">
-                    Banner Details
-                  </h3>
-
                   {/* Banner Description */}
                   <div className="grid grid-cols-1 gap-[0.65rem] mb-[0.65rem]">
                     <TextAreaField

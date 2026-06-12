@@ -56,25 +56,10 @@ export function BannerDetailModal({
                 <CardTitle>Banner Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-[0.65rem]">
-                {/* Labels Row - Top alignment */}
-                <div className="flex flex-col md:flex-row gap-[0.975rem]">
-                  {/* Left label - Business Name */}
-                  <div className="w-full md:w-1/2">
-                    <p className="text-[11px] font-medium text-foreground">Business Name</p>
-                  </div>
-                  {/* Right label - Banner Image */}
-                  {banner.imageUrl && (
-                    <div className="w-full md:w-1/2">
-                      <p className="text-[11px] font-medium text-foreground">Banner Image</p>
-                    </div>
-                  )}
-                </div>
-
                 {/* Content Row - Fields and Image */}
                 <div className="flex flex-col md:flex-row gap-[0.975rem]">
                   {/* Basic Info - Left Side (50%) */}
                   <div className="w-full md:w-1/2 space-y-[0.65rem]">
-                    <p className="text-foreground">{banner.businessName || "---"}</p>
                     <DisplayField label="Link URL" value={banner.linkUrl || "---"} />
                     <DisplayField label="Status" value={banner.status ? formatEnumValue(banner.status) : "---"} />
                   </div>
