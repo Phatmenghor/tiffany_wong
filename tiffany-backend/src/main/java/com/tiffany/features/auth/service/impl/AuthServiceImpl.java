@@ -80,10 +80,25 @@ public class AuthServiceImpl implements AuthService {
 
         userValidationService.validateUsernameUniqueness(request.getUserIdentifier(), UserType.CUSTOMER);
 
-        User user = userMapper.toEntity(request);
-        user.setUserType(UserType.CUSTOMER);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        // If a previously deleted account exists with the same identifier, restore it
+        User user = userRepository.findByUserIdentifierAndIsDeletedTrue(request.getUserIdentifier())
+                .map(deleted -> {
+                    log.info("Restoring previously deleted account: identifier={}", request.getUserIdentifier());
+                    deleted.setIsDeleted(false);
+                    deleted.setDeletedAt(null);
+                    deleted.setDeletedBy(null);
+                    deleted.setAccountStatus(com.tiffany.enums.user.AccountStatus.ACTIVE);
+                    deleted.setUserType(UserType.CUSTOMER);
+                    deleted.setUserRole(request.getUserRole() != null ? request.getUserRole() : com.tiffany.enums.user.UserRole.CUSTOMER);
+                    return deleted;
+                })
+                .orElseGet(() -> {
+                    User newUser = userMapper.toEntity(request);
+                    newUser.setUserType(UserType.CUSTOMER);
+                    return newUser;
+                });
 
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         User savedUser = userRepository.save(user);
 
         log.info("Customer registered: {}", savedUser.getUserIdentifier());

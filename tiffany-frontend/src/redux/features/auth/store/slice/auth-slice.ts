@@ -12,6 +12,7 @@ import {
   changePasswordService,
   deleteAccountService,
   logoutService,
+  registerCustomerService,
 } from "../thunks/auth-thunks";
 
 import { AuthState } from "../models/type/auth-types";
@@ -112,6 +113,20 @@ const authSlice = createSlice({
   },
 
   extraReducers: (builder) => {
+    // Register customer thunk handlers
+    builder
+      .addCase(registerCustomerService.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(registerCustomerService.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(registerCustomerService.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
     // Login thunk handlers
     builder
       .addCase(loginService.pending, (state) => {

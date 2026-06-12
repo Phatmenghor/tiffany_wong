@@ -19,6 +19,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByUserIdentifierAndIsDeletedFalse(String userIdentifier);
 
+    Optional<User> findByUserIdentifierAndIsDeletedTrue(String userIdentifier);
+
     @Deprecated
     boolean existsByUserIdentifierAndIsDeletedFalse(String userIdentifier);
 
