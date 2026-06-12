@@ -3,7 +3,7 @@
 import React, { useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Upload, X, ImageIcon } from "lucide-react";
+import { Upload, X, ImageIcon, FolderOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FieldError } from "react-hook-form";
 import { showToast } from "@/components/shared/common/show-toast";
@@ -181,9 +181,16 @@ export function SpacesImageUpload({
         </div>
 
         {value && !disabled && showPreviewText && (
-          <p className="text-[11px] text-muted-foreground text-center">
-            Click on the image to change it
-          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full text-[11px] h-[1.625rem]"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <FolderOpen className="h-[0.65rem] w-[0.65rem] mr-[0.325rem]" />
+            Change Image
+          </Button>
         )}
       </div>
 
