@@ -43,7 +43,7 @@ export function FormFooter({
         className
       )}
     >
-      <div className="text-[0.56875rem] text-muted-foreground flex items-center gap-[0.325rem]">
+      <div className="text-[12px] text-muted-foreground flex items-center gap-[0.325rem]">
         {isSubmitting && (
           <div className="h-[0.325rem] w-[0.325rem] rounded-full bg-blue-500 animate-pulse" />
         )}

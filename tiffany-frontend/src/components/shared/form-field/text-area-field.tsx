@@ -30,7 +30,7 @@ export function TextareaField({
 }: TextareaFieldProps) {
   return (
     <div className={`space-y-[0.325rem] ${className}`}>
-      <Label htmlFor={name} className="text-[0.56875rem] font-medium">
+      <Label htmlFor={name} className="text-[12px] font-medium">
         {label} {required && <span className="text-red-500">*</span>}
       </Label>
       <Controller
@@ -50,7 +50,7 @@ export function TextareaField({
           />
         )}
       />
-      {error && <p className="text-[0.56875rem] text-red-600">{error.message}</p>}
+      {error && <p className="text-[11px] text-red-600">{error.message}</p>}
     </div>
   );
 }

@@ -31,7 +31,7 @@ export function SelectField<T extends FieldValues = any>({
 
   return (
     <div className={`space-y-[0.325rem] ${className}`}>
-      <Label htmlFor={name} className="text-[0.56875rem] font-medium">
+      <Label htmlFor={name} className="text-[12px] font-medium">
         {label} {required && <span className="text-red-500">*</span>}
       </Label>
       <Controller
@@ -99,7 +99,7 @@ export function SelectField<T extends FieldValues = any>({
                         setOpen(false);
                       }}
                       className={cn(
-                        "w-full flex items-center gap-[0.325rem] px-[0.4875rem] py-[0.325rem] text-[0.56875rem] text-left cursor-pointer transition-colors",
+                        "w-full flex items-center gap-[0.325rem] px-[0.4875rem] py-[0.325rem] text-[12px] text-left cursor-pointer transition-colors",
                         "hover:bg-primary/10 hover:text-primary/50",
                         currentValue === option.value
                           ? "bg-primary/20 text-primary/50 font-medium"
@@ -121,7 +121,7 @@ export function SelectField<T extends FieldValues = any>({
           );
         }}
       />
-      {error && <p className="text-[0.56875rem] text-red-600">{error?.message}</p>}
+      {error && <p className="text-[11px] text-red-600">{error?.message}</p>}
     </div>
   );
 }

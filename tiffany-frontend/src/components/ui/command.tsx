@@ -45,7 +45,7 @@ const CommandInput = React.forwardRef<
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        "flex h-[1.625rem] w-full rounded-[0.24375rem] bg-transparent py-[0.4875rem] text-[0.56875rem] outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none",
+        "flex h-[1.625rem] w-full rounded-[0.24375rem] bg-transparent py-[0.4875rem] text-[12px] outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none",
         className
       )}
       {...props}
@@ -74,7 +74,7 @@ const CommandEmpty = React.forwardRef<
 >((props, ref) => (
   <CommandPrimitive.Empty
     ref={ref}
-    className="py-[0.975rem] text-center text-[0.56875rem] text-muted-foreground"
+    className="py-[0.975rem] text-center text-[12px] text-muted-foreground"
     {...props}
   />
 ))
@@ -90,7 +90,7 @@ const CommandGroup = React.forwardRef<
     className={cn(
       "overflow-hidden p-[0.1625rem] text-foreground",
       "[&_[cmdk-group-heading]]:px-[0.325rem] [&_[cmdk-group-heading]]:py-[0.24375rem]",
-      "[&_[cmdk-group-heading]]:text-[0.4875rem] [&_[cmdk-group-heading]]:font-semibold",
+      "[&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold",
       "[&_[cmdk-group-heading]]:text-primary [&_[cmdk-group-heading]]:bg-primary/5",
       className
     )}
@@ -119,7 +119,7 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default gap-[0.325rem] select-none items-center rounded-[0.08125rem] px-[0.325rem] py-[0.24375rem] text-[0.56875rem] outline-none transition-colors",
+      "relative flex cursor-default gap-[0.325rem] select-none items-center rounded-[0.08125rem] px-[0.325rem] py-[0.24375rem] text-[12px] outline-none transition-colors",
       "hover:bg-muted",
       "data-[selected=true]:bg-muted data-[selected=true]:text-primary data-[selected=true]:font-medium",
       "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",
@@ -139,7 +139,7 @@ const CommandShortcut = ({
   return (
     <span
       className={cn(
-        "ml-auto text-[0.4875rem] tracking-widest text-muted-foreground",
+        "ml-auto text-[11px] tracking-widest text-muted-foreground",
         className
       )}
       {...props}

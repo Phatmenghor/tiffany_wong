@@ -35,7 +35,7 @@ export function PageSizeSelectField({
   return (
     <div className={`flex items-center gap-[0.325rem] ${className}`}>
       {label && (
-        <span className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground font-semibold whitespace-nowrap">
+        <span className="text-[12px] text-muted-foreground font-semibold whitespace-nowrap">
           {label}
         </span>
       )}
@@ -52,7 +52,7 @@ export function PageSizeSelectField({
             aria-expanded={open}
             aria-haspopup="listbox"
           >
-            <span className="font-medium text-[0.56875rem]">{pageSize}</span>
+            <span className="font-medium text-[12px]">{pageSize}</span>
             <ChevronDown
               className={cn(
                 "h-[0.65rem] w-[0.65rem] opacity-50 shrink-0 transition-transform duration-200",
@@ -78,7 +78,7 @@ export function PageSizeSelectField({
                   setOpen(false);
                 }}
                 className={cn(
-                  "w-full flex items-center gap-[0.325rem] px-[0.4875rem] py-[0.325rem] text-[0.56875rem] text-left rounded-[0.1625rem] transition-colors",
+                  "w-full flex items-center gap-[0.325rem] px-[0.4875rem] py-[0.325rem] text-[12px] text-left rounded-[0.1625rem] transition-colors",
                   "hover:bg-accent hover:text-accent-foreground cursor-pointer",
                   pageSize === size
                     ? "bg-accent text-accent-foreground font-medium"

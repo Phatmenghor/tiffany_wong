@@ -43,9 +43,9 @@ export function PageFormHeader({
 
         {/* Header Content */}
         <div className="flex flex-col gap-[0.24375rem] flex-1 min-w-0">
-          <h1 className="text-[0.8125rem] font-semibold">{title}</h1>
+          <h1 className="text-[14px] font-semibold">{title}</h1>
           {description && (
-            <p className="text-[0.56875rem] text-muted-foreground">
+            <p className="text-[12px] text-muted-foreground">
               {description}
             </p>
           )}

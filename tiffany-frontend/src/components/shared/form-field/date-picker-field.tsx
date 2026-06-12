@@ -38,7 +38,7 @@ export function DateTimePickerField<T extends FieldValues>({
     <div className={`space-y-[0.325rem]`}>
       <Label
         htmlFor={name}
-        className="text-[0.4875rem] sm:text-[0.56875rem] font-semibold text-foreground"
+        className="text-[12px] font-semibold text-foreground"
       >
         {label} {required && <span className="text-destructive ml-[0.1625rem]">*</span>}
       </Label>
@@ -59,7 +59,7 @@ export function DateTimePickerField<T extends FieldValues>({
         )}
       />
       {error && (
-        <p className="text-[0.4875rem] text-destructive font-medium">{error?.message}</p>
+        <p className="text-[11px] text-destructive font-medium">{error?.message}</p>
       )}
     </div>
   );

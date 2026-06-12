@@ -27,7 +27,7 @@ export function TextAreaField({
 }: TextAreaFieldProps) {
   return (
     <div className={`space-y-[0.325rem] ${className}`}>
-      <Label htmlFor={name as string} className="text-[0.56875rem] font-medium text-foreground">
+      <Label htmlFor={name as string} className="text-[12px] font-medium text-foreground">
         {label}
       </Label>
       <Controller
@@ -51,7 +51,7 @@ export function TextAreaField({
           />
         )}
       />
-      {error && <p className="text-[0.4875rem] text-red-500">{error.message}</p>}
+      {error && <p className="text-[11px] text-red-500">{error.message}</p>}
     </div>
   );
 }
