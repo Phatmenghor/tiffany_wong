@@ -1,6 +1,7 @@
 package com.tiffany.features.main.repository;
 
 import com.tiffany.enums.common.Status;
+import com.tiffany.enums.product.ProductStatus;
 import com.tiffany.features.main.models.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,23 +57,20 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
         Sort sort
     );
     /**
-     * Get product counts for multiple categories in a single query (optimized)
+     * Count total (non-deleted) products per category
      */
-    @Query("SELECT c.id, COUNT(p.id) FROM Category c " +
-           "LEFT JOIN Product p ON p.categoryId = c.id AND p.isDeleted = false " +
-           "WHERE c.id IN :categoryIds AND c.isDeleted = false " +
-           "GROUP BY c.id")
-    List<Object[]> countProductsForCategories(@Param("categoryIds") List<UUID> categoryIds);
+    @Query("SELECT p.categoryId, COUNT(p.id) FROM Product p " +
+           "WHERE p.categoryId IN :categoryIds AND p.isDeleted = false " +
+           "GROUP BY p.categoryId")
+    List<Object[]> countTotalProductsByCategories(@Param("categoryIds") List<UUID> categoryIds);
 
     /**
-     * Get total and active product counts for multiple categories in a single query (optimized)
+     * Count active products per category
      */
-    @Query("SELECT c.id, " +
-           "COUNT(p.id) as total_count, " +
-           "SUM(CASE WHEN p.status = 'ACTIVE' THEN 1 ELSE 0 END) as active_count " +
-           "FROM Category c " +
-           "LEFT JOIN Product p ON p.categoryId = c.id AND p.isDeleted = false " +
-           "WHERE c.id IN :categoryIds AND c.isDeleted = false " +
-           "GROUP BY c.id")
-    List<Object[]> countTotalAndActiveProductsForCategories(@Param("categoryIds") List<UUID> categoryIds);
+    @Query("SELECT p.categoryId, COUNT(p.id) FROM Product p " +
+           "WHERE p.categoryId IN :categoryIds AND p.isDeleted = false AND p.status = :status " +
+           "GROUP BY p.categoryId")
+    List<Object[]> countActiveProductsByCategories(
+            @Param("categoryIds") List<UUID> categoryIds,
+            @Param("status") ProductStatus status);
 }

@@ -86,16 +86,14 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(Category::getId)
                 .toList();
 
-        List<Object[]> productCountData = categoryRepository.countTotalAndActiveProductsForCategories(categoryIds);
-
         Map<UUID, Long> totalProductCountMap = new HashMap<>();
+        for (Object[] row : categoryRepository.countTotalProductsByCategories(categoryIds)) {
+            totalProductCountMap.put((UUID) row[0], ((Number) row[1]).longValue());
+        }
+
         Map<UUID, Long> activeProductCountMap = new HashMap<>();
-        for (Object[] data : productCountData) {
-            UUID categoryId = (UUID) data[0];
-            Long totalCount = ((Number) data[1]).longValue();
-            Long activeCount = ((Number) data[2]).longValue();
-            totalProductCountMap.put(categoryId, totalCount);
-            activeProductCountMap.put(categoryId, activeCount);
+        for (Object[] row : categoryRepository.countActiveProductsByCategories(categoryIds, ProductStatus.ACTIVE)) {
+            activeProductCountMap.put((UUID) row[0], ((Number) row[1]).longValue());
         }
 
         List<CategoryWithProductCountResponse> responses = categoryPage.getContent().stream()
@@ -187,10 +185,6 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryWithProductCountResponse deleteCategory(UUID id) {
         Category category = findCategoryById(id);
 
-        // Set all products in this category to INACTIVE
-        productRepository.updateProductsStatusByCategory(id, ProductStatus.INACTIVE);
-        log.info("Set all products in category {} to INACTIVE", id);
-
         category.softDelete();
         category = categoryRepository.save(category);
 
@@ -206,19 +200,12 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryWithProductCountResponse buildCategoryWithProductCount(Category category) {
         CategoryResponse baseResponse = categoryMapper.toResponse(category);
 
-        // Get product counts
-        List<Object[]> productCountData = categoryRepository.countTotalAndActiveProductsForCategories(
-                List.of(category.getId())
-        );
+        List<UUID> ids = List.of(category.getId());
 
-        long totalProducts = 0L;
-        long activeProducts = 0L;
-
-        if (!productCountData.isEmpty()) {
-            Object[] data = productCountData.get(0);
-            totalProducts = ((Number) data[1]).longValue();
-            activeProducts = ((Number) data[2]).longValue();
-        }
+        long totalProducts = categoryRepository.countTotalProductsByCategories(ids)
+                .stream().findFirst().map(r -> ((Number) r[1]).longValue()).orElse(0L);
+        long activeProducts = categoryRepository.countActiveProductsByCategories(ids, ProductStatus.ACTIVE)
+                .stream().findFirst().map(r -> ((Number) r[1]).longValue()).orElse(0L);
 
         // Build response with product counts
         CategoryWithProductCountResponse response = new CategoryWithProductCountResponse();
