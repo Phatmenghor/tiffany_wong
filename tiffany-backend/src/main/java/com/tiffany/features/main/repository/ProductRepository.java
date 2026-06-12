@@ -207,7 +207,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         "  AND ( " +
         "      p.promotion_value IS NULL " +
         "      OR p.promotion_type IS NULL " +
-        "      OR (p.promotion_from_date IS NOT NULL AND p.promotion_from_date::date > CURRENT_DATE) " +
         "      OR (p.promotion_to_date   IS NOT NULL AND p.promotion_to_date::date   < CURRENT_DATE) " +
         "  )")
     int clearExpiredPromotionsForProductsWithoutSizes();
