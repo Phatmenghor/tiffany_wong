@@ -64,8 +64,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponse createOrderFromCart(OrderCreateRequest request) {
         User currentUser = securityUtils.getCurrentUser();
-        log.info("Creating order from cart: userId={}, addressId={}, paymentMethod={}",
-                currentUser.getId(), request.getAddressId(), request.getPaymentMethod());
+        log.info("Creating order from cart: userId={}, addressId={}, paymentBy={}",
+                currentUser.getId(), request.getAddressId(), request.getPaymentBy());
 
         try {
             Order order = createBaseOrder(request, currentUser.getId());
