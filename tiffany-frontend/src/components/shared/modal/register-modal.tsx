@@ -19,6 +19,7 @@ import { PasswordField } from "@/components/shared/form-field/password-field";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import {
   registerCustomerService,
+  loginService,
 } from "@/redux/features/auth/store/thunks/auth-thunks";
 import { showToast } from "@/components/shared/common/show-toast";
 import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
@@ -56,7 +57,7 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
 
   async function onRegisterSubmit(values: RegisterFormData) {
     try {
-      const result = await dispatch(
+      await dispatch(
         registerCustomerService({
           userIdentifier: values.userIdentifier,
           password: values.password,
@@ -65,12 +66,18 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
         }),
       ).unwrap();
 
-      if (result) {
-        showToast.success("Welcome! Your account has been created successfully.");
-        onOpenChange(false);
-        registerForm.reset();
-        window.location.reload();
-      }
+      await dispatch(
+        loginService({
+          userIdentifier: values.userIdentifier,
+          password: values.password,
+          userType: "CUSTOMER",
+        }),
+      ).unwrap();
+
+      showToast.success("Welcome! Your account has been created successfully.");
+      onOpenChange(false);
+      registerForm.reset();
+      window.location.reload();
     } catch (err: any) {
       showToast.error(err || "Registration failed. Please try again.");
     }
