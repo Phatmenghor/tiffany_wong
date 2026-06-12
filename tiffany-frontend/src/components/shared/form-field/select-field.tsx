@@ -54,7 +54,7 @@ export function SelectField<T extends FieldValues = any>({
                   role="combobox"
                   disabled={disabled || loading}
                   className={cn(
-                    "w-full justify-between h-[1.625rem] px-[0.4875rem] font-normal transition-all duration-200 border-input",
+                    "w-full justify-between h-[1.625rem] px-[0.4875rem] font-normal border-input",
                     // Hover state
                     "hover:bg-primary/10 hover:border-primary hover:text-primary",
                     // Focus state
@@ -78,7 +78,7 @@ export function SelectField<T extends FieldValues = any>({
                       : selectedOption?.label || placeholder}
                   </span>
                   <ChevronDown className={cn(
-                    "ml-[0.325rem] h-[0.65rem] w-[0.65rem] shrink-0 transition-all duration-200",
+                    "ml-[0.325rem] h-[0.65rem] w-[0.65rem] shrink-0",
                     !open && "opacity-50",
                     open && "opacity-100 text-primary rotate-180"
                   )} />
@@ -99,7 +99,7 @@ export function SelectField<T extends FieldValues = any>({
                         setOpen(false);
                       }}
                       className={cn(
-                        "w-full flex items-center gap-[0.325rem] px-[0.4875rem] py-[0.325rem] text-[12px] text-left cursor-pointer transition-colors",
+                        "w-full flex items-center gap-[0.325rem] px-[0.4875rem] py-[0.325rem] text-[12px] text-left cursor-pointer",
                         "hover:bg-primary/10 hover:text-primary/50",
                         currentValue === option.value
                           ? "bg-primary/20 text-primary/50 font-medium"

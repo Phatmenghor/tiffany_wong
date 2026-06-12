@@ -101,7 +101,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             role="combobox"
             disabled={disabled}
             className={cn(
-              "w-full justify-between gap-[0.325rem] font-normal transition-all duration-200",
+              "w-full justify-between gap-[0.325rem] font-normal",
               // Default state
               "border-input",
               // Hover state
@@ -130,7 +130,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             </span>
             <ChevronDown
               className={cn(
-                `${sizeConfig.icon} shrink-0 transition-all duration-200`,
+                `${sizeConfig.icon} shrink-0`,
                 !open && "opacity-50",
                 open && "opacity-100 text-primary rotate-180"
               )}
@@ -162,7 +162,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                     }
                   }}
                   className={cn(
-                    "w-full flex items-center gap-[0.325rem] text-left transition-colors",
+                    "w-full flex items-center gap-[0.325rem] text-left",
                     sizeConfig.item,
                     "hover:bg-primary/10 hover:text-primary",
                     value === option.value
