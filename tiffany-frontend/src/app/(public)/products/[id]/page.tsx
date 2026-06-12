@@ -230,10 +230,18 @@ export default function ProductDetailPage() {
     return null;
   };
   const hasDiscount = selectedSize ? selectedSize.hasPromotion : product?.hasPromotion;
-  const discountPercent = (() => {
-    const orig = getOriginalPrice();
-    if (!orig) return 0;
-    return Math.round(((orig - getDisplayPrice()) / orig) * 100);
+  const discountLabel = (() => {
+    if (!hasDiscount) return "";
+    if (selectedSize?.hasPromotion) {
+      if (selectedSize.promotionType === "PERCENTAGE") return `-${selectedSize.promotionValue}%`;
+      if (selectedSize.promotionType === "FIXED_AMOUNT") return `-$${selectedSize.promotionValue}`;
+      const orig = getOriginalPrice();
+      if (orig) return `-${Math.round(((orig - getDisplayPrice()) / orig) * 100)}%`;
+      return "";
+    }
+    if (product?.displayPromotionType === "PERCENTAGE") return `-${product.displayPromotionValue}%`;
+    if (product?.displayPromotionType === "FIXED_AMOUNT") return `-$${product.displayPromotionValue}`;
+    return "";
   })();
 
   // ── Pending qty handlers (sized products) ──────────────────────────────
@@ -500,7 +508,7 @@ export default function ProductDetailPage() {
               onPrevImage={prevImage}
               onNextImage={nextImage}
               onOpenLightbox={openLightbox}
-              discountPercent={discountPercent}
+              discountLabel={discountLabel}
               hasDiscount={!!hasDiscount}
             />
           </div>

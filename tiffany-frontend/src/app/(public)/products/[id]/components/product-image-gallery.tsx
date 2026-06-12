@@ -24,7 +24,7 @@ interface ProductImageGalleryProps {
   onPrevImage: () => void;
   onNextImage: () => void;
   onOpenLightbox: (index: number) => void;
-  discountPercent: number;
+  discountLabel: string;
   hasDiscount: boolean;
 }
 
@@ -42,7 +42,7 @@ export function ProductImageGallery({
   onPrevImage,
   onNextImage,
   onOpenLightbox,
-  discountPercent,
+  discountLabel,
   hasDiscount,
 }: ProductImageGalleryProps) {
   const [thumbOffset, setThumbOffset] = useState(0);
@@ -127,9 +127,9 @@ export function ProductImageGallery({
         />
 
         {/* Discount badge */}
-        {hasDiscount && discountPercent > 0 && (
+        {hasDiscount && discountLabel && (
           <Badge className="absolute top-[0.4875rem] left-[0.4875rem] bg-rose-500 hover:bg-rose-500 text-white text-[11px] font-bold z-10 pointer-events-none">
-            -{discountPercent}%
+            {discountLabel}
           </Badge>
         )}
 

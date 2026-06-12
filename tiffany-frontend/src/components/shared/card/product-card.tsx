@@ -362,8 +362,8 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
                   className="text-[11px] font-bold px-[0.325rem] py-[0.08125rem] shadow-md"
                 >
                   {product.displayPromotionType === "PERCENTAGE"
-                    ? `${product.displayPromotionValue}%`
-                    : `${formatCurrency(product.displayPromotionValue)}`}
+                    ? `-${product.displayPromotionValue}%`
+                    : `-${formatCurrency(product.displayPromotionValue)}`}
                 </Badge>
               </div>
             )}

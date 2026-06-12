@@ -52,7 +52,7 @@ export function SizeSelectionModal({
   const [fullProduct, setFullProduct] =
     useState<ProductDetailResponseModel | null>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const isSaving = false;
   const [clearingSize, setClearingSize] = useState<string | null>(null);
 
   // Local pending quantities: key = sizeId (or "no_size"), value = quantity
@@ -156,7 +156,6 @@ export function SizeSelectionModal({
       setIsLoadingDetail(false);
       setPendingQuantities(new Map());
       setModifiedSizes(new Set());
-      setIsSaving(false);
     }
   }, [open, product, productDispatch]);
 
@@ -263,99 +262,76 @@ export function SizeSelectionModal({
     onOpenChange(false);
   }, [onOpenChange]);
 
-  // Save all pending changes to API
-  const handleAddToCart = useCallback(async () => {
+  // Save all pending changes — update local immediately, fire API in background
+  const handleAddToCart = useCallback(() => {
     if (!displayProduct || modifiedSizes.size === 0) return;
 
-    setIsSaving(true);
+    const ts = Date.now();
 
-    try {
-      const promises: Promise<any>[] = [];
-      const ts = Date.now(); // Single timestamp for conflict resolution
+    for (const key of modifiedSizes) {
+      const sizeId = key === "no_size" ? null : key;
+      const newQty = pendingQuantities.get(key) ?? getQuantityForSize(sizeId);
+      const currentQuantity = getQuantityForSize(sizeId);
 
-      for (const key of modifiedSizes) {
-        const sizeId = key === "no_size" ? null : key;
-        const newQty = pendingQuantities.get(key) ?? getQuantityForSize(sizeId);
-        const currentQuantity = getQuantityForSize(sizeId);
+      if (newQty === currentQuantity) continue;
 
-        if (newQty === currentQuantity) continue;
+      if (currentQuantity === 0 && newQty > 0) {
+        const size = displayProduct.sizes?.find((s) => s.id === sizeId);
+        const itemFinalPrice = size?.finalPrice || displayProduct.displayPrice || 0;
+        const itemCurrentPrice = size?.hasPromotion
+          ? size.price
+          : displayProduct.displayOriginPrice || itemFinalPrice;
 
-        // Optimistic local update
-        if (currentQuantity === 0 && newQty > 0) {
-          const size = displayProduct.sizes?.find((s) => s.id === sizeId);
-          const itemFinalPrice =
-            size?.finalPrice || displayProduct.displayPrice || 0;
-          const itemCurrentPrice = size?.hasPromotion
-            ? size.price
-            : displayProduct.displayOriginPrice || itemFinalPrice;
-          const hasDiscount = size
-            ? size.hasPromotion
-            : displayProduct.hasActivePromotion;
-
-          dispatch(
-            addLocalCartItem({
-              productId: displayProduct.id,
-              productSizeId: sizeId,
-              quantity: newQty,
-              productName: displayProduct.name,
-              productImageUrl: displayProduct.mainImageUrl,
-              sizeName: size?.name || null,
-              finalPrice: itemFinalPrice,
-              currentPrice: itemCurrentPrice,
-              hasPromotion: hasDiscount,
-              promotionType: size?.promotionType ?? displayProduct.displayPromotionType ?? null,
-              promotionValue: size?.promotionValue ?? displayProduct.displayPromotionValue ?? null,
-              promotionFromDate: size?.promotionFromDate ?? displayProduct.displayPromotionFromDate ?? null,
-              promotionToDate: size?.promotionToDate ?? displayProduct.displayPromotionToDate ?? null,
-              optimisticTimestamp: ts,
-            }),
-          );
-        } else {
-          dispatch(
-            updateLocalCartItem({
-              productId: displayProduct.id,
-              productSizeId: sizeId,
-              quantity: newQty,
-              optimisticTimestamp: ts,
-            }),
-          );
-        }
-
-        // API call
-        if (newQty > 0) {
-          promises.push(
-            dispatch(
-              addToCart({
-                productId: displayProduct.id,
-                productSizeId: sizeId,
-                quantity: newQty,
-                optimisticTimestamp: ts,
-              }),
-            ).unwrap(),
-          );
-        } else {
-          promises.push(
-            dispatch(
-              updateCartItem({
-                productId: displayProduct.id,
-                productSizeId: sizeId,
-                quantity: 0,
-                optimisticTimestamp: ts,
-              }),
-            ).unwrap(),
-          );
-        }
+        dispatch(
+          addLocalCartItem({
+            productId: displayProduct.id,
+            productSizeId: sizeId,
+            quantity: newQty,
+            productName: displayProduct.name,
+            productImageUrl: displayProduct.mainImageUrl,
+            sizeName: size?.name || null,
+            finalPrice: itemFinalPrice,
+            currentPrice: itemCurrentPrice,
+            hasPromotion: size ? size.hasPromotion : displayProduct.hasActivePromotion,
+            promotionType: size?.promotionType ?? displayProduct.displayPromotionType ?? null,
+            promotionValue: size?.promotionValue ?? displayProduct.displayPromotionValue ?? null,
+            promotionFromDate: size?.promotionFromDate ?? displayProduct.displayPromotionFromDate ?? null,
+            promotionToDate: size?.promotionToDate ?? displayProduct.displayPromotionToDate ?? null,
+            optimisticTimestamp: ts,
+          }),
+        );
+      } else {
+        dispatch(
+          updateLocalCartItem({
+            productId: displayProduct.id,
+            productSizeId: sizeId,
+            quantity: newQty,
+            optimisticTimestamp: ts,
+          }),
+        );
       }
+    }
 
-      await Promise.all(promises);
-      setPendingQuantities(new Map());
-      setModifiedSizes(new Set());
-      onOpenChange(false);
-      onSuccess?.();
-    } catch (error: any) {
-      showToast.error(error?.message || "Failed to update cart");
-    } finally {
-      setIsSaving(false);
+    // Close immediately after local update
+    setPendingQuantities(new Map());
+    setModifiedSizes(new Set());
+    onOpenChange(false);
+    onSuccess?.();
+
+    // Fire API calls in background
+    for (const key of modifiedSizes) {
+      const sizeId = key === "no_size" ? null : key;
+      const newQty = pendingQuantities.get(key) ?? getQuantityForSize(sizeId);
+      const currentQuantity = getQuantityForSize(sizeId);
+      if (newQty === currentQuantity) continue;
+
+      const apiCall = newQty > 0
+        ? dispatch(addToCart({ productId: displayProduct.id, productSizeId: sizeId, quantity: newQty, optimisticTimestamp: ts }))
+        : dispatch(updateCartItem({ productId: displayProduct.id, productSizeId: sizeId, quantity: 0, optimisticTimestamp: ts }));
+
+      apiCall.unwrap().catch(() => {
+        showToast.error("Failed to sync cart. Please try again.");
+      });
     }
   }, [
     displayProduct,
@@ -552,19 +528,10 @@ export function SizeSelectionModal({
                 <CustomButton
                   className="flex-1"
                   onClick={handleAddToCart}
-                  disabled={isSaving || !hasUnsavedChanges}
+                  disabled={!hasUnsavedChanges}
                 >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="h-[0.65rem] w-[0.65rem] mr-[0.24375rem] animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingCart className="h-[0.65rem] w-[0.65rem] mr-[0.24375rem]" />
-                      Add to Cart
-                    </>
-                  )}
+                  <ShoppingCart className="h-[0.65rem] w-[0.65rem] mr-[0.24375rem]" />
+                  Add to Cart
                 </CustomButton>
               </div>
             </>
