@@ -217,18 +217,7 @@ export default function UserBusinessModal({
         } as any;
 
         const result = await dispatch(createUserService(payload)).unwrap();
-        showToast.user({
-          title: 'User Account Created',
-          message: `New user business account has been successfully created and is ready to use.`,
-          details: {
-            'Email': result.email,
-            'Name': result.userIdentifier || result.firstName || 'N/A',
-            'Status': data.accountStatus || 'ACTIVE',
-            'Role': data.userRole || 'N/A',
-            'Created At': new Date().toLocaleString(),
-          },
-          duration: 6000,
-        });
+        showToast.success("User created successfully");
         handleClose();
       } else {
         const payload: UpdateUserRequest = {
@@ -248,18 +237,7 @@ export default function UserBusinessModal({
         const result = await dispatch(
           updateUserService({ userId: data.id, userData: payload }),
         ).unwrap();
-        showToast.user({
-          title: 'User Account Updated',
-          message: `User business account has been successfully updated with new information.`,
-          details: {
-            'Email': result.email || data.email,
-            'Name': result.fullName || data.firstName || 'N/A',
-            'Status': data.accountStatus || 'ACTIVE',
-            'Role': data.userRole || 'N/A',
-            'Updated At': new Date().toLocaleString(),
-          },
-          duration: 6000,
-        });
+        showToast.success("User updated successfully");
         handleClose();
       }
     } catch (error: any) {
