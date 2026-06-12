@@ -10,11 +10,9 @@ import lombok.Data;
 
 @Data
 public class RegisterRequest {
-    
-    @NotBlank(message = "User identifier is required")
+
+    @NotBlank(message = "Email or username is required")
     private String userIdentifier;
-    
-    private String email;
 
     @NotBlank(message = "Password is required")
     @Size(min = 8)
@@ -26,8 +24,6 @@ public class RegisterRequest {
     @NotNull(message = "User role is required")
     private UserRole userRole = UserRole.CUSTOMER;
 
-    private String firstName;
-    private String lastName;
     private String profileImageUrl;
     private String phoneNumber;
     private String address;
