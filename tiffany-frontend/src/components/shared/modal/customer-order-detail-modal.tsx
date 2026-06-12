@@ -59,7 +59,7 @@ export function CustomerOrderDetailModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogTitle className="sr-only">Order Details - {order.orderNumber}</DialogTitle>
 
-      <DialogContent className="w-full sm:max-w-6xl max-h-[95dvh] p-0 gap-0 flex flex-col overflow-hidden">
+      <DialogContent className="w-full sm:max-w-2xl max-h-[95dvh] p-0 gap-0 flex flex-col overflow-hidden">
         {/* Header */}
         <div className="px-[0.65rem] py-[0.4875rem] border-b bg-muted/30 flex-shrink-0 flex items-center gap-[0.4875rem]">
           <div className="min-w-0">
