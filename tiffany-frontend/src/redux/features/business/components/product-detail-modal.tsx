@@ -256,14 +256,6 @@ export function ProductDetailModal({
                               label="Final Price"
                               value={formatCurrency(size.finalPrice)}
                             />
-                            <DisplayField
-                              label="SKU"
-                              value={size.sku || "---"}
-                            />
-                            <DisplayField
-                              label="Barcode"
-                              value={size.barcode || "---"}
-                            />
                             {size.hasPromotion && (
                               <>
                                 <DisplayField
