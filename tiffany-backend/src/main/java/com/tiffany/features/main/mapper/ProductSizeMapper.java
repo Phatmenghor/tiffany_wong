@@ -46,6 +46,22 @@ public interface ProductSizeMapper {
     @Mapping(source = "promotionType", target = "promotionType", qualifiedByName = "sizePromotionTypeToString")
     ProductSizeDto toDto(ProductSize entity);
 
+    @AfterMapping
+    default void clearExpiredSizePromotionFields(ProductSize entity, @MappingTarget ProductSizeDto dto) {
+        if (entity.getPromotionType() == null || entity.getPromotionValue() == null) {
+            return;
+        }
+        // Expired: toDate is in the past — clear all promotion fields
+        if (entity.getPromotionToDate() != null && java.time.LocalDate.now().isAfter(entity.getPromotionToDate())) {
+            dto.setPromotionType(null);
+            dto.setPromotionValue(null);
+            dto.setPromotionFromDate(null);
+            dto.setPromotionToDate(null);
+        }
+        // Future: fromDate is in the future — keep the dates so the upcoming promotion is visible,
+        // hasPromotion stays false (already set correctly by isPromotionActive())
+    }
+
     List<ProductSizeDto> toDtos(List<ProductSize> entities);
 
     default List<ProductSize> toEntitiesFromUpdate(List<ProductSizeUpdateDto> dtos) {
