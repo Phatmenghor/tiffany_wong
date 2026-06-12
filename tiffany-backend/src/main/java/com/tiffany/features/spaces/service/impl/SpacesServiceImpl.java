@@ -33,12 +33,14 @@ public class SpacesServiceImpl implements SpacesService {
     @Transactional
     public SpacesUploadResponse upload(MultipartFile file) {
         String key = StorageKeyUtil.key(StorageNameUtil.generateName());
+        log.info("Uploading image: filename={}, size={} bytes, key={}",
+                file.getOriginalFilename(), file.getSize(), key);
 
         byte[] bytes;
         try {
             bytes = file.getBytes();
         } catch (IOException e) {
-            log.error("Failed to read file bytes: {}", e.getMessage());
+            log.error("Failed to read file bytes: filename={}, error={}", file.getOriginalFilename(), e.getMessage());
             throw new RuntimeException("Failed to read uploaded file: " + e.getMessage());
         }
 
@@ -56,7 +58,7 @@ public class SpacesServiceImpl implements SpacesService {
                     RequestBody.fromBytes(bytes)
             );
         } catch (Exception e) {
-            log.error("Upload failed for key {}: {}", key, e.getMessage());
+            log.error("S3 upload failed: key={}, bucket={}, error={}", key, spacesProperties.getBucket(), e.getMessage());
             throw new RuntimeException("Image upload failed: " + e.getMessage());
         }
 
@@ -69,31 +71,37 @@ public class SpacesServiceImpl implements SpacesService {
                 .fileSize((long) bytes.length)
                 .build());
 
-        log.info("Uploaded: {}", key);
+        log.info("Image uploaded: key={}, url={}", key, url);
         return SpacesUploadResponse.builder().key(key).url(url).build();
     }
 
     @Override
     @Transactional
     public void deleteByKey(String key) {
+        log.info("Deleting image: key={}", key);
+
         try {
             spacesS3Client.deleteObject(DeleteObjectRequest.builder()
                     .bucket(spacesProperties.getBucket())
                     .key(key)
                     .build());
         } catch (Exception e) {
-            log.warn("S3 delete failed for key {}: {}", key, e.getMessage());
+            log.warn("S3 delete failed (continuing with DB cleanup): key={}, error={}", key, e.getMessage());
         }
+
         spacesImageRepository.deleteByObjectKey(key);
-        log.info("Deleted: {}", key);
+        log.info("Image deleted: key={}", key);
     }
 
     @Override
     public List<SpacesImageResponse> getLogs() {
-        return spacesImageRepository.findAllByOrderByCreatedAtDesc()
+        log.info("Fetching image upload logs");
+        List<SpacesImageResponse> logs = spacesImageRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
                 .map(this::toResponse)
                 .toList();
+        log.info("Image logs fetched: count={}", logs.size());
+        return logs;
     }
 
     private SpacesImageResponse toResponse(SpacesImage image) {

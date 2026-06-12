@@ -1,6 +1,5 @@
 package com.tiffany.features.order.service.impl;
 
-import com.tiffany.exception.custom.NotFoundException;
 import com.tiffany.exception.custom.ValidationException;
 import com.tiffany.features.auth.models.User;
 import com.tiffany.features.order.dto.helper.CartCreateHelper;
@@ -50,15 +49,11 @@ public class CartServiceImpl implements CartService {
     public CartSummaryResponse submitCartItem(CartItemCreateRequest request) {
         User currentUser = securityUtils.getCurrentUser();
         UUID userId = currentUser.getId();
+        log.info("Submit cart item: userId={}, productId={}, sizeId={}, quantity={}",
+                userId, request.getProductId(), request.getProductSizeId(), request.getQuantity());
 
-        log.info("Submit cart item - User: {}, Product: {}, Quantity: {}",
-                userId, request.getProductId(), request.getQuantity());
-
-        // Get or create cart
         Cart cart = getOrCreateCart(userId);
 
-        // Check if item already exists in cart (with pessimistic lock to prevent
-        // OptimisticLockException when users rapidly update quantities)
         Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductIdAndSizeIdForUpdate(
                 cart.getId(), request.getProductId(), request.getProductSizeId());
 
@@ -67,11 +62,12 @@ public class CartServiceImpl implements CartService {
 
             if (request.getQuantity() == 0) {
                 cartItemRepository.delete(item);
-                log.info("Removed cart item: {} for user: {}", item.getId(), userId);
+                log.info("Cart item removed: userId={}, cartItemId={}", userId, item.getId());
             } else {
                 item.setQuantity(request.getQuantity());
                 cartItemRepository.save(item);
-                log.info("Updated cart item quantity to: {} for user: {}", request.getQuantity(), userId);
+                log.info("Cart item quantity updated: userId={}, cartItemId={}, quantity={}",
+                        userId, item.getId(), request.getQuantity());
             }
         } else {
             if (request.getQuantity() > 0) {
@@ -82,33 +78,37 @@ public class CartServiceImpl implements CartService {
                         request.getQuantity()
                 );
                 cartItemRepository.save(newItem);
-                log.info("Added new item to cart with quantity: {} for user: {}", request.getQuantity(), userId);
+                log.info("Cart item added: userId={}, productId={}, sizeId={}, quantity={}",
+                        userId, request.getProductId(), request.getProductSizeId(), request.getQuantity());
+            } else {
+                log.info("Ignored zero-quantity add for non-existing cart item: userId={}, productId={}",
+                        userId, request.getProductId());
             }
         }
 
-        // Flush pending changes and clear the persistence context so the reload
-        // query populates all lazy relations (product, productSize) from the database
-        // instead of returning cached entities with null associations.
         entityManager.flush();
         entityManager.clear();
 
-        // Reload cart with items for response (deduplication happens during load)
-        return loadCartSummary(userId);
+        CartSummaryResponse response = loadCartSummary(userId);
+        log.info("Cart updated: userId={}, totalItems={}", userId, response.getTotalItems());
+        return response;
     }
 
     @Override
     @Transactional(readOnly = true)
     public CartSummaryResponse getCart() {
         UUID userId = securityUtils.getCurrentUserId();
-        log.info("Getting cart for user: {}", userId);
+        log.info("Fetching cart: userId={}", userId);
 
-        return loadCartSummary(userId);
+        CartSummaryResponse response = loadCartSummary(userId);
+        log.info("Cart fetched: userId={}, totalItems={}", userId, response.getTotalItems());
+        return response;
     }
 
     @Override
     public CartSummaryResponse clearCart() {
         UUID userId = securityUtils.getCurrentUserId();
-        log.info("Clearing cart for user: {}", userId);
+        log.info("Clearing cart: userId={}", userId);
 
         Optional<Cart> cartOpt = cartRepository.findByUserIdWithItems(userId);
         if (cartOpt.isPresent()) {
@@ -117,14 +117,18 @@ public class CartServiceImpl implements CartService {
                 int count = cart.getItems().size();
                 cartItemRepository.deleteAll(cart.getItems());
                 cart.getItems().clear();
-                log.info("Cleared {} items from cart: {}", count, cart.getId());
+                log.info("Cart cleared: userId={}, removedItems={}", userId, count);
+            } else {
+                log.info("Cart already empty: userId={}", userId);
             }
+        } else {
+            log.info("No cart found to clear: userId={}", userId);
         }
 
         return emptyCartSummary();
     }
 
-    // ===== PRIVATE HELPER METHODS =====
+    // ─── Private helpers ──────────────────────────────────────────────────────
 
     private CartSummaryResponse loadCartSummary(UUID userId) {
         Optional<Cart> cartOpt = cartRepository.findByUserIdWithItems(userId);
@@ -145,7 +149,6 @@ public class CartServiceImpl implements CartService {
 
     private Cart getOrCreateCart(UUID userId) {
         Optional<Cart> existingCart = cartRepository.findByUserIdAndIsDeletedFalse(userId);
-
         if (existingCart.isPresent()) {
             return existingCart.get();
         }
@@ -153,8 +156,7 @@ public class CartServiceImpl implements CartService {
         CartCreateHelper helper = new CartCreateHelper(userId);
         Cart newCart = cartMapper.createFromHelper(helper);
         Cart savedCart = cartRepository.save(newCart);
-
-        log.info("Created new cart for user: {}", userId);
+        log.info("Cart created: userId={}, cartId={}", userId, savedCart.getId());
         return savedCart;
     }
 
@@ -171,9 +173,7 @@ public class CartServiceImpl implements CartService {
     }
 
     private void deduplicateCartItems(Cart cart) {
-        if (cart.getItems() == null || cart.getItems().isEmpty()) {
-            return;
-        }
+        if (cart.getItems() == null || cart.getItems().isEmpty()) return;
 
         Map<String, UUID> latestByKey = new LinkedHashMap<>();
         Map<String, LocalDateTime> latestTimeByKey = new LinkedHashMap<>();
@@ -186,12 +186,10 @@ public class CartServiceImpl implements CartService {
             if (latestByKey.containsKey(key)) {
                 LocalDateTime existingTime = latestTimeByKey.get(key);
                 if (itemTime != null && existingTime != null && itemTime.isAfter(existingTime)) {
-                    // Current item is newer, mark old one as duplicate
                     duplicateIds.add(latestByKey.get(key));
                     latestByKey.put(key, item.getId());
                     latestTimeByKey.put(key, itemTime);
                 } else {
-                    // Existing item is newer, mark current as duplicate
                     duplicateIds.add(item.getId());
                 }
             } else {
@@ -200,17 +198,14 @@ public class CartServiceImpl implements CartService {
             }
         }
 
-        // Remove duplicates from cart collection
         if (!duplicateIds.isEmpty()) {
             cart.getItems().removeIf(item -> duplicateIds.contains(item.getId()));
-            log.warn("Removed {} duplicate cart items from collection", duplicateIds.size());
+            log.warn("Duplicate cart items removed: cartId={}, count={}", cart.getId(), duplicateIds.size());
         }
     }
 
     private void filterUnavailableItems(Cart cart) {
-        if (cart.getItems() == null || cart.getItems().isEmpty()) {
-            return;
-        }
+        if (cart.getItems() == null || cart.getItems().isEmpty()) return;
 
         var unavailableItems = cart.getItems().stream()
                 .filter(item -> !isCartItemAvailable(item))
@@ -218,8 +213,7 @@ public class CartServiceImpl implements CartService {
 
         if (!unavailableItems.isEmpty()) {
             cartItemRepository.deleteAll(unavailableItems);
-            log.info("Deleted {} unavailable cart items from cart: {}",
-                    unavailableItems.size(), cart.getId());
+            log.info("Unavailable cart items removed: cartId={}, count={}", cart.getId(), unavailableItems.size());
         }
 
         cart.getItems().removeIf(item -> !isCartItemAvailable(item));
@@ -230,23 +224,17 @@ public class CartServiceImpl implements CartService {
             Product product = cartItem.getProduct();
             if (product == null) {
                 Optional<Product> productOpt = productRepository.findByIdAndIsDeletedFalse(cartItem.getProductId());
-                if (productOpt.isEmpty()) {
-                    return false;
-                }
+                if (productOpt.isEmpty()) return false;
                 product = productOpt.get();
             }
 
-            if (product.getIsDeleted() || !product.isActive()) {
-                return false;
-            }
+            if (product.getIsDeleted() || !product.isActive()) return false;
 
             if (cartItem.getProductSizeId() != null) {
                 ProductSize productSize = cartItem.getProductSize();
                 if (productSize == null) {
                     Optional<ProductSize> sizeOpt = productSizeRepository.findById(cartItem.getProductSizeId());
-                    if (sizeOpt.isEmpty()) {
-                        return false;
-                    }
+                    if (sizeOpt.isEmpty()) return false;
                     productSize = sizeOpt.get();
                 }
                 return !productSize.getIsDeleted();
@@ -254,7 +242,7 @@ public class CartServiceImpl implements CartService {
 
             return true;
         } catch (Exception e) {
-            log.error("Error checking cart item availability for item {}: {}", cartItem.getId(), e.getMessage());
+            log.error("Cart item availability check failed: cartItemId={}, error={}", cartItem.getId(), e.getMessage());
             return false;
         }
     }

@@ -47,11 +47,16 @@ public class TelegramServiceImpl implements TelegramService {
     @Override
     @Async
     public void notifyUserCreated(User user) {
-        if (!telegramEnabled) return;
+        if (!telegramEnabled) {
+            log.debug("Telegram disabled, skipping user-created notification: userId={}", user.getId());
+            return;
+        }
+        log.info("Sending user-created Telegram notification: userId={}", user.getId());
         try {
             sendMessage(buildUserRegistrationMessage(user));
+            log.info("User-created notification sent: userId={}", user.getId());
         } catch (Exception e) {
-            log.error("Failed to send user creation notification - userId: {}, error: {}", user.getId(), e.getMessage());
+            log.error("User-created notification failed: userId={}, error={}", user.getId(), e.getMessage());
         }
     }
 
@@ -59,16 +64,21 @@ public class TelegramServiceImpl implements TelegramService {
     @Async
     @Transactional(readOnly = true)
     public void notifyOrderCreated(UUID orderId) {
-        if (!telegramEnabled) return;
+        if (!telegramEnabled) {
+            log.debug("Telegram disabled, skipping order-created notification: orderId={}", orderId);
+            return;
+        }
+        log.info("Sending order-created Telegram notification: orderId={}", orderId);
         try {
             Order order = orderRepository.findByIdWithDetails(orderId).orElse(null);
             if (order == null) {
-                log.warn("Order not found for Telegram notification - orderId: {}", orderId);
+                log.warn("Order not found for Telegram notification: orderId={}", orderId);
                 return;
             }
             sendMessage(buildOrderCreatedMessage(order));
+            log.info("Order-created notification sent: orderId={}, orderNumber={}", orderId, order.getOrderNumber());
         } catch (Exception e) {
-            log.error("Failed to send order creation notification - orderId: {}, error: {}", orderId, e.getMessage());
+            log.error("Order-created notification failed: orderId={}, error={}", orderId, e.getMessage());
         }
     }
 
@@ -76,16 +86,22 @@ public class TelegramServiceImpl implements TelegramService {
     @Async
     @Transactional(readOnly = true)
     public void notifyOrderStatusChanged(UUID orderId) {
-        if (!telegramEnabled) return;
+        if (!telegramEnabled) {
+            log.debug("Telegram disabled, skipping order-status notification: orderId={}", orderId);
+            return;
+        }
+        log.info("Sending order-status Telegram notification: orderId={}", orderId);
         try {
             Order order = orderRepository.findByIdWithDetails(orderId).orElse(null);
             if (order == null) {
-                log.warn("Order not found for Telegram status notification - orderId: {}", orderId);
+                log.warn("Order not found for Telegram status notification: orderId={}", orderId);
                 return;
             }
             sendMessage(buildOrderStatusChangeMessage(order));
+            log.info("Order-status notification sent: orderId={}, orderNumber={}, status={}",
+                    orderId, order.getOrderNumber(), order.getOrderStatus());
         } catch (Exception e) {
-            log.error("Failed to send order status change notification - orderId: {}, error: {}", orderId, e.getMessage());
+            log.error("Order-status notification failed: orderId={}, error={}", orderId, e.getMessage());
         }
     }
 
@@ -125,7 +141,6 @@ public class TelegramServiceImpl implements TelegramService {
         }
         sb.append("Time: ").append(formatKhTime(order.getCreatedAt())).append("\n");
 
-        // Items
         List<OrderItem> items = order.getItems();
         int itemCount = items != null ? items.size() : 0;
         sb.append(SEP).append("\n");
@@ -155,7 +170,6 @@ public class TelegramServiceImpl implements TelegramService {
             }
         }
 
-        // Payment
         sb.append(SEP).append("\n");
         sb.append("PAYMENT\n");
         sb.append("Method: ").append(order.getPaymentMethod() != null ? order.getPaymentMethod().name() : "-").append("\n");
@@ -180,7 +194,6 @@ public class TelegramServiceImpl implements TelegramService {
         sb.append("Delivery: ").append(formatDeliveryAddress(order.getDeliveryAddress())).append("\n");
         sb.append("Updated: ").append(formatKhTime(order.getUpdatedAt())).append("\n");
 
-        // Items
         List<OrderItem> items = order.getItems();
         if (items != null && !items.isEmpty()) {
             sb.append(SEP).append("\n");
@@ -216,8 +229,9 @@ public class TelegramServiceImpl implements TelegramService {
             body.put("chat_id", groupId);
             body.put("text", message);
             restTemplate.postForObject(url, body, String.class);
+            log.debug("Telegram message sent: groupId={}", groupId);
         } catch (Exception e) {
-            log.error("Error sending message to Telegram: {}", e.getMessage());
+            log.error("Telegram API call failed: groupId={}, error={}", groupId, e.getMessage());
         }
     }
 

@@ -26,6 +26,8 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public DashboardSummaryResponse getSummary(String period) {
+        log.info("Dashboard summary query: period={}", period);
+
         LocalDateTime[] today     = DashboardPeriodUtil.getTodayRange();
         LocalDateTime[] yesterday = DashboardPeriodUtil.getYesterdayRange();
 
@@ -38,6 +40,9 @@ public class DashboardServiceImpl implements DashboardService {
         BigDecimal avg = ordersToday > 0
             ? salesToday.divide(BigDecimal.valueOf(ordersToday), 2, RoundingMode.HALF_UP)
             : BigDecimal.ZERO;
+
+        log.info("Dashboard summary result: todaySales={}, todayOrders={}, pendingOrders={}, avgOrderValue={}",
+                salesToday, ordersToday, pendingOrders, avg);
 
         return DashboardSummaryResponse.builder()
             .totalSalesToday(salesToday)
@@ -53,6 +58,8 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public DashboardSalesResponse getSales(String period) {
+        log.info("Dashboard sales query: period={}", period);
+
         LocalDateTime[] range = DashboardPeriodUtil.getRange(period);
 
         @SuppressWarnings("unchecked")
@@ -84,6 +91,9 @@ public class DashboardServiceImpl implements DashboardService {
             totalOrders  += orders;
         }
 
+        log.info("Dashboard sales result: period={}, dataPoints={}, totalRevenue={}, totalOrders={}",
+                period, points.size(), totalRevenue, totalOrders);
+
         return DashboardSalesResponse.builder()
             .data(points).totalRevenue(totalRevenue)
             .totalOrders(totalOrders).period(period).build();
@@ -91,6 +101,8 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public DashboardPaymentsResponse getPayments(String period) {
+        log.info("Dashboard payments query: period={}", period);
+
         LocalDateTime[] range = DashboardPeriodUtil.getRange(period);
 
         @SuppressWarnings("unchecked")
@@ -125,12 +137,17 @@ public class DashboardServiceImpl implements DashboardService {
             item.getAmount().divide(total, 4, RoundingMode.HALF_UP)
                 .multiply(BigDecimal.valueOf(100)).doubleValue()));
 
+        log.info("Dashboard payments result: period={}, methods={}, totalAmount={}, totalCount={}",
+                period, items.size(), totalAmount, totalCount);
+
         return DashboardPaymentsResponse.builder()
             .data(items).totalAmount(totalAmount).totalCount(totalCount).build();
     }
 
     @Override
     public DashboardHourlySalesResponse getHourlySales(String period) {
+        log.info("Dashboard hourly-sales query: period={}", period);
+
         LocalDateTime[] range = DashboardPeriodUtil.getRange(period);
 
         @SuppressWarnings("unchecked")
@@ -167,6 +184,9 @@ public class DashboardServiceImpl implements DashboardService {
             points.add(DashboardHourlySalesResponse.HourlySalesPoint.builder()
                 .hour(h).revenue(rev).orders(orders).build());
         }
+
+        log.info("Dashboard hourly-sales result: period={}, peakHour={}, peakRevenue={}, currentHour={}",
+                period, peakHour, peakRev, nowHour);
 
         return DashboardHourlySalesResponse.builder()
             .data(points).peakHour(peakHour).currentHour(nowHour).build();

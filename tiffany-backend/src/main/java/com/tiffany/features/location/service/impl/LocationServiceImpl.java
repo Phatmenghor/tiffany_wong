@@ -39,13 +39,11 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public LocationResponse createAddress(LocationCreateRequest request) {
         User currentUser = securityUtils.getCurrentUser();
-
-        log.info("Creating location for user: {}", currentUser.getUserIdentifier());
+        log.info("Creating location: userId={}, isDefault={}", currentUser.getId(), request.getIsDefault());
 
         Location address = addressMapper.toEntity(request);
         address.setUserId(currentUser.getId());
 
-        // Handle default address logic with synchronization to prevent race conditions
         if (request.getIsDefault() || !hasDefaultAddress(currentUser.getId())) {
             synchronized (currentUser.getId().toString().intern()) {
                 if (request.getIsDefault() || !hasDefaultAddress(currentUser.getId())) {
@@ -56,8 +54,8 @@ public class LocationServiceImpl implements LocationService {
         }
 
         Location savedAddress = addressRepository.save(address);
-        log.info("Location saved with ID: {}", savedAddress.getId());
-        log.info("Address created successfully for user: {}", currentUser.getUserIdentifier());
+        log.info("Location created: id={}, userId={}, isDefault={}",
+                savedAddress.getId(), currentUser.getId(), savedAddress.getIsDefault());
 
         return addressMapper.toResponse(savedAddress);
     }
@@ -65,6 +63,9 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<LocationResponse> getAllAddresses(LocationFilterRequest filter) {
+        log.info("Fetching locations: page={}, size={}, userId={}, search={}",
+                filter.getPageNo(), filter.getPageSize(), filter.getUserId(), filter.getSearch());
+
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection()
         );
@@ -74,6 +75,10 @@ public class LocationServiceImpl implements LocationService {
                 filter.getSearch(),
                 pageable
         );
+
+        log.info("Locations fetched: total={}, pages={}, current={}",
+                addressPage.getTotalElements(), addressPage.getTotalPages(), addressPage.getNumber() + 1);
+
         return addressMapper.toPaginationResponse(addressPage, paginationMapper);
     }
 
@@ -81,8 +86,12 @@ public class LocationServiceImpl implements LocationService {
     @Transactional(readOnly = true)
     public List<LocationResponse> getMyAddressesList() {
         User currentUser = securityUtils.getCurrentUser();
+        log.info("Fetching my addresses (list): userId={}", currentUser.getId());
+
         List<Location> addresses = addressRepository
                 .findByUserIdAndIsDeletedFalseOrderByIsDefaultDescCreatedAtDesc(currentUser.getId());
+
+        log.info("My addresses fetched: userId={}, count={}", currentUser.getId(), addresses.size());
         return addressMapper.toResponseList(addresses);
     }
 
@@ -90,41 +99,53 @@ public class LocationServiceImpl implements LocationService {
     @Transactional(readOnly = true)
     public LocationResponse getAddressById(UUID id) {
         User currentUser = securityUtils.getCurrentUser();
+        log.info("Fetching location: id={}, userId={}", id, currentUser.getId());
+
         Location address = addressRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new NotFoundException("Address not found"));
-        
+                .orElseThrow(() -> {
+                    log.warn("Location not found: id={}", id);
+                    return new NotFoundException("Address not found");
+                });
+
         if (!address.getUserId().equals(currentUser.getId())) {
+            log.warn("Unauthorized location access: id={}, requesterId={}, ownerId={}",
+                    id, currentUser.getId(), address.getUserId());
             throw new ValidationException("You can only access your own addresses");
         }
-        
+
+        log.info("Location fetched: id={}, userId={}", id, currentUser.getId());
         return addressMapper.toResponse(address);
     }
 
     @Override
     public LocationResponse updateAddress(UUID id, LocationUpdateRequest request) {
         User currentUser = securityUtils.getCurrentUser();
+        log.info("Updating location: id={}, userId={}", id, currentUser.getId());
+
         Location address = addressRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new NotFoundException("Address not found"));
+                .orElseThrow(() -> {
+                    log.warn("Location not found for update: id={}", id);
+                    return new NotFoundException("Address not found");
+                });
 
         if (!address.getUserId().equals(currentUser.getId())) {
+            log.warn("Unauthorized location update: id={}, requesterId={}, ownerId={}",
+                    id, currentUser.getId(), address.getUserId());
             throw new ValidationException("You can only update your own addresses");
         }
 
-        log.info("Updating location {} for user: {}", id, currentUser.getUserIdentifier());
-
         addressMapper.updateEntity(request, address);
 
-        // Handle default address logic
         if (Boolean.TRUE.equals(request.getIsDefault())) {
             clearDefaultForUser(currentUser.getId());
             address.setAsDefault();
-            log.info("Setting address {} as default", id);
+            log.info("Location set as default: id={}, userId={}", id, currentUser.getId());
         } else if (Boolean.FALSE.equals(request.getIsDefault())) {
             address.unsetDefault();
         }
 
         addressRepository.save(address);
-        log.info("Address updated successfully for user: {}", currentUser.getUserIdentifier());
+        log.info("Location updated: id={}, userId={}", id, currentUser.getId());
 
         return addressMapper.toResponse(address);
     }
@@ -132,21 +153,25 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public LocationResponse deleteAddress(UUID id) {
         User currentUser = securityUtils.getCurrentUser();
+        log.info("Deleting location: id={}, userId={}", id, currentUser.getId());
+
         Location address = addressRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new NotFoundException("Address not found"));
+                .orElseThrow(() -> {
+                    log.warn("Location not found for delete: id={}", id);
+                    return new NotFoundException("Address not found");
+                });
 
         if (!address.getUserId().equals(currentUser.getId())) {
+            log.warn("Unauthorized location delete: id={}, requesterId={}, ownerId={}",
+                    id, currentUser.getId(), address.getUserId());
             throw new ValidationException("You can only delete your own addresses");
         }
 
         boolean wasDefault = Boolean.TRUE.equals(address.getIsDefault());
 
-        log.info("Deleting location {} for user: {}", id, currentUser.getUserIdentifier());
-
         address.softDelete();
         addressRepository.save(address);
 
-        // If deleted address was default, promote the next address to default
         if (wasDefault) {
             List<Location> remainingAddresses = addressRepository
                     .findByUserIdAndIsDeletedFalseOrderByIsDefaultDescCreatedAtDesc(currentUser.getId());
@@ -154,15 +179,13 @@ public class LocationServiceImpl implements LocationService {
                 Location nextDefault = remainingAddresses.get(0);
                 nextDefault.setAsDefault();
                 addressRepository.save(nextDefault);
-                log.info("Promoted address {} to default after deletion of default address", nextDefault.getId());
+                log.info("Next default location promoted: id={}, userId={}", nextDefault.getId(), currentUser.getId());
             } else {
-                log.info("No remaining addresses to promote to default");
+                log.info("No remaining locations to promote: userId={}", currentUser.getId());
             }
         }
 
-        log.info("Location deletion completed successfully");
-
-        log.info("Address deleted for user: {}", currentUser.getUserIdentifier());
+        log.info("Location deleted: id={}, userId={}", id, currentUser.getId());
         return addressMapper.toResponse(address);
     }
 
@@ -170,17 +193,23 @@ public class LocationServiceImpl implements LocationService {
     @Transactional(readOnly = true)
     public LocationResponse getDefaultAddress() {
         User currentUser = securityUtils.getCurrentUser();
+        log.info("Fetching default location: userId={}", currentUser.getId());
+
         Location defaultAddress = addressRepository
                 .findByUserIdAndIsDefaultTrueAndIsDeletedFalse(currentUser.getId())
-                .orElseThrow(() -> new NotFoundException("No default address found"));
-        
+                .orElseThrow(() -> {
+                    log.warn("No default location found: userId={}", currentUser.getId());
+                    return new NotFoundException("No default address found");
+                });
+
+        log.info("Default location fetched: id={}, userId={}", defaultAddress.getId(), currentUser.getId());
         return addressMapper.toResponse(defaultAddress);
     }
-    
+
     private boolean hasDefaultAddress(UUID userId) {
         return addressRepository.findByUserIdAndIsDefaultTrueAndIsDeletedFalse(userId).isPresent();
     }
-    
+
     private void clearDefaultForUser(UUID userId) {
         addressRepository.clearDefaultForUser(userId);
     }

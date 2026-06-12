@@ -45,11 +45,16 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
     public FavoriteToggleDto toggleFavorite(UUID productId) {
         User currentUser = securityUtils.getCurrentUser();
         UUID userId = currentUser.getId();
+        log.info("Toggle favorite: userId={}, productId={}", userId, productId);
 
         Product product = productRepository.findByIdAndIsDeletedFalse(productId)
-                .orElseThrow(() -> new NotFoundException("Product not found"));
+                .orElseThrow(() -> {
+                    log.warn("Product not found for favorite toggle: productId={}", productId);
+                    return new NotFoundException("Product not found");
+                });
 
         if (!product.isActive()) {
+            log.warn("Cannot favorite inactive product: productId={}", productId);
             throw new ValidationException("Cannot favorite inactive product");
         }
 
@@ -58,12 +63,12 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
         if (!isFavorited) {
             favoriteRepository.save(new ProductFavorite(userId, productId));
             productRepository.incrementFavoriteCount(productId);
-            log.info("Favorite added: productId={}", productId);
+            log.info("Favorite added: userId={}, productId={}", userId, productId);
             return favoriteMapper.createToggleResponse(productId, userId, true, "added");
         } else {
             favoriteRepository.deleteByUserIdAndProductId(userId, productId);
             productRepository.decrementFavoriteCount(productId);
-            log.info("Favorite removed: productId={}", productId);
+            log.info("Favorite removed: userId={}, productId={}", userId, productId);
             return favoriteMapper.createToggleResponse(productId, userId, false, "removed");
         }
     }
@@ -72,6 +77,7 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
     @Transactional(readOnly = true)
     public PaginationResponse<ProductListDto> getUserFavorites(ProductFilterDto filter) {
         UUID userId = securityUtils.getCurrentUserId();
+        log.info("Fetching user favorites: userId={}, page={}, size={}", userId, filter.getPageNo(), filter.getPageSize());
 
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(),
@@ -84,21 +90,23 @@ public class ProductFavoriteServiceImpl implements ProductFavoriteService {
         PaginationResponse<ProductListDto> response = productMapper.toPaginationResponse(favoritePage, paginationMapper);
 
         if (!response.getContent().isEmpty()) {
-            response.getContent().forEach(product -> {
-                product.setIsFavorited(true);
-            });
+            response.getContent().forEach(product -> product.setIsFavorited(true));
         }
 
-        log.info("Retrieved favorites: count={}", response.getContent().size());
+        log.info("User favorites fetched: userId={}, count={}, total={}",
+                userId, response.getContent().size(), response.getTotalElements());
+
         return response;
     }
 
     @Override
     public FavoriteRemoveAllDto removeAllFavorites() {
         UUID userId = securityUtils.getCurrentUserId();
+        log.info("Removing all favorites: userId={}", userId);
+
         int removedCount = favoriteRepository.deleteAllByUserId(userId);
 
-        log.info("Removed all favorites: count={}", removedCount);
+        log.info("All favorites removed: userId={}, removedCount={}", userId, removedCount);
 
         return FavoriteRemoveAllDto.builder()
                 .userId(userId)

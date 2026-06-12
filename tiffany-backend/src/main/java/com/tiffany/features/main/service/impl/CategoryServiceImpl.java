@@ -43,20 +43,26 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryWithProductCountResponse createCategory(CategoryCreateRequest request) {
+        log.info("Creating category: name={}", request.getName());
+
         if (categoryRepository.existsByNameAndIsDeletedFalse(request.getName())) {
+            log.warn("Category name already exists: name={}", request.getName());
             throw new ValidationException("Category name already exists");
         }
 
         Category category = categoryMapper.toEntity(request);
         Category savedCategory = categoryRepository.save(category);
 
-        log.info("Category created: name={}", savedCategory.getName());
+        log.info("Category created: id={}, name={}", savedCategory.getId(), savedCategory.getName());
         return buildCategoryWithProductCount(savedCategory);
     }
 
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<CategoryResponse> getAllCategories(CategoryFilterRequest filter) {
+        log.info("Fetching categories: page={}, size={}, status={}, search={}",
+                filter.getPageNo(), filter.getPageSize(), filter.getStatus(), filter.getSearch());
+
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection()
         );
@@ -66,12 +72,19 @@ public class CategoryServiceImpl implements CategoryService {
                 filter.getSearch(),
                 pageable
         );
+
+        log.info("Categories fetched: total={}, pages={}, current={}",
+                categoryPage.getTotalElements(), categoryPage.getTotalPages(), categoryPage.getNumber() + 1);
+
         return categoryMapper.toPaginationResponse(categoryPage, paginationMapper);
     }
 
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<CategoryWithProductCountResponse> getCategoriesWithProductCount(CategoryFilterRequest filter) {
+        log.info("Fetching categories with product count: page={}, size={}, status={}, search={}",
+                filter.getPageNo(), filter.getPageSize(), filter.getStatus(), filter.getSearch());
+
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection()
         );
@@ -130,61 +143,69 @@ public class CategoryServiceImpl implements CategoryService {
         paginationResponse.setHasNext(categoryPage.hasNext());
         paginationResponse.setHasPrevious(categoryPage.hasPrevious());
 
+        log.info("Categories with product count fetched: total={}, pages={}, current={}",
+                categoryPage.getTotalElements(), categoryPage.getTotalPages(), categoryPage.getNumber() + 1);
+
         return paginationResponse;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<CategoryResponse> getAllItemCategories(CategoryAllFilterRequest filter) {
+        log.info("Fetching all categories (list): status={}, search={}", filter.getStatus(), filter.getSearch());
+
         List<Category> categories = categoryRepository.findAllWithFilters(
                 filter.getStatus(),
                 filter.getSearch(),
                 PaginationUtils.createSort(filter.getSortBy(), filter.getSortDirection())
         );
+
+        log.info("All categories fetched: count={}", categories.size());
         return categoryMapper.toResponseList(categories);
     }
 
     @Override
     @Transactional(readOnly = true)
     public CategoryWithProductCountResponse getCategoryById(UUID id) {
+        log.info("Fetching category: id={}", id);
         Category category = findCategoryById(id);
+        log.info("Category fetched: id={}, name={}", id, category.getName());
         return buildCategoryWithProductCount(category);
     }
 
     @Override
     public CategoryWithProductCountResponse updateCategory(UUID id, CategoryUpdateRequest request) {
+        log.info("Updating category: id={}", id);
+
         Category category = findCategoryById(id);
 
         if (request.getName() != null && !request.getName().equals(category.getName())) {
             if (categoryRepository.existsByNameAndIsDeletedFalse(request.getName())) {
+                log.warn("Category name already exists: name={}", request.getName());
                 throw new ValidationException("Category name already exists");
             }
         }
 
-        // Handle cascading status changes to products
         if (request.getStatus() != null && !request.getStatus().equals(category.getStatus())) {
             Status oldStatus = category.getStatus();
             Status newStatus = request.getStatus();
-
-            // Convert Status to ProductStatus
             ProductStatus productStatus = newStatus == Status.ACTIVE ? ProductStatus.ACTIVE : ProductStatus.INACTIVE;
-
-            // Update all products in this category
             productRepository.updateProductsStatusByCategory(id, productStatus);
-            log.info("Updated all products in category {} from {} to {}", id, oldStatus, newStatus);
+            log.info("Cascaded status change to products: categoryId={}, from={}, to={}", id, oldStatus, newStatus);
         }
 
         categoryMapper.updateEntity(request, category);
         Category updatedCategory = categoryRepository.save(category);
 
-        log.info("Category updated: id={}", id);
+        log.info("Category updated: id={}, name={}", id, updatedCategory.getName());
         return buildCategoryWithProductCount(updatedCategory);
     }
 
     @Override
     public CategoryWithProductCountResponse deleteCategory(UUID id) {
-        Category category = findCategoryById(id);
+        log.info("Deleting category: id={}", id);
 
+        Category category = findCategoryById(id);
         category.softDelete();
         category = categoryRepository.save(category);
 
@@ -194,7 +215,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     private Category findCategoryById(UUID id) {
         return categoryRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new NotFoundException("Category not found"));
+                .orElseThrow(() -> {
+                    log.warn("Category not found: id={}", id);
+                    return new NotFoundException("Category not found");
+                });
     }
 
     private CategoryWithProductCountResponse buildCategoryWithProductCount(Category category) {
@@ -207,7 +231,6 @@ public class CategoryServiceImpl implements CategoryService {
         long activeProducts = categoryRepository.countActiveProductsByCategories(ids, ProductStatus.ACTIVE)
                 .stream().findFirst().map(r -> ((Number) r[1]).longValue()).orElse(0L);
 
-        // Build response with product counts
         CategoryWithProductCountResponse response = new CategoryWithProductCountResponse();
         response.setId(baseResponse.getId());
         response.setCreatedAt(baseResponse.getCreatedAt());

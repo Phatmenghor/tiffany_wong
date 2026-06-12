@@ -35,9 +35,9 @@ public class BannerServiceImpl implements BannerService {
 
     @Override
     public BannerResponse createBanner(BannerCreateRequest request) {
+        log.info("Creating banner");
         Banner banner = bannerMapper.toEntity(request);
         Banner savedBanner = bannerRepository.save(banner);
-
         log.info("Banner created: id={}", savedBanner.getId());
         return bannerMapper.toResponse(savedBanner);
     }
@@ -45,6 +45,9 @@ public class BannerServiceImpl implements BannerService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponse<BannerResponse> getAllBanners(BannerFilterRequest filter) {
+        log.info("Fetching banners: page={}, size={}, status={}, search={}",
+                filter.getPageNo(), filter.getPageSize(), filter.getStatus(), filter.getSearch());
+
         Pageable pageable = PaginationUtils.createPageable(
                 filter.getPageNo(), filter.getPageSize(), filter.getSortBy(), filter.getSortDirection()
         );
@@ -54,33 +57,49 @@ public class BannerServiceImpl implements BannerService {
                 filter.getSearch(),
                 pageable
         );
+
+        log.info("Banners fetched: total={}, pages={}, current={}",
+                bannerPage.getTotalElements(), bannerPage.getTotalPages(), bannerPage.getNumber() + 1);
+
         return bannerMapper.toPaginationResponse(bannerPage, paginationMapper);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<BannerResponse> getAllItemBanners(BannerAllFilterRequest filter) {
+        log.info("Fetching all banners (list): status={}, search={}", filter.getStatus(), filter.getSearch());
+
         List<Banner> banners = bannerRepository.findAllWithFilters(
                 filter.getStatus(),
                 filter.getSearch(),
                 PaginationUtils.createSort(filter.getSortBy(), filter.getSortDirection())
         );
+
+        log.info("All banners fetched: count={}", banners.size());
         return bannerMapper.toResponseList(banners);
     }
 
     @Override
     @Transactional(readOnly = true)
     public BannerResponse getBannerById(UUID id) {
+        log.info("Fetching banner: id={}", id);
         Banner banner = bannerRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new NotFoundException("Banner not found"));
-
+                .orElseThrow(() -> {
+                    log.warn("Banner not found: id={}", id);
+                    return new NotFoundException("Banner not found");
+                });
+        log.info("Banner fetched: id={}", id);
         return bannerMapper.toResponse(banner);
     }
 
     @Override
     public BannerResponse updateBanner(UUID id, BannerUpdateRequest request) {
+        log.info("Updating banner: id={}", id);
         Banner banner = bannerRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new NotFoundException("Banner not found"));
+                .orElseThrow(() -> {
+                    log.warn("Banner not found for update: id={}", id);
+                    return new NotFoundException("Banner not found");
+                });
 
         bannerMapper.updateEntity(request, banner);
         Banner updatedBanner = bannerRepository.save(banner);
@@ -91,8 +110,12 @@ public class BannerServiceImpl implements BannerService {
 
     @Override
     public BannerResponse deleteBanner(UUID id) {
+        log.info("Deleting banner: id={}", id);
         Banner banner = bannerRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new NotFoundException("Banner not found"));
+                .orElseThrow(() -> {
+                    log.warn("Banner not found for delete: id={}", id);
+                    return new NotFoundException("Banner not found");
+                });
 
         banner.softDelete();
         banner = bannerRepository.save(banner);
@@ -100,5 +123,4 @@ public class BannerServiceImpl implements BannerService {
         log.info("Banner deleted: id={}", id);
         return bannerMapper.toResponse(banner);
     }
-
 }
