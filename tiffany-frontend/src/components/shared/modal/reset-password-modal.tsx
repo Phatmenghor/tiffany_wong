@@ -50,7 +50,7 @@ export default function ResetPasswordModal({
   const isResettingPassword = useAppSelector(selectIsResettingPassword);
 
   const [showPassword, setShowPassword] = useState(false);
-  const defaultPassword = AppDefault.RESET_PASSWORD;
+  const [newPassword, setNewPassword] = useState(AppDefault.RESET_PASSWORD);
 
   const onReset = async () => {
     if (!userId) {
@@ -62,8 +62,8 @@ export default function ResetPasswordModal({
       await dispatch(
         adminChangePasswordService({
           userId: userId,
-          newPassword: defaultPassword,
-          confirmPassword: defaultPassword,
+          newPassword: newPassword,
+          confirmPassword: newPassword,
         })
       ).unwrap();
 
@@ -78,12 +78,13 @@ export default function ResetPasswordModal({
 
   const handleClose = () => {
     setShowPassword(false);
+    setNewPassword(AppDefault.RESET_PASSWORD);
     onClose();
   };
 
   const copyPassword = async () => {
     try {
-      await navigator.clipboard.writeText(defaultPassword);
+      await navigator.clipboard.writeText(newPassword);
       toast.success("Password copied to clipboard");
     } catch (error) {
       console.error("Failed to copy password:", error);
@@ -93,7 +94,7 @@ export default function ResetPasswordModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-full sm:max-w-3xl max-h-[92dvh] p-0 flex flex-col">
+      <DialogContent className="w-full sm:max-w-md max-h-[92dvh] p-0 flex flex-col">
         <FormHeader
           title="Reset Password"
           description="Reset the user's password to the default value"
@@ -110,16 +111,16 @@ export default function ResetPasswordModal({
                     {profileImageUrl ? (
                       <img src={profileImageUrl} alt={userName} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-[0.56875rem] font-semibold text-primary">
+                      <span className="text-[12px] font-semibold text-primary">
                         {userName?.charAt(0)?.toUpperCase() || "U"}
                       </span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[0.56875rem] font-medium text-foreground truncate">
+                    <p className="text-[12px] font-medium text-foreground truncate">
                       {userName || "Unknown User"}
                     </p>
-                    <p className="text-[0.4875rem] text-muted-foreground">
+                    <p className="text-[11px] text-muted-foreground">
                       {userRole && userRole.length > 0
                         ? userRole.map(role => formatEnumValue(role)).join(", ")
                         : "User Account"}
@@ -133,15 +134,15 @@ export default function ResetPasswordModal({
             <div className="space-y-[0.4875rem]">
               <div className="flex items-center gap-[0.325rem]">
                 <Key className="h-[0.65rem] w-[0.65rem] text-muted-foreground" />
-                <Label className="text-[0.56875rem] font-semibold">New Password</Label>
+                <Label className="text-[12px] font-semibold">New Password</Label>
               </div>
 
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
-                  value={defaultPassword}
-                  readOnly
-                  className="pr-[3.25rem] font-mono text-[0.56875rem] h-[1.95rem] py-[0.4875rem]"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="pr-[3.25rem] font-mono text-[12px] h-[1.95rem] py-[0.4875rem]"
                 />
                 <div className="absolute right-[0.1625rem] top-1/2 -translate-y-1/2 flex gap-[0.1625rem]">
                   <Button
@@ -170,7 +171,7 @@ export default function ResetPasswordModal({
                   </Button>
                 </div>
               </div>
-              <p className="text-[0.4875rem] text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground">
                 User must change this password on first login
               </p>
             </div>
@@ -181,10 +182,10 @@ export default function ResetPasswordModal({
                 <div className="flex gap-[0.4875rem]">
                   <AlertTriangle className="h-[0.8125rem] w-[0.8125rem] text-orange-600 flex-shrink-0 mt-[0.08125rem]" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-[0.56875rem] font-semibold text-orange-900">
+                    <p className="text-[12px] font-semibold text-orange-900">
                       Important Notice
                     </p>
-                    <p className="text-[0.56875rem] text-orange-800 mt-[0.1625rem]">
+                    <p className="text-[12px] text-orange-800 mt-[0.1625rem]">
                       This action will log out the user from all devices. They must use the new password to sign in.
                     </p>
                   </div>
