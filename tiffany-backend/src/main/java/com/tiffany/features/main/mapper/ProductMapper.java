@@ -111,6 +111,34 @@ public interface ProductMapper {
             // Calculate display fields from sizes
             calculateDisplayFieldsFromSizes(product, dto);
             dto.setHasPromotion(hasActivePromotionInSizes(product));
+
+            // Sort sizes: promotion sizes first (biggest savings first), then by price ascending
+            if (dto.getSizes() != null && !dto.getSizes().isEmpty()) {
+                java.util.List<com.tiffany.features.main.dto.response.ProductSizeDto> withPromotion =
+                        dto.getSizes().stream()
+                                .filter(s -> Boolean.TRUE.equals(s.getHasPromotion()))
+                                .sorted(java.util.Comparator.comparing(
+                                        (com.tiffany.features.main.dto.response.ProductSizeDto s) -> {
+                                            java.math.BigDecimal price = s.getPrice() != null ? s.getPrice() : java.math.BigDecimal.ZERO;
+                                            java.math.BigDecimal fp = s.getFinalPrice() != null ? s.getFinalPrice() : price;
+                                            return price.subtract(fp);
+                                        },
+                                        java.util.Comparator.reverseOrder()))
+                                .collect(java.util.stream.Collectors.toList());
+
+                java.util.List<com.tiffany.features.main.dto.response.ProductSizeDto> withoutPromotion =
+                        dto.getSizes().stream()
+                                .filter(s -> !Boolean.TRUE.equals(s.getHasPromotion()))
+                                .sorted(java.util.Comparator.comparing(
+                                        (com.tiffany.features.main.dto.response.ProductSizeDto s) ->
+                                                s.getPrice() != null ? s.getPrice() : java.math.BigDecimal.ZERO))
+                                .collect(java.util.stream.Collectors.toList());
+
+                java.util.List<com.tiffany.features.main.dto.response.ProductSizeDto> sortedSizes =
+                        new java.util.ArrayList<>(withPromotion);
+                sortedSizes.addAll(withoutPromotion);
+                dto.setSizes(sortedSizes);
+            }
         } else {
             // When product doesn't have sizes, use product-level fields
             calculateDisplayFields(product, dto);
@@ -194,10 +222,13 @@ return promotionType != null ? promotionType.name() : null;
             return;
         }
 
-        // Find size with active promotion
+        // Find size with biggest active promotion (most savings = price - finalPrice)
         var sizeWithPromotion = product.getSizes().stream()
                 .filter(this::isSizePromotionActive)
-                .findFirst();
+                .max(java.util.Comparator.comparing(s -> {
+                    java.math.BigDecimal p = s.getPrice() != null ? s.getPrice() : java.math.BigDecimal.ZERO;
+                    return p.subtract(getSizeFinalPrice(s));
+                }));
 
         if (sizeWithPromotion.isPresent()) {
             var size = sizeWithPromotion.get();
@@ -224,7 +255,7 @@ return promotionType != null ? promotionType.name() : null;
 
     /**
      * Calculate display fields for products with sizes (ListDto version)
-     * Uses size with active promotion if any, otherwise uses cheapest size
+     * Uses size with biggest active promotion if any, otherwise uses cheapest size
      */
     default void calculateDisplayFieldsFromSizes(Product product, ProductListDto dto) {
         if (product.getSizes() == null || product.getSizes().isEmpty()) {
@@ -233,10 +264,13 @@ return promotionType != null ? promotionType.name() : null;
             return;
         }
 
-        // Find size with active promotion
+        // Find size with biggest active promotion (most savings = price - finalPrice)
         var sizeWithPromotion = product.getSizes().stream()
                 .filter(this::isSizePromotionActive)
-                .findFirst();
+                .max(java.util.Comparator.comparing(s -> {
+                    java.math.BigDecimal p = s.getPrice() != null ? s.getPrice() : java.math.BigDecimal.ZERO;
+                    return p.subtract(getSizeFinalPrice(s));
+                }));
 
         if (sizeWithPromotion.isPresent()) {
             var size = sizeWithPromotion.get();
