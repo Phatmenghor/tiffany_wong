@@ -728,8 +728,6 @@ export default function BulkPromotionPage() {
         }),
       );
 
-      showToast.success("Clearing promotions... (updating in background)");
-
       // ✅ BACKGROUND API CALL
       await dispatch(
         resetSelectedPromotionsService({
