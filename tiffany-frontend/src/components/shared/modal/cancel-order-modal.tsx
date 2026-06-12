@@ -88,7 +88,7 @@ export function CancelOrderModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-full sm:max-w-2xl max-h-[92dvh] p-0 flex flex-col">
+      <DialogContent className="w-full sm:max-w-md max-h-[92dvh] p-0 flex flex-col">
         {/* Header */}
         <FormHeader
           title="Cancel Order"
@@ -103,14 +103,6 @@ export function CancelOrderModal({
         >
           {/* Body */}
           <FormBody>
-            {/* Alert Box */}
-            <Alert className="border-red-200 bg-red-50">
-              <AlertTriangle className="h-[0.65rem] w-[0.65rem] text-red-600" />
-              <AlertDescription className="text-red-700">
-                This action cannot be undone. The order will be marked as cancelled and no longer processing.
-              </AlertDescription>
-            </Alert>
-
             {/* Order Information Display */}
             <div className="space-y-[0.4875rem] p-[0.65rem] bg-muted rounded-[0.325rem] border border-muted-foreground/20">
               <div className="flex items-center justify-between">
