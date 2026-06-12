@@ -20,7 +20,7 @@ import { CustomButton } from "@/components/shared/button/custom-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { DateTimePickerField } from "@/components/shared/form-field/date-picker-field";
-import { PromotionValueField } from "@/components/shared/form-field/promotion-value-field";
+import { TextField } from "@/components/shared/form-field/text-field";
 import { CustomSelect } from "@/components/shared/common/custom-select";
 import {
   DataTableWithPagination,
@@ -1051,7 +1051,7 @@ export default function BulkPromotionPage() {
                       </p>
                     )}
 
-                    <PromotionValueField
+                    <TextField
                       control={form.control}
                       name="promotionValue"
                       label={
@@ -1059,9 +1059,18 @@ export default function BulkPromotionPage() {
                           ? "Discount Percentage"
                           : "Discount Amount"
                       }
-                      promotionType={promotionType}
-                      error={form.formState.errors.promotionValue}
+                      type="number"
+                      placeholder={
+                        promotionType === "PERCENTAGE"
+                          ? "Enter percentage (0-100)"
+                          : "Enter amount"
+                      }
                       disabled={isSubmitting}
+                      error={form.formState.errors.promotionValue as any}
+                      valueAsNumber={true}
+                      min={0}
+                      step="0.01"
+                      allowZero={false}
                       required
                     />
                   </div>
