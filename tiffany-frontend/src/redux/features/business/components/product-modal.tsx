@@ -32,7 +32,6 @@ import {
 } from "../store/models/schema/product-schema";
 import { Loading } from "@/components/shared/common/loading";
 import { ProductBasicInfo } from "./product-modal/product-basic-info";
-import { ProductMainImage } from "./product-modal/product-main-image";
 import { ProductPricing } from "./product-modal/product-pricing";
 import { ProductSizes } from "./product-modal/product-sizes";
 import { ProductImagesGallery } from "./product-modal/product-images-gallery";
@@ -365,12 +364,6 @@ export default function ProductModal({
                   onCategoryIdChange={(categoryId) =>
                     setValue("categoryId", categoryId, { shouldDirty: true })
                   }
-                />
-
-                <ProductMainImage
-                  control={control}
-                  errors={errors}
-                  isProcessing={isProcessing}
                   onImageChange={(url) =>
                     setValue("mainImageUrl", url, { shouldDirty: true })
                   }
