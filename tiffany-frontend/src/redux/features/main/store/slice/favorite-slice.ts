@@ -47,6 +47,22 @@ const favoriteSlice = createSlice({
   initialState,
   reducers: {
     resetFavorites: () => initialState,
+
+    removeFavoriteItem: (state, action: PayloadAction<string>) => {
+      const idx = state.items.findIndex((item) => item.id === action.payload);
+      if (idx >= 0) {
+        state.items.splice(idx, 1);
+        state.totalItems = Math.max(0, state.totalItems - 1);
+      }
+    },
+
+    addFavoriteItem: (state, action: PayloadAction<ProductDetailResponseModel>) => {
+      const exists = state.items.some((item) => item.id === action.payload.id);
+      if (!exists) {
+        state.items.unshift(action.payload);
+        state.totalItems += 1;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -161,5 +177,5 @@ const favoriteSlice = createSlice({
   },
 });
 
-export const { resetFavorites } = favoriteSlice.actions;
+export const { resetFavorites, removeFavoriteItem, addFavoriteItem } = favoriteSlice.actions;
 export default favoriteSlice.reducer;

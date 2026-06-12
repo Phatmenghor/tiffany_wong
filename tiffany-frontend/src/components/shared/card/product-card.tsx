@@ -15,6 +15,7 @@ import { CustomButton } from "../button/custom-button";
 import { ProductDetailResponseModel } from "@/redux/features/business/store/models/response/product-response";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
 import { toggleFavorite } from "@/redux/features/main/store/thunks/favorite-thunks";
+import { removeFavoriteItem, addFavoriteItem } from "@/redux/features/main/store/slice/favorite-slice";
 import { showToast } from "../common/show-toast";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { appImages } from "@/constants/app-resource/icons/app-images";
@@ -305,16 +306,28 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
       return;
     }
 
-    // Update UI instantly - no delay, no disabled state!
+    // Update UI instantly
     const newFavState = !isFavorited;
     setIsFavorited(newFavState);
 
-    // Fire API in background - don't block or disable button
+    // Update local favorites list immediately (real-time on favorites page)
+    if (isFavorited) {
+      favoriteDispatch(removeFavoriteItem(product.id));
+    } else {
+      favoriteDispatch(addFavoriteItem({ ...product, isFavorited: true }));
+    }
+
+    // Fire API in background
     favoriteDispatch(toggleFavorite({ productId: product.id, isFavorited }))
       .unwrap()
       .catch((error: any) => {
-        // Rollback on failure only
+        // Rollback on failure
         setIsFavorited((prev) => !prev);
+        if (isFavorited) {
+          favoriteDispatch(addFavoriteItem({ ...product, isFavorited: true }));
+        } else {
+          favoriteDispatch(removeFavoriteItem(product.id));
+        }
         showToast.error(error?.message || "Failed to update favorites");
       });
   };
