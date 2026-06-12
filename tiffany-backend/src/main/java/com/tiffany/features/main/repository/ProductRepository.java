@@ -85,10 +85,25 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
            "AND (:hasPromotion IS NULL OR (CASE WHEN :hasPromotion = true THEN " +
-           "     (p.promotionType IS NOT NULL AND p.promotionValue IS NOT NULL " +
-           "      AND (p.promotionFromDate IS NULL OR CURRENT_TIMESTAMP >= p.promotionFromDate) " +
-           "      AND (p.promotionToDate IS NULL OR CURRENT_TIMESTAMP <= p.promotionToDate)) " +
-           "     ELSE (p.promotionType IS NULL OR p.promotionValue IS NULL) END)) " +
+           "     ((NOT EXISTS (SELECT 1 FROM ProductSize ps_hp1 WHERE ps_hp1.product.id = p.id AND ps_hp1.isDeleted = false) " +
+           "       AND p.promotionType IS NOT NULL AND p.promotionValue IS NOT NULL " +
+           "       AND (p.promotionFromDate IS NULL OR CURRENT_DATE >= p.promotionFromDate) " +
+           "       AND (p.promotionToDate IS NULL OR CURRENT_DATE <= p.promotionToDate)) " +
+           "      OR EXISTS (SELECT 1 FROM ProductSize ps_hp2 WHERE ps_hp2.product.id = p.id AND ps_hp2.isDeleted = false " +
+           "                 AND ps_hp2.promotionType IS NOT NULL AND ps_hp2.promotionValue IS NOT NULL " +
+           "                 AND (ps_hp2.promotionFromDate IS NULL OR CURRENT_DATE >= ps_hp2.promotionFromDate) " +
+           "                 AND (ps_hp2.promotionToDate IS NULL OR CURRENT_DATE <= ps_hp2.promotionToDate))) " +
+           "     ELSE " +
+           "     ((NOT EXISTS (SELECT 1 FROM ProductSize ps_hp3 WHERE ps_hp3.product.id = p.id AND ps_hp3.isDeleted = false) " +
+           "       AND (p.promotionType IS NULL OR p.promotionValue IS NULL " +
+           "            OR (p.promotionFromDate IS NOT NULL AND CURRENT_DATE < p.promotionFromDate) " +
+           "            OR (p.promotionToDate IS NOT NULL AND CURRENT_DATE > p.promotionToDate))) " +
+           "      OR (EXISTS (SELECT 1 FROM ProductSize ps_hp4 WHERE ps_hp4.product.id = p.id AND ps_hp4.isDeleted = false) " +
+           "          AND NOT EXISTS (SELECT 1 FROM ProductSize ps_hp5 WHERE ps_hp5.product.id = p.id AND ps_hp5.isDeleted = false " +
+           "                          AND ps_hp5.promotionType IS NOT NULL AND ps_hp5.promotionValue IS NOT NULL " +
+           "                          AND (ps_hp5.promotionFromDate IS NULL OR CURRENT_DATE >= ps_hp5.promotionFromDate) " +
+           "                          AND (ps_hp5.promotionToDate IS NULL OR CURRENT_DATE <= ps_hp5.promotionToDate)))) " +
+           "     END)) " +
            "AND (:hasSizes IS NULL OR (CASE WHEN :hasSizes = true THEN EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) " +
            "     ELSE NOT EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) END)) " +
            "AND (:search IS NULL OR :search = '' OR " +
@@ -139,10 +154,25 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
            "AND (:hasPromotion IS NULL OR (CASE WHEN :hasPromotion = true THEN " +
-           "     (p.promotionType IS NOT NULL AND p.promotionValue IS NOT NULL " +
-           "      AND (p.promotionFromDate IS NULL OR CURRENT_TIMESTAMP >= p.promotionFromDate) " +
-           "      AND (p.promotionToDate IS NULL OR CURRENT_TIMESTAMP <= p.promotionToDate)) " +
-           "     ELSE (p.promotionType IS NULL OR p.promotionValue IS NULL) END)) " +
+           "     ((NOT EXISTS (SELECT 1 FROM ProductSize ps_hp1 WHERE ps_hp1.product.id = p.id AND ps_hp1.isDeleted = false) " +
+           "       AND p.promotionType IS NOT NULL AND p.promotionValue IS NOT NULL " +
+           "       AND (p.promotionFromDate IS NULL OR CURRENT_DATE >= p.promotionFromDate) " +
+           "       AND (p.promotionToDate IS NULL OR CURRENT_DATE <= p.promotionToDate)) " +
+           "      OR EXISTS (SELECT 1 FROM ProductSize ps_hp2 WHERE ps_hp2.product.id = p.id AND ps_hp2.isDeleted = false " +
+           "                 AND ps_hp2.promotionType IS NOT NULL AND ps_hp2.promotionValue IS NOT NULL " +
+           "                 AND (ps_hp2.promotionFromDate IS NULL OR CURRENT_DATE >= ps_hp2.promotionFromDate) " +
+           "                 AND (ps_hp2.promotionToDate IS NULL OR CURRENT_DATE <= ps_hp2.promotionToDate))) " +
+           "     ELSE " +
+           "     ((NOT EXISTS (SELECT 1 FROM ProductSize ps_hp3 WHERE ps_hp3.product.id = p.id AND ps_hp3.isDeleted = false) " +
+           "       AND (p.promotionType IS NULL OR p.promotionValue IS NULL " +
+           "            OR (p.promotionFromDate IS NOT NULL AND CURRENT_DATE < p.promotionFromDate) " +
+           "            OR (p.promotionToDate IS NOT NULL AND CURRENT_DATE > p.promotionToDate))) " +
+           "      OR (EXISTS (SELECT 1 FROM ProductSize ps_hp4 WHERE ps_hp4.product.id = p.id AND ps_hp4.isDeleted = false) " +
+           "          AND NOT EXISTS (SELECT 1 FROM ProductSize ps_hp5 WHERE ps_hp5.product.id = p.id AND ps_hp5.isDeleted = false " +
+           "                          AND ps_hp5.promotionType IS NOT NULL AND ps_hp5.promotionValue IS NOT NULL " +
+           "                          AND (ps_hp5.promotionFromDate IS NULL OR CURRENT_DATE >= ps_hp5.promotionFromDate) " +
+           "                          AND (ps_hp5.promotionToDate IS NULL OR CURRENT_DATE <= ps_hp5.promotionToDate)))) " +
+           "     END)) " +
            "AND (:hasSizes IS NULL OR (CASE WHEN :hasSizes = true THEN EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) " +
            "     ELSE NOT EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) END)) " +
            "AND (:search IS NULL OR :search = '' OR " +
