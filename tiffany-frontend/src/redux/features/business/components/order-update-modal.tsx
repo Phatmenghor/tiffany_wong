@@ -116,28 +116,13 @@ export function OrderUpdateModal({
         },
       })).unwrap();
 
-      showToast.order({
-        title: "Order Updated",
-        message: "Status and payment information updated.",
-        details: {
-          Order: orderId.substring(0, 8),
-          Status: data.orderStatus,
-          Payment: data.paymentStatus,
-        },
-        duration: 5000,
-      });
+      showToast.success("Order updated successfully");
       if (onOrderUpdated) {
         onOrderUpdated();
       }
       handleClose();
     } catch (error: any) {
-      showToast.error({
-        title: "Failed to Update Order",
-        message: error?.message || "Error updating order",
-        details: {
-          "Attempted At": new Date().toLocaleString(),
-        },
-      });
+      showToast.error(error?.message || "Failed to update order");
     }
   };
 

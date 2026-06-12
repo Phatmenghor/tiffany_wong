@@ -156,17 +156,7 @@ export default function CustomerModal({ isOpen, onClose, userId }: Props) {
       showToast.success("Customer updated successfully");
       handleClose();
     } catch (error: any) {
-      showToast.error({
-        title: "Failed to Update Customer",
-        message: error?.message || "Unable to update customer account. Please try again.",
-        details: {
-          Email: data.email || "N/A",
-          Action: "UPDATE",
-          "Attempted At": new Date().toLocaleString(),
-          Error: error?.message?.substring(0, 50) || "Unknown error",
-        },
-        duration: 7000,
-      });
+      showToast.error(error?.message || "Failed to update customer");
     }
   };
 

@@ -241,17 +241,7 @@ export default function UserBusinessModal({
         handleClose();
       }
     } catch (error: any) {
-      showToast.error({
-        title: `Failed to ${isCreate ? 'Create' : 'Update'} User`,
-        message: error?.message || `Unable to ${isCreate ? 'create' : 'update'} user business account. Please try again.`,
-        details: {
-          'Email': data.email || 'N/A',
-          'Action': isCreate ? 'CREATE' : 'UPDATE',
-          'Attempted At': new Date().toLocaleString(),
-          'Error': error?.message?.substring(0, 50) || 'Unknown error',
-        },
-        duration: 7000,
-      });
+      showToast.error(error?.message || `Failed to ${isCreate ? 'create' : 'update'} user`);
     }
   };
 
