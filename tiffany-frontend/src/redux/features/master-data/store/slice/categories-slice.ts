@@ -176,6 +176,13 @@ const categoriesSlice = createSlice({
             state.data.totalElements / state.data.pageSize
           );
         }
+        if (state.dataWithProductCount) {
+          state.dataWithProductCount.content = [
+            { ...action.payload, productCount: 0 },
+            ...state.dataWithProductCount.content,
+          ];
+          state.dataWithProductCount.totalElements += 1;
+        }
         state.operations.isCreating = false;
       })
       .addCase(createCategoriesService.rejected, (state, action) => {
@@ -192,10 +199,15 @@ const categoriesSlice = createSlice({
         state.selectedCategories = action.payload;
         state.operations.isUpdating = false;
 
-        // Update in list
         if (state.data) {
-          state.data.content = state.data.content.map((user) =>
-            user.id === action.payload.id ? action.payload : user
+          state.data.content = state.data.content.map((cat) =>
+            cat.id === action.payload.id ? action.payload : cat
+          );
+        }
+        // Preserve productCount when updating dataWithProductCount
+        if (state.dataWithProductCount) {
+          state.dataWithProductCount.content = state.dataWithProductCount.content.map((cat) =>
+            cat.id === action.payload.id ? { ...cat, ...action.payload } : cat
           );
         }
       })

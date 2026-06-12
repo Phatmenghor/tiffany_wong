@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,12 +15,15 @@ import { FormBody } from "@/components/shared/form-field/form-body";
 import { FormFooter } from "@/components/shared/form-field/form-footer";
 import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { showToast } from "@/components/shared/common/show-toast";
-import { axiosClientWithAuth } from "@/utils/axios/axios-client";
 import {
   selectSelectedOrder,
   selectOrderAdminIsFetchingDetail,
+  selectOrderAdminOperations,
 } from "../store/selectors/order-admin-selector";
-import { fetchOrderByIdAdminService } from "../store/thunks/order-admin-thunks";
+import {
+  fetchOrderByIdAdminService,
+  updateOrderAdminService,
+} from "../store/thunks/order-admin-thunks";
 import { clearSelectedOrder } from "../store/slice/order-admin-slice";
 
 // Validation schema
@@ -61,7 +64,8 @@ export function OrderUpdateModal({
   const dispatch = useAppDispatch();
   const orderData = useAppSelector(selectSelectedOrder);
   const isFetchingDetail = useAppSelector(selectOrderAdminIsFetchingDetail);
-  const [isSaving, setIsSaving] = useState(false);
+  const operations = useAppSelector(selectOrderAdminOperations);
+  const isSaving = operations.isUpdating;
 
   const {
     control,
@@ -102,54 +106,38 @@ export function OrderUpdateModal({
   const onSubmit = async (data: UpdateOrderData) => {
     if (!orderId) return;
 
-    setIsSaving(true);
     try {
-      const updatePayload = {
-        orderStatus: data.orderStatus,
-        paymentStatus: data.paymentStatus,
-        customerNote: data.customerNote,
-      };
+      await dispatch(updateOrderAdminService({
+        orderId,
+        orderData: {
+          orderStatus: data.orderStatus,
+          paymentStatus: data.paymentStatus,
+          customerNote: data.customerNote,
+        },
+      })).unwrap();
 
-      const response = await axiosClientWithAuth.put(
-        `/api/v1/orders/${orderId}`,
-        updatePayload
-      );
-
-      if (response.status === 200 || response.status === 204) {
-        // Simple toast message (short details only)
-        const details: Record<string, any> = {
-          'Order': orderId.substring(0, 8),
-          'Status': data.orderStatus,
-          'Payment': data.paymentStatus,
-        };
-
-        showToast.order({
-          title: 'Order Updated',
-          message: 'Status and payment information updated.',
-          details,
-          duration: 5000,
-        });
-        if (onOrderUpdated) {
-          onOrderUpdated();
-        }
-        handleClose();
-      }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Error updating order";
-      showToast.error({
-        title: 'Failed to Update Order',
-        message: errorMessage,
+      showToast.order({
+        title: "Order Updated",
+        message: "Status and payment information updated.",
         details: {
-          'Error Type': error?.response?.status === 404 ? 'Not Found' : 'Server Error',
-          'Attempted At': new Date().toLocaleString(),
+          Order: orderId.substring(0, 8),
+          Status: data.orderStatus,
+          Payment: data.paymentStatus,
+        },
+        duration: 5000,
+      });
+      if (onOrderUpdated) {
+        onOrderUpdated();
+      }
+      handleClose();
+    } catch (error: any) {
+      showToast.error({
+        title: "Failed to Update Order",
+        message: error?.message || "Error updating order",
+        details: {
+          "Attempted At": new Date().toLocaleString(),
         },
       });
-      console.error("Order update error:", error);
-    } finally {
-      setIsSaving(false);
     }
   };
 
