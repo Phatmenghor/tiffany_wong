@@ -68,10 +68,17 @@ export default function FavoritesPage() {
   // Fixed page size of 15 for favorites
   const pageSize = 15;
 
-  // Initial load
+  // Initial load.
+  // initialFetchStartedRef dedupes React StrictMode's double-invoke (dev):
+  // the `loaded` guard is read from the effect closure, so both invocations
+  // see it as false and would dispatch twice. The ref is set synchronously
+  // when the fetch starts, so the second invocation is skipped. The effect
+  // still re-runs (and can fetch) until auth resolves and is authenticated.
+  const initialFetchStartedRef = useRef(false);
   useEffect(() => {
     if (!authReady) return;
-    if (isAuthenticated && !loaded) {
+    if (isAuthenticated && !loaded && !initialFetchStartedRef.current) {
+      initialFetchStartedRef.current = true;
       dispatch(fetchFavoritePaginated({ pageNo: 1, pageSize }));
     }
   }, [authReady, isAuthenticated, loaded, dispatch, pageSize]);

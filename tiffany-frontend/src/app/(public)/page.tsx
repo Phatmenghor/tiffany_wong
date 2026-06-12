@@ -11,7 +11,7 @@
  * - Performance optimized: lazy section loading, memoization, debounced pagination
  */
 
-import React, { useEffect, useCallback, useMemo } from "react";
+import React, { useEffect, useCallback, useMemo, useRef } from "react";
 
 import {
   fetchHomeBanners,
@@ -76,8 +76,17 @@ export default function HomePage() {
     featuredProducts.length === 0 &&
     !featuredProductsSection.loaded;
 
+  // Guard against duplicate initial loads. The loaded/loading flags are read
+  // from the effect closure, so React StrictMode's double-invoke (dev) sees
+  // them both as false and would dispatch twice before a re-render. A ref is
+  // set synchronously, so the second invocation is skipped.
+  const didInitialLoadRef = useRef(false);
+
   // Initial data load
   useEffect(() => {
+    if (didInitialLoadRef.current) return;
+    didInitialLoadRef.current = true;
+
     const loadData = async () => {
       const promises = [];
       const pageSize = getPageSize();

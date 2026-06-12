@@ -68,12 +68,11 @@ export default function ProductPage() {
     dispatch,
   } = useProductState();
 
-  // Reset filters when entering this page (separate from other admin pages)
-  useEffect(() => {
-    dispatch(setPageNo(1));
-    dispatch(setSearchFilter(""));
-    dispatch(selectProductStatus(ProductStatus.ALL));
-  }, []);
+  // NOTE: Do NOT reset filters in a mount effect here. State is already
+  // reset to defaults on unmount via useAdminCleanup(resetState), so the
+  // page always opens with a clean slate. A reset-on-mount effect caused a
+  // double API call: the fetch effect fired once with the current filters,
+  // then the reset mutated those filters and the fetch effect ran again.
 
   // Local UI state for modals only
   const [modalState, setModalState] = useState({
