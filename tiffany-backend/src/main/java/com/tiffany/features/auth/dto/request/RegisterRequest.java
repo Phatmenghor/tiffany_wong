@@ -24,6 +24,8 @@ public class RegisterRequest {
     @NotNull(message = "User role is required")
     private UserRole userRole = UserRole.CUSTOMER;
 
+    private String firstName;
+    private String lastName;
     private String profileImageUrl;
     private String phoneNumber;
     private String address;
