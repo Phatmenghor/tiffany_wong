@@ -213,8 +213,16 @@ export default function CustomerModal({ isOpen, onClose, userId }: Props) {
                 {/* Personal Information */}
                 <div className="space-y-[0.65rem]">
                   <h3 className="text-[13px] font-semibold">Personal Information</h3>
-                  <div className="space-y-[0.65rem]">
-                    {/* Account Status - full width */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
+                    <TextField
+                      control={control}
+                      name="firstName"
+                      label="First Name"
+                      placeholder="Enter first name"
+                      disabled={isSubmitting}
+                      error={errors.firstName}
+                    />
+
                     <SelectField
                       control={control}
                       name="accountStatus"
@@ -226,101 +234,86 @@ export default function CustomerModal({ isOpen, onClose, userId }: Props) {
                       error={errors.accountStatus}
                     />
 
-                    {/* Personal Details Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
-                      <TextField
-                        control={control}
-                        name="firstName"
-                        label="First Name"
-                        placeholder="Enter first name"
-                        disabled={isSubmitting}
-                        error={errors.firstName}
-                      />
+                    <TextField
+                      control={control}
+                      name="lastName"
+                      label="Last Name"
+                      placeholder="Enter last name"
+                      disabled={isSubmitting}
+                      error={errors.lastName}
+                    />
 
-                      <TextField
-                        control={control}
-                        name="lastName"
-                        label="Last Name"
-                        placeholder="Enter last name"
-                        disabled={isSubmitting}
-                        error={errors.lastName}
-                      />
+                    <TextField
+                      control={control}
+                      name="email"
+                      label="Email"
+                      type="email"
+                      placeholder="Enter email address"
+                      disabled={isSubmitting}
+                      error={errors.email}
+                    />
 
-                      <TextField
-                        control={control}
-                        name="email"
-                        label="Email"
-                        type="email"
-                        placeholder="Enter email address"
-                        disabled={isSubmitting}
-                        error={errors.email}
-                      />
+                    <TextField
+                      control={control}
+                      name="nickname"
+                      label="Nickname"
+                      placeholder="Enter nickname"
+                      disabled={isSubmitting}
+                      error={errors.nickname}
+                    />
 
-                      <TextField
-                        control={control}
-                        name="phoneNumber"
-                        label="Phone Number"
-                        placeholder="Enter phone number"
-                        disabled={isSubmitting}
-                        error={errors.phoneNumber}
-                      />
+                    <TextField
+                      control={control}
+                      name="phoneNumber"
+                      label="Phone Number"
+                      placeholder="Enter phone number"
+                      disabled={isSubmitting}
+                      error={errors.phoneNumber}
+                    />
 
-                      <TextField
-                        control={control}
-                        name="nickname"
-                        label="Nickname"
-                        placeholder="Enter nickname"
-                        disabled={isSubmitting}
-                        error={errors.nickname}
-                      />
+                    <SelectField
+                      control={control}
+                      name="gender"
+                      label="Gender"
+                      placeholder="Select gender"
+                      options={GENDER_OPTIONS}
+                      disabled={isSubmitting}
+                      error={errors.gender}
+                    />
 
-                      <SelectField
-                        control={control}
-                        name="gender"
-                        label="Gender"
-                        placeholder="Select gender"
-                        options={GENDER_OPTIONS}
-                        disabled={isSubmitting}
-                        error={errors.gender}
-                      />
+                    <DateTimePickerField
+                      control={control}
+                      name="dateOfBirth"
+                      label="Date of Birth"
+                      mode="date"
+                      placeholder="Select date of birth"
+                      disabled={isSubmitting}
+                      error={errors.dateOfBirth}
+                    />
 
-                      <DateTimePickerField
-                        control={control}
-                        name="dateOfBirth"
-                        label="Date of Birth"
-                        mode="date"
-                        placeholder="Select date of birth"
-                        disabled={isSubmitting}
-                        error={errors.dateOfBirth}
-                      />
+                    <SpacesImageUpload
+                      label="Profile Image"
+                      value={watch("profileImageUrl") || ""}
+                      onChange={(url) =>
+                        setValue("profileImageUrl", url, { shouldDirty: true })
+                      }
+                      aspectRatio="square"
+                      height="h-[6.5rem]"
+                      maxSize={5}
+                      disabled={isSubmitting}
+                      error={errors.profileImageUrl as any}
+                    />
 
-                      <SpacesImageUpload
-                        label="Profile Image"
-                        value={watch("profileImageUrl") || ""}
-                        onChange={(url) =>
-                          setValue("profileImageUrl", url, { shouldDirty: true })
-                        }
-                        aspectRatio="square"
-                        height="h-[6.5rem]"
-                        maxSize={5}
-                        disabled={isSubmitting}
-                        error={errors.profileImageUrl as any}
-                      />
-                    </div>
+                    <TextareaField
+                      control={control}
+                      name="remark"
+                      label="Remarks"
+                      placeholder="Enter any remarks"
+                      rows={3}
+                      disabled={isSubmitting}
+                      error={errors.remark}
+                    />
                   </div>
-                </div>
-
-                {/* Remarks */}
-                <div className="space-y-[0.65rem]">
-                  <TextareaField
-                    control={control}
-                    name="remark"
-                    label="Remarks"
-                    placeholder="Enter any remarks"
-                    rows={3}
-                    disabled={isSubmitting}
-                    error={errors.remark}
-                  />
                 </div>
               </div>
             </FormBody>
