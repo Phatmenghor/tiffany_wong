@@ -307,12 +307,13 @@ export default function UserBusinessModal({
         ) : (
           <form
             onSubmit={handleSubmit(onSubmit)}
+            autoComplete="off"
             className="flex flex-col flex-1 overflow-hidden"
           >
             <FormBody>
               {reduxError && (
                 <div className="p-[0.65rem] bg-destructive/10 border border-destructive rounded-[0.325rem] mb-[0.65rem]">
-                  <p className="text-[0.56875rem] text-destructive font-medium">
+                  <p className="text-[11px] text-destructive font-medium">
                     {reduxError}
                   </p>
                 </div>
@@ -322,7 +323,7 @@ export default function UserBusinessModal({
                 {/* Account Credentials - CREATE MODE */}
                 {isCreate && (
                   <div className="space-y-[0.65rem]">
-                    <h3 className="text-[0.73125rem] font-semibold">
+                    <h3 className="text-[13px] font-semibold">
                       Account Credentials <span className="text-red-500">*</span>
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.65rem]">
@@ -334,6 +335,7 @@ export default function UserBusinessModal({
                         required
                         disabled={isSubmitting}
                         error={errors.userIdentifier}
+                        autoComplete="new-password"
                       />
 
                       <TextField
@@ -356,6 +358,7 @@ export default function UserBusinessModal({
                         required
                         disabled={isSubmitting}
                         error={errors.password}
+                        autoComplete="new-password"
                       />
 
                       <SelectField
@@ -385,7 +388,7 @@ export default function UserBusinessModal({
 
                 {/* Personal Information */}
                 <div className="space-y-[0.65rem]">
-                  <h3 className="text-[0.73125rem] font-semibold">
+                  <h3 className="text-[13px] font-semibold">
                     Personal Information
                   </h3>
                   <div className="space-y-[0.65rem]">

@@ -218,7 +218,7 @@ export default function PublicProfilePage() {
           <h1 className="text-[1.21875rem] font-bold text-foreground">
             Customer Profile
           </h1>
-          <p className="text-muted-foreground text-[0.56875rem] mt-[0.1625rem]">
+          <p className="text-muted-foreground text-[11px] mt-[0.1625rem]">
             Manage your personal information and account settings
           </p>
         </div>
@@ -248,14 +248,14 @@ export default function PublicProfilePage() {
                 <div className="flex-1">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h2 className="text-[0.975rem] font-bold text-foreground">
+                      <h2 className="text-[14px] font-bold text-foreground">
                         {userProfile?.fullName}
                       </h2>
-                      <p className="text-primary/70 text-[0.56875rem] font-medium">
+                      <p className="text-primary/70 text-[11px] font-medium">
                         {userProfile?.email}
                       </p>
                       <div className="flex items-center gap-[0.325rem] mt-[0.325rem]">
-                        <span className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-primary text-[0.4875rem] font-semibold">
+                        <span className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-primary text-[11px] font-semibold">
                           {userProfile?.accountStatus}
                         </span>
                       </div>
@@ -328,7 +328,7 @@ export default function PublicProfilePage() {
               onClick={() => setActiveSection("profile")}
               className={cn(
                 "flex-1 flex items-center justify-center gap-[0.40625rem] py-[0.65rem] px-[0.975rem] relative z-10",
-                "text-[0.56875rem] font-semibold transition-all duration-300",
+                "text-[11px] font-semibold transition-all duration-300",
                 "border-r border-primary/20",
                 activeSection === "profile"
                   ? "text-foreground"
@@ -349,7 +349,7 @@ export default function PublicProfilePage() {
               onClick={() => setActiveSection("security")}
               className={cn(
                 "flex-1 flex items-center justify-center gap-[0.40625rem] py-[0.65rem] px-[0.975rem] relative z-10",
-                "text-[0.56875rem] font-semibold transition-all duration-300",
+                "text-[11px] font-semibold transition-all duration-300",
                 activeSection === "security"
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground/70",
@@ -488,7 +488,7 @@ export default function PublicProfilePage() {
                       <h3 className="font-semibold text-foreground">
                         Change Password
                       </h3>
-                      <p className="text-[0.56875rem] text-muted-foreground mt-[0.1625rem]">
+                      <p className="text-[11px] text-muted-foreground mt-[0.1625rem]">
                         Update your password to keep your account secure
                       </p>
                     </div>
@@ -513,7 +513,7 @@ export default function PublicProfilePage() {
                       <h3 className="font-semibold text-destructive">
                         Delete Account
                       </h3>
-                      <p className="text-[0.56875rem] text-muted-foreground mt-[0.1625rem]">
+                      <p className="text-[11px] text-muted-foreground mt-[0.1625rem]">
                         Permanently delete your account and all associated data
                       </p>
                     </div>

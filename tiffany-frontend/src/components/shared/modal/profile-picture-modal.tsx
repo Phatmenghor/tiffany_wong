@@ -125,7 +125,7 @@ export function ProfilePictureModal({
 
         {/* Header */}
         <div className="px-[0.975rem] py-[0.65rem] border-b">
-          <h2 className="text-[0.73125rem] font-semibold">Update Profile Picture</h2>
+          <h2 className="text-[13px] font-semibold">Update Profile Picture</h2>
         </div>
 
         {/* Body - Image Preview */}
@@ -155,13 +155,13 @@ export function ProfilePictureModal({
           </div>
 
           {selectedImage && selectedImage !== currentImageUrl && (
-            <p className="text-[0.56875rem] text-blue-600 font-medium">
+            <p className="text-[11px] text-blue-600 font-medium">
               ✓ New image selected
             </p>
           )}
 
           {(currentImageUrl || selectedImage) && !selectedImage?.startsWith("data:") && (
-            <p className="text-[0.4875rem] text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground">
               Click image to view in new tab
             </p>
           )}

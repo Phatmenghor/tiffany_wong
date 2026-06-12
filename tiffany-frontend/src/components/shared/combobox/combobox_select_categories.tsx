@@ -74,9 +74,9 @@ export function ComboboxSelectCategories({
   }, [loading, lastPage]);
 
   const sizeClasses = {
-    sm: "h-[1.3rem] text-[0.4875rem]",
-    md: "h-[1.4625rem] text-[0.56875rem]",
-    lg: "h-[1.625rem] text-[0.65rem]",
+    sm: "h-[1.3rem] text-[11px]",
+    md: "h-[1.4625rem] text-[11px]",
+    lg: "h-[1.625rem] text-[12px]",
   };
 
   // Helper function to remove duplicates by ID
@@ -166,7 +166,7 @@ export function ComboboxSelectCategories({
   return (
     <div className="flex flex-col gap-[0.1625rem] w-full">
       {label && (
-        <Label className="text-[0.4875rem] font-medium text-foreground">
+        <Label className="text-[11px] font-medium text-foreground">
           {label}
           {required && <span className="text-red-500 ml-[0.1625rem]">*</span>}
         </Label>
@@ -239,7 +239,7 @@ export function ComboboxSelectCategories({
               )}
 
               {!loading && lastPage && data.length > 0 && (
-                <div className="text-center py-[0.325rem] text-[0.56875rem] text-gray-400">
+                <div className="text-center py-[0.325rem] text-[11px] text-gray-400">
                   No more categories
                 </div>
               )}
@@ -247,7 +247,7 @@ export function ComboboxSelectCategories({
           </Command>
         </PopoverContent>
       </Popover>
-      {error && <p className="text-[0.4875rem] text-red-500">{error}</p>}
+      {error && <p className="text-[11px] text-red-500">{error}</p>}
     </div>
   );
 }

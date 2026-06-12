@@ -82,12 +82,12 @@ export function CartItemCard({
           <div className="flex items-center gap-[0.325rem] min-w-0 mb-[0.325rem]">
             {showLink ? (
               <Link href={`/products/${productId}`}>
-                <h3 className="font-semibold text-[0.56875rem] leading-tight text-slate-900 hover:text-blue-600 transition-colors line-clamp-1">
+                <h3 className="font-semibold text-[11px] leading-tight text-slate-900 hover:text-blue-600 transition-colors line-clamp-1">
                   {productName}
                 </h3>
               </Link>
             ) : (
-              <h3 className="font-semibold text-[0.56875rem] leading-tight text-slate-900 line-clamp-1">
+              <h3 className="font-semibold text-[11px] leading-tight text-slate-900 line-clamp-1">
                 {productName}
               </h3>
             )}
@@ -102,7 +102,7 @@ export function CartItemCard({
 
           {sizeName && (
             <div className="mb-[0.325rem]">
-              <span className="text-[0.4875rem] font-medium text-primary bg-primary/5 px-[0.40625rem] py-[0.1625rem] rounded-full flex-shrink-0 whitespace-nowrap inline-block border border-primary/30">
+              <span className="text-[11px] font-medium text-primary bg-primary/5 px-[0.40625rem] py-[0.1625rem] rounded-full flex-shrink-0 whitespace-nowrap inline-block border border-primary/30">
                 {sizeName}
               </span>
             </div>
@@ -111,9 +111,9 @@ export function CartItemCard({
           {showControls && (
             <div className="flex items-center justify-between gap-[0.4875rem]">
               <div className="flex items-baseline gap-[0.325rem]">
-                <span className="font-bold text-[0.65rem] text-slate-900">{formatCurrency(displayPrice)}</span>
+                <span className="font-bold text-[12px] text-slate-900">{formatCurrency(displayPrice)}</span>
                 {hasActivePromotion && displayOriginPrice > displayPrice && (
-                  <span className="text-[0.4875rem] text-slate-500 line-through font-medium">{formatCurrency(displayOriginPrice)}</span>
+                  <span className="text-[11px] text-slate-500 line-through font-medium">{formatCurrency(displayOriginPrice)}</span>
                 )}
               </div>
 
@@ -126,7 +126,7 @@ export function CartItemCard({
                 >
                   <Minus className="h-[0.4875rem] w-[0.4875rem]" />
                 </CustomButton>
-                <div className="flex-1 text-center h-[1.3rem] bg-primary/10 text-primary font-semibold text-[0.56875rem] rounded-[0.325rem] border border-primary/20 flex items-center justify-center w-[1.625rem]">
+                <div className="flex-1 text-center h-[1.3rem] bg-primary/10 text-primary font-semibold text-[11px] rounded-[0.325rem] border border-primary/20 flex items-center justify-center w-[1.625rem]">
                   {quantity}
                 </div>
                 <CustomButton

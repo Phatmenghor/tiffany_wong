@@ -350,7 +350,7 @@ export default function ProductModal({
               <div className="space-y-[0.975rem]">
                 {reduxError && (
                   <div className="p-[0.65rem] bg-destructive/10 border border-destructive rounded-[0.325rem]">
-                    <p className="text-[0.56875rem] text-destructive font-medium">
+                    <p className="text-[11px] text-destructive font-medium">
                       {reduxError}
                     </p>
                   </div>

@@ -40,19 +40,19 @@ export function TablePagination({
 }: TablePaginationProps) {
   const sizeClasses = {
     sm: {
-      button: "h-[1.3rem] px-[0.4875rem] text-[0.4875rem]",
+      button: "h-[1.3rem] px-[0.4875rem] text-[11px]",
       icon: "h-[0.4875rem] w-[0.4875rem]",
-      pageButton: "h-[1.3rem] min-w-[1.3rem] text-[0.4875rem]",
+      pageButton: "h-[1.3rem] min-w-[1.3rem] text-[11px]",
     },
     md: {
-      button: "h-[1.4625rem] px-[0.65rem] text-[0.56875rem]",
+      button: "h-[1.4625rem] px-[0.65rem] text-[11px]",
       icon: "h-[0.65rem] w-[0.65rem]",
-      pageButton: "h-[1.4625rem] min-w-[1.4625rem] text-[0.56875rem]",
+      pageButton: "h-[1.4625rem] min-w-[1.4625rem] text-[11px]",
     },
     lg: {
-      button: "h-[1.625rem] px-[0.8125rem] text-[0.65rem]",
+      button: "h-[1.625rem] px-[0.8125rem] text-[12px]",
       icon: "h-[0.8125rem] w-[0.8125rem]",
-      pageButton: "h-[1.625rem] min-w-[1.625rem] text-[0.65rem]",
+      pageButton: "h-[1.625rem] min-w-[1.625rem] text-[12px]",
     },
   };
 
@@ -105,7 +105,7 @@ export function TablePagination({
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-[0.65rem] px-[0.65rem] py-[0.4875rem] border-t">
-      <div className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground">
+      <div className="text-[11px] sm:text-[11px] text-muted-foreground">
         Showing {(currentPage - 1) * pageSize + 1} to{" "}
         {Math.min(currentPage * pageSize, totalElements)} of{" "}
         {totalElements} results

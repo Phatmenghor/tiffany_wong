@@ -76,7 +76,7 @@ export function ProductSizes({
       <CardContent>
         {sizeFields.length === 0 ? (
           <div className="text-center py-[1.3rem]">
-            <p className="text-[0.56875rem] text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground">
               {hasSizes
                 ? "No sizes defined."
                 : "No sizes defined. Product will use main pricing."}

@@ -126,7 +126,7 @@ export default function CartPage() {
               size="sm"
               onClick={() => setClearCartModalOpen(true)}
               disabled={loading.clear}
-              className="gap-[0.24375rem] text-destructive hover:text-destructive hover:bg-destructive/10 text-[0.4875rem] rounded-[0.4875rem]"
+              className="gap-[0.24375rem] text-destructive hover:text-destructive hover:bg-destructive/10 text-[11px] rounded-[0.4875rem]"
             >
               <Trash2 className="h-[0.56875rem] w-[0.56875rem]" />
               Clear All
@@ -139,7 +139,7 @@ export default function CartPage() {
           {/* ── Cart Items ── */}
           <div className="lg:col-span-2 space-y-[0.4875rem]">
             {items.length > 0 && (
-              <div className="text-[0.4875rem] text-muted-foreground">
+              <div className="text-[11px] text-muted-foreground">
                 Showing {items.length} items with total quantity {totalQuantity}
               </div>
             )}
@@ -175,9 +175,9 @@ export default function CartPage() {
           {/* ── Order Summary (desktop) ── */}
           <div className="hidden lg:block lg:col-span-1">
             <div className="bg-card border rounded-[0.65rem] p-[0.8125rem] sticky top-[3.9rem]">
-              <h2 className="text-[0.73125rem] font-bold mb-[0.65rem] flex items-center justify-between">
+              <h2 className="text-[13px] font-bold mb-[0.65rem] flex items-center justify-between">
                 <span>Order Summary</span>
-                <span className="text-[0.4875rem] font-normal text-muted-foreground bg-muted px-[0.325rem] py-[0.1625rem] rounded-[0.325rem]">
+                <span className="text-[11px] font-normal text-muted-foreground bg-muted px-[0.325rem] py-[0.1625rem] rounded-[0.325rem]">
                   {totalItems} {totalItems === 1 ? 'item' : 'items'}
                 </span>
               </h2>
@@ -185,42 +185,42 @@ export default function CartPage() {
               <div className="space-y-[0.4875rem] mb-[0.8125rem]">
                 {/* Items count with quantity */}
                 <div className="bg-muted/50 rounded-[0.325rem] p-[0.4875rem] mb-[0.65rem]">
-                  <div className="text-[0.4875rem] text-muted-foreground mb-[0.325rem]">Items Breakdown</div>
+                  <div className="text-[11px] text-muted-foreground mb-[0.325rem]">Items Breakdown</div>
                   <div className="flex justify-between items-center">
-                    <span className="text-[0.56875rem] font-medium">{totalItems} unique {totalItems === 1 ? 'product' : 'products'}</span>
-                    <span className="text-[0.73125rem] font-bold text-foreground">{totalQuantity}</span>
+                    <span className="text-[11px] font-medium">{totalItems} unique {totalItems === 1 ? 'product' : 'products'}</span>
+                    <span className="text-[13px] font-bold text-foreground">{totalQuantity}</span>
                   </div>
-                  <div className="text-[0.4875rem] text-muted-foreground mt-[0.1625rem]">total quantity</div>
+                  <div className="text-[11px] text-muted-foreground mt-[0.1625rem]">total quantity</div>
                 </div>
 
                 {/* Subtotal */}
-                <div className="flex justify-between text-[0.56875rem]">
+                <div className="flex justify-between text-[11px]">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span className="font-medium">{formatCurrency(subtotal)}</span>
                 </div>
 
                 {/* Discount */}
                 {discountAmount > 0 && (
-                  <div className="flex justify-between text-[0.56875rem] bg-red-50/30 p-[0.40625rem] rounded-[0.325rem] border border-red-200/50">
+                  <div className="flex justify-between text-[11px] bg-red-50/30 p-[0.40625rem] rounded-[0.325rem] border border-red-200/50">
                     <span className="text-red-700 font-medium">Discount Applied</span>
                     <span className="font-bold text-red-600">-{formatCurrency(discountAmount)}</span>
                   </div>
                 )}
 
                 {/* Shipping */}
-                <div className="flex justify-between text-[0.56875rem] pt-[0.325rem] border-t">
+                <div className="flex justify-between text-[11px] pt-[0.325rem] border-t">
                   <span className="text-muted-foreground">Shipping & Fees</span>
-                  <span className="text-muted-foreground text-[0.4875rem]">Calculated at checkout</span>
+                  <span className="text-muted-foreground text-[11px]">Calculated at checkout</span>
                 </div>
 
                 {/* Total */}
                 <div className="bg-primary/10 rounded-[0.325rem] p-[0.4875rem] border border-primary/20">
                   <div className="flex justify-between items-center mb-[0.325rem]">
                     <span className="font-bold text-foreground">Total Amount</span>
-                    <span className="text-[0.975rem] font-bold text-primary">{formatCurrency(finalTotal)}</span>
+                    <span className="text-[14px] font-bold text-primary">{formatCurrency(finalTotal)}</span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="text-[0.4875rem] text-red-600 text-right pt-[0.325rem] border-t border-primary/10">
+                    <div className="text-[11px] text-red-600 text-right pt-[0.325rem] border-t border-primary/10">
                       💰 You save <span className="font-bold">{formatCurrency(discountAmount)}</span>
                     </div>
                   )}
@@ -239,7 +239,7 @@ export default function CartPage() {
       {/* Mobile sticky checkout bar — sits above the bottom nav (4rem) + safe area */}
       <div className="fixed bottom-nav-safe left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur-sm border-t px-[0.65rem] py-[0.4875rem]">
         <div className="flex items-center justify-between mb-[0.40625rem]">
-          <div className="text-[0.4875rem]">
+          <div className="text-[11px]">
             <div className="text-muted-foreground font-medium">{totalItems} items • {totalQuantity} qty</div>
             {discountAmount > 0 && (
               <div className="text-red-600 font-semibold mt-[0.08125rem]">
@@ -248,8 +248,8 @@ export default function CartPage() {
             )}
           </div>
           <div className="text-right">
-            <div className="text-[0.4875rem] text-muted-foreground">Total</div>
-            <div className="text-[0.8125rem] font-bold text-primary">{formatCurrency(finalTotal)}</div>
+            <div className="text-[11px] text-muted-foreground">Total</div>
+            <div className="text-[13px] font-bold text-primary">{formatCurrency(finalTotal)}</div>
           </div>
         </div>
         <CustomButton className="w-full gap-[0.325rem] h-[1.7875rem] rounded-[0.4875rem]" onClick={handleCheckout}>

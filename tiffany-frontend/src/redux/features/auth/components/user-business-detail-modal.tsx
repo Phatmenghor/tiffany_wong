@@ -92,17 +92,17 @@ export function UserBusinessDetailModal({
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-primary/10">
-                  <span className="text-[0.975rem] font-semibold text-primary">
+                  <span className="text-[14px] font-semibold text-primary">
                     {userData.fullName?.charAt(0)?.toUpperCase() || "U"}
                   </span>
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-[0.73125rem] font-semibold text-foreground">
+              <h2 className="text-[13px] font-semibold text-foreground">
                 User Details
               </h2>
-              <p className="text-[0.56875rem] text-foreground mt-[0.1625rem]">
+              <p className="text-[11px] text-foreground mt-[0.1625rem]">
                 View detailed information about the user
               </p>
             </div>

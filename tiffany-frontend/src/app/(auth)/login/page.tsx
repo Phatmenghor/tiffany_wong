@@ -71,10 +71,10 @@ export default function LoginPage() {
       <div className="flex flex-1 items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-[0.65rem]">
         <Card className="w-full max-w-md border border-gray-200 shadow-2xl">
           <CardHeader className="space-y-[0.1625rem] pb-[0.65rem] sm:pb-[0.975rem]">
-            <h1 className="text-[0.975rem] sm:text-[1.21875rem] font-bold text-gray-900">
+            <h1 className="text-[14px] sm:text-[1.21875rem] font-bold text-gray-900">
               Admin Panel Login
             </h1>
-            <p className="text-[0.56875rem] text-gray-600">
+            <p className="text-[11px] text-gray-600">
               Enter your credentials to continue
             </p>
           </CardHeader>
@@ -118,14 +118,14 @@ export default function LoginPage() {
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-gray-300" />
               </div>
-              <div className="relative flex justify-center text-[0.4875rem] uppercase">
+              <div className="relative flex justify-center text-[11px] uppercase">
                 <span className="bg-white px-[0.325rem] text-gray-500">
                   Or continue with
                 </span>
               </div>
             </div>
 
-            <p className="text-center text-[0.4875rem] text-gray-500 mt-[0.8125rem]">
+            <p className="text-center text-[11px] text-gray-500 mt-[0.8125rem]">
               By signing in, you agree to our{" "}
               <a
                 href="#"

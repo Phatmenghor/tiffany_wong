@@ -359,7 +359,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
               <div className="absolute top-[0.325rem] left-[0.325rem] z-10 pointer-events-none">
                 <Badge
                   variant="destructive"
-                  className="text-[0.4875rem] font-bold px-[0.325rem] py-[0.08125rem] shadow-md"
+                  className="text-[11px] font-bold px-[0.325rem] py-[0.08125rem] shadow-md"
                 >
                   {product.displayPromotionType === "PERCENTAGE"
                     ? `${product.displayPromotionValue}%`
@@ -373,7 +373,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
               <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center pointer-events-none">
                 <Badge
                   variant="secondary"
-                  className="text-[0.4875rem] font-semibold px-[0.4875rem] py-[0.1625rem]"
+                  className="text-[11px] font-semibold px-[0.4875rem] py-[0.1625rem]"
                 >
                   Out of Stock
                 </Badge>
@@ -407,7 +407,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
               <div className="absolute bottom-[0.325rem] left-[0.325rem] z-10 pointer-events-none">
                 <Badge
                   variant="secondary"
-                  className="text-[0.4875rem] font-medium px-[0.24375rem] py-[0.08125rem] shadow-sm bg-background/90 backdrop-blur-sm gap-[0.1625rem]"
+                  className="text-[11px] font-medium px-[0.24375rem] py-[0.08125rem] shadow-sm bg-background/90 backdrop-blur-sm gap-[0.1625rem]"
                 >
                   <Ruler className="h-[0.4875rem] w-[0.4875rem]" />
                   Sizes
@@ -418,7 +418,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
 
           {/* Info */}
           <div className="p-[0.4875rem] flex flex-col flex-1">
-            <h3 className="font-medium text-[0.56875rem] line-clamp-2 mb-[0.325rem] leading-snug min-h-[40px]">
+            <h3 className="font-medium text-[11px] line-clamp-2 mb-[0.325rem] leading-snug min-h-[40px]">
               {product.name}
             </h3>
 
@@ -426,13 +426,13 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
               <div className="flex flex-col mb-[0.40625rem]">
                 <span
                   className={cn(
-                    "text-[0.4875rem] text-muted-foreground line-through",
+                    "text-[11px] text-muted-foreground line-through",
                     !product.hasActivePromotion && "invisible",
                   )}
                 >
                   {formatCurrency(product.displayOriginPrice)}
                 </span>
-                <span className="text-[0.65rem] font-bold text-primary">
+                <span className="text-[12px] font-bold text-primary">
                   {formatCurrency(product.displayPrice)}
                 </span>
               </div>
@@ -447,7 +447,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
                   >
                     <Minus className="h-[0.4875rem] w-[0.4875rem]" />
                   </CustomButton>
-                  <div className="flex-1 text-center h-[1.3rem] bg-primary/10 text-primary font-semibold text-[0.56875rem] rounded-[0.325rem] border border-primary/20 flex items-center justify-center">
+                  <div className="flex-1 text-center h-[1.3rem] bg-primary/10 text-primary font-semibold text-[11px] rounded-[0.325rem] border border-primary/20 flex items-center justify-center">
                     {displayQuantity}
                   </div>
                   <CustomButton
@@ -461,7 +461,7 @@ function ProductCardComponent({ product, className }: ProductCardProps) {
                 </div>
               ) : (
                 <CustomButton
-                  className="w-full gap-[0.24375rem] h-[1.3rem] text-[0.4875rem] font-semibold"
+                  className="w-full gap-[0.24375rem] h-[1.3rem] text-[11px] font-semibold"
                   onClick={handleAddToCart}
                   disabled={isOutOfStock}
                   size="sm"

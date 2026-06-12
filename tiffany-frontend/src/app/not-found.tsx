@@ -50,7 +50,7 @@ export default function NotFoundPage() {
 
         {/* Additional Help */}
         <div className="pt-[1.3rem] border-t border-border/50">
-          <p className="text-[0.56875rem] text-muted-foreground">
+          <p className="text-[11px] text-muted-foreground">
             Need help?{" "}
             <a
               href="mailto:support@menuscanner.com"

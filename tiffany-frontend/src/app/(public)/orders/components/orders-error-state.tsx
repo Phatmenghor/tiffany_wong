@@ -20,7 +20,7 @@ export function OrdersErrorState({
           <AlertCircle className="h-[0.975rem] w-[0.975rem] text-red-600 flex-shrink-0 mt-[0.08125rem]" />
           <div>
             <h3 className="font-semibold text-red-900">Sign In Required</h3>
-            <p className="text-red-800 text-[0.56875rem] mt-[0.1625rem]">
+            <p className="text-red-800 text-[11px] mt-[0.1625rem]">
               Please sign in to view your orders.
             </p>
             <CustomButton
@@ -41,7 +41,7 @@ export function OrdersErrorState({
         <AlertCircle className="h-[0.975rem] w-[0.975rem] text-red-600 flex-shrink-0 mt-[0.08125rem]" />
         <div>
           <h3 className="font-semibold text-red-900">Error Loading Orders</h3>
-          <p className="text-red-800 text-[0.56875rem] mt-[0.1625rem]">
+          <p className="text-red-800 text-[11px] mt-[0.1625rem]">
             {errorMessage || "An error occurred while loading your orders."}
           </p>
         </div>

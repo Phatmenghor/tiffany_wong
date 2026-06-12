@@ -76,7 +76,7 @@ export function TopBar({ onMenuClick, onFullscreenClick }: TopBarProps) {
           </Button>
 
           {/* Breadcrumb — hidden on small screens */}
-          <nav className="hidden md:flex items-center gap-[0.325rem] text-[0.56875rem] min-w-0">
+          <nav className="hidden md:flex items-center gap-[0.325rem] text-[11px] min-w-0">
             {breadcrumbs.map((crumb, i) => (
               <div key={crumb.href} className="flex items-center gap-[0.1625rem] min-w-0">
                 {i > 0 && (
@@ -99,7 +99,7 @@ export function TopBar({ onMenuClick, onFullscreenClick }: TopBarProps) {
           </nav>
 
           {/* Page title mobile */}
-          <span className="md:hidden font-semibold text-[0.56875rem] text-foreground truncate">
+          <span className="md:hidden font-semibold text-[11px] text-foreground truncate">
             {breadcrumbs[breadcrumbs.length - 1]?.label ?? "Dashboard"}
           </span>
         </div>
@@ -126,10 +126,10 @@ export function TopBar({ onMenuClick, onFullscreenClick }: TopBarProps) {
                     size="lg"
                   />
                   <div className="flex flex-col space-y-[0.08125rem] flex-1 min-w-0">
-                    <p className="text-[0.56875rem] font-semibold line-clamp-1">
+                    <p className="text-[11px] font-semibold line-clamp-1">
                       {fullName || profile?.fullName || "Admin"}
                     </p>
-                    <p className="text-[0.4875rem] text-muted-foreground line-clamp-1">
+                    <p className="text-[11px] text-muted-foreground line-clamp-1">
                       {profile?.email || ""}
                     </p>
                   </div>
@@ -172,12 +172,12 @@ export function TopBar({ onMenuClick, onFullscreenClick }: TopBarProps) {
                 <LogOut className="h-[0.8125rem] w-[0.8125rem] text-red-600" />
               </div>
               <div>
-                <AlertDialogTitle className="text-left text-[0.73125rem] font-bold">
+                <AlertDialogTitle className="text-left text-[13px] font-bold">
                   Sign Out
                 </AlertDialogTitle>
               </div>
             </div>
-            <AlertDialogDescription className="text-left text-[0.56875rem] text-muted-foreground mt-[0.325rem] leading-relaxed">
+            <AlertDialogDescription className="text-left text-[11px] text-muted-foreground mt-[0.325rem] leading-relaxed">
               Are you sure you want to sign out of your account? You'll need to
               sign in again to access your dashboard and saved data.
             </AlertDialogDescription>

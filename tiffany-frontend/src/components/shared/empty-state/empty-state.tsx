@@ -40,20 +40,20 @@ const sizeStyles = {
   sm: {
     container: "py-[1.3rem]",
     icon: "h-[1.95rem] w-[1.95rem]",
-    title: "text-[0.73125rem]",
-    description: "text-[0.56875rem]",
+    title: "text-[13px]",
+    description: "text-[11px]",
   },
   md: {
     container: "py-[1.95rem]",
     icon: "h-[2.6rem] w-[2.6rem]",
-    title: "text-[0.8125rem]",
-    description: "text-[0.65rem]",
+    title: "text-[13px]",
+    description: "text-[12px]",
   },
   lg: {
     container: "py-[2.6rem]",
     icon: "h-[3.25rem] w-[3.25rem]",
-    title: "text-[0.975rem]",
-    description: "text-[0.73125rem]",
+    title: "text-[14px]",
+    description: "text-[13px]",
   },
 };
 

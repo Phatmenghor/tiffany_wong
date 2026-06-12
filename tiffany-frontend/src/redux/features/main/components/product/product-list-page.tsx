@@ -248,7 +248,7 @@ export function ProductListPage({
                   {!pagination.hasMore &&
                     products.length > 0 &&
                     !loading.list && (
-                      <div className="text-center py-[0.65rem] text-[0.56875rem] text-muted-foreground">
+                      <div className="text-center py-[0.65rem] text-[11px] text-muted-foreground">
                         You've seen it all!
                       </div>
                     )}
@@ -263,7 +263,7 @@ export function ProductListPage({
                       <span className="text-[1.21875rem]">📦</span>
                     )}
                   </div>
-                  <h3 className="text-[0.8125rem] font-semibold mb-[0.325rem]">
+                  <h3 className="text-[13px] font-semibold mb-[0.325rem]">
                     {lockedPromotion ? "No deals found" : "No products found"}
                   </h3>
                   <p className="text-muted-foreground">

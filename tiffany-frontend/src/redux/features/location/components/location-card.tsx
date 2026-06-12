@@ -115,7 +115,7 @@ export function LocationCard({
             <div className="flex items-center gap-[0.325rem] mb-[0.325rem] flex-wrap">
               <span
                 className={cn(
-                  "text-[0.56875rem] font-semibold leading-tight",
+                  "text-[11px] font-semibold leading-tight",
                   isPrimary
                     ? "text-amber-700"
                     : "text-foreground"
@@ -142,7 +142,7 @@ export function LocationCard({
               )}
               title={hasCoordinates ? "Click to view on Google Maps" : ""}
             >
-              <p className="text-[0.56875rem] font-medium text-foreground line-clamp-2">
+              <p className="text-[11px] font-medium text-foreground line-clamp-2">
                 {location.fullAddress || "No address provided"}
               </p>
             </button>
@@ -158,7 +158,7 @@ export function LocationCard({
                 size="sm"
                 onClick={() => onSetPrimary(location)}
                 disabled={isSettingPrimary}
-                className="h-[1.3rem] text-[0.4875rem] gap-[0.24375rem] rounded-[0.325rem]"
+                className="h-[1.3rem] text-[11px] gap-[0.24375rem] rounded-[0.325rem]"
               >
                 <Star className="h-[0.56875rem] w-[0.56875rem]" />
                 <span className="hidden sm:inline">Default</span>

@@ -36,7 +36,7 @@ export function OrdersFilters({
       <div className="flex flex-col sm:flex-row gap-[0.4875rem] items-start sm:items-end w-full">
         {/* Search Bar - Left side, takes available space */}
         <div className="flex-1 min-w-0 w-full sm:w-auto">
-          <label className="text-[0.56875rem] font-semibold text-foreground mb-[0.325rem] block">
+          <label className="text-[11px] font-semibold text-foreground mb-[0.325rem] block">
             Search Orders
           </label>
           <div className="relative">
@@ -46,7 +46,7 @@ export function OrdersFilters({
               placeholder="Search by order number..."
               value={filters.search}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-[1.625rem] h-[1.7875rem] rounded-[0.325rem] border-border/70 bg-background text-[0.65rem]"
+              className="pl-[1.625rem] h-[1.7875rem] rounded-[0.325rem] border-border/70 bg-background text-[12px]"
             />
             {filters.search && (
               <button
@@ -131,7 +131,7 @@ export function OrdersFilters({
       {hasActiveFilters && (
         <div className="flex flex-wrap gap-[0.325rem] pt-[0.325rem]">
           {filters.status && (
-            <div className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-[0.56875rem] font-medium text-primary">
+            <div className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-[11px] font-medium text-primary">
               <span>Order: {filters.status}</span>
               <button
                 onClick={() => onStatusChange("")}
@@ -142,7 +142,7 @@ export function OrdersFilters({
             </div>
           )}
           {filters.paymentStatus && filters.paymentStatus !== "ALL" && (
-            <div className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-[0.56875rem] font-medium text-primary">
+            <div className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-[11px] font-medium text-primary">
               <span>Payment: {filters.paymentStatus}</span>
               <button
                 onClick={() => onPaymentStatusChange("ALL")}
@@ -153,7 +153,7 @@ export function OrdersFilters({
             </div>
           )}
           {filters.paymentMethod && (
-            <div className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-[0.56875rem] font-medium text-primary">
+            <div className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-[11px] font-medium text-primary">
               <span>Method: {filters.paymentMethod}</span>
               <button
                 onClick={() => onPaymentMethodChange("")}
@@ -164,7 +164,7 @@ export function OrdersFilters({
             </div>
           )}
           {filters.search && (
-            <div className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-[0.56875rem] font-medium text-primary">
+            <div className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-[11px] font-medium text-primary">
               <span>Search: {filters.search}</span>
               <button
                 onClick={() => onSearchChange("")}

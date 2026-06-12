@@ -122,7 +122,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
             >
               <AvatarImage src={getImageWithFallback(user.profileImageUrl, "profile")} alt={displayName} />
               <AvatarFallback
-                className={`${sizes.avatar} rounded-[0.325rem] bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white text-[0.56875rem] font-bold shadow-sm`}
+                className={`${sizes.avatar} rounded-[0.325rem] bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white text-[11px] font-bold shadow-sm`}
               >
                 {fallbackLetter}
               </AvatarFallback>
@@ -144,7 +144,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
                   <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-[0.65rem] z-10">
                     <div className="flex flex-col items-center gap-[0.4875rem]">
                       <div className="w-[1.95rem] h-[1.95rem] border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-                      <p className="text-[0.56875rem] text-muted-foreground">
+                      <p className="text-[11px] text-muted-foreground">
                         Loading image...
                       </p>
                     </div>
@@ -162,7 +162,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
                     transition: "opacity 0.3s",
                   }}
                 />
-                <p className="text-[0.73125rem] font-semibold text-center text-gray-900">
+                <p className="text-[13px] font-semibold text-center text-gray-900">
                   {displayName}
                 </p>
               </div>
@@ -203,11 +203,11 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({
       {AvatarComponent}
 
       <div className="flex-1 min-w-0">
-        <p className="text-[0.56875rem] font-semibold text-foreground truncate">
+        <p className="text-[11px] font-semibold text-foreground truncate">
           {displayName}
         </p>
         {showEmail && (
-          <p className="text-[0.4875rem] text-muted-foreground truncate">
+          <p className="text-[11px] text-muted-foreground truncate">
             {user.email || "user@example.com"}
           </p>
         )}

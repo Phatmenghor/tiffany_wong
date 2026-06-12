@@ -277,10 +277,10 @@ export function Navbar() {
         size="lg"
       />
       <div className="flex flex-col space-y-[0.08125rem] flex-1 min-w-0">
-        <p className="text-[0.56875rem] font-semibold line-clamp-1">
+        <p className="text-[11px] font-semibold line-clamp-1">
           {fullName || profile?.fullName || "User"}
         </p>
-        <p className="text-[0.4875rem] text-muted-foreground line-clamp-1">
+        <p className="text-[11px] text-muted-foreground line-clamp-1">
           {email || profile?.email || ""}
         </p>
       </div>
@@ -343,10 +343,10 @@ export function Navbar() {
                   />
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="font-bold text-[0.56875rem] text-foreground leading-tight">
+                  <span className="font-bold text-[11px] text-foreground leading-tight">
                     {isHydrated ? businessName : ""}
                   </span>
-                  <span className="text-[0.4875rem] text-muted-foreground font-medium">
+                  <span className="text-[11px] text-muted-foreground font-medium">
                     Shop Online
                   </span>
                 </div>
@@ -427,10 +427,10 @@ export function Navbar() {
                   />
                 </div>
                 <div className="hidden md:flex flex-col text-left">
-                  <span className="text-foreground font-bold text-[0.56875rem] leading-tight">
+                  <span className="text-foreground font-bold text-[11px] leading-tight">
                     {isHydrated ? businessName : ""}
                   </span>
-                  <span className="text-muted-foreground text-[0.4875rem] font-medium">
+                  <span className="text-muted-foreground text-[11px] font-medium">
                     Shop Online
                   </span>
                 </div>
@@ -510,7 +510,7 @@ export function Navbar() {
                   <Badge
                     variant="destructive"
                     className={cn(
-                      "absolute -top-[0.1625rem] -right-[0.1625rem] h-[0.8125rem] min-w-[20px] max-w-[28px] px-[0.1625rem] flex items-center justify-center text-[0.4875rem] font-semibold leading-none transition-transform duration-300",
+                      "absolute -top-[0.1625rem] -right-[0.1625rem] h-[0.8125rem] min-w-[20px] max-w-[28px] px-[0.1625rem] flex items-center justify-center text-[11px] font-semibold leading-none transition-transform duration-300",
                       favoriteAnimating && "animate-slide-down",
                     )}
                   >
@@ -529,7 +529,7 @@ export function Navbar() {
                 {cartItemCount > 0 && (
                   <Badge
                     variant="destructive"
-                    className="absolute -top-[0.1625rem] -right-[0.1625rem] min-w-[20px] max-w-[28px] h-[0.8125rem] px-[0.1625rem] flex items-center justify-center text-[0.4875rem] font-semibold leading-none"
+                    className="absolute -top-[0.1625rem] -right-[0.1625rem] min-w-[20px] max-w-[28px] h-[0.8125rem] px-[0.1625rem] flex items-center justify-center text-[11px] font-semibold leading-none"
                   >
                     {cartItemCount > 99 ? "99+" : cartItemCount}
                   </Badge>

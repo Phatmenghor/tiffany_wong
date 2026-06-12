@@ -270,7 +270,7 @@ export default function OrdersPage() {
           <div className="w-[2.6rem] h-[2.6rem] rounded-[0.65rem] bg-primary/10 flex items-center justify-center mx-auto mb-[0.65rem]">
             <AlertCircle className="h-[1.3rem] w-[1.3rem] text-primary" />
           </div>
-          <h1 className="text-[0.975rem] font-bold mb-[0.325rem]">Sign In Required</h1>
+          <h1 className="text-[14px] font-bold mb-[0.325rem]">Sign In Required</h1>
           <p className="text-muted-foreground mb-[0.975rem]">
             Please sign in to view your orders.
           </p>

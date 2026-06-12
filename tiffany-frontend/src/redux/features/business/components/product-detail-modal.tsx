@@ -94,17 +94,17 @@ export function ProductDetailModal({
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-[0.4875rem] text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     No image
                   </span>
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-[0.73125rem] font-semibold text-foreground">
+              <h2 className="text-[13px] font-semibold text-foreground">
                 Product Details
               </h2>
-              <p className="text-[0.56875rem] text-foreground mt-[0.1625rem]">
+              <p className="text-[11px] text-foreground mt-[0.1625rem]">
                 View detailed information about the product
               </p>
             </div>
@@ -247,7 +247,7 @@ export function ProductDetailModal({
                               {size.hasPromotion ? "Promotion" : "Regular"}
                             </Badge>
                           </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.4875rem] text-[0.56875rem]">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-[0.4875rem] text-[11px]">
                             <DisplayField
                               label="Price"
                               value={formatCurrency(size.price)}

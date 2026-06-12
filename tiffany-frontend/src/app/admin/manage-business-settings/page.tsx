@@ -145,7 +145,7 @@ export default function BusinessSettingsPage() {
                 {...form.register("description")}
                 rows={3}
               />
-              <p className="text-[0.4875rem] text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground">
                 Brief description shown in the footer under the business name
               </p>
             </div>
@@ -186,7 +186,7 @@ export default function BusinessSettingsPage() {
                   {...form.register("contactEmail")}
                 />
                 {form.formState.errors.contactEmail && (
-                  <p className="text-[0.4875rem] text-destructive">
+                  <p className="text-[11px] text-destructive">
                     {form.formState.errors.contactEmail.message}
                   </p>
                 )}

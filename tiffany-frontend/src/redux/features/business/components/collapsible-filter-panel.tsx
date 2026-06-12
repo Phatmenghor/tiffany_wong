@@ -89,7 +89,7 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
       case "input-number":
         return (
           <div key={filter.id} className="flex flex-col gap-[0.1625rem]">
-            <label className="text-[0.4875rem] font-medium whitespace-nowrap">
+            <label className="text-[12px] font-medium whitespace-nowrap">
               {filter.label}
             </label>
             <Input
@@ -105,7 +105,7 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
               }}
               min={(filter as any).min || "0"}
               max={(filter as any).max}
-              className="h-[1.625rem] text-[0.4875rem] w-full"
+              className="h-[1.625rem] text-[12px] w-full"
               disabled={filter.disabled}
             />
           </div>
@@ -114,7 +114,7 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
       case "input-text":
         return (
           <div key={filter.id} className="flex flex-col gap-[0.1625rem]">
-            <label className="text-[0.4875rem] font-medium whitespace-nowrap">
+            <label className="text-[12px] font-medium whitespace-nowrap">
               {filter.label}
             </label>
             <Input
@@ -122,7 +122,7 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
               placeholder={filter.placeholder || "Enter text..."}
               value={filter.value?.toString() || ""}
               onChange={(e) => filter.onChange(e.target.value)}
-              className="h-[1.625rem] text-[0.4875rem] w-full"
+              className="h-[1.625rem] text-[12px] w-full"
               disabled={filter.disabled}
             />
           </div>
@@ -139,7 +139,7 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
         <CardContent className="py-[0.4875rem] sm:py-[0.8125rem] space-y-[0.4875rem]">
           {/* Title Section */}
           <div className="flex items-center gap-[0.325rem] mb-0">
-            <h1 className="text-[0.65rem] sm:text-[0.73125rem] font-bold">{config.title}</h1>
+            <h1 className="text-[13px] font-bold">{config.title}</h1>
           </div>
 
           {/* Row 1: Search (left) + Filters & Add Button (right, grouped) */}
@@ -196,9 +196,9 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
             className="flex items-center justify-between w-full hover:text-primary hover:bg-primary/10 px-[0.325rem] py-[0.1625rem] rounded-[0.1625rem] transition-all duration-200"
           >
             <div className="flex items-center gap-[0.325rem]">
-              <span className="text-[0.56875rem] font-bold text-primary">Advanced Filters</span>
+              <span className="text-[12px] font-bold text-primary">Advanced Filters</span>
               {activeFiltersCount > 0 && (
-                <Badge variant="secondary" className="text-[0.4875rem] bg-primary/10 text-primary border border-primary">
+                <Badge variant="secondary" className="text-[11px] bg-primary/10 text-primary border border-primary">
                   {activeFiltersCount} active
                 </Badge>
               )}

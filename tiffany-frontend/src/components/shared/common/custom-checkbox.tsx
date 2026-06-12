@@ -48,25 +48,25 @@ export function CustomCheckbox({
       box: "w-[12.8px] h-[12.8px]",
       innerBox: "w-[6.4px] h-[6.4px]",
       icon: "w-[9.6px] h-[9.6px]",
-      text: "text-[0.4875rem]",
+      text: "text-[11px]",
     },
     md: {
       box: "w-[0.65rem] h-[0.65rem]",
       innerBox: "w-[0.325rem] h-[0.325rem]",
       icon: "w-[0.4875rem] h-[0.4875rem]",
-      text: "text-[0.56875rem]",
+      text: "text-[11px]",
     },
     lg: {
       box: "w-[19.2px] h-[19.2px]",
       innerBox: "w-[9.6px] h-[9.6px]",
       icon: "w-[0.65rem] h-[0.65rem]",
-      text: "text-[0.65rem]",
+      text: "text-[12px]",
     },
     xl: {
       box: "w-[25.6px] h-[25.6px]",
       innerBox: "w-[12.8px] h-[12.8px]",
       icon: "w-[0.8125rem] h-[0.8125rem]",
-      text: "text-[0.73125rem]",
+      text: "text-[13px]",
     },
   };
 

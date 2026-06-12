@@ -137,7 +137,7 @@ export function ComboboxSelectLocation({
   return (
     <div className="space-y-[0.24375rem] w-full">
       {label && (
-        <Label className="text-[0.4875rem] font-semibold">
+        <Label className="text-[11px] font-semibold">
           {label}
           {required && <span className="text-red-500 ml-[0.1625rem]">*</span>}
         </Label>
@@ -149,7 +149,7 @@ export function ComboboxSelectLocation({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "w-full justify-between px-[0.65rem] py-[0.325rem] h-[1.7875rem] text-[0.56875rem] transition-all duration-200 border-input",
+              "w-full justify-between px-[0.65rem] py-[0.325rem] h-[1.7875rem] text-[11px] transition-all duration-200 border-input",
               "hover:bg-primary/10 hover:border-primary hover:text-primary",
               "focus:bg-primary/10 focus:border-primary focus:text-primary focus:ring-2 focus:ring-primary/30",
               open && "bg-primary/20 border-primary text-primary",
@@ -181,7 +181,7 @@ export function ComboboxSelectLocation({
               placeholder="Search address..."
               value={searchTerm}
               onValueChange={setSearchTerm}
-              className="text-[0.56875rem] h-[1.7875rem] px-[0.4875rem] border-b"
+              className="text-[11px] h-[1.7875rem] px-[0.4875rem] border-b"
             />
             <CommandList className="max-h-[7.8rem] overflow-y-auto">
               {/* Always-visible Pickup option */}
@@ -189,7 +189,7 @@ export function ComboboxSelectLocation({
                 <CommandItem
                   value="__pickup__"
                   onSelect={handleSelectPickup}
-                  className="text-[0.56875rem] py-[0.40625rem]"
+                  className="text-[11px] py-[0.40625rem]"
                 >
                   <Check
                     className={cn(
@@ -212,7 +212,7 @@ export function ComboboxSelectLocation({
                     value={item.fullAddress}
                     onSelect={() => handleSelect(item)}
                     ref={index === data.length - 1 ? ref : null}
-                    className="text-[0.56875rem] py-[0.325rem]"
+                    className="text-[11px] py-[0.325rem]"
                   >
                     <Check
                       className={cn(
@@ -222,7 +222,7 @@ export function ComboboxSelectLocation({
                     />
                     <span className="truncate line-clamp-1 flex-1">{item.fullAddress}</span>
                     {item.note && (
-                      <span className="text-[0.4875rem] text-muted-foreground flex-shrink-0 ml-[0.325rem]">
+                      <span className="text-[11px] text-muted-foreground flex-shrink-0 ml-[0.325rem]">
                         ({item.note})
                       </span>
                     )}
@@ -236,7 +236,7 @@ export function ComboboxSelectLocation({
                 </div>
               )}
               {!loading && lastPage && data.length > 0 && (
-                <div className="text-center py-[0.1625rem] text-[0.4875rem] text-gray-400">
+                <div className="text-center py-[0.1625rem] text-[11px] text-gray-400">
                   No more addresses
                 </div>
               )}
@@ -244,7 +244,7 @@ export function ComboboxSelectLocation({
           </Command>
         </PopoverContent>
       </Popover>
-      {error && <p className="text-[0.4875rem] text-red-500">{error}</p>}
+      {error && <p className="text-[11px] text-red-500">{error}</p>}
     </div>
   );
 }

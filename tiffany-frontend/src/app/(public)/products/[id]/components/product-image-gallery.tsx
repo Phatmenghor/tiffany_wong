@@ -128,7 +128,7 @@ export function ProductImageGallery({
 
         {/* Discount badge */}
         {hasDiscount && discountPercent > 0 && (
-          <Badge className="absolute top-[0.4875rem] left-[0.4875rem] bg-rose-500 hover:bg-rose-500 text-white text-[0.4875rem] font-bold z-10 pointer-events-none">
+          <Badge className="absolute top-[0.4875rem] left-[0.4875rem] bg-rose-500 hover:bg-rose-500 text-white text-[11px] font-bold z-10 pointer-events-none">
             -{discountPercent}%
           </Badge>
         )}
@@ -143,7 +143,7 @@ export function ProductImageGallery({
 
         {/* Image counter */}
         {allImages.length > 1 && (
-          <div className="absolute bottom-[0.4875rem] right-[0.4875rem] bg-black/50 text-white text-[0.4875rem] px-[0.40625rem] py-[0.1625rem] rounded-full pointer-events-none">
+          <div className="absolute bottom-[0.4875rem] right-[0.4875rem] bg-black/50 text-white text-[11px] px-[0.40625rem] py-[0.1625rem] rounded-full pointer-events-none">
             {currentImageIndex + 1} / {allImages.length}
           </div>
         )}

@@ -31,7 +31,7 @@ export function ImageLightbox({ isOpen, currentIndex, images, productName, onClo
   return (
     <div className="fixed inset-0 z-[200] bg-black/95 flex flex-col items-center justify-between" onClick={onClose}>
       <div className="w-full flex items-center justify-between px-[0.65rem] py-[0.4875rem] shrink-0" onClick={(e) => e.stopPropagation()}>
-        <span className="text-white/70 text-[0.56875rem] font-medium">
+        <span className="text-white/70 text-[11px] font-medium">
           {currentIndex + 1} / {images.length}
         </span>
         <button onClick={onClose} className="bg-white/10 hover:bg-white/20 text-white p-[0.325rem] rounded-full transition-colors">

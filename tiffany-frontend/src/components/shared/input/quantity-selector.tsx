@@ -139,7 +139,7 @@ export function QuantitySelector({
           pending
             ? "bg-amber-50 text-amber-600 border-amber-200 focus:ring-amber-300"
             : "bg-primary/10 text-primary border-primary/20 focus:ring-primary/30",
-          isSmall ? "w-[1.95rem] h-[1.3rem] text-[0.56875rem]" : "w-[2.6rem] h-[1.625rem] text-[0.73125rem]",
+          isSmall ? "w-[1.95rem] h-[1.3rem] text-[11px]" : "w-[2.6rem] h-[1.625rem] text-[13px]",
         )}
       />
 

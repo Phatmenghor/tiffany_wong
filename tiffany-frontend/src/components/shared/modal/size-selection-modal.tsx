@@ -385,7 +385,7 @@ export function SizeSelectionModal({
       <DialogContent className="w-full sm:max-w-[480px] p-0 overflow-hidden">
         {/* Header */}
         <DialogHeader className="p-[0.65rem] pb-0">
-          <DialogTitle className="text-[0.73125rem] font-bold">Choose Size</DialogTitle>
+          <DialogTitle className="text-[13px] font-bold">Choose Size</DialogTitle>
         </DialogHeader>
 
         <div className="p-[0.65rem] pt-[0.325rem]">
@@ -393,7 +393,7 @@ export function SizeSelectionModal({
           {isLoadingDetail ? (
             <div className="flex flex-col items-center justify-center py-[1.95rem]">
               <Loader2 className="h-[1.3rem] w-[1.3rem] animate-spin text-primary mb-[0.4875rem]" />
-              <p className="text-[0.56875rem] text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground">
                 Loading product details...
               </p>
             </div>
@@ -410,21 +410,21 @@ export function SizeSelectionModal({
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-[0.56875rem] line-clamp-2 mb-[0.1625rem]">
+                  <h3 className="font-semibold text-[11px] line-clamp-2 mb-[0.1625rem]">
                     {displayProduct?.name}
                   </h3>
                   <div className="flex items-center gap-[0.325rem]">
-                    <span className="text-[0.73125rem] font-bold text-primary">
+                    <span className="text-[13px] font-bold text-primary">
                       {formatCurrency(displayPrice)}
                     </span>
                     {hasDiscount && originalPrice && (
-                      <span className="text-[0.4875rem] text-muted-foreground line-through">
+                      <span className="text-[11px] text-muted-foreground line-through">
                         {formatCurrency(originalPrice)}
                       </span>
                     )}
                   </div>
                   {hasDiscount && (
-                    <Badge variant="destructive" className="text-[0.4875rem] mt-[0.1625rem]">
+                    <Badge variant="destructive" className="text-[11px] mt-[0.1625rem]">
                       {selectedSize?.hasPromotion
                         ? `-${Math.round(
                             ((selectedSize.price - selectedSize.finalPrice) /
@@ -446,7 +446,7 @@ export function SizeSelectionModal({
                 displayProduct?.sizes &&
                 displayProduct.sizes.length > 0 && (
                   <div className="mb-[0.65rem]">
-                    <h4 className="font-semibold mb-[0.325rem] text-[0.56875rem]">Choose Size</h4>
+                    <h4 className="font-semibold mb-[0.325rem] text-[11px]">Choose Size</h4>
                     <div className="flex flex-wrap gap-[0.325rem]">
                       {displayProduct.sizes.map((size) => {
                         const sizeDisplayQty = getDisplayQuantity(size.id);
@@ -466,11 +466,11 @@ export function SizeSelectionModal({
                               isModified && "ring-2 ring-amber-400/50",
                             )}
                           >
-                            <div className="font-semibold text-[0.4875rem] text-left">
+                            <div className="font-semibold text-[11px] text-left">
                               {size.name}
                             </div>
                             <div className="flex items-center gap-[0.24375rem]">
-                              <span className="text-primary font-bold text-[0.56875rem]">{formatCurrency(size.finalPrice)}</span>
+                              <span className="text-primary font-bold text-[11px]">{formatCurrency(size.finalPrice)}</span>
                               {size.hasPromotion && (
                                 <span className="text-[10px] text-muted-foreground line-through">{formatCurrency(size.price)}</span>
                               )}
@@ -500,7 +500,7 @@ export function SizeSelectionModal({
 
               {/* Quantity Selector + Clear button */}
               <div className="mb-[0.65rem]">
-                <h4 className="font-semibold mb-[0.325rem] text-[0.56875rem]">Quantity</h4>
+                <h4 className="font-semibold mb-[0.325rem] text-[11px]">Quantity</h4>
                 <div className="flex items-center gap-[0.325rem]">
                   <QuantitySelector
                     value={currentQuantity}
@@ -533,7 +533,7 @@ export function SizeSelectionModal({
               {/* Total */}
               <div className="flex justify-between items-center py-[0.4875rem] border-t mb-[0.65rem]">
                 <span className="text-muted-foreground">Total</span>
-                <span className="text-[0.8125rem] font-bold text-primary">
+                <span className="text-[13px] font-bold text-primary">
                   {formatCurrency(displayPrice * currentQuantity)}
                 </span>
               </div>

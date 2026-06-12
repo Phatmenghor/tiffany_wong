@@ -175,7 +175,7 @@ export default function BannerModal({
               {/* Display Redux errors */}
               {reduxError && (
                 <div className="p-[0.65rem] bg-destructive/10 border border-destructive rounded-[0.325rem] mb-[0.65rem]">
-                  <p className="text-[0.56875rem] text-destructive font-medium">
+                  <p className="text-[11px] text-destructive font-medium">
                     {reduxError}
                   </p>
                 </div>
@@ -198,7 +198,7 @@ export default function BannerModal({
 
                 {/* Divider */}
                 <div className="border-t pt-[0.975rem]">
-                  <h3 className="text-[0.56875rem] font-semibold text-foreground mb-[0.65rem]">
+                  <h3 className="text-[11px] font-semibold text-foreground mb-[0.65rem]">
                     Banner Details
                   </h3>
 

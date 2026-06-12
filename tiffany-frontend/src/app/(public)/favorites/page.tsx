@@ -187,8 +187,8 @@ export default function FavoritesPage() {
             <div className="flex items-center justify-center w-[2.6rem] h-[2.6rem] sm:w-[3.25rem] sm:h-[3.25rem] rounded-full bg-red-50 mx-auto mb-[0.65rem]">
               <Heart className="h-[1.3rem] w-[1.3rem] sm:h-[1.625rem] sm:w-[1.625rem] text-red-500" />
             </div>
-            <h1 className="text-[0.8125rem] sm:text-[0.975rem] font-bold mb-[0.325rem]">My Favorites</h1>
-            <p className="text-[0.56875rem] text-muted-foreground mb-[0.975rem]">
+            <h1 className="text-[13px] sm:text-[14px] font-bold mb-[0.325rem]">My Favorites</h1>
+            <p className="text-[11px] text-muted-foreground mb-[0.975rem]">
               Sign in to save and view your favorite items.
             </p>
             <div className="flex flex-col gap-[0.4875rem]">
@@ -222,10 +222,10 @@ export default function FavoritesPage() {
           <div className="flex items-center justify-center w-[2.6rem] h-[2.6rem] sm:w-[3.25rem] sm:h-[3.25rem] rounded-full bg-red-50 mx-auto mb-[0.65rem]">
             <Heart className="h-[1.3rem] w-[1.3rem] sm:h-[1.625rem] sm:w-[1.625rem] text-red-500" />
           </div>
-          <h1 className="text-[0.8125rem] sm:text-[0.975rem] font-bold mb-[0.325rem]">
+          <h1 className="text-[13px] sm:text-[14px] font-bold mb-[0.325rem]">
             No Favorites Yet
           </h1>
-          <p className="text-[0.56875rem] text-muted-foreground mb-[0.975rem]">
+          <p className="text-[11px] text-muted-foreground mb-[0.975rem]">
             Save your favorite items to find them quickly later.
           </p>
           <CustomButton
@@ -255,7 +255,7 @@ export default function FavoritesPage() {
             size="sm"
             onClick={() => setClearAllModalOpen(true)}
             disabled={loading.fetch}
-            className="gap-[0.24375rem] text-destructive hover:text-destructive hover:bg-destructive/10 text-[0.4875rem]"
+            className="gap-[0.24375rem] text-destructive hover:text-destructive hover:bg-destructive/10 text-[11px]"
           >
             <Trash2 className="h-[0.56875rem] w-[0.56875rem]" />
             Clear All
@@ -283,7 +283,7 @@ export default function FavoritesPage() {
           {/* Loading spinner */}
           <div className="flex flex-col items-center justify-center mt-[0.975rem] py-[0.975rem]">
             <Loader2 className="h-[0.975rem] w-[0.975rem] animate-spin text-primary mb-[0.325rem]" />
-            <p className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground">
+            <p className="text-[11px] sm:text-[11px] text-muted-foreground">
               Loading more favorites...
             </p>
           </div>
@@ -297,7 +297,7 @@ export default function FavoritesPage() {
 
       {/* End of favorites message */}
       {!pagination.hasMore && items.length > 0 && (
-        <div className="text-center py-[0.65rem] text-[0.56875rem] text-muted-foreground">
+        <div className="text-center py-[0.65rem] text-[11px] text-muted-foreground">
           You've seen it all!
         </div>
       )}

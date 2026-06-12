@@ -38,7 +38,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
           <h1 className="text-[1.4625rem] sm:text-[1.95rem] font-bold text-foreground">
             Oops! Something Went Wrong
           </h1>
-          <p className="text-[0.73125rem] text-muted-foreground">
+          <p className="text-[13px] text-muted-foreground">
             We encountered an unexpected error while processing your request. Don't worry, our team has been notified and is investigating.
           </p>
         </div>
@@ -47,7 +47,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
         {process.env.NODE_ENV === "development" && (
           <div className="space-y-[0.65rem] bg-card border border-border rounded-[0.325rem] p-[0.975rem]">
             <div className="flex items-center justify-between mb-[0.65rem]">
-              <h3 className="text-[0.56875rem] font-semibold text-foreground">Technical Details</h3>
+              <h3 className="text-[11px] font-semibold text-foreground">Technical Details</h3>
               <button
                 onClick={handleCopyError}
                 className="p-[0.325rem] rounded-[0.24375rem] hover:bg-muted transition-colors"
@@ -61,14 +61,14 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
               </button>
             </div>
             <div className="bg-muted rounded-[0.1625rem] p-[0.65rem] overflow-auto max-h-[7.8rem]">
-              <pre className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground font-mono whitespace-pre-wrap break-words">
+              <pre className="text-[11px] sm:text-[11px] text-muted-foreground font-mono whitespace-pre-wrap break-words">
                 {error.message}
               </pre>
             </div>
             {error.digest && (
               <div className="bg-muted rounded-[0.1625rem] p-[0.65rem]">
-                <p className="text-[0.4875rem] text-muted-foreground mb-[0.325rem]">Error ID:</p>
-                <p className="text-[0.56875rem] font-mono text-foreground">{error.digest}</p>
+                <p className="text-[11px] text-muted-foreground mb-[0.325rem]">Error ID:</p>
+                <p className="text-[11px] font-mono text-foreground">{error.digest}</p>
               </div>
             )}
           </div>
@@ -105,7 +105,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
         </div>
 
         {/* Footer */}
-        <div className="text-center text-[0.56875rem] text-muted-foreground pt-[0.65rem] border-t border-border">
+        <div className="text-center text-[11px] text-muted-foreground pt-[0.65rem] border-t border-border">
           <p>Tiffany Furniture Cambodia</p>
         </div>
       </div>

@@ -81,14 +81,14 @@ const PromotionsSectionComponent = ({
       )}
 
       <div className="relative">
-        <h2 className="text-[0.8125rem] sm:text-[0.975rem] md:text-[1.21875rem] font-bold tracking-tight flex items-center gap-[0.325rem] mb-[0.325rem]">
+        <h2 className="text-[13px] sm:text-[14px] md:text-[1.21875rem] font-bold tracking-tight flex items-center gap-[0.325rem] mb-[0.325rem]">
           <Flame
             className="h-[0.8125rem] w-[0.8125rem] sm:h-[0.975rem] sm:w-[0.975rem] md:h-[1.1375rem] md:w-[1.1375rem] text-red-500 flex-shrink-0"
             aria-label="Hot deals icon"
           />
           {title}
         </h2>
-        <p className="text-muted-foreground text-[0.4875rem] sm:text-[0.56875rem]">
+        <p className="text-muted-foreground text-[11px] sm:text-[11px]">
           Limited time offers - Don't miss out! 🎁
         </p>
       </div>

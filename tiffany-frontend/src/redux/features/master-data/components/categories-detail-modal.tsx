@@ -39,10 +39,10 @@ export function CategoriesDetailModal({
         {/* Header */}
         <div className="px-[0.975rem] py-[0.65rem] border-b bg-muted/30 flex-shrink-0">
           <div className="flex-1 min-w-0">
-            <h2 className="text-[0.73125rem] font-semibold text-foreground">
+            <h2 className="text-[13px] font-semibold text-foreground">
               Category Details
             </h2>
-            <p className="text-[0.56875rem] text-foreground mt-[0.1625rem]">
+            <p className="text-[11px] text-foreground mt-[0.1625rem]">
               Detailed information about the selected category
             </p>
           </div>
@@ -61,12 +61,12 @@ export function CategoriesDetailModal({
                 <div className="flex flex-col md:flex-row gap-[0.975rem]">
                   {/* Left label - Category Name */}
                   <div className="w-full md:w-1/2">
-                    <p className="text-[0.56875rem] font-medium text-foreground">Category Name</p>
+                    <p className="text-[11px] font-medium text-foreground">Category Name</p>
                   </div>
                   {/* Right label - Category Image */}
                   {categories.imageUrl && (
                     <div className="w-full md:w-1/2">
-                      <p className="text-[0.56875rem] font-medium text-foreground">Category Image</p>
+                      <p className="text-[11px] font-medium text-foreground">Category Image</p>
                     </div>
                   )}
                 </div>

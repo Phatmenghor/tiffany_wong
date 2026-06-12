@@ -98,7 +98,7 @@ export const CardHeaderSection: React.FC<CardHeaderSectionProps> = ({
               {customSelect && (
                 <div className="flex flex-wrap gap-[0.325rem] items-end
                   [&>*]:w-auto [&>*]:flex-shrink-0
-                  [&>*>label]:whitespace-nowrap [&>*>label]:text-[0.4875rem] [&>*>label]:font-medium">
+                  [&>*>label]:whitespace-nowrap [&>*>label]:text-[12px] [&>*>label]:font-medium">
                   {customSelect}
                 </div>
               )}

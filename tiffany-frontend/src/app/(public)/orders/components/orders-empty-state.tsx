@@ -14,7 +14,7 @@ export function OrdersEmptyState({ hasFilters }: OrdersEmptyStateProps) {
       <div className="w-[2.6rem] h-[2.6rem] rounded-[0.65rem] bg-primary/10 flex items-center justify-center mx-auto mb-[0.65rem]">
         <ShoppingBag className="h-[1.3rem] w-[1.3rem] text-primary" />
       </div>
-      <h3 className="text-[0.73125rem] font-semibold text-foreground mb-[0.325rem]">
+      <h3 className="text-[13px] font-semibold text-foreground mb-[0.325rem]">
         {hasFilters ? "No Orders Found" : "No Orders Yet"}
       </h3>
       <p className="text-muted-foreground mb-[0.975rem]">

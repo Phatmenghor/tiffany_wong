@@ -46,11 +46,11 @@ export function DetailModal({
             )}
 
             <div className="flex-1">
-              <DialogTitle className="text-[0.8125rem] font-semibold">
+              <DialogTitle className="text-[13px] font-semibold">
                 {title}
               </DialogTitle>
               {description && (
-                <DialogDescription className="text-[0.56875rem] text-muted-foreground">
+                <DialogDescription className="text-[11px] text-muted-foreground">
                   {description}
                 </DialogDescription>
               )}

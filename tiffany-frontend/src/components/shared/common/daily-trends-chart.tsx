@@ -104,15 +104,15 @@ export function DailyTrendsChart() {
     return (
       <Card className="border-2 border-red-200 shadow-lg bg-white mb-[1.3rem]">
         <CardHeader className="pb-[0.325rem]">
-          <CardTitle className="text-[0.73125rem]">Daily Trends</CardTitle>
+          <CardTitle className="text-[13px]">Daily Trends</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="p-[0.975rem] bg-red-50 border border-red-200 rounded-[0.325rem]">
             <p className="text-red-800 font-semibold mb-[0.325rem]">Error Loading Daily Trends</p>
-            <p className="text-red-700 text-[0.56875rem] mb-[0.65rem]">{error}</p>
+            <p className="text-red-700 text-[11px] mb-[0.65rem]">{error}</p>
             <button
               onClick={fetchDailyTrends}
-              className="px-[0.65rem] py-[0.325rem] bg-red-600 text-white rounded-[0.1625rem] hover:bg-red-700 text-[0.56875rem]"
+              className="px-[0.65rem] py-[0.325rem] bg-red-600 text-white rounded-[0.1625rem] hover:bg-red-700 text-[11px]"
             >
               Try Again
             </button>
@@ -126,7 +126,7 @@ export function DailyTrendsChart() {
     return (
       <Card className="border-2 border-gray-200 shadow-lg bg-white mb-[1.3rem]">
         <CardHeader className="pb-[0.325rem]">
-          <CardTitle className="text-[0.73125rem]">Daily Trends</CardTitle>
+          <CardTitle className="text-[13px]">Daily Trends</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-[13rem]">
@@ -145,7 +145,7 @@ export function DailyTrendsChart() {
   return (
     <Card className="border-2 border-blue-200 shadow-lg bg-white mb-[1.3rem]">
       <CardHeader className="pb-[0.325rem] border-b-2 border-blue-200">
-        <CardTitle className="text-[0.8125rem] font-bold">📈 Daily Trends - Last 30 Days</CardTitle>
+        <CardTitle className="text-[13px] font-bold">📈 Daily Trends - Last 30 Days</CardTitle>
       </CardHeader>
       <CardContent className="pt-[0.975rem]">
         <ResponsiveContainer width="100%" height={380}>

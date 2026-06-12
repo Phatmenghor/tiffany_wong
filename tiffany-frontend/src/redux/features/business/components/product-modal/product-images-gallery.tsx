@@ -114,7 +114,7 @@ export function ProductImagesGallery({
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>Product Images</CardTitle>
-            <p className="text-[0.4875rem] text-muted-foreground mt-[0.1625rem]">
+            <p className="text-[11px] text-muted-foreground mt-[0.1625rem]">
               {imageFields.length > 0
                 ? `${imageFields.length}/${MAX_PRODUCT_IMAGES} images added`
                 : `Upload up to ${MAX_PRODUCT_IMAGES} product images`}
@@ -148,7 +148,7 @@ export function ProductImagesGallery({
       <CardContent>
         {imageFields.length === 0 ? (
           <div className="text-center py-[1.3rem] border-2 border-dashed rounded-[0.325rem]">
-            <p className="text-[0.56875rem] text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground">
               No images added yet
             </p>
           </div>

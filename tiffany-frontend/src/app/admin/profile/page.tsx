@@ -276,14 +276,14 @@ export default function AdminProfilePage() {
               <div className="flex-1">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h2 className="text-[0.975rem] font-bold text-foreground">
+                    <h2 className="text-[14px] font-bold text-foreground">
                       {userProfile?.fullName}
                     </h2>
-                    <p className="text-primary/70 text-[0.56875rem] font-medium">
+                    <p className="text-primary/70 text-[11px] font-medium">
                       {userProfile?.email}
                     </p>
                     <div className="flex items-center gap-[0.325rem] mt-[0.325rem]">
-                      <span className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-primary text-[0.4875rem] font-semibold">
+                      <span className="inline-flex items-center gap-[0.1625rem] px-[0.4875rem] py-[0.1625rem] rounded-full bg-primary/10 border border-primary/30 text-primary text-[11px] font-semibold">
                         {userProfile?.userType}
                       </span>
                     </div>
@@ -356,7 +356,7 @@ export default function AdminProfilePage() {
             onClick={() => setActiveSection("profile")}
             className={cn(
               "flex-1 flex items-center justify-center gap-[0.40625rem] py-[0.65rem] px-[0.975rem] relative z-10",
-              "text-[0.56875rem] font-semibold transition-all duration-300",
+              "text-[11px] font-semibold transition-all duration-300",
               "border-r border-primary/20",
               activeSection === "profile"
                 ? "text-foreground"
@@ -375,7 +375,7 @@ export default function AdminProfilePage() {
             onClick={() => setActiveSection("security")}
             className={cn(
               "flex-1 flex items-center justify-center gap-[0.40625rem] py-[0.65rem] px-[0.975rem] relative z-10",
-              "text-[0.56875rem] font-semibold transition-all duration-300",
+              "text-[11px] font-semibold transition-all duration-300",
               activeSection === "security"
                 ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground/70"
@@ -510,7 +510,7 @@ export default function AdminProfilePage() {
                 <CardTitle>Change Password</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col items-end">
-                <p className="text-[0.56875rem] text-muted-foreground mb-[0.65rem] w-full">
+                <p className="text-[11px] text-muted-foreground mb-[0.65rem] w-full">
                   Update your password to keep your account secure.
                 </p>
                 <Button
@@ -528,7 +528,7 @@ export default function AdminProfilePage() {
                 <CardTitle className="text-destructive">Delete Account</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col items-end">
-                <p className="text-[0.56875rem] text-muted-foreground mb-[0.65rem] w-full">
+                <p className="text-[11px] text-muted-foreground mb-[0.65rem] w-full">
                   Permanently delete your account and all associated data. This action cannot be undone.
                 </p>
                 <Button

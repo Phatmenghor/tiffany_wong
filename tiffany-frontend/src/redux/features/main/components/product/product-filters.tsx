@@ -159,7 +159,7 @@ function ProductFiltersComponent({
                 />
               </div>
               <div>
-                <p className="text-[0.56875rem] font-semibold leading-none">
+                <p className="text-[11px] font-semibold leading-none">
                   On Sale Only
                 </p>
                 <p className="text-[11px] text-muted-foreground mt-[0.08125rem]">
@@ -199,7 +199,7 @@ function ProductFiltersComponent({
           <div className="flex items-center justify-center w-[1.1375rem] h-[1.1375rem] rounded-[0.325rem] bg-blue-500/10">
             <ListChecks className="h-[0.56875rem] w-[0.56875rem] text-blue-600" />
           </div>
-          <label className="text-[0.56875rem] font-semibold">Product Size</label>
+          <label className="text-[11px] font-semibold">Product Size</label>
         </div>
         <div className="space-y-[0.40625rem]">
           <label className="flex items-center gap-[0.4875rem] cursor-pointer group">
@@ -210,7 +210,7 @@ function ProductFiltersComponent({
                 updateFilter("hasSizes", hasSizes === true ? "" : "true")
               }
             />
-            <span className="text-[0.56875rem] group-hover:text-primary transition-colors select-none">
+            <span className="text-[11px] group-hover:text-primary transition-colors select-none">
               Has Sizes
             </span>
           </label>
@@ -222,7 +222,7 @@ function ProductFiltersComponent({
                 updateFilter("hasSizes", hasSizes === false ? "" : "false")
               }
             />
-            <span className="text-[0.56875rem] group-hover:text-primary transition-colors select-none">
+            <span className="text-[11px] group-hover:text-primary transition-colors select-none">
               No Sizes
             </span>
           </label>
@@ -237,7 +237,7 @@ function ProductFiltersComponent({
           <div className="flex items-center justify-center w-[1.1375rem] h-[1.1375rem] rounded-[0.325rem] bg-yellow-500/10">
             <DollarSign className="h-[0.56875rem] w-[0.56875rem] text-yellow-600" />
           </div>
-          <label className="text-[0.56875rem] font-semibold">Price Range</label>
+          <label className="text-[11px] font-semibold">Price Range</label>
         </div>
         <div className="flex items-center gap-[0.325rem]">
           <Input
@@ -246,16 +246,16 @@ function ProductFiltersComponent({
             min={0}
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
-            className="h-[1.4625rem] text-[0.56875rem]"
+            className="h-[1.4625rem] text-[11px]"
           />
-          <span className="text-muted-foreground text-[0.56875rem] flex-shrink-0">–</span>
+          <span className="text-muted-foreground text-[11px] flex-shrink-0">–</span>
           <Input
             type="number"
             placeholder="Max"
             min={0}
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="h-[1.4625rem] text-[0.56875rem]"
+            className="h-[1.4625rem] text-[11px]"
           />
         </div>
         <div className="flex gap-[0.325rem]">
@@ -287,7 +287,7 @@ function ProductFiltersComponent({
             <div className="flex items-center justify-between px-[0.8125rem] py-[0.65rem] border-b border-border/60 flex-shrink-0">
               <div className="flex items-center gap-[0.40625rem]">
                 <SlidersHorizontal className="h-[0.8125rem] w-[0.8125rem] text-primary" />
-                <h3 className="font-bold text-[0.65rem]">Filters</h3>
+                <h3 className="font-bold text-[12px]">Filters</h3>
                 {activeFiltersCount > 0 && (
                   <Badge className="rounded-full h-[0.8125rem] w-[0.8125rem] p-0 flex items-center justify-center text-[10px] font-bold">
                     {activeFiltersCount}
@@ -298,7 +298,7 @@ function ProductFiltersComponent({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-[1.3rem] px-[0.325rem] text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-[0.24375rem] text-[0.4875rem]"
+                  className="h-[1.3rem] px-[0.325rem] text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-[0.24375rem] text-[11px]"
                   onClick={clearAllFilters}
                 >
                   <FilterX className="h-[0.56875rem] w-[0.56875rem]" />
@@ -309,7 +309,7 @@ function ProductFiltersComponent({
 
             {/* Results count */}
             <div className="px-[0.8125rem] py-[0.4875rem] border-b border-border/40 flex-shrink-0 bg-muted/30">
-              <p className="text-[0.4875rem] text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground">
                 <span className="font-semibold text-foreground">
                   {totalResults.toLocaleString()}
                 </span>{" "}
@@ -329,11 +329,11 @@ function ProductFiltersComponent({
       <div className="lg:hidden w-full">
         <div className="flex items-center justify-between gap-[0.4875rem] bg-card border rounded-[0.4875rem] p-[0.65rem] shadow-sm">
           <div className="flex-1 min-w-0">
-            <p className="text-[0.56875rem] font-semibold truncate">
+            <p className="text-[11px] font-semibold truncate">
               {totalResults.toLocaleString()} result
               {totalResults !== 1 ? "s" : ""}
             </p>
-            <p className="text-[0.4875rem] text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground">
               {activeFiltersCount > 0
                 ? `${activeFiltersCount} filter${activeFiltersCount > 1 ? "s" : ""} applied`
                 : "No filters applied"}
@@ -345,7 +345,7 @@ function ProductFiltersComponent({
               <Button
                 variant="outline"
                 size="sm"
-                className="h-[1.4625rem] px-[0.4875rem] text-muted-foreground hover:text-destructive hover:border-destructive/50 gap-[0.24375rem] text-[0.4875rem]"
+                className="h-[1.4625rem] px-[0.4875rem] text-muted-foreground hover:text-destructive hover:border-destructive/50 gap-[0.24375rem] text-[11px]"
                 onClick={clearAllFilters}
               >
                 <FilterX className="h-[0.56875rem] w-[0.56875rem]" />
@@ -386,7 +386,7 @@ function ProductFiltersComponent({
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-[1.3rem] px-[0.325rem] text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-[0.24375rem] text-[0.4875rem]"
+                        className="h-[1.3rem] px-[0.325rem] text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-[0.24375rem] text-[11px]"
                         onClick={clearAllFilters}
                       >
                         <FilterX className="h-[0.56875rem] w-[0.56875rem]" />
@@ -394,7 +394,7 @@ function ProductFiltersComponent({
                       </Button>
                     )}
                   </div>
-                  <p className="text-[0.4875rem] text-muted-foreground text-left mt-[0.1625rem]">
+                  <p className="text-[11px] text-muted-foreground text-left mt-[0.1625rem]">
                     <span className="font-semibold text-foreground">
                       {totalResults.toLocaleString()}
                     </span>{" "}

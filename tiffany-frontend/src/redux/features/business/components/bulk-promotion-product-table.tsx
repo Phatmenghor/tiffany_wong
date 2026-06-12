@@ -40,11 +40,11 @@ export const BulkPromotionProductTable: React.FC<Props> = ({
   return (
     <div className="space-y-[0.65rem] border rounded-[0.325rem] p-[0.65rem] bg-white">
       <div className="flex items-center justify-between">
-        <h3 className="text-[0.56875rem] font-semibold">
+        <h3 className="text-[11px] font-semibold">
           Select Products ({selectedProductIds.size} selected)
         </h3>
         <div className="flex items-center gap-[0.325rem]">
-          <span className="text-[0.4875rem] text-muted-foreground">Page {currentPage} of {totalPages}</span>
+          <span className="text-[11px] text-muted-foreground">Page {currentPage} of {totalPages}</span>
         </div>
       </div>
 
@@ -56,7 +56,7 @@ export const BulkPromotionProductTable: React.FC<Props> = ({
           onCheckedChange={handleSelectAll}
           disabled={isLoading}
         />
-        <label className="text-[0.56875rem] font-medium cursor-pointer">
+        <label className="text-[11px] font-medium cursor-pointer">
           Select all products on this page
         </label>
       </div>
@@ -65,11 +65,11 @@ export const BulkPromotionProductTable: React.FC<Props> = ({
       <div className="space-y-[0.325rem] max-h-[15.6rem] overflow-y-auto">
         {isLoading ? (
           <div className="flex items-center justify-center py-[1.3rem]">
-            <p className="text-[0.56875rem] text-muted-foreground">Loading products...</p>
+            <p className="text-[11px] text-muted-foreground">Loading products...</p>
           </div>
         ) : products.length === 0 ? (
           <div className="flex items-center justify-center py-[1.3rem]">
-            <p className="text-[0.56875rem] text-muted-foreground">No products found</p>
+            <p className="text-[11px] text-muted-foreground">No products found</p>
           </div>
         ) : (
           products.map((product) => (
@@ -88,8 +88,8 @@ export const BulkPromotionProductTable: React.FC<Props> = ({
                 size="md"
               />
               <div className="flex-1 min-w-0">
-                <p className="text-[0.4875rem] font-medium truncate">{product.name}</p>
-                <p className="text-[0.4875rem] text-muted-foreground">
+                <p className="text-[11px] font-medium truncate">{product.name}</p>
+                <p className="text-[11px] text-muted-foreground">
                   {product.categoryName} • ${parseFloat(product.displayPrice?.toString() || "0").toFixed(2)}
                 </p>
               </div>
@@ -111,7 +111,7 @@ export const BulkPromotionProductTable: React.FC<Props> = ({
             <ChevronLeft className="w-[0.65rem] h-[0.65rem]" />
             Previous
           </Button>
-          <span className="text-[0.4875rem] text-muted-foreground">
+          <span className="text-[11px] text-muted-foreground">
             Page {currentPage} of {totalPages}
           </span>
           <Button

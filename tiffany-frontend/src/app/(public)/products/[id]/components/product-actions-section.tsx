@@ -76,7 +76,7 @@ export function ProductActionsSection({
         {/* Size buttons — sized products only */}
         {hasSizes && sizes && sizes.length > 0 && (
           <>
-            <p className="text-[0.4875rem] font-semibold uppercase tracking-wider text-muted-foreground">Choose Size</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Choose Size</p>
             <div className="flex flex-wrap gap-[0.325rem]">
               {sizes.map((size) => {
                 const szQty = displayQuantity(size.id);
@@ -96,9 +96,9 @@ export function ProductActionsSection({
                         <Check className="h-[0.40625rem] w-[0.40625rem]" />
                       </div>
                     )}
-                    <div className="font-semibold text-[0.56875rem]">{size.name}</div>
+                    <div className="font-semibold text-[11px]">{size.name}</div>
                     <div className="flex items-center gap-[0.24375rem]">
-                      <span className="text-primary font-bold text-[0.56875rem]">{formatCurrency(size.finalPrice)}</span>
+                      <span className="text-primary font-bold text-[11px]">{formatCurrency(size.finalPrice)}</span>
                       {size.hasPromotion && <span className="text-[10px] text-muted-foreground line-through">{formatCurrency(size.price)}</span>}
                     </div>
                     {szQty > 0 && (
@@ -119,7 +119,7 @@ export function ProductActionsSection({
           const isPending = modifiedSizes.has(key) && displayQty !== cartQty;
           return (
             <div className="space-y-[0.4875rem]">
-              <h4 className="font-semibold text-[0.56875rem]">Quantity</h4>
+              <h4 className="font-semibold text-[11px]">Quantity</h4>
               <div className="flex items-center gap-[0.325rem]">
                 <QuantitySelector value={displayQty} onChange={(qty) => onQtyChange(sizeId, qty)} min={0} size="sm" pending={isPending} />
                 {(displayQty > 0 || cartQty > 0) && (
@@ -137,7 +137,7 @@ export function ProductActionsSection({
                 <div className="flex-1" />
                 {/* "In Cart" status — always visible when anything is in cart, no icon */}
                 {totalCartQtyAllSizes > 0 && (
-                  <div className="h-[1.3rem] shrink-0 flex items-center px-[0.4875rem] text-[0.56875rem] font-medium rounded-[0.24375rem] border border-border text-muted-foreground">{`In Cart · ${formatCurrency(totalCartValueAllSizes)}`}</div>
+                  <div className="h-[1.3rem] shrink-0 flex items-center px-[0.4875rem] text-[11px] font-medium rounded-[0.24375rem] border border-border text-muted-foreground">{`In Cart · ${formatCurrency(totalCartValueAllSizes)}`}</div>
                 )}
                 {/* Action button — shown when there are pending changes OR nothing in cart */}
                 {(modifiedSizes.size > 0 || totalCartQtyAllSizes === 0) && (
@@ -156,10 +156,10 @@ export function ProductActionsSection({
 
               {/* Total — sum of ALL sizes × their pending/cart quantities */}
               <div className="flex justify-between items-center py-[0.4875rem] border-t">
-                <span className="text-[0.56875rem] text-muted-foreground">Total</span>
+                <span className="text-[11px] text-muted-foreground">Total</span>
                 <div className="flex items-center gap-[0.325rem]">
-                  {hasAnyPromotion && <span className="text-[0.56875rem] text-red-500 line-through">{formatCurrency(totalOrigValueAllSizes)}</span>}
-                  <span className="text-[0.8125rem] font-bold text-primary">{formatCurrency(totalDisplayValueAllSizes)}</span>
+                  {hasAnyPromotion && <span className="text-[11px] text-red-500 line-through">{formatCurrency(totalOrigValueAllSizes)}</span>}
+                  <span className="text-[13px] font-bold text-primary">{formatCurrency(totalDisplayValueAllSizes)}</span>
                 </div>
               </div>
             </div>
@@ -187,15 +187,15 @@ export function ProductActionsSection({
 
       {/* Stats */}
       <div className="flex items-center gap-[0.975rem] pt-[0.65rem] border-t text-muted-foreground">
-        <div className="flex items-center gap-[0.24375rem] text-[0.56875rem]">
+        <div className="flex items-center gap-[0.24375rem] text-[11px]">
           <Eye className="h-[0.65rem] w-[0.65rem]" />
           <span>{viewCount.toLocaleString()}</span>
-          <span className="text-[0.4875rem]">views</span>
+          <span className="text-[11px]">views</span>
         </div>
-        <div className="flex items-center gap-[0.24375rem] text-[0.56875rem]">
+        <div className="flex items-center gap-[0.24375rem] text-[11px]">
           <Heart className="h-[0.65rem] w-[0.65rem]" />
           <span>{favoriteCount.toLocaleString()}</span>
-          <span className="text-[0.4875rem]">saves</span>
+          <span className="text-[11px]">saves</span>
         </div>
       </div>
     </div>

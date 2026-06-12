@@ -421,9 +421,9 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
               <MapPin className="h-[0.65rem] w-[0.65rem] text-primary" />
             </div>
             <div className="min-w-0">
-              <span className="text-[0.56875rem] font-semibold block">Select on Map</span>
+              <span className="text-[11px] font-semibold block">Select on Map</span>
               {hasCoords && (
-                <span className="text-[0.4875rem] font-mono text-muted-foreground">
+                <span className="text-[11px] font-mono text-muted-foreground">
                   {latitude.toFixed(5)}, {longitude.toFixed(5)}
                   {isReverseGeocoding && <Loader2 className="inline-block h-[0.4875rem] w-[0.4875rem] ml-[0.1625rem] animate-spin" />}
                 </span>
@@ -446,7 +446,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
         <div className="px-[0.65rem] py-[0.4875rem] border-b bg-background/95 backdrop-blur shrink-0">
           <div className="relative w-full">
             <Search className="absolute left-[0.4875rem] top-1/2 -translate-y-1/2 h-[0.65rem] w-[0.65rem] text-muted-foreground" />
-            <Input ref={fullscreenSearchRef} type="text" placeholder="Search for a place, address…" className="pl-[1.4625rem] h-[1.625rem] rounded-[0.325rem] text-[0.56875rem] w-full" autoComplete="off" />
+            <Input ref={fullscreenSearchRef} type="text" placeholder="Search for a place, address…" className="pl-[1.4625rem] h-[1.625rem] rounded-[0.325rem] text-[11px] w-full" autoComplete="off" />
           </div>
         </div>
 
@@ -456,7 +456,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
             <div className="absolute inset-0 flex items-center justify-center bg-muted/80 z-10">
               <div className="flex flex-col items-center gap-[0.325rem]">
                 <Loader2 className="h-[1.3rem] w-[1.3rem] animate-spin text-primary" />
-                <span className="text-[0.56875rem] text-muted-foreground">Loading map…</span>
+                <span className="text-[11px] text-muted-foreground">Loading map…</span>
               </div>
             </div>
           )}
@@ -468,11 +468,11 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
               <MapPin className="h-[0.8125rem] w-[0.8125rem] text-red-500 shrink-0 mt-[0.08125rem]" />
               <div className="min-w-0 flex-1">
                 {addressPreview && (
-                  <p className="text-[0.65rem] font-semibold text-foreground leading-relaxed break-words">
+                  <p className="text-[12px] font-semibold text-foreground leading-relaxed break-words">
                     {addressPreview}
                   </p>
                 )}
-                <p className="text-[0.56875rem] font-mono text-muted-foreground mt-[0.325rem] flex items-center gap-[0.325rem]">
+                <p className="text-[11px] font-mono text-muted-foreground mt-[0.325rem] flex items-center gap-[0.325rem]">
                   {latitude.toFixed(6)}, {longitude.toFixed(6)}
                   {isReverseGeocoding && <Loader2 className="h-[0.4875rem] w-[0.4875rem] animate-spin shrink-0" />}
                 </p>
@@ -504,7 +504,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
           <FormBody contentClassName="space-y-[0.8125rem]">
             {/* Error banner */}
             {reduxError && (
-              <div className="p-[0.4875rem] bg-destructive/10 border border-destructive/30 rounded-[0.325rem] text-[0.56875rem] text-destructive font-medium">
+              <div className="p-[0.4875rem] bg-destructive/10 border border-destructive/30 rounded-[0.325rem] text-[11px] text-destructive font-medium">
                 {reduxError}
               </div>
             )}
@@ -518,7 +518,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
                     <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
                       <div className="flex flex-col items-center gap-[0.325rem]">
                         <Loader2 className="h-[0.975rem] w-[0.975rem] animate-spin text-primary" />
-                        <span className="text-[0.56875rem] text-muted-foreground">Loading map…</span>
+                        <span className="text-[11px] text-muted-foreground">Loading map…</span>
                       </div>
                     </div>
                   )}
@@ -526,13 +526,13 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
                     <div className="absolute inset-0 flex items-center justify-center bg-yellow-50/90">
                       <div className="text-center">
                         <AlertTriangle className="h-[0.8125rem] w-[0.8125rem] text-yellow-600 mx-auto mb-[0.1625rem]" />
-                        <p className="text-[0.56875rem] font-medium text-yellow-800">Map unavailable</p>
+                        <p className="text-[11px] font-medium text-yellow-800">Map unavailable</p>
                       </div>
                     </div>
                   )}
                   <div className="absolute inset-0 group cursor-pointer" onClick={() => setIsFullScreen(true)}>
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
-                    <div className="absolute bottom-[0.4875rem] left-1/2 -translate-x-1/2 bg-background/90 backdrop-blur-sm border rounded-[0.325rem] px-[0.4875rem] py-[0.24375rem] text-[0.4875rem] text-foreground flex items-center gap-[0.24375rem] shadow-sm group-hover:shadow-md transition-all">
+                    <div className="absolute bottom-[0.4875rem] left-1/2 -translate-x-1/2 bg-background/90 backdrop-blur-sm border rounded-[0.325rem] px-[0.4875rem] py-[0.24375rem] text-[11px] text-foreground flex items-center gap-[0.24375rem] shadow-sm group-hover:shadow-md transition-all">
                       <Maximize2 className="h-[0.56875rem] w-[0.56875rem] text-primary" />
                       Click to expand
                     </div>
@@ -543,8 +543,8 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
                 {hasCoords && (
                   <div className="flex items-center gap-[0.325rem] bg-green-50 border border-green-200 rounded-[0.325rem] px-[0.4875rem] py-[0.325rem]">
                     <CheckCircle2 className="h-[0.65rem] w-[0.65rem] text-green-600 shrink-0" />
-                    <span className="text-[0.4875rem] font-mono text-green-700 flex-1">{latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
-                    <Badge variant="secondary" className="text-[0.4875rem]">Set</Badge>
+                    <span className="text-[11px] font-mono text-green-700 flex-1">{latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
+                    <Badge variant="secondary" className="text-[11px]">Set</Badge>
                   </div>
                 )}
 
@@ -586,10 +586,10 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
                   <Star className={cn("h-[0.65rem] w-[0.65rem]", isDefaultValue ? "text-amber-500 fill-amber-500" : "text-muted-foreground")} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={cn("text-[0.56875rem] font-semibold", isDefaultValue ? "text-amber-700" : "text-foreground")}>
+                  <p className={cn("text-[11px] font-semibold", isDefaultValue ? "text-amber-700" : "text-foreground")}>
                     {isDefaultValue ? "Default Location" : "Set as Default"}
                   </p>
-                  <p className="text-[0.4875rem] text-muted-foreground">Default address for deliveries</p>
+                  <p className="text-[11px] text-muted-foreground">Default address for deliveries</p>
                 </div>
                 {isDefaultValue && <CheckCircle2 className="h-[0.65rem] w-[0.65rem] text-amber-500 shrink-0" />}
               </button>

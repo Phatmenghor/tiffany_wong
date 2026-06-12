@@ -70,14 +70,14 @@ export function ConfirmationModal({
           <DialogTitle>{title}</DialogTitle>
         </VisuallyHidden>
         <div className={`p-[0.975rem] border-b border-border ${headerBgColor}`}>
-          <h2 className="text-[0.73125rem] font-semibold text-foreground">{title}</h2>
-          <p className="text-[0.56875rem] text-muted-foreground mt-[0.325rem]">{description}</p>
+          <h2 className="text-[13px] font-semibold text-foreground">{title}</h2>
+          <p className="text-[11px] text-muted-foreground mt-[0.325rem]">{description}</p>
         </div>
 
         <FormBody>
           {itemName && (
             <div className="p-[0.4875rem] bg-muted rounded-[0.325rem] border border-muted-foreground/20">
-              <p className="text-[0.56875rem]">
+              <p className="text-[11px]">
                 <span className="text-muted-foreground">Item:</span>
                 <span className="font-semibold text-foreground ml-[0.325rem]">
                   "{itemName}"

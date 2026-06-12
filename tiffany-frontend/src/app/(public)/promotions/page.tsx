@@ -10,9 +10,9 @@ function PromotionsHero() {
         <div className="flex items-center justify-center w-[1.625rem] h-[1.625rem] rounded-[0.4875rem] bg-white/20">
           <Flame className="h-[0.8125rem] w-[0.8125rem]" />
         </div>
-        <h1 className="text-[0.8125rem] sm:text-[0.975rem] font-bold">Hot Deals &amp; Promotions</h1>
+        <h1 className="text-[13px] sm:text-[14px] font-bold">Hot Deals &amp; Promotions</h1>
       </div>
-      <p className="text-[0.56875rem] text-white/80 pl-13">
+      <p className="text-[11px] text-white/80 pl-13">
         Exclusive discounts and limited-time offers — grab them before they&apos;re gone!
       </p>
     </div>

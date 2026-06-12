@@ -19,10 +19,10 @@ export function LocationEmptyState({ onAddNew }: LocationEmptyStateProps) {
           <Plus className="h-[0.65rem] w-[0.65rem] text-primary" />
         </div>
       </div>
-      <h3 className="text-[0.8125rem] font-semibold text-foreground mb-[0.325rem]">
+      <h3 className="text-[13px] font-semibold text-foreground mb-[0.325rem]">
         No saved locations
       </h3>
-      <p className="text-[0.56875rem] text-muted-foreground text-center max-w-sm mb-[1.3rem] leading-relaxed">
+      <p className="text-[11px] text-muted-foreground text-center max-w-sm mb-[1.3rem] leading-relaxed">
         Save your favourite delivery spots — use the interactive map or select
         from our location hierarchy.
       </p>

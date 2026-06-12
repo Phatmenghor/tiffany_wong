@@ -24,7 +24,7 @@ export function MobileCheckoutBar({
   return (
     <div className="fixed bottom-[2.6rem] left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur-sm border-t px-[0.65rem] py-[0.4875rem]">
       <div className="flex items-center justify-between mb-[0.40625rem]">
-        <div className="text-[0.4875rem]">
+        <div className="text-[11px]">
           <div className="text-muted-foreground font-medium">
             {totalItems} items • {totalQuantity} qty
           </div>
@@ -35,8 +35,8 @@ export function MobileCheckoutBar({
           )}
         </div>
         <div className="text-right">
-          <div className="text-[0.4875rem] text-muted-foreground">Total</div>
-          <div className="text-[0.8125rem] font-bold text-primary">{formatCurrency(finalTotal)}</div>
+          <div className="text-[11px] text-muted-foreground">Total</div>
+          <div className="text-[13px] font-bold text-primary">{formatCurrency(finalTotal)}</div>
         </div>
       </div>
       <CustomButton

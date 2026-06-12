@@ -770,10 +770,10 @@ export default function BulkPromotionPage() {
             <ArrowLeft className="h-[0.8125rem] w-[0.8125rem]" />
           </Button>
           <div className="flex flex-col">
-            <h1 className="text-[0.8125rem] sm:text-[0.975rem] font-bold text-foreground">
+            <h1 className="text-[13px] sm:text-[14px] font-bold text-foreground">
               Create Bulk Promotion
             </h1>
-            <p className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground mt-[0.08125rem]">
+            <p className="text-[11px] sm:text-[11px] text-muted-foreground mt-[0.08125rem]">
               Select products and apply discount settings
             </p>
           </div>
@@ -830,7 +830,7 @@ export default function BulkPromotionPage() {
 
                   {/* Status Text */}
                   <div className="flex flex-col gap-[0.08125rem] min-w-0">
-                    <span className="text-[0.56875rem] font-semibold text-foreground">
+                    <span className="text-[11px] font-semibold text-foreground">
                       {allSelected
                         ? "All products selected"
                         : someSelected
@@ -841,7 +841,7 @@ export default function BulkPromotionPage() {
                             } products selected`
                           : "Select all products"}
                     </span>
-                    <span className="text-[0.4875rem] text-muted-foreground">
+                    <span className="text-[11px] text-muted-foreground">
                       {productContent.length} products on this page
                     </span>
                   </div>
@@ -857,7 +857,7 @@ export default function BulkPromotionPage() {
                       placeholder="Search product..."
                       value={searchQuery}
                       onChange={(e) => handleSearchChange(e.target.value)}
-                      className="w-full pl-[1.4625rem] pr-[1.4625rem] py-[0.325rem] rounded-[0.24375rem] border border-border bg-background text-[0.56875rem] placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                      className="w-full pl-[1.4625rem] pr-[1.4625rem] py-[0.325rem] rounded-[0.24375rem] border border-border bg-background text-[11px] placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
                     />
                     {searchQuery && (
                       <button
@@ -876,7 +876,7 @@ export default function BulkPromotionPage() {
                     <button
                       type="button"
                       onClick={handleClearAllSelections}
-                      className="inline-flex items-center gap-[0.24375rem] px-[0.4875rem] py-[0.325rem] rounded-[0.24375rem] text-[0.4875rem] font-medium text-destructive border border-destructive/40 bg-destructive/5 hover:border-destructive/70 hover:bg-destructive/15 hover:text-destructive transition-colors duration-150 flex-shrink-0"
+                      className="inline-flex items-center gap-[0.24375rem] px-[0.4875rem] py-[0.325rem] rounded-[0.24375rem] text-[11px] font-medium text-destructive border border-destructive/40 bg-destructive/5 hover:border-destructive/70 hover:bg-destructive/15 hover:text-destructive transition-colors duration-150 flex-shrink-0"
                       title="Clear all selections (stored in browser)"
                     >
                       <Trash2 className="h-[0.56875rem] w-[0.56875rem]" />
@@ -972,10 +972,10 @@ export default function BulkPromotionPage() {
             <div className="px-[0.65rem] sm:px-[0.8125rem] md:px-[0.65rem] lg:px-[0.8125rem] py-[0.975rem] sm:py-[1.3rem] md:py-[0.975rem] lg:py-[1.3rem] space-y-[0.975rem] sm:space-y-[1.3rem] md:space-y-[0.975rem] lg:space-y-[1.3rem]">
               {/* Header Section */}
               <div className="space-y-[0.1625rem]">
-                <h2 className="text-[0.73125rem] sm:text-[0.8125rem] font-bold text-foreground">
+                <h2 className="text-[13px] sm:text-[13px] font-bold text-foreground">
                   Promotion Setup
                 </h2>
-                <p className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground">
+                <p className="text-[11px] sm:text-[11px] text-muted-foreground">
                   Configure discount details below
                 </p>
               </div>
@@ -983,7 +983,7 @@ export default function BulkPromotionPage() {
               {/* Selected Count Card */}
               <div className="rounded-[0.325rem] p-[0.8125rem] bg-gradient-to-r from-primary/15 to-green-500/15 border border-primary/25 shadow-sm">
                 <div className="space-y-[0.4875rem]">
-                  <p className="text-[0.4875rem] font-bold uppercase tracking-wider text-primary/70">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-primary/70">
                     Selection Status
                   </p>
 
@@ -994,7 +994,7 @@ export default function BulkPromotionPage() {
                       <p className="text-[1.95rem] sm:text-[2.4375rem] font-black text-primary">
                         {selectedIds.length}
                       </p>
-                      <p className="text-[0.4875rem] sm:text-[0.56875rem] font-semibold text-foreground/60">
+                      <p className="text-[11px] sm:text-[11px] font-semibold text-foreground/60">
                         {selectedIds.length === 1 ? "Product" : "Products"}
                       </p>
                     </div>
@@ -1010,7 +1010,7 @@ export default function BulkPromotionPage() {
                           0,
                         )}
                       </p>
-                      <p className="text-[0.4875rem] sm:text-[0.56875rem] font-semibold text-foreground/60">
+                      <p className="text-[11px] sm:text-[11px] font-semibold text-foreground/60">
                         {Object.values(selectedSizesFromRedux).reduce(
                           (sum, sizeArray) => sum + sizeArray.length,
                           0,
@@ -1027,7 +1027,7 @@ export default function BulkPromotionPage() {
               <div className="space-y-[0.975rem] sm:space-y-[1.1375rem] md:space-y-[0.975rem] lg:space-y-[1.1375rem]">
                 {/* Discount Section */}
                 <div className="space-y-[0.4875rem] sm:space-y-[0.65rem] md:space-y-[0.4875rem] lg:space-y-[0.65rem]">
-                  <h3 className="text-[0.56875rem] font-bold text-foreground uppercase tracking-wider px-[0.1625rem]">
+                  <h3 className="text-[11px] font-bold text-foreground uppercase tracking-wider px-[0.1625rem]">
                     Discount Settings
                   </h3>
                   <div className="space-y-[0.4875rem] sm:space-y-[0.65rem] md:space-y-[0.4875rem] lg:space-y-[0.65rem]">
@@ -1046,7 +1046,7 @@ export default function BulkPromotionPage() {
                       required
                     />
                     {form.formState.errors.promotionType && (
-                      <p className="text-[0.4875rem] text-destructive font-medium px-[0.1625rem]">
+                      <p className="text-[11px] text-destructive font-medium px-[0.1625rem]">
                         {form.formState.errors.promotionType.message}
                       </p>
                     )}
@@ -1099,7 +1099,7 @@ export default function BulkPromotionPage() {
                   onClick={() => router.push(ROUTES.ADMIN.PRODUCTS_PROMOTION)}
                   disabled={isSubmitting}
                   variant="outline"
-                  className="flex-1 h-[1.625rem] sm:h-[1.7875rem] md:h-[1.625rem] lg:h-[1.7875rem] text-[0.4875rem] sm:text-[0.56875rem] md:text-[0.4875rem] lg:text-[0.56875rem] font-semibold rounded-[0.325rem] border-2 hover:bg-muted/50"
+                  className="flex-1 h-[1.625rem] sm:h-[1.7875rem] md:h-[1.625rem] lg:h-[1.7875rem] text-[11px] sm:text-[11px] md:text-[11px] lg:text-[11px] font-semibold rounded-[0.325rem] border-2 hover:bg-muted/50"
                 >
                   Cancel
                 </CustomButton>
@@ -1112,7 +1112,7 @@ export default function BulkPromotionPage() {
                   disabled={!isFormValid}
                   onClick={handleApplyClick}
                   variant="default"
-                  className="flex-1 h-[1.625rem] sm:h-[1.7875rem] md:h-[1.625rem] lg:h-[1.7875rem] text-[0.4875rem] sm:text-[0.56875rem] md:text-[0.4875rem] lg:text-[0.56875rem] font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-[0.325rem] shadow-md hover:shadow-lg disabled:opacity-50"
+                  className="flex-1 h-[1.625rem] sm:h-[1.7875rem] md:h-[1.625rem] lg:h-[1.7875rem] text-[11px] sm:text-[11px] md:text-[11px] lg:text-[11px] font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-[0.325rem] shadow-md hover:shadow-lg disabled:opacity-50"
                 />
               </div>
             </div>

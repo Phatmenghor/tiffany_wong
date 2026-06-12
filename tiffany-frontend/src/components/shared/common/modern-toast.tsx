@@ -115,14 +115,14 @@ export function ModernToastContent({
       {/* Header with Title and ID */}
       <div className="flex justify-between items-start mb-[0.4875rem] pb-[0.4875rem] border-b border-gray-200">
         <div className="flex-1">
-          <h4 className={`${getTitleColor()} font-semibold text-[0.65rem] leading-tight`}>
+          <h4 className={`${getTitleColor()} font-semibold text-[12px] leading-tight`}>
             {title}
           </h4>
         </div>
       </div>
 
       {/* Message */}
-      <p className="text-gray-700 text-[0.56875rem] leading-relaxed mb-[0.4875rem]">
+      <p className="text-gray-700 text-[11px] leading-relaxed mb-[0.4875rem]">
         {message}
       </p>
 
@@ -130,26 +130,26 @@ export function ModernToastContent({
       {validationData && (
         <div className="border-t border-gray-200 pt-[0.4875rem] mb-[0.4875rem]">
           <div className="space-y-[0.325rem]">
-            <div className="flex justify-between text-[0.4875rem] mb-[0.325rem]">
+            <div className="flex justify-between text-[11px] mb-[0.325rem]">
               <span className="text-gray-600 font-medium">NID:</span>
               <span className="text-gray-800 font-mono">{validationData.nid}</span>
             </div>
-            <div className="flex justify-between text-[0.4875rem]">
+            <div className="flex justify-between text-[11px]">
               <span className="text-gray-600 font-medium">Score:</span>
               <span className="text-gray-800 font-mono">{validationData.score}</span>
             </div>
             {validationData.incorrectFields && validationData.incorrectFields.length > 0 && (
-              <div className="text-[0.4875rem] mt-[0.325rem]">
+              <div className="text-[11px] mt-[0.325rem]">
                 <span className="text-gray-600 font-medium">Incorrect Fields:</span>
                 <ul className="list-disc list-inside text-gray-700">
                   {validationData.incorrectFields.map((field, idx) => (
-                    <li key={idx} className="text-[0.4875rem] text-gray-700">{field}</li>
+                    <li key={idx} className="text-[11px] text-gray-700">{field}</li>
                   ))}
                 </ul>
               </div>
             )}
             <div className="border-t border-gray-200 pt-[0.325rem] mt-[0.325rem]">
-              <div className="text-[0.4875rem] space-y-[0.1625rem]">
+              <div className="text-[11px] space-y-[0.1625rem]">
                 {validationData.nameKH && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Name KH:</span>
@@ -203,7 +203,7 @@ export function ModernToastContent({
         <div className="border-t border-gray-200 pt-[0.4875rem] mb-[0.4875rem]">
           <div className="grid grid-cols-1 gap-[0.325rem]">
             {Object.entries(details).map(([key, value]) => (
-              <div key={key} className="flex justify-between text-[0.4875rem]">
+              <div key={key} className="flex justify-between text-[11px]">
                 <span className="text-gray-600 font-medium">{key}:</span>
                 <span className="text-gray-800 font-mono">{String(value)}</span>
               </div>
@@ -214,9 +214,9 @@ export function ModernToastContent({
 
       {/* Footer with Timestamp */}
       <div className="border-t border-gray-200 pt-[0.325rem] mt-[0.4875rem]">
-        <div className="flex justify-between text-[0.4875rem]">
+        <div className="flex justify-between text-[11px]">
           <span className="text-gray-500">Time</span>
-          <span className="text-gray-700 text-[0.4875rem]">{timestamp}</span>
+          <span className="text-gray-700 text-[11px]">{timestamp}</span>
         </div>
       </div>
     </div>

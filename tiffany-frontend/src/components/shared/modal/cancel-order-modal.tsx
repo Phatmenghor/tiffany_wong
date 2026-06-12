@@ -114,12 +114,12 @@ export function CancelOrderModal({
             {/* Order Information Display */}
             <div className="space-y-[0.4875rem] p-[0.65rem] bg-muted rounded-[0.325rem] border border-muted-foreground/20">
               <div className="flex items-center justify-between">
-                <span className="text-[0.56875rem] text-muted-foreground">Order Number:</span>
-                <span className="text-[0.56875rem] font-semibold text-foreground">#{orderNumber}</span>
+                <span className="text-[11px] text-muted-foreground">Order Number:</span>
+                <span className="text-[11px] font-semibold text-foreground">#{orderNumber}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[0.56875rem] text-muted-foreground">New Status:</span>
-                <span className="text-[0.56875rem] font-semibold px-[0.40625rem] py-[0.1625rem] rounded-[0.24375rem] bg-red-100 text-red-800 border border-red-300">
+                <span className="text-[11px] text-muted-foreground">New Status:</span>
+                <span className="text-[11px] font-semibold px-[0.40625rem] py-[0.1625rem] rounded-[0.24375rem] bg-red-100 text-red-800 border border-red-300">
                   CANCELLED
                 </span>
               </div>
@@ -144,7 +144,7 @@ export function CancelOrderModal({
                 rows={4}
                 error={errors.customerNote}
               />
-              <p className="text-[0.4875rem] text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground">
                 This note will be recorded with the cancellation and may help us improve our service.
               </p>
             </div>

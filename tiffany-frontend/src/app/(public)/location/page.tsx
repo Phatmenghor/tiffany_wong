@@ -270,7 +270,7 @@ export default function LocationPage() {
           {/* Loading spinner */}
           <div className="flex flex-col items-center justify-center mt-[0.975rem] py-[0.975rem]">
             <Loader2 className="h-[0.975rem] w-[0.975rem] animate-spin text-primary mb-[0.325rem]" />
-            <p className="text-[0.4875rem] sm:text-[0.56875rem] text-muted-foreground">
+            <p className="text-[11px] sm:text-[11px] text-muted-foreground">
               Loading more locations...
             </p>
           </div>
@@ -284,7 +284,7 @@ export default function LocationPage() {
 
       {/* End of locations message */}
       {!locationPagination.hasMore && locations.length > 0 && (
-        <div className="text-center py-[0.65rem] text-[0.56875rem] text-muted-foreground">
+        <div className="text-center py-[0.65rem] text-[11px] text-muted-foreground">
           You've seen it all!
         </div>
       )}

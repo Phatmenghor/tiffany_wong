@@ -201,7 +201,7 @@ export function CustomDropdownMenu({
               <div key={sectionIndex}>
                 {/* Section Label */}
                 {section.label && (
-                  <div className="px-[0.4875rem] py-[0.325rem] text-[0.4875rem] font-semibold text-muted-foreground uppercase tracking-wider">
+                  <div className="px-[0.4875rem] py-[0.325rem] text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                     {section.label}
                   </div>
                 )}
@@ -212,7 +212,7 @@ export function CustomDropdownMenu({
                     <button
                       onClick={() => handleItemClick(item.onClick)}
                       className={cn(
-                        "w-full flex items-center px-[0.4875rem] py-[0.325rem] text-[0.56875rem] transition-colors cursor-pointer",
+                        "w-full flex items-center px-[0.4875rem] py-[0.325rem] text-[11px] transition-colors cursor-pointer",
                         "hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary focus:outline-none",
                         item.variant === "destructive"
                           ? "text-destructive hover:bg-destructive/10 hover:text-destructive focus:bg-destructive/10 focus:text-destructive"

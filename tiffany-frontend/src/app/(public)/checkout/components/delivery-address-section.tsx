@@ -17,7 +17,7 @@ export function DeliveryAddressSection({
   return (
     <div className="bg-card border rounded-[0.65rem] p-[0.65rem] sm:p-[0.8125rem]">
       <div className="flex items-center justify-between mb-[0.65rem]">
-        <h2 className="text-[0.73125rem] font-bold flex items-center gap-[0.325rem]">
+        <h2 className="text-[13px] font-bold flex items-center gap-[0.325rem]">
           <MapPin className="h-[0.8125rem] w-[0.8125rem]" />
           Delivery / Pickup
         </h2>

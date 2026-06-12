@@ -86,8 +86,8 @@ export function LoginModal({ open, onOpenChange, onRegisterClick }: LoginModalPr
         {/* Header */}
         <DialogHeader className="text-left">
           <div>
-            <DialogTitle className="text-[0.975rem]">{businessName}</DialogTitle>
-            <p className="text-[0.56875rem] text-muted-foreground mt-[0.1625rem]">
+            <DialogTitle className="text-[14px]">{businessName}</DialogTitle>
+            <p className="text-[11px] text-muted-foreground mt-[0.1625rem]">
               Sign in to your account
             </p>
           </div>
@@ -130,7 +130,7 @@ export function LoginModal({ open, onOpenChange, onRegisterClick }: LoginModalPr
             </Button>
           </DialogFooter>
 
-          <p className="text-center text-[0.56875rem] text-muted-foreground">
+          <p className="text-center text-[11px] text-muted-foreground">
             No account?{" "}
             <button
               type="button"

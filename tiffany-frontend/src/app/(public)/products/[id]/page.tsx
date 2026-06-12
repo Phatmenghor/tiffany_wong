@@ -441,7 +441,7 @@ export default function ProductDetailPage() {
   if (!product) {
     return (
       <PageContainer className="py-[2.6rem] text-center">
-        <h2 className="text-[0.8125rem] font-bold mb-[0.65rem]">Product Not Found</h2>
+        <h2 className="text-[13px] font-bold mb-[0.65rem]">Product Not Found</h2>
         <Button onClick={() => router.back()}>Go Back</Button>
       </PageContainer>
     );

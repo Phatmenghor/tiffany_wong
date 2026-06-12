@@ -51,17 +51,17 @@ export function Footer() {
                   className="object-cover rounded-[0.1625rem]"
                 />
               </div>
-              <span className="font-bold text-[0.73125rem] text-white">{businessName}</span>
+              <span className="font-bold text-[13px] text-white">{businessName}</span>
             </div>
             {isHydrated && businessDescription && (
-              <p className="text-white/80 text-[0.56875rem] leading-relaxed">{businessDescription}</p>
+              <p className="text-white/80 text-[11px] leading-relaxed">{businessDescription}</p>
             )}
           </div>
 
           {/* Contact */}
           <div className="space-y-[0.65rem]">
-            <h3 className="font-semibold text-white text-[0.65rem]">Contact Info</h3>
-            <div className="space-y-[0.4875rem] text-[0.56875rem]">
+            <h3 className="font-semibold text-white text-[12px]">Contact Info</h3>
+            <div className="space-y-[0.4875rem] text-[11px]">
               {contactAddress && (
                 <div className="flex gap-[0.4875rem]">
                   <MapPin className="w-[0.8125rem] h-[0.8125rem] text-white flex-shrink-0 mt-[0.08125rem]" />
@@ -90,8 +90,8 @@ export function Footer() {
 
           {/* Social Media */}
           <div className="space-y-[0.65rem]">
-            <h3 className="font-semibold text-white text-[0.65rem]">Follow Us</h3>
-            <div className="space-y-[0.325rem] text-[0.56875rem]">
+            <h3 className="font-semibold text-white text-[12px]">Follow Us</h3>
+            <div className="space-y-[0.325rem] text-[11px]">
               {socialLinks.map((s) => (
                 <a
                   key={s.label}

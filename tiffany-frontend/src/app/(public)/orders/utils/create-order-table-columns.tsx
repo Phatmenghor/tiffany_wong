@@ -22,7 +22,7 @@ export function createOrderTableColumns(
       minWidth: "40px",
       maxWidth: "60px",
       render: (_, index) => (
-        <span className="font-medium text-[0.4875rem]">
+        <span className="font-medium text-[11px]">
           {indexDisplay(pagination.pageNo || 1, pagination.pageSize || 15, index + 1)}
         </span>
       ),
@@ -33,7 +33,7 @@ export function createOrderTableColumns(
       minWidth: "100px",
       maxWidth: "130px",
       render: (order) => (
-        <span className="text-[0.4875rem] font-mono font-medium">
+        <span className="text-[11px] font-mono font-medium">
           {order?.orderNumber || "---"}
         </span>
       ),
@@ -67,7 +67,7 @@ export function createOrderTableColumns(
           }
         };
         return (
-          <span className={`text-[0.4875rem] font-semibold px-[0.40625rem] py-[0.24375rem] rounded-[0.24375rem] w-fit ${getStatusColor(order?.orderStatus)}`}>
+          <span className={`text-[11px] font-semibold px-[0.40625rem] py-[0.24375rem] rounded-[0.24375rem] w-fit ${getStatusColor(order?.orderStatus)}`}>
             {getOrderStatusLabel(order?.orderStatus)}
           </span>
         );
@@ -79,7 +79,7 @@ export function createOrderTableColumns(
       minWidth: "120px",
       maxWidth: "150px",
       render: (order) => (
-        <span className="text-[0.4875rem] font-medium">
+        <span className="text-[11px] font-medium">
           {order?.paymentMethod || "---"}
         </span>
       ),
@@ -105,7 +105,7 @@ export function createOrderTableColumns(
           }
         };
         return (
-          <span className={`text-[0.4875rem] font-semibold px-[0.40625rem] py-[0.24375rem] rounded-[0.24375rem] w-fit ${getPaymentStatusColor(order?.paymentStatus)}`}>
+          <span className={`text-[11px] font-semibold px-[0.40625rem] py-[0.24375rem] rounded-[0.24375rem] w-fit ${getPaymentStatusColor(order?.paymentStatus)}`}>
             {order?.paymentStatus || "---"}
           </span>
         );
@@ -117,7 +117,7 @@ export function createOrderTableColumns(
       minWidth: "80px",
       maxWidth: "110px",
       render: (order) => (
-        <span className="text-[0.4875rem] font-medium">
+        <span className="text-[11px] font-medium">
           {order?.items?.length || 0}
         </span>
       ),
@@ -129,11 +129,11 @@ export function createOrderTableColumns(
       maxWidth: "140px",
       render: (order) => (
         <div className="flex flex-col">
-          <span className="text-[0.4875rem] font-bold text-green-600">
+          <span className="text-[11px] font-bold text-green-600">
             {formatCurrency(order?.totalAmount || 0)}
           </span>
           {order?.discountAmount && order.discountAmount > 0 && (
-            <span className="text-[0.4875rem] text-red-600 font-medium">
+            <span className="text-[11px] text-red-600 font-medium">
               Save {formatCurrency(order.discountAmount)}
             </span>
           )}
@@ -146,7 +146,7 @@ export function createOrderTableColumns(
       minWidth: "140px",
       maxWidth: "170px",
       render: (order) => (
-        <span className="text-[0.4875rem] text-muted-foreground">
+        <span className="text-[11px] text-muted-foreground">
           {dateTimeFormat(order?.createdAt)}
         </span>
       ),

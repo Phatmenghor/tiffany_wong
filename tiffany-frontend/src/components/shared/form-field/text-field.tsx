@@ -26,9 +26,10 @@ interface TextFieldProps {
   min?: number;
   max?: number;
   step?: number | string;
-  allowZero?: boolean; // New prop: whether 0 is a valid value (default true)
-  pattern?: string; // New prop: regex pattern for input validation
-  onCustomChange?: (value: string) => void; // New prop: custom onChange handler
+  allowZero?: boolean;
+  pattern?: string;
+  onCustomChange?: (value: string) => void;
+  autoComplete?: string;
 }
 
 export function TextField({
@@ -45,9 +46,10 @@ export function TextField({
   min,
   max,
   step,
-  allowZero = true, // Default: 0 is valid
+  allowZero = true,
   pattern,
   onCustomChange,
+  autoComplete = "off",
 }: TextFieldProps) {
   return (
     <div className={`space-y-[0.325rem] ${className}`}>
@@ -68,7 +70,7 @@ export function TextField({
             min={min}
             max={max}
             step={step}
-            autoComplete="off"
+            autoComplete={autoComplete}
             onChange={(e) => {
               if (valueAsNumber && type === "number") {
                 const value = e.target.valueAsNumber;

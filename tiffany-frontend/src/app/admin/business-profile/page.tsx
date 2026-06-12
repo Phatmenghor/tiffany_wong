@@ -170,8 +170,8 @@ export default function BusinessProfileEditorPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-[0.4875rem] mb-[0.65rem] sm:mb-[1.3rem]">
         <div>
-          <h1 className="text-[0.8125rem] sm:text-[1.21875rem] font-bold">Business Profile</h1>
-          <p className="text-[0.56875rem] text-gray-600 mt-[0.1625rem]">
+          <h1 className="text-[13px] sm:text-[1.21875rem] font-bold">Business Profile</h1>
+          <p className="text-[11px] text-gray-600 mt-[0.1625rem]">
             Customize your business portfolio and showcase your brand
           </p>
         </div>
@@ -208,7 +208,7 @@ export default function BusinessProfileEditorPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-[0.4875rem] px-[0.65rem] text-[0.56875rem] font-medium whitespace-nowrap border-b-2 transition-colors ${
+              className={`py-[0.4875rem] px-[0.65rem] text-[11px] font-medium whitespace-nowrap border-b-2 transition-colors ${
                 activeTab === tab.id
                   ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-600 hover:text-gray-900"
@@ -230,7 +230,7 @@ export default function BusinessProfileEditorPage() {
               </CardHeader>
               <CardContent className="space-y-[0.65rem]">
                 <div>
-                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                  <label className="block text-[11px] font-medium mb-[0.325rem]">
                     Business Name *
                   </label>
                   <Controller
@@ -242,14 +242,14 @@ export default function BusinessProfileEditorPage() {
                     )}
                   />
                   {errors.businessName && (
-                    <p className="text-red-600 text-[0.56875rem] mt-[0.1625rem]">
+                    <p className="text-red-600 text-[11px] mt-[0.1625rem]">
                       {errors.businessName.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                  <label className="block text-[11px] font-medium mb-[0.325rem]">
                     Tagline
                   </label>
                   <Controller
@@ -263,7 +263,7 @@ export default function BusinessProfileEditorPage() {
 
                 <div className="grid grid-cols-2 gap-[0.65rem]">
                   <div>
-                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                    <label className="block text-[11px] font-medium mb-[0.325rem]">
                       Business Type *
                     </label>
                     <Controller
@@ -285,7 +285,7 @@ export default function BusinessProfileEditorPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                    <label className="block text-[11px] font-medium mb-[0.325rem]">
                       Industry *
                     </label>
                     <Controller
@@ -300,7 +300,7 @@ export default function BusinessProfileEditorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                  <label className="block text-[11px] font-medium mb-[0.325rem]">
                     About Your Business *
                   </label>
                   <Controller
@@ -316,7 +316,7 @@ export default function BusinessProfileEditorPage() {
                     )}
                   />
                   {errors.description && (
-                    <p className="text-red-600 text-[0.56875rem] mt-[0.1625rem]">
+                    <p className="text-red-600 text-[11px] mt-[0.1625rem]">
                       {errors.description.message}
                     </p>
                   )}
@@ -335,7 +335,7 @@ export default function BusinessProfileEditorPage() {
               </CardHeader>
               <CardContent className="space-y-[0.65rem]">
                 <div>
-                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                  <label className="block text-[11px] font-medium mb-[0.325rem]">
                     Email *
                   </label>
                   <Controller
@@ -357,14 +357,14 @@ export default function BusinessProfileEditorPage() {
                     )}
                   />
                   {errors.email && (
-                    <p className="text-red-600 text-[0.56875rem] mt-[0.1625rem]">
+                    <p className="text-red-600 text-[11px] mt-[0.1625rem]">
                       {errors.email.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                  <label className="block text-[11px] font-medium mb-[0.325rem]">
                     Phone *
                   </label>
                   <Controller
@@ -378,7 +378,7 @@ export default function BusinessProfileEditorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                  <label className="block text-[11px] font-medium mb-[0.325rem]">
                     WhatsApp (optional)
                   </label>
                   <Controller
@@ -391,7 +391,7 @@ export default function BusinessProfileEditorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                  <label className="block text-[11px] font-medium mb-[0.325rem]">
                     Street Address *
                   </label>
                   <Controller
@@ -406,7 +406,7 @@ export default function BusinessProfileEditorPage() {
 
                 <div className="grid grid-cols-2 gap-[0.65rem]">
                   <div>
-                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                    <label className="block text-[11px] font-medium mb-[0.325rem]">
                       City *
                     </label>
                     <Controller
@@ -419,7 +419,7 @@ export default function BusinessProfileEditorPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                    <label className="block text-[11px] font-medium mb-[0.325rem]">
                       State/Province
                     </label>
                     <Controller
@@ -434,7 +434,7 @@ export default function BusinessProfileEditorPage() {
 
                 <div className="grid grid-cols-2 gap-[0.65rem]">
                   <div>
-                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                    <label className="block text-[11px] font-medium mb-[0.325rem]">
                       Country *
                     </label>
                     <Controller
@@ -447,7 +447,7 @@ export default function BusinessProfileEditorPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                    <label className="block text-[11px] font-medium mb-[0.325rem]">
                       Postal Code
                     </label>
                     <Controller
@@ -470,7 +470,7 @@ export default function BusinessProfileEditorPage() {
                 <div className="space-y-[0.4875rem]">
                   {profile.businessHours?.map((hours, index) => (
                     <div key={hours.day} className="flex flex-wrap items-center gap-[0.325rem]">
-                      <div className="w-[3.9rem] font-medium text-[0.56875rem]">
+                      <div className="w-[3.9rem] font-medium text-[11px]">
                         {hours.day.charAt(0) + hours.day.slice(1).toLowerCase()}
                       </div>
                       <input
@@ -497,7 +497,7 @@ export default function BusinessProfileEditorPage() {
                         </>
                       )}
                       {!hours.isOpen && (
-                        <span className="text-gray-500 text-[0.56875rem]">Closed</span>
+                        <span className="text-gray-500 text-[11px]">Closed</span>
                       )}
                     </div>
                   ))}
@@ -516,30 +516,30 @@ export default function BusinessProfileEditorPage() {
               </CardHeader>
               <CardContent className="space-y-[0.975rem]">
                 <div>
-                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                  <label className="block text-[11px] font-medium mb-[0.325rem]">
                     Cover Image
                   </label>
                   <div className="border-2 border-dashed rounded-[0.325rem] p-[1.3rem] text-center hover:border-orange-500 transition-colors cursor-pointer">
                     <Upload className="w-[1.3rem] h-[1.3rem] mx-auto text-gray-400 mb-[0.325rem]" />
-                    <p className="text-[0.56875rem] text-gray-600">
+                    <p className="text-[11px] text-gray-600">
                       Click to upload or drag and drop
                     </p>
-                    <p className="text-[0.4875rem] text-gray-500 mt-[0.1625rem]">
+                    <p className="text-[11px] text-gray-500 mt-[0.1625rem]">
                       Recommended: 1200x400px
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                  <label className="block text-[11px] font-medium mb-[0.325rem]">
                     Business Logo
                   </label>
                   <div className="border-2 border-dashed rounded-[0.325rem] p-[1.3rem] text-center hover:border-orange-500 transition-colors cursor-pointer">
                     <Upload className="w-[1.3rem] h-[1.3rem] mx-auto text-gray-400 mb-[0.325rem]" />
-                    <p className="text-[0.56875rem] text-gray-600">
+                    <p className="text-[11px] text-gray-600">
                       Click to upload or drag and drop
                     </p>
-                    <p className="text-[0.4875rem] text-gray-500 mt-[0.1625rem]">
+                    <p className="text-[11px] text-gray-500 mt-[0.1625rem]">
                       Recommended: Square image, 400x400px
                     </p>
                   </div>
@@ -574,7 +574,7 @@ export default function BusinessProfileEditorPage() {
                   <div className="aspect-square border-2 border-dashed rounded-[0.325rem] flex items-center justify-center cursor-pointer hover:border-orange-500 transition-colors">
                     <div className="text-center">
                       <Plus className="w-[0.975rem] h-[0.975rem] mx-auto text-gray-400" />
-                      <p className="text-[0.4875rem] text-gray-500 mt-[0.1625rem]">Add Photo</p>
+                      <p className="text-[11px] text-gray-500 mt-[0.1625rem]">Add Photo</p>
                     </div>
                   </div>
                 </div>
@@ -591,7 +591,7 @@ export default function BusinessProfileEditorPage() {
             </CardHeader>
             <CardContent className="space-y-[0.65rem] max-w-2xl">
               <div>
-                <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                <label className="block text-[11px] font-medium mb-[0.325rem]">
                   Website
                 </label>
                 <Controller
@@ -607,7 +607,7 @@ export default function BusinessProfileEditorPage() {
               </div>
 
               <div>
-                <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                <label className="block text-[11px] font-medium mb-[0.325rem]">
                   Facebook
                 </label>
                 <Controller
@@ -623,7 +623,7 @@ export default function BusinessProfileEditorPage() {
               </div>
 
               <div>
-                <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                <label className="block text-[11px] font-medium mb-[0.325rem]">
                   Instagram
                 </label>
                 <Controller
@@ -639,7 +639,7 @@ export default function BusinessProfileEditorPage() {
               </div>
 
               <div>
-                <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                <label className="block text-[11px] font-medium mb-[0.325rem]">
                   Twitter
                 </label>
                 <Controller
@@ -655,7 +655,7 @@ export default function BusinessProfileEditorPage() {
               </div>
 
               <div>
-                <label className="block text-[0.56875rem] font-medium mb-[0.325rem]">
+                <label className="block text-[11px] font-medium mb-[0.325rem]">
                   LinkedIn
                 </label>
                 <Controller

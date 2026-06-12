@@ -76,7 +76,7 @@ export function CategoryCard({ category, className }: CategoryCardProps) {
 
           {/* Category Name - Clean typography */}
           <div className="text-center w-full">
-            <h3 className="font-semibold text-[0.56875rem] sm:text-[0.65rem] line-clamp-2 text-foreground group-hover:text-primary transition-colors leading-snug">
+            <h3 className="font-semibold text-[11px] sm:text-[12px] line-clamp-2 text-foreground group-hover:text-primary transition-colors leading-snug">
               {category.name}
             </h3>
           </div>

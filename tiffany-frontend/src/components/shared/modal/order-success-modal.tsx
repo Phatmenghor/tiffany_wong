@@ -35,8 +35,8 @@ export function OrderSuccessModal({
           <div className="w-[3.25rem] h-[3.25rem] rounded-full bg-white/20 flex items-center justify-center mb-[0.8125rem] ring-4 ring-white/30">
             <CheckCircle2 className="w-[1.7875rem] h-[1.7875rem] text-white" strokeWidth={2} />
           </div>
-          <h2 className="text-[0.975rem] font-bold text-white tracking-tight">Order Placed!</h2>
-          <p className="text-green-100 text-[0.65rem] mt-[0.24375rem]">Your order has been confirmed</p>
+          <h2 className="text-[14px] font-bold text-white tracking-tight">Order Placed!</h2>
+          <p className="text-green-100 text-[12px] mt-[0.24375rem]">Your order has been confirmed</p>
         </div>
 
         {/* Card pulled up over the banner */}
@@ -47,8 +47,8 @@ export function OrderSuccessModal({
             <div className="flex items-center gap-[0.4875rem] bg-muted/50 rounded-[0.4875rem] px-[0.8125rem] py-[0.65rem]">
               <Receipt className="w-[0.8125rem] h-[0.8125rem] text-muted-foreground shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-[0.4875rem] uppercase tracking-widest text-muted-foreground font-medium">Order Number</p>
-                <p className="text-[0.65rem] font-mono font-bold text-foreground truncate">{orderNumber}</p>
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground font-medium">Order Number</p>
+                <p className="text-[12px] font-mono font-bold text-foreground truncate">{orderNumber}</p>
               </div>
             </div>
           )}
@@ -57,39 +57,39 @@ export function OrderSuccessModal({
           <div className="divide-y divide-border rounded-[0.4875rem] border overflow-hidden">
             {typeof itemCount === "number" && (
               <div className="flex items-center justify-between px-[0.8125rem] py-[0.56875rem] bg-card">
-                <span className="flex items-center gap-[0.325rem] text-[0.56875rem] text-muted-foreground">
+                <span className="flex items-center gap-[0.325rem] text-[11px] text-muted-foreground">
                   <Package className="w-[0.65rem] h-[0.65rem]" />
                   Items
                 </span>
-                <span className="text-[0.56875rem] font-semibold">
+                <span className="text-[11px] font-semibold">
                   {itemCount} {itemCount === 1 ? "item" : "items"}
                 </span>
               </div>
             )}
             {paymentMethod && (
               <div className="flex items-center justify-between px-[0.8125rem] py-[0.56875rem] bg-card">
-                <span className="flex items-center gap-[0.325rem] text-[0.56875rem] text-muted-foreground">
+                <span className="flex items-center gap-[0.325rem] text-[11px] text-muted-foreground">
                   <CreditCard className="w-[0.65rem] h-[0.65rem]" />
                   Payment
                 </span>
-                <span className="text-[0.56875rem] font-semibold">{paymentMethod}</span>
+                <span className="text-[11px] font-semibold">{paymentMethod}</span>
               </div>
             )}
             {typeof discountAmount === "number" && discountAmount > 0 && (
               <div className="flex items-center justify-between px-[0.8125rem] py-[0.56875rem] bg-card">
-                <span className="flex items-center gap-[0.325rem] text-[0.56875rem] text-muted-foreground">
+                <span className="flex items-center gap-[0.325rem] text-[11px] text-muted-foreground">
                   <Tag className="w-[0.65rem] h-[0.65rem]" />
                   Discount
                 </span>
-                <span className="text-[0.56875rem] font-semibold text-red-500">
+                <span className="text-[11px] font-semibold text-red-500">
                   -{formatCurrency(discountAmount)}
                 </span>
               </div>
             )}
             {typeof totalAmount === "number" && (
               <div className="flex items-center justify-between px-[0.8125rem] py-[0.65rem] bg-green-50 dark:bg-green-950/20">
-                <span className="text-[0.65rem] font-bold text-foreground">Total Paid</span>
-                <span className="text-[0.73125rem] font-bold text-green-600">
+                <span className="text-[12px] font-bold text-foreground">Total Paid</span>
+                <span className="text-[13px] font-bold text-green-600">
                   {formatCurrency(totalAmount)}
                 </span>
               </div>
@@ -100,14 +100,14 @@ export function OrderSuccessModal({
           <div className="flex flex-col gap-[0.4875rem] pt-[0.1625rem]">
             <button
               onClick={onViewOrders}
-              className="w-full h-[1.95rem] rounded-[0.4875rem] bg-primary text-primary-foreground text-[0.56875rem] font-semibold flex items-center justify-center gap-[0.325rem] hover:bg-primary/90 transition-colors"
+              className="w-full h-[1.95rem] rounded-[0.4875rem] bg-primary text-primary-foreground text-[11px] font-semibold flex items-center justify-center gap-[0.325rem] hover:bg-primary/90 transition-colors"
             >
               <ShoppingBag className="w-[0.65rem] h-[0.65rem]" />
               View My Orders
             </button>
             <button
               onClick={onBackToHome}
-              className="w-full h-[1.95rem] rounded-[0.4875rem] border border-border text-[0.56875rem] font-semibold flex items-center justify-center gap-[0.325rem] hover:bg-muted/60 transition-colors"
+              className="w-full h-[1.95rem] rounded-[0.4875rem] border border-border text-[11px] font-semibold flex items-center justify-center gap-[0.325rem] hover:bg-muted/60 transition-colors"
             >
               <Home className="w-[0.65rem] h-[0.65rem]" />
               Back to Home
