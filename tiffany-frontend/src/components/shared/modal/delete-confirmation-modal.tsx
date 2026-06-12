@@ -5,10 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { FormBody } from "@/components/shared/form-field/form-body";
-import { FormFooter } from "@/components/shared/form-field/form-footer";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface DeleteConfirmationDialogProps {
@@ -71,16 +69,19 @@ export function DeleteConfirmationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-xl p-0 flex flex-col">
+      <DialogContent className="w-full max-w-sm p-0">
         <VisuallyHidden asChild>
           <DialogTitle>{title}</DialogTitle>
         </VisuallyHidden>
-        <div className="p-[0.975rem] border-b border-border bg-destructive/5">
+
+        {/* Header */}
+        <div className="px-[0.975rem] pt-[0.975rem] pb-[0.65rem] border-b border-border bg-destructive/5">
           <h2 className="text-[13px] font-semibold text-foreground">{title}</h2>
           <p className="text-[11px] text-muted-foreground mt-[0.325rem]">{description}</p>
         </div>
 
-        <FormBody>
+        {/* Body */}
+        <div className="px-[0.975rem] py-[0.65rem] space-y-[0.65rem]">
           {itemName && (
             <div className="p-[0.4875rem] bg-muted rounded-[0.325rem] border border-muted-foreground/20">
               <p className="text-[11px]">
@@ -93,15 +94,14 @@ export function DeleteConfirmationModal({
           )}
 
           {isCritical && (
-            <Alert className="border-red-200 bg-red-50">
+            <Alert className="border-red-200 bg-red-50 py-[0.4875rem]">
               <AlertTriangle className="h-[0.65rem] w-[0.65rem] text-red-600" />
-              <AlertDescription className="text-red-700">
+              <AlertDescription className="text-red-700 text-[11px]">
                 This action cannot be undone.
               </AlertDescription>
             </Alert>
           )}
 
-          {/* Confirmation Input for Critical Actions */}
           {requireConfirmation && (
             <div className="space-y-[0.325rem]">
               <Label htmlFor="confirmation" className="text-[11px] font-medium">
@@ -116,48 +116,46 @@ export function DeleteConfirmationModal({
                 value={confirmationValue}
                 onChange={(e) => setConfirmationValue(e.target.value)}
                 placeholder="Type to confirm deletion"
-                className="font-mono"
+                className="font-mono text-[12px] h-[1.95rem]"
                 autoComplete="off"
                 disabled={isDeleting || isSubmitting}
               />
             </div>
           )}
 
-          {/* Error Alert */}
           {(error || errorMessage) && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="py-[0.4875rem]">
               <AlertTriangle className="h-[0.65rem] w-[0.65rem]" />
-              <AlertDescription>{error || errorMessage}</AlertDescription>
+              <AlertDescription className="text-[11px]">{error || errorMessage}</AlertDescription>
             </Alert>
           )}
-        </FormBody>
+        </div>
 
-        <FormFooter isSubmitting={isDeleting || isSubmitting} isDirty={true}>
+        {/* Footer */}
+        <div className="px-[0.975rem] pb-[0.975rem] flex justify-end gap-[0.4875rem]">
           <Button
             variant="outline"
+            size="sm"
             onClick={onClose}
             disabled={isDeleting || isSubmitting}
-            className="flex-1 sm:flex-initial"
           >
             Cancel
           </Button>
           <Button
             variant="destructive"
+            size="sm"
             onClick={handleDelete}
             disabled={isDeleteDisabled}
-            className={`flex-1 sm:flex-initial ${
-              isCritical
-                ? "bg-red-600 hover:bg-red-700 focus:ring-red-600"
-                : "bg-red-500 hover:bg-red-600"
-            }`}
+            className={isCritical ? "bg-red-600 hover:bg-red-700" : "bg-red-500 hover:bg-red-600"}
           >
             {isDeleting || isSubmitting ? (
-              <>Deleting...</>
-            ) : (
-              <>Delete{isCritical ? " Permanently" : ""}</>
-            )}
+              <>
+                <Loader2 className="h-[0.65rem] w-[0.65rem] animate-spin mr-[0.325rem]" />
+                Deleting...
+              </>
+            ) : `Delete${isCritical ? " Permanently" : ""}`}
           </Button>
-        </FormFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
