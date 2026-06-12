@@ -187,7 +187,7 @@ export default function BannerModal({
                   <SpacesImageUpload
                     label="Banner Image"
                     value={imageUrl}
-                    onChange={(url) => setValue("imageUrl", url)}
+                    onChange={(url) => setValue("imageUrl", url, { shouldDirty: true })}
                     aspectRatio="banner"
                     required
                     error={errors.imageUrl}
