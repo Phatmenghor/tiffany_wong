@@ -69,7 +69,7 @@ export default function LoginPage() {
 
       {/* Right side — login form */}
       <div className="flex flex-1 items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-[0.65rem]">
-        <Card className="w-full max-w-md border border-gray-200 shadow-2xl">
+        <Card className="w-full max-w-sm border border-gray-200 shadow-2xl">
           <CardHeader className="space-y-[0.1625rem] pb-[0.65rem] sm:pb-[0.975rem]">
             <h1 className="text-[14px] sm:text-[1.21875rem] font-bold text-gray-900">
               Admin Panel Login
