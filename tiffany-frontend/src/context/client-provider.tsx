@@ -11,7 +11,6 @@ import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useAppDispatch } from '@/redux/store/hooks';
 import { fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
 import { AuthModalProvider } from "@/context/auth-modal-context";
-import { usePathname } from "next/navigation";
 
 interface ClientProvidersProps {
   children: ReactNode;
@@ -33,11 +32,11 @@ function AppInitializer({ children }: { children: ReactNode }) {
   const dispatch = useAppDispatch();
   const { isAuthenticated, authReady } = useAuthState();
   const [isInitialized, setIsInitialized] = useState(false);
-  const pathname = usePathname();
 
   useEffect(() => {
     // Cart is only needed for customer-facing routes, not admin
-    const isAdminRoute = pathname?.startsWith("/admin");
+    // window.location is safe here since useEffect is client-only
+    const isAdminRoute = window.location.pathname.startsWith("/admin");
     if (authReady && isAuthenticated && !isAdminRoute) {
       dispatch(fetchCart()).finally(() => {
         setIsInitialized(true);
@@ -45,8 +44,6 @@ function AppInitializer({ children }: { children: ReactNode }) {
     } else {
       setIsInitialized(true);
     }
-    // pathname intentionally excluded from deps — checked once when auth becomes ready
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authReady, isAuthenticated, dispatch]);
 
   return <>{children}</>;
