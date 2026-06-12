@@ -33,24 +33,24 @@ interface CustomSelectProps {
 
 const CUSTOM_SELECT_SIZES = {
   sm: {
-    button: "h-[1.3rem] text-[0.4875rem]",
-    icon: "h-[0.4875rem] w-[0.4875rem]",
-    item: "text-[0.4875rem] py-[0.1625rem] px-[0.325rem]",
+    button: "h-[1.4625rem] text-[11px]",
+    icon: "h-[0.65rem] w-[0.65rem]",
+    item: "text-[11px] py-[0.325rem] px-[0.4875rem]",
   },
   md: {
-    button: "h-[1.4625rem] text-[0.56875rem]",
+    button: "h-[1.625rem] text-[12px]",
     icon: "h-[0.65rem] w-[0.65rem]",
-    item: "text-[0.56875rem] py-[0.325rem] px-[0.4875rem]",
+    item: "text-[12px] py-[0.325rem] px-[0.4875rem]",
   },
   lg: {
-    button: "h-[1.625rem] text-[0.65rem]",
-    icon: "h-[0.8125rem] w-[0.8125rem]",
-    item: "text-[0.65rem] py-[0.325rem] px-[0.4875rem]",
+    button: "h-[1.625rem] text-[12px]",
+    icon: "h-[0.65rem] w-[0.65rem]",
+    item: "text-[12px] py-[0.325rem] px-[0.4875rem]",
   },
   xl: {
-    button: "h-[1.7875rem] text-[0.65rem]",
+    button: "h-[1.95rem] text-[13px]",
     icon: "h-[0.8125rem] w-[0.8125rem]",
-    item: "text-[0.65rem] py-[0.325rem] px-[0.4875rem]",
+    item: "text-[13px] py-[0.325rem] px-[0.4875rem]",
   },
 } as const;
 
@@ -77,9 +77,9 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   const selectedOption = options.find((opt) => opt.value === value);
 
   const labelSizeClass = {
-    xs: "text-[0.4875rem]",
-    sm: "text-[0.56875rem]",
-    md: "text-[0.65rem]",
+    xs: "text-[11px]",
+    sm: "text-[12px]",
+    md: "text-[12px]",
   }[labelSize];
 
   const wrapperClass = layout === "vertical"
@@ -144,7 +144,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         >
           <div className="max-h-[300px] overflow-y-auto" role="listbox">
             {options.length === 0 ? (
-              <div className="p-[0.4875rem] text-[0.56875rem] text-muted-foreground text-center">
+              <div className="p-[0.4875rem] text-[12px] text-muted-foreground text-center">
                 No options available
               </div>
             ) : (
