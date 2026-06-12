@@ -75,7 +75,7 @@ export function ComboboxSelectCategories({
 
   const sizeClasses = {
     sm: "h-[1.3rem] text-[11px]",
-    md: "h-[1.4625rem] text-[11px]",
+    md: "h-[1.625rem] text-[12px]",
     lg: "h-[1.625rem] text-[12px]",
   };
 
@@ -166,7 +166,7 @@ export function ComboboxSelectCategories({
   return (
     <div className="flex flex-col gap-[0.1625rem] w-full">
       {label && (
-        <Label className="text-[11px] font-medium text-foreground">
+        <Label className="text-[12px] font-medium text-foreground">
           {label}
           {required && <span className="text-red-500 ml-[0.1625rem]">*</span>}
         </Label>

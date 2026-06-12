@@ -137,7 +137,7 @@ export function ComboboxSelectLocation({
   return (
     <div className="space-y-[0.24375rem] w-full">
       {label && (
-        <Label className="text-[11px] font-semibold">
+        <Label className="text-[12px] font-semibold">
           {label}
           {required && <span className="text-red-500 ml-[0.1625rem]">*</span>}
         </Label>
@@ -149,7 +149,7 @@ export function ComboboxSelectLocation({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "w-full justify-between px-[0.65rem] py-[0.325rem] h-[1.7875rem] text-[11px] transition-all duration-200 border-input",
+              "w-full justify-between px-[0.4875rem] py-[0.325rem] h-[1.625rem] text-[12px] transition-all duration-200 border-input",
               "hover:bg-primary/10 hover:border-primary hover:text-primary",
               "focus:bg-primary/10 focus:border-primary focus:text-primary focus:ring-2 focus:ring-primary/30",
               open && "bg-primary/20 border-primary text-primary",

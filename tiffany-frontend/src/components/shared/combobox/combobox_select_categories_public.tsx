@@ -54,7 +54,7 @@ function ComboboxSelectCategoriesPublicComponent({
 
   const fetchedRef = useRef(false);
 
-  const sizeClasses = { sm: "h-[1.3rem] text-[11px]", md: "h-[1.4625rem] text-[11px]", lg: "h-[1.625rem] text-[12px]" };
+  const sizeClasses = { sm: "h-[1.3rem] text-[11px]", md: "h-[1.625rem] text-[12px]", lg: "h-[1.625rem] text-[12px]" };
 
   // Fetch all categories once on mount — backend returns a flat array
   useEffect(() => {
@@ -99,7 +99,7 @@ function ComboboxSelectCategoriesPublicComponent({
           <div className="flex items-center justify-center w-[1.1375rem] h-[1.1375rem] rounded-[0.325rem] bg-blue-500/10">
             <Package className="h-[0.56875rem] w-[0.56875rem] text-blue-500" />
           </div>
-          <Label className="text-[11px] font-medium text-foreground">{label}</Label>
+          <Label className="text-[12px] font-medium text-foreground">{label}</Label>
         </div>
       )}
       <Popover open={open} onOpenChange={setOpen} modal={true}>

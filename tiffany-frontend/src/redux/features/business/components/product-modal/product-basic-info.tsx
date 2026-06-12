@@ -86,7 +86,7 @@ export function ProductBasicInfo({
               name="description"
               label="Description"
               placeholder="Enter product description"
-              rows={1}
+              rows={4}
               required
               disabled={isProcessing}
               error={errors.description}
