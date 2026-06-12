@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
         errorDetails.put("suggestion", "Please verify your email and password");
 
         ApiResponse<Object> response = new ApiResponse<>("error",
-                "Invalid email or password", errorDetails);
+                "Incorrect password. Please try again.", errorDetails);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 

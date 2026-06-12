@@ -49,7 +49,7 @@ export default function LoginPage() {
       ).unwrap();
       router.replace(ROUTES.ADMIN.DASHBOARD);
     } catch (err: any) {
-      showToast.error(err?.message || error || "Login failed");
+      showToast.error(err?.message || err || error || "Login failed");
     }
   }
 

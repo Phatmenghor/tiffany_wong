@@ -52,10 +52,10 @@ public class AuthServiceImpl implements AuthService {
         log.info("Login attempt: {}", request.getUserIdentifier());
 
         User user = userRepository.findByUserIdentifierAndIsDeletedFalse(request.getUserIdentifier())
-                .orElseThrow(() -> new ValidationException("Invalid credentials"));
+                .orElseThrow(() -> new ValidationException("Account not found. Please check your email."));
 
         if (!request.getUserType().equals(user.getUserType())) {
-            throw new ValidationException("Invalid credentials");
+            throw new ValidationException("Account not found. Please check your email.");
         }
 
         Authentication authentication = authenticationManager.authenticate(

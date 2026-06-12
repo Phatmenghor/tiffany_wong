@@ -48,11 +48,11 @@ public class SecurityUtils {
     public void validateAccountStatus(User user) {
 
         if (user.getAccountStatus() == AccountStatus.LOCKED) {
-            throw new ValidationException("Account is locked");
+            throw new ValidationException("Your account is locked. Please contact support.");
         }
 
         if (user.getAccountStatus() == AccountStatus.END_WORK) {
-            throw new ValidationException("Account has been ended");
+            throw new ValidationException("Your account is inactive. Please contact support.");
         }
     }
 
