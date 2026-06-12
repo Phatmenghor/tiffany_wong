@@ -14,6 +14,7 @@ import {
   Trash2,
   Search,
   X,
+  Loader2,
 } from "lucide-react";
 import { CustomCheckbox } from "@/components/shared/common/custom-checkbox";
 import { CustomButton } from "@/components/shared/button/custom-button";
@@ -1118,7 +1119,14 @@ export default function BulkPromotionPage() {
                   variant="default"
                   className="flex-1 h-[1.625rem] sm:h-[1.7875rem] md:h-[1.625rem] lg:h-[1.7875rem] text-[11px] sm:text-[11px] md:text-[11px] lg:text-[11px] font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-[0.325rem] shadow-md hover:shadow-lg disabled:opacity-50"
                 >
-                  {isSubmitting ? "Applying..." : "Apply Promotion"}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />
+                      Applying...
+                    </>
+                  ) : (
+                    "Apply Promotion"
+                  )}
                 </CustomButton>
               </div>
             </div>
