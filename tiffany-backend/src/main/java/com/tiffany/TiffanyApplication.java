@@ -1,5 +1,6 @@
 package com.tiffany;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -12,21 +13,13 @@ import java.util.TimeZone;
 @EnableScheduling
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 @EnableTransactionManagement
+@Slf4j
 public class TiffanyApplication {
 
 	public static void main(String[] args) {
 		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Phnom_Penh"));
 		SpringApplication.run(TiffanyApplication.class, args);
-		System.out.println("""
-            
-            🇰🇭 Cambodia E-Menu Platform Started Successfully! 🇰🇭
-           
-            
-            🌐 Access Points:
-            • Application: http://localhost:8080
-            • Swagger UI: http://localhost:8080/swagger-ui.html
-            • Health Check: http://localhost:8080/actuator/health
-            
-            """);
+		log.info("Cambodia Tiffany Platform started successfully");
+		log.info("Access points - App: http://localhost:8080  Swagger: http://localhost:8080/swagger-ui.html  Health: http://localhost:8080/actuator/health");
 	}
 }

@@ -23,9 +23,11 @@ public class SystemSettingServiceImpl implements SystemSettingService {
     @Override
     @Transactional(readOnly = true)
     public SystemSettingResponse getSystemSetting() {
+        log.info("Fetching system setting");
         SystemSetting setting = systemSettingRepository.findAll().stream()
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("System setting not configured"));
+        log.info("System setting fetched: id={}", setting.getId());
         return systemSettingMapper.toResponse(setting);
     }
 

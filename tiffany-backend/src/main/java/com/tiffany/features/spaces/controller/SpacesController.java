@@ -6,6 +6,7 @@ import com.tiffany.features.spaces.service.SpacesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api/v1/spaces")
 @RequiredArgsConstructor
 @Tag(name = "Spaces Storage", description = "Image upload and delete via DigitalOcean Spaces")
+@Slf4j
 public class SpacesController {
 
     private final SpacesService spacesService;
@@ -26,19 +28,27 @@ public class SpacesController {
     public ResponseEntity<SpacesUploadResponse> upload(
             @RequestPart("file") MultipartFile file
     ) {
-        return ResponseEntity.ok(spacesService.upload(file));
+        log.info("Image upload request: filename={}, size={} bytes", file.getOriginalFilename(), file.getSize());
+        SpacesUploadResponse response = spacesService.upload(file);
+        log.info("Image uploaded: key={}", response.getKey());
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/object")
     @Operation(summary = "Delete image by object key")
     public ResponseEntity<Void> deleteByKey(@RequestParam String key) {
+        log.info("Image delete request: key={}", key);
         spacesService.deleteByKey(key);
+        log.info("Image deleted: key={}", key);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/logs")
     @Operation(summary = "Get all uploaded image logs")
     public ResponseEntity<List<SpacesImageResponse>> getLogs() {
-        return ResponseEntity.ok(spacesService.getLogs());
+        log.info("Image logs requested");
+        List<SpacesImageResponse> logs = spacesService.getLogs();
+        log.info("Image logs retrieved: count={}", logs.size());
+        return ResponseEntity.ok(logs);
     }
 }

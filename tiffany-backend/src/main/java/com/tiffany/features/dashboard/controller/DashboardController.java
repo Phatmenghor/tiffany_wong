@@ -19,24 +19,39 @@ public class DashboardController {
     @GetMapping("/summary")
     public ResponseEntity<ApiResponse<DashboardSummaryResponse>> getSummary(
             @RequestParam(defaultValue = "30D") String period) {
-        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getSummary(period)));
+        log.info("Dashboard summary request: period={}", period);
+        DashboardSummaryResponse data = dashboardService.getSummary(period);
+        log.info("Dashboard summary: todaySales={}, todayOrders={}, pending={}",
+                data.getTotalSalesToday(), data.getTotalOrdersToday(), data.getSystemAlerts());
+        return ResponseEntity.ok(ApiResponse.success("OK", data));
     }
 
     @GetMapping("/sales")
     public ResponseEntity<ApiResponse<DashboardSalesResponse>> getSales(
             @RequestParam(defaultValue = "30D") String period) {
-        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getSales(period)));
+        log.info("Dashboard sales request: period={}", period);
+        DashboardSalesResponse data = dashboardService.getSales(period);
+        log.info("Dashboard sales: period={}, totalRevenue={}, totalOrders={}",
+                period, data.getTotalRevenue(), data.getTotalOrders());
+        return ResponseEntity.ok(ApiResponse.success("OK", data));
     }
 
     @GetMapping("/payments")
     public ResponseEntity<ApiResponse<DashboardPaymentsResponse>> getPayments(
             @RequestParam(defaultValue = "30D") String period) {
-        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getPayments(period)));
+        log.info("Dashboard payments request: period={}", period);
+        DashboardPaymentsResponse data = dashboardService.getPayments(period);
+        log.info("Dashboard payments: period={}, totalAmount={}, totalCount={}",
+                period, data.getTotalAmount(), data.getTotalCount());
+        return ResponseEntity.ok(ApiResponse.success("OK", data));
     }
 
     @GetMapping("/hourly-sales")
     public ResponseEntity<ApiResponse<DashboardHourlySalesResponse>> getHourlySales(
             @RequestParam(defaultValue = "TODAY") String period) {
-        return ResponseEntity.ok(ApiResponse.success("OK", dashboardService.getHourlySales(period)));
+        log.info("Dashboard hourly-sales request: period={}", period);
+        DashboardHourlySalesResponse data = dashboardService.getHourlySales(period);
+        log.info("Dashboard hourly-sales: peakHour={}, currentHour={}", data.getPeakHour(), data.getCurrentHour());
+        return ResponseEntity.ok(ApiResponse.success("OK", data));
     }
 }

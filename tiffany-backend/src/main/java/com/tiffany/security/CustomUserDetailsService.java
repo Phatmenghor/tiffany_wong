@@ -3,6 +3,7 @@ package com.tiffany.security;
 import com.tiffany.features.auth.models.User;
 import com.tiffany.features.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +17,7 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -26,9 +28,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String userIdentifier) throws UsernameNotFoundException {
+        log.debug("Loading user details: identifier={}", userIdentifier);
         User user = userRepository.findByUserIdentifierAndIsDeletedFalse(userIdentifier)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userIdentifier));
+                .orElseThrow(() -> {
+                    log.warn("User not found during authentication: identifier={}", userIdentifier);
+                    return new UsernameNotFoundException("User not found: " + userIdentifier);
+                });
 
+        log.debug("User details loaded: identifier={}, role={}", userIdentifier, user.getUserRole());
         return new org.springframework.security.core.userdetails.User(
                 user.getUserIdentifier(),
                 user.getPassword(),
