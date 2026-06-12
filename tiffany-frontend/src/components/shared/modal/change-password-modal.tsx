@@ -12,8 +12,12 @@ import { FormBody } from "@/components/shared/form-field/form-body";
 import { FormFooter } from "@/components/shared/form-field/form-footer";
 import { CancelButton } from "@/components/shared/form-field/cancel-button";
 import { SubmitButton } from "@/components/shared/form-field/submid-button";
+import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { changePasswordService } from "@/redux/features/auth/store/thunks/auth-thunks";
+import { ROUTES } from "@/constants/app-routes/routes";
+import { clearToken } from "@/utils/local-storage/token";
+import { clearUserInfo } from "@/utils/local-storage/userInfo";
 import { selectError } from "@/redux/features/auth/store/selectors/auth-selectors";
 import { clearError } from "@/redux/features/auth/store/slice/auth-slice";
 import { showToast } from "@/components/shared/common/show-toast";
@@ -29,6 +33,7 @@ type Props = {
 
 export default function ChangePasswordModal({ isOpen, onClose }: Props) {
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const reduxError = useAppSelector(selectError);
 
@@ -72,8 +77,14 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
 
       await dispatch(changePasswordService(payload)).unwrap();
 
-      showToast.success("Password changed successfully");
+      // Changing the password invalidates all tokens server-side, so the
+      // current session is dead. Log out and send the user to login to
+      // re-authenticate (avoids the 400s from using a revoked token).
+      showToast.success("Password changed successfully. Please sign in again.");
       handleClose();
+      clearToken();
+      clearUserInfo();
+      router.replace(ROUTES.AUTH.LOGIN);
     } catch (error: any) {
       console.error("Error changing password:", error);
       showToast.error(error || "Failed to change password");
