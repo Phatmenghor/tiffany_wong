@@ -190,23 +190,45 @@ export const productTableColumns = ({
       maxWidth: "120px",
       truncate: true,
       render: (product) => {
-        const value = product?.displayPromotionValue;
-        const type = product?.displayPromotionType;
+        const isActive = !!product?.displayPromotionValue;
 
-        let displayValue = "---";
-        if (value) {
-          if (type === "PERCENTAGE") {
-            displayValue = `${value}%`;
-          } else if (type === "FIXED_AMOUNT") {
-            displayValue = `$${parseFloat(value.toString()).toFixed(2)}`;
-          } else {
-            displayValue = value.toString();
-          }
+        // Active promotion uses the display* fields; a scheduled (not yet
+        // started) promotion falls back to the raw promotion fields.
+        const isUpcoming =
+          !isActive &&
+          !!product?.promotionType &&
+          product.promotionType !== "NONE" &&
+          !!product?.promotionValue;
+
+        const value = isActive
+          ? product?.displayPromotionValue
+          : product?.promotionValue;
+        const type = isActive
+          ? product?.displayPromotionType
+          : product?.promotionType;
+
+        if (!value || (!isActive && !isUpcoming)) {
+          return <span className="font-semibold text-red-600">---</span>;
         }
 
+        const displayValue =
+          type === "PERCENTAGE"
+            ? `${value}%`
+            : type === "FIXED_AMOUNT"
+              ? `$${parseFloat(value.toString()).toFixed(2)}`
+              : value.toString();
+
         return (
-          <span className="font-semibold text-red-600">
-            {displayValue}
+          <span className="inline-flex items-center gap-[0.325rem]">
+            <span
+              className={cn(
+                "font-semibold",
+                isUpcoming ? "text-muted-foreground" : "text-red-600",
+              )}
+            >
+              {displayValue}
+            </span>
+            {isUpcoming && <Badge variant="secondary">Future</Badge>}
           </span>
         );
       },

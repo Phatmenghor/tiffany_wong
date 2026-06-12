@@ -191,6 +191,35 @@ export function ProductDetailModal({
                       />
                     </>
                   )}
+                  {!productData.hasPromotion &&
+                    productData.promotionType &&
+                    productData.promotionType !== "NONE" && (
+                      <>
+                        <DisplayField
+                          label="Discount"
+                          value={
+                            <span className="inline-flex items-center gap-[0.325rem]">
+                              {productData.promotionType === "PERCENTAGE"
+                                ? `-${productData.promotionValue}%`
+                                : `-${formatCurrency(productData.promotionValue || 0)}`}
+                              <Badge variant="secondary">Future promotion</Badge>
+                            </span>
+                          }
+                        />
+                        <DisplayField
+                          label="Promotion Valid From"
+                          value={dateTimeFormat(
+                            productData.promotionFromDate ?? "",
+                          )}
+                        />
+                        <DisplayField
+                          label="Promotion Valid Until"
+                          value={dateTimeFormat(
+                            productData.promotionToDate ?? "",
+                          )}
+                        />
+                      </>
+                    )}
                 </div>
               </CardContent>
             </Card>
