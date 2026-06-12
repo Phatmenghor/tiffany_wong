@@ -95,7 +95,7 @@ export function OrderDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">Order Details Loading</DialogTitle>
-        <DialogContent className="w-full sm:max-w-6xl max-h-[95vh] p-0 gap-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full sm:max-w-3xl max-h-[95vh] p-0 gap-0 flex flex-col overflow-hidden">
           <div className="flex items-center justify-center h-[10.4rem]">
             <Loading />
           </div>
@@ -108,7 +108,7 @@ export function OrderDetailModal({
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogTitle className="sr-only">Order Details</DialogTitle>
-        <DialogContent className="w-full sm:max-w-6xl max-h-[95vh] p-0 gap-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full sm:max-w-3xl max-h-[95vh] p-0 gap-0 flex flex-col overflow-hidden">
           <div className="flex items-center justify-center h-[10.4rem] flex-col gap-[0.325rem]">
             <p className="text-[11px] font-medium text-muted-foreground">
               {detailError ? `Error: ${detailError}` : "No order data available"}
@@ -131,7 +131,7 @@ export function OrderDetailModal({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogTitle className="sr-only">Order Details - {orderData.orderNumber}</DialogTitle>
 
-      <DialogContent className="w-full sm:max-w-6xl max-h-[95vh] p-0 gap-0 flex flex-col overflow-hidden">
+      <DialogContent className="w-full sm:max-w-3xl max-h-[95vh] p-0 gap-0 flex flex-col overflow-hidden">
         {/* Header */}
         <div className="px-[0.65rem] py-[0.4875rem] border-b bg-muted/30 flex-shrink-0 flex items-center justify-between gap-[0.4875rem]">
           <div className="flex items-center gap-[0.4875rem] min-w-0">

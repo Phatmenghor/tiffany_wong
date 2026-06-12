@@ -188,7 +188,7 @@ export const orderAdminTableColumns = ({
           <span className="font-bold text-green-600">
             {formatCurrency(order?.totalAmount || 0)}
           </span>
-          {order?.discountAmount && order.discountAmount > 0 && (
+          {(order?.discountAmount ?? 0) > 0 && (
             <span className="text-red-600 font-medium">
               Save {formatCurrency(order.discountAmount)}
             </span>
