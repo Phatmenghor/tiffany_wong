@@ -101,7 +101,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             role="combobox"
             disabled={disabled}
             className={cn(
-              "w-full justify-between gap-[0.325rem] transition-all duration-200",
+              "w-full justify-between gap-[0.325rem] font-normal transition-all duration-200",
               // Default state
               "border-input",
               // Hover state

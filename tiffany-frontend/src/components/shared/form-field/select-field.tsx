@@ -54,7 +54,7 @@ export function SelectField<T extends FieldValues = any>({
                   role="combobox"
                   disabled={disabled || loading}
                   className={cn(
-                    "w-full justify-between h-[1.625rem] px-[0.4875rem] transition-all duration-200 border-input",
+                    "w-full justify-between h-[1.625rem] px-[0.4875rem] font-normal transition-all duration-200 border-input",
                     // Hover state
                     "hover:bg-primary/10 hover:border-primary hover:text-primary",
                     // Focus state
