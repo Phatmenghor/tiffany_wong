@@ -6,7 +6,6 @@ import com.tiffany.enums.payment.PaymentStatus;
 import com.tiffany.features.auth.models.User;
 import com.tiffany.shared.domain.BaseUUIDEntity;
 import jakarta.persistence.*;
-import org.hibernate.annotations.BatchSize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -88,14 +87,8 @@ public class Order extends BaseUUIDEntity {
     @Column(name = "payment_status", nullable = false)
     private PaymentStatus paymentStatus = PaymentStatus.UNPAID;
 
-    // Order items.
-    // @BatchSize lets Hibernate load items for many orders in a single IN(...)
-    // query instead of one query per order (N+1). This allows the paginated
-    // list query to fetch order roots at the DB level (real LIMIT/OFFSET) and
-    // load items lazily in batches, avoiding the in-memory pagination warning
-    // (HHH90003004) that a JOIN FETCH on this collection would cause.
+    // Order items (loaded via OrderRepository.fetchItemsForOrders for list views)
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @BatchSize(size = 50)
     private List<OrderItem> items = new ArrayList<>();
 
     // Business Methods

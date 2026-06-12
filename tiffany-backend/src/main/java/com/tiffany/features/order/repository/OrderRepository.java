@@ -18,6 +18,13 @@ import java.util.UUID;
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     /**
+     * Loads items for a page of orders in one query (no Pageable, so the
+     * collection fetch is safe). Paired with the root-only list queries below.
+     */
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.items WHERE o.id IN :orderIds")
+    List<Order> fetchItemsForOrders(@Param("orderIds") List<UUID> orderIds);
+
+    /**
      * Finds a non-deleted order by ID with items, products, sizes, customer, and delivery address eagerly fetched
      * NOTE: statusHistory is loaded lazily to avoid MultipleBagFetchException with multiple collections
      */
@@ -75,16 +82,8 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     Page<Order> findByCustomerIdAndIsDeletedFalseOrderByCreatedAtDesc(@Param("customerId") UUID customerId, Pageable pageable);
 
     /**
-     * Find all non-deleted orders with optional filters.
-     *
-     * Only the single-valued associations (customer @ManyToOne, deliveryAddress
-     * @OneToOne) are JOIN FETCHed, so the database can apply real LIMIT/OFFSET
-     * pagination. The items collection is intentionally NOT fetched here:
-     * JOIN FETCHing a collection together with a Pageable forces Hibernate to
-     * load the entire result set and paginate in memory (HHH90003004). Items
-     * are instead loaded lazily in a single batched query via @BatchSize on
-     * Order.items. The order-item response is built from snapshot columns, so
-     * oi.product / oi.productSize are not needed at all.
+     * Find non-deleted orders with optional filters. Fetches only single-valued
+     * associations so the DB can paginate; items are loaded via fetchItemsForOrders.
      */
     @Query(value = "SELECT o FROM Order o " +
            "LEFT JOIN FETCH o.customer c " +
@@ -106,12 +105,8 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             Pageable pageable);
 
     /**
-     * Find paginated customer orders with optional filters.
-     *
-     * Same approach as findAllWithFilters: only single-valued associations are
-     * JOIN FETCHed so the database performs real LIMIT/OFFSET pagination, while
-     * the items collection is loaded lazily in a batched query via @BatchSize
-     * on Order.items (avoids the HHH90003004 in-memory pagination warning).
+     * Find paginated customer orders with optional filters. Same approach as
+     * findAllWithFilters; items are loaded via fetchItemsForOrders.
      */
     @Query(value = "SELECT o FROM Order o " +
            "LEFT JOIN FETCH o.customer c " +

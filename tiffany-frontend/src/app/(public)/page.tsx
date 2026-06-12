@@ -76,10 +76,7 @@ export default function HomePage() {
     featuredProducts.length === 0 &&
     !featuredProductsSection.loaded;
 
-  // Guard against duplicate initial loads. The loaded/loading flags are read
-  // from the effect closure, so React StrictMode's double-invoke (dev) sees
-  // them both as false and would dispatch twice before a re-render. A ref is
-  // set synchronously, so the second invocation is skipped.
+  // Run the initial load once (guards against StrictMode double-invoke).
   const didInitialLoadRef = useRef(false);
 
   // Initial data load

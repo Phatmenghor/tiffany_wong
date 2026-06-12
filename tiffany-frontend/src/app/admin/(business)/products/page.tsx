@@ -68,11 +68,8 @@ export default function ProductPage() {
     dispatch,
   } = useProductState();
 
-  // NOTE: Do NOT reset filters in a mount effect here. State is already
-  // reset to defaults on unmount via useAdminCleanup(resetState), so the
-  // page always opens with a clean slate. A reset-on-mount effect caused a
-  // double API call: the fetch effect fired once with the current filters,
-  // then the reset mutated those filters and the fetch effect ran again.
+  // Filters are reset on unmount via useAdminCleanup(resetState); a
+  // reset-on-mount effect here would double-fetch, so it's omitted.
 
   // Local UI state for modals only
   const [modalState, setModalState] = useState({

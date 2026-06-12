@@ -131,6 +131,7 @@ public class OrderServiceImpl implements OrderService {
                 filter.getPaymentStatus(),
                 pageable
         );
+        hydrateOrderItems(page.getContent());
 
         PaginationResponse<OrderResponse> response = orderMapper.toPaginationResponse(page, paginationMapper);
         log.info("Customer orders retrieved - count: {}, total: {}", page.getNumberOfElements(), page.getTotalElements());
@@ -162,6 +163,7 @@ public class OrderServiceImpl implements OrderService {
                 filter.getPaymentStatus(),
                 pageable
         );
+        hydrateOrderItems(page.getContent());
 
         PaginationResponse<OrderResponse> response = orderMapper.toPaginationResponse(page, paginationMapper);
         log.info("Orders retrieved - count: {}, total: {}", page.getNumberOfElements(), page.getTotalElements());
@@ -214,6 +216,15 @@ public class OrderServiceImpl implements OrderService {
         log.info("Order deleted: {}", orderId);
 
         return orderMapper.toResponse(order);
+    }
+
+    /** Loads the items collection for a page of orders in a single query. */
+    private void hydrateOrderItems(List<Order> orders) {
+        if (orders == null || orders.isEmpty()) {
+            return;
+        }
+        List<UUID> orderIds = orders.stream().map(Order::getId).toList();
+        orderRepository.fetchItemsForOrders(orderIds);
     }
 
     private Order createBaseOrder(OrderCreateRequest request, UUID customerId) {
