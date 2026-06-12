@@ -547,19 +547,19 @@ export default function AdminProfilePage() {
       {/* Modals */}
       {isChangePasswordModalOpen && (
         <ChangePasswordModal
-          open={isChangePasswordModalOpen}
-          onOpenChange={setIsChangePasswordModalOpen}
+          isOpen={isChangePasswordModalOpen}
+          onClose={() => setIsChangePasswordModalOpen(false)}
         />
       )}
 
       {isDeleteDialogOpen && (
         <DeleteConfirmationModal
-          open={isDeleteDialogOpen}
-          onOpenChange={setIsDeleteDialogOpen}
-          onConfirm={handleDeleteAccount}
+          isOpen={isDeleteDialogOpen}
+          onClose={() => setIsDeleteDialogOpen(false)}
+          onDelete={handleDeleteAccount}
           title="Delete Account"
           description="Are you sure you want to delete your account? This action cannot be undone."
-          isLoading={isProfileLoading}
+          isSubmitting={isProfileLoading}
         />
       )}
 
