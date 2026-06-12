@@ -5,14 +5,13 @@ import { usePathname } from "next/navigation";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ROUTES, SIDEBAR_MENU } from "@/constants/app-routes/routes";
 import Image from "next/image";
 import { UserAvatarCard } from "../shared/avator/user-avatar-card";
 import { useIsMobile } from "@/redux/store/use-mobile";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
-import { getProfileService } from "@/redux/features/auth/store/thunks/auth-thunks";
 import { BUSINESS_SETTINGS_DEFAULTS } from "@/constants/business-settings";
 
 interface SidebarProps {
@@ -24,11 +23,9 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
 
-  const { profile, isProfileLoading, dispatch } = useAuthState();
+  const { profile } = useAuthState();
 
   const businessName = BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME;
-
-
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     "Master Data": true,
@@ -38,14 +35,6 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
     Settings: true,
   });
   const [collapsed, setCollapsed] = useState(false);
-
-  useEffect(() => {
-    if (!profile && !isProfileLoading) {
-      dispatch(getProfileService());
-    }
-    // Business settings are loaded by useBusinessTheme hook in client-provider
-    // No need to fetch here - just use Redux selectors
-  }, [profile, isProfileLoading, dispatch]);
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({
