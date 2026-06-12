@@ -62,50 +62,42 @@ export function TextField({
         render={({ field }) => (
           <Input
             {...field}
-            value={field.value ?? ""}
+            value={
+              valueAsNumber && type === "number"
+                ? (field.value === undefined || field.value === null ? "" : String(field.value))
+                : (field.value ?? "")
+            }
             id={name}
-            type={type}
+            type={valueAsNumber && type === "number" ? "text" : type}
+            inputMode={valueAsNumber && type === "number" ? "decimal" : undefined}
             placeholder={placeholder}
             disabled={disabled}
-            min={min}
-            max={max}
-            step={step}
             autoComplete={autoComplete}
             onChange={(e) => {
               if (valueAsNumber && type === "number") {
-                const value = e.target.valueAsNumber;
-
-                // Handle empty input (NaN)
-                if (isNaN(value)) {
+                const raw = e.target.value;
+                if (raw === "") {
                   field.onChange(undefined);
                   return;
                 }
-
-                // Handle zero based on allowZero prop
-                if (value === 0 && !allowZero) {
+                // Allow intermediate states like "1." while typing
+                if (!/^-?\d*\.?\d*$/.test(raw)) return;
+                const num = parseFloat(raw);
+                if (isNaN(num)) return;
+                if (num === 0 && !allowZero) {
                   field.onChange(undefined);
                   return;
                 }
-
-                // Valid number (including 0 if allowZero is true)
-                field.onChange(value);
+                field.onChange(num);
               } else if (type === "number" && !valueAsNumber) {
-                // Return string representation for number inputs without valueAsNumber
                 const value = e.target.value;
                 field.onChange(value === "" ? undefined : value);
               } else {
-                // For non-number types
                 let value = e.target.value;
-
-                // Apply pattern filtering if provided
                 if (pattern) {
                   const regex = new RegExp(`^${pattern}*$`);
-                  if (!regex.test(value)) {
-                    // If value doesn't match pattern, keep the last valid value
-                    return;
-                  }
+                  if (!regex.test(value)) return;
                 }
-
                 field.onChange(value);
                 onCustomChange?.(value);
               }
