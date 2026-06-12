@@ -132,7 +132,7 @@ export function DeleteConfirmationModal({
         </div>
 
         {/* Footer */}
-        <div className="px-[0.975rem] pb-[0.975rem] flex justify-end gap-[0.4875rem]">
+        <div className="px-[0.975rem] py-[0.65rem] border-t border-border bg-muted/30 flex justify-end gap-[0.4875rem]">
           <Button
             variant="outline"
             size="sm"
