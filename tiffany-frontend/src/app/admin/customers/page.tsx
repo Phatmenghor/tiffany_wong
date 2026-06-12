@@ -30,12 +30,8 @@ import {
   ACCOUNT_STATUS_FILTER,
 } from "@/constants/status/filter-status";
 import { useAdminCleanup } from "@/hooks/use-cleanup-on-unmount";
-import {
-  AccountStatus,
-  ModalMode,
-  UserGropeType,
-} from "@/constants/status/status";
-import UserBusinessModal from "@/redux/features/auth/components/user-business-modal";
+import { AccountStatus } from "@/constants/status/status";
+import CustomerModal from "@/redux/features/auth/components/customer-modal";
 import { UserBusinessDetailModal } from "@/redux/features/auth/components/user-business-detail-modal";
 import { AppDefault } from "@/constants/app-resource/default/default";
 import { setGlobalPageSize } from "@/redux/store/slices/global-settings-slice";
@@ -70,7 +66,6 @@ export default function CustomerUsersPage() {
 
   const [modalState, setModalState] = useState({
     isOpen: false,
-    mode: ModalMode.CREATE_MODE,
     userId: "",
   });
 
@@ -92,7 +87,7 @@ export default function CustomerUsersPage() {
     user: null as UserResponseModel | null,
   });
 
-  const handleEditUser = (user: UserResponseModel) => setModalState({ isOpen: true, mode: ModalMode.UPDATE_MODE, userId: user?.id || "" });
+  const handleEditUser = (user: UserResponseModel) => setModalState({ isOpen: true, userId: user?.id || "" });
   const handleViewDetail = (user: UserResponseModel) => setDetailModalState({ isOpen: true, userBusinessId: user.id || "" });
   const handleResetPassword = (user: UserResponseModel) => setResetPasswordState({ isOpen: true, userBusinessId: user.id || "", userName: user.userIdentifier || "", userRole: user.userRole ? [user.userRole] : [], profileImageUrl: user.profileImageUrl || "" });
   const handleDeleteUser = (user: UserResponseModel) => setDeleteState({ isOpen: true, user });
@@ -151,7 +146,7 @@ export default function CustomerUsersPage() {
     }
   };
 
-  const closeModal = () => setModalState({ isOpen: false, mode: ModalMode.CREATE_MODE, userId: "" });
+  const closeModal = () => setModalState({ isOpen: false, userId: "" });
   const closeDetailModal = () => setDetailModalState({ isOpen: false, userBusinessId: "" });
   const closeResetPasswordModal = () => setResetPasswordState({ isOpen: false, userBusinessId: "", userName: "", userRole: [], profileImageUrl: "" });
   const closeDeleteModal = () => setDeleteState({ isOpen: false, user: null });
@@ -192,7 +187,7 @@ export default function CustomerUsersPage() {
         />
       </div>
 
-      <UserBusinessModal isOpen={modalState.isOpen} onClose={closeModal} userId={modalState.userId} mode={modalState.mode} hideUserRole />
+      <CustomerModal isOpen={modalState.isOpen} onClose={closeModal} userId={modalState.userId} />
       <UserBusinessDetailModal userId={detailModalState.userBusinessId} isOpen={detailModalState.isOpen} onClose={closeDetailModal} />
       <ResetPasswordModal isOpen={resetPasswordState.isOpen} userName={resetPasswordState.userName} userRole={resetPasswordState.userRole} profileImageUrl={resetPasswordState.profileImageUrl} onClose={closeResetPasswordModal} userId={resetPasswordState.userBusinessId} />
       <DeleteConfirmationModal
