@@ -59,57 +59,75 @@ export function TextField({
       <Controller
         control={control}
         name={name}
-        render={({ field }) => (
-          <Input
-            {...field}
-            value={
-              valueAsNumber && type === "number"
-                ? (field.value === undefined || field.value === null ? "" : String(field.value))
-                : (field.value ?? "")
-            }
-            id={name}
-            type={valueAsNumber && type === "number" ? "text" : type}
-            inputMode={valueAsNumber && type === "number" ? "decimal" : undefined}
-            placeholder={placeholder}
-            disabled={disabled}
-            autoComplete={autoComplete}
-            onChange={(e) => {
-              if (valueAsNumber && type === "number") {
-                const raw = e.target.value;
-                if (raw === "") {
-                  field.onChange(undefined);
-                  return;
+        render={({ field }) => {
+          const inputClass = `h-[1.625rem] transition-all duration-200 border ${disabled ? "bg-muted/50" : ""} ${
+            error
+              ? "border-red-500 focus:border-red-500"
+              : "border-input focus:border-primary focus:ring-2 focus:ring-primary/30"
+          }`;
+
+          // Numeric fields: use text input with decimal keyboard to allow clearing 0
+          if (valueAsNumber && type === "number") {
+            return (
+              <Input
+                ref={field.ref}
+                name={field.name}
+                onBlur={field.onBlur}
+                id={name}
+                type="text"
+                inputMode="decimal"
+                placeholder={placeholder}
+                disabled={disabled}
+                autoComplete={autoComplete}
+                value={field.value === undefined || field.value === null ? "" : String(field.value)}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  if (raw === "") {
+                    field.onChange(undefined);
+                    return;
+                  }
+                  if (!/^-?\d*\.?\d*$/.test(raw)) return;
+                  const num = parseFloat(raw);
+                  if (isNaN(num)) return;
+                  if (num === 0 && !allowZero) {
+                    field.onChange(undefined);
+                    return;
+                  }
+                  field.onChange(num);
+                }}
+                className={inputClass}
+              />
+            );
+          }
+
+          return (
+            <Input
+              {...field}
+              value={field.value ?? ""}
+              id={name}
+              type={type}
+              placeholder={placeholder}
+              disabled={disabled}
+              autoComplete={autoComplete}
+              onChange={(e) => {
+                if (type === "number") {
+                  const value = e.target.value;
+                  field.onChange(value === "" ? undefined : value);
+                } else {
+                  let value = e.target.value;
+                  if (pattern) {
+                    const regex = new RegExp(`^${pattern}*$`);
+                    if (!regex.test(value)) return;
+                  }
+                  field.onChange(value);
+                  onCustomChange?.(value);
                 }
-                // Allow intermediate states like "1." while typing
-                if (!/^-?\d*\.?\d*$/.test(raw)) return;
-                const num = parseFloat(raw);
-                if (isNaN(num)) return;
-                if (num === 0 && !allowZero) {
-                  field.onChange(undefined);
-                  return;
-                }
-                field.onChange(num);
-              } else if (type === "number" && !valueAsNumber) {
-                const value = e.target.value;
-                field.onChange(value === "" ? undefined : value);
-              } else {
-                let value = e.target.value;
-                if (pattern) {
-                  const regex = new RegExp(`^${pattern}*$`);
-                  if (!regex.test(value)) return;
-                }
-                field.onChange(value);
-                onCustomChange?.(value);
-              }
-            }}
-            pattern={pattern}
-            className={`h-[1.625rem] transition-all duration-200 border ${disabled ? "bg-muted/50" : ""} ${
-              error
-                ? "border-red-500 focus:border-red-500"
-                : "border-input focus:border-primary focus:ring-2 focus:ring-primary/30"
-            }`}
-          />
-        )}
+              }}
+              pattern={pattern}
+              className={inputClass}
+            />
+          );
+        }}
       />
       {error && <p className="text-[11px] text-red-500">{error.message}</p>}
     </div>
