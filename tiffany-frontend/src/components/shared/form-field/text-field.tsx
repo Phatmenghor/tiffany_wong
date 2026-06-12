@@ -1,9 +1,84 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Controller, FieldError } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+interface NumericInputProps {
+  fieldValue: number | undefined | null;
+  fieldRef: React.Ref<HTMLInputElement>;
+  fieldName: string;
+  fieldOnBlur: () => void;
+  fieldOnChange: (val: number | undefined) => void;
+  allowZero: boolean;
+  placeholder: string;
+  disabled: boolean;
+  autoComplete: string;
+  className: string;
+}
+
+function NumericInput({
+  fieldValue,
+  fieldRef,
+  fieldName,
+  fieldOnBlur,
+  fieldOnChange,
+  allowZero,
+  placeholder,
+  disabled,
+  autoComplete,
+  className,
+}: NumericInputProps) {
+  const [display, setDisplay] = useState(
+    fieldValue === undefined || fieldValue === null ? "" : String(fieldValue)
+  );
+  const isFocused = useRef(false);
+
+  // Sync display when field value changes externally (e.g. form reset)
+  useEffect(() => {
+    if (!isFocused.current) {
+      setDisplay(fieldValue === undefined || fieldValue === null ? "" : String(fieldValue));
+    }
+  }, [fieldValue]);
+
+  return (
+    <Input
+      ref={fieldRef}
+      name={fieldName}
+      id={fieldName}
+      type="text"
+      inputMode="decimal"
+      placeholder={placeholder}
+      disabled={disabled}
+      autoComplete={autoComplete}
+      value={display}
+      onFocus={() => { isFocused.current = true; }}
+      onBlur={() => {
+        isFocused.current = false;
+        fieldOnBlur();
+        if (display === "") fieldOnChange(undefined);
+      }}
+      onChange={(e) => {
+        const raw = e.target.value;
+        setDisplay(raw);
+        if (raw === "") {
+          fieldOnChange(undefined);
+          return;
+        }
+        if (!/^-?\d*\.?\d*$/.test(raw)) return;
+        const num = parseFloat(raw);
+        if (isNaN(num)) return;
+        if (num === 0 && !allowZero) {
+          fieldOnChange(undefined);
+          return;
+        }
+        fieldOnChange(num);
+      }}
+      className={className}
+    />
+  );
+}
 
 interface TextFieldProps {
   name: string;
@@ -66,35 +141,20 @@ export function TextField({
               : "border-input focus:border-primary focus:ring-2 focus:ring-primary/30"
           }`;
 
-          // Numeric fields: use text input with decimal keyboard to allow clearing 0
+          // Numeric fields: dedicated component with local display state
+          // so clearing "0" always works regardless of form default value
           if (valueAsNumber && type === "number") {
             return (
-              <Input
-                ref={field.ref}
-                name={field.name}
-                onBlur={field.onBlur}
-                id={name}
-                type="text"
-                inputMode="decimal"
+              <NumericInput
+                fieldValue={field.value}
+                fieldRef={field.ref}
+                fieldName={field.name}
+                fieldOnBlur={field.onBlur}
+                fieldOnChange={field.onChange}
+                allowZero={allowZero}
                 placeholder={placeholder}
                 disabled={disabled}
                 autoComplete={autoComplete}
-                value={field.value === undefined || field.value === null ? "" : String(field.value)}
-                onChange={(e) => {
-                  const raw = e.target.value;
-                  if (raw === "") {
-                    field.onChange(undefined);
-                    return;
-                  }
-                  if (!/^-?\d*\.?\d*$/.test(raw)) return;
-                  const num = parseFloat(raw);
-                  if (isNaN(num)) return;
-                  if (num === 0 && !allowZero) {
-                    field.onChange(undefined);
-                    return;
-                  }
-                  field.onChange(num);
-                }}
                 className={inputClass}
               />
             );
