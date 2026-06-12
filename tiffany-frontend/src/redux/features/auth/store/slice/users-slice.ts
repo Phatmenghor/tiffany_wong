@@ -82,6 +82,20 @@ const usersSlice = createSlice({
     resetState: () => {
       return initialState;
     },
+
+    toggleUserStatusOptimistic: (state, action: PayloadAction<{ userId: string; newStatus: string }>) => {
+      if (state.data?.content) {
+        const user = state.data.content.find((u) => u.id === action.payload.userId);
+        if (user) user.accountStatus = action.payload.newStatus as any;
+      }
+    },
+
+    revertUserStatusOptimistic: (state, action: PayloadAction<{ userId: string; oldStatus: string }>) => {
+      if (state.data?.content) {
+        const user = state.data.content.find((u) => u.id === action.payload.userId);
+        if (user) user.accountStatus = action.payload.oldStatus as any;
+      }
+    },
   },
 
   extraReducers: (builder) => {
@@ -238,6 +252,8 @@ export const {
   clearSelectedUser,
   resetFilters,
   resetState,
+  toggleUserStatusOptimistic,
+  revertUserStatusOptimistic,
 } = usersSlice.actions;
 
 export default usersSlice.reducer;
