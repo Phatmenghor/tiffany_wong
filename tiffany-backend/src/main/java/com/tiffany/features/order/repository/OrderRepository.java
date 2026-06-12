@@ -75,19 +75,18 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     Page<Order> findByCustomerIdAndIsDeletedFalseOrderByCreatedAtDesc(@Param("customerId") UUID customerId, Pageable pageable);
 
     /**
-     * Find all non-deleted orders with optional filters and eager loading of related entities
-     * Supports filtering by:
-     * - orderStatus
-     * - paymentMethod
-     * - paymentStatus
+     * Find all non-deleted orders with optional filters.
      *
-     * Uses JOIN FETCH to prevent N+1 query problem
-     * NOTE: statusHistory is loaded separately to avoid MultipleBagFetchException
+     * Only the single-valued associations (customer @ManyToOne, deliveryAddress
+     * @OneToOne) are JOIN FETCHed, so the database can apply real LIMIT/OFFSET
+     * pagination. The items collection is intentionally NOT fetched here:
+     * JOIN FETCHing a collection together with a Pageable forces Hibernate to
+     * load the entire result set and paginate in memory (HHH90003004). Items
+     * are instead loaded lazily in a single batched query via @BatchSize on
+     * Order.items. The order-item response is built from snapshot columns, so
+     * oi.product / oi.productSize are not needed at all.
      */
-    @Query(value = "SELECT DISTINCT o FROM Order o " +
-           "LEFT JOIN FETCH o.items oi " +
-           "LEFT JOIN FETCH oi.product " +
-           "LEFT JOIN FETCH oi.productSize " +
+    @Query(value = "SELECT o FROM Order o " +
            "LEFT JOIN FETCH o.customer c " +
            "LEFT JOIN FETCH o.deliveryAddress " +
            "WHERE o.isDeleted = false " +
@@ -95,7 +94,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
            "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
            "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus) " +
            "ORDER BY o.createdAt DESC",
-           countQuery = "SELECT COUNT(DISTINCT o) FROM Order o " +
+           countQuery = "SELECT COUNT(o) FROM Order o " +
            "WHERE o.isDeleted = false " +
            "AND (:orderStatus IS NULL OR o.orderStatus = :orderStatus) " +
            "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
@@ -107,20 +106,14 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             Pageable pageable);
 
     /**
-     * Find paginated customer orders with optional filters and eager loading of related entities
-     * Supports filtering by:
-     * - customerId (required)
-     * - orderStatus
-     * - paymentMethod
-     * - paymentStatus
+     * Find paginated customer orders with optional filters.
      *
-     * Uses JOIN FETCH to prevent N+1 query problem
-     * NOTE: statusHistory is loaded separately to avoid MultipleBagFetchException
+     * Same approach as findAllWithFilters: only single-valued associations are
+     * JOIN FETCHed so the database performs real LIMIT/OFFSET pagination, while
+     * the items collection is loaded lazily in a batched query via @BatchSize
+     * on Order.items (avoids the HHH90003004 in-memory pagination warning).
      */
-    @Query(value = "SELECT DISTINCT o FROM Order o " +
-           "LEFT JOIN FETCH o.items oi " +
-           "LEFT JOIN FETCH oi.product " +
-           "LEFT JOIN FETCH oi.productSize " +
+    @Query(value = "SELECT o FROM Order o " +
            "LEFT JOIN FETCH o.customer c " +
            "LEFT JOIN FETCH o.deliveryAddress " +
            "WHERE o.customerId = :customerId AND o.isDeleted = false " +
@@ -128,7 +121,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
            "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
            "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus) " +
            "ORDER BY o.createdAt DESC",
-           countQuery = "SELECT COUNT(DISTINCT o) FROM Order o " +
+           countQuery = "SELECT COUNT(o) FROM Order o " +
            "WHERE o.customerId = :customerId AND o.isDeleted = false " +
            "AND (:orderStatus IS NULL OR o.orderStatus = :orderStatus) " +
            "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
