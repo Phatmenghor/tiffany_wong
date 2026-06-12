@@ -23,7 +23,7 @@ export function DashboardSidebar({ isOpen, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
 
-  const { profile } = useAuthState();
+  const { profile, isProfileLoading } = useAuthState();
 
   const businessName = BUSINESS_SETTINGS_DEFAULTS.BUSINESS_NAME;
 
