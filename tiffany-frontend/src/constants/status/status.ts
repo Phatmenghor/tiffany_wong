@@ -25,11 +25,10 @@ export const isInactive = (status: Status): boolean => {
   return status === Status.INACTIVE;
 };
 
-// AccountStatus aligned with backend User entity
+// AccountStatus aligned with backend AccountStatus enum: ACTIVE, END_WORK, LOCKED
 export enum AccountStatus {
   ALL = "ALL",
   ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
   END_WORK = "END_WORK",
   LOCKED = "LOCKED",
 }

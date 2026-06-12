@@ -28,10 +28,11 @@ export const USER_CUSTOMER_ROLE_CREATE_UPDATE = [
   { value: UserRole.CUSTOMER, label: "Customer" },
 ];
 
-// Aligned with backend AccountStatus enum (ACTIVE, INACTIVE)
+// Aligned with backend AccountStatus enum: ACTIVE, END_WORK, LOCKED
 export const ACCOUNT_STATUS_CREATE_UPDATE = [
   { value: AccountStatus.ACTIVE, label: "Active" },
-  { value: AccountStatus.INACTIVE, label: "Inactive" },
+  { value: AccountStatus.END_WORK, label: "End Work" },
+  { value: AccountStatus.LOCKED, label: "Locked" },
 ];
 
 export const BUSINESS_STATUS_CREATE_UPDATE = [
