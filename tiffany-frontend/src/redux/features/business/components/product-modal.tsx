@@ -83,7 +83,7 @@ export default function ProductModal({
       name: "",
       description: "",
       categoryId: "",
-      price: 0,
+      price: undefined,
       mainImageUrl: "",
       promotionType: "NONE",
       promotionValue: undefined,
@@ -165,7 +165,7 @@ export default function ProductModal({
         name: "",
         description: "",
         categoryId: "",
-        price: 0,
+        price: undefined,
         mainImageUrl: "",
         promotionType: "NONE",
         promotionValue: undefined,
@@ -400,7 +400,7 @@ export default function ProductModal({
                   onAddSize={() =>
                     appendSize({
                       name: "",
-                      price: 0,
+                      price: undefined as any,
                       promotionType: "NONE",
                       promotionValue: undefined,
                       promotionFromDate: "",
