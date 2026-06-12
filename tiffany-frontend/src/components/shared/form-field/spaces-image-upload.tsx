@@ -106,7 +106,7 @@ export function SpacesImageUpload({
 
   return (
     <div className="space-y-[0.325rem]">
-      <Label className="text-[0.56875rem] font-medium">
+      <Label className="text-[12px] font-medium">
         {label}
         {required && <span className="text-red-500 ml-[0.1625rem]">*</span>}
       </Label>
@@ -147,7 +147,7 @@ export function SpacesImageUpload({
               <div className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
                 <div className="opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-[0.325rem] text-white">
                   <Upload className="h-[1.3rem] w-[1.3rem]" />
-                  <p className="text-[0.56875rem] font-medium">Click to change image</p>
+                  <p className="text-[12px] font-medium">Click to change image</p>
                 </div>
               </div>
 
@@ -169,10 +169,10 @@ export function SpacesImageUpload({
                 <ImageIcon className="h-[1.625rem] w-[1.625rem] text-muted-foreground" />
               </div>
               <div className="text-center px-[0.65rem]">
-                <p className="text-[0.56875rem] font-medium text-foreground">
+                <p className="text-[12px] font-medium text-foreground">
                   {placeholder}
                 </p>
-                <p className="text-[0.4875rem] text-muted-foreground mt-[0.1625rem]">
+                <p className="text-[11px] text-muted-foreground mt-[0.1625rem]">
                   {helperText || `PNG, JPG, GIF up to ${maxSize}MB`}
                 </p>
               </div>
@@ -181,13 +181,13 @@ export function SpacesImageUpload({
         </div>
 
         {value && !disabled && showPreviewText && (
-          <p className="text-[0.4875rem] text-muted-foreground text-center">
+          <p className="text-[11px] text-muted-foreground text-center">
             Click on the image to change it
           </p>
         )}
       </div>
 
-      {error && <p className="text-[0.4875rem] text-red-500">{error.message}</p>}
+      {error && <p className="text-[11px] text-red-500">{error.message}</p>}
     </div>
   );
 }
