@@ -22,6 +22,7 @@ interface ConfirmationModalProps {
   headerBgColor?: string;
   buttonColor?: string;
   isDangerous?: boolean;
+  maxWidthClassName?: string;
 }
 
 export function ConfirmationModal({
@@ -37,6 +38,7 @@ export function ConfirmationModal({
   headerBgColor = "bg-blue-50",
   buttonColor = "",
   isDangerous = false,
+  maxWidthClassName = "max-w-md",
 }: ConfirmationModalProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +67,7 @@ export function ConfirmationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-xl p-0 flex flex-col shadow-lg shadow-yellow-200">
+      <DialogContent className={`w-full ${maxWidthClassName} p-0 flex flex-col shadow-lg shadow-yellow-200`}>
         <VisuallyHidden asChild>
           <DialogTitle>{title}</DialogTitle>
         </VisuallyHidden>

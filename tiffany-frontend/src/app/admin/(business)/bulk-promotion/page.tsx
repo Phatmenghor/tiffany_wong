@@ -149,7 +149,7 @@ export default function BulkPromotionPage() {
     defaultValues: {
       productIds: [],
       promotionType: undefined,
-      promotionValue: 0,
+      promotionValue: undefined,
       promotionFromDate: getDateAt1159PM(new Date()).toISOString(),
       promotionToDate: getDateAt1159PM(
         new Date(Date.now() + PROMOTION_DEFAULT_DURATION_DAYS * 24 * 60 * 60 * 1000),
@@ -458,7 +458,7 @@ export default function BulkPromotionPage() {
   const hasValidDates =
     form.watch("promotionFromDate") &&
     form.watch("promotionToDate") &&
-    new Date(form.watch("promotionFromDate")) <
+    new Date(form.watch("promotionFromDate")) <=
       new Date(form.watch("promotionToDate"));
   const hasSelectedProducts = selectedIds.length > 0;
 
@@ -1076,7 +1076,7 @@ export default function BulkPromotionPage() {
                       name="promotionFromDate"
                       label="Start Date"
                       required
-                      mode="datetime"
+                      mode="date"
                       error={form.formState.errors.promotionFromDate}
                     />
 
@@ -1086,7 +1086,7 @@ export default function BulkPromotionPage() {
                       name="promotionToDate"
                       label="End Date"
                       required
-                      mode="datetime"
+                      mode="date"
                       error={form.formState.errors.promotionToDate}
                     />
                   </div>
@@ -1104,16 +1104,13 @@ export default function BulkPromotionPage() {
                   Cancel
                 </CustomButton>
                 <CustomButton
-                  isSubmitting={isSubmitting}
-                  isDirty={selectedIds.length > 0}
-                  isCreate={true}
-                  createText="Apply Promotion"
-                  submittingCreateText="Applying..."
-                  disabled={!isFormValid}
+                  disabled={!isFormValid || isSubmitting}
                   onClick={handleApplyClick}
                   variant="default"
                   className="flex-1 h-[1.625rem] sm:h-[1.7875rem] md:h-[1.625rem] lg:h-[1.7875rem] text-[11px] sm:text-[11px] md:text-[11px] lg:text-[11px] font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-[0.325rem] shadow-md hover:shadow-lg disabled:opacity-50"
-                />
+                >
+                  {isSubmitting ? "Applying..." : "Apply Promotion"}
+                </CustomButton>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { indexDisplay } from "@/utils/common/common";
 import { dateTimeFormat } from "@/utils/date/date-time-format";
-import { Edit, Eye, Trash, Package, RotateCcw, Zap, Check } from "lucide-react";
+import { Edit, Eye, Trash, Package, Zap, Check } from "lucide-react";
 import { TableColumn } from "@/components/shared/common/data-table";
 import { ActionButton } from "@/components/shared/button/action-button";
 import { TableThumbnail } from "@/components/shared/common/table-thumbnail";
@@ -277,14 +277,6 @@ export const productTableColumns = ({
             tooltip="Edit Product"
             onClick={() => handleEditProduct(brand)}
           />
-          {brand?.hasPromotion && (
-            <ActionButton
-              icon={<RotateCcw className="w-[0.65rem] h-[0.65rem]" />}
-              tooltip="Reset Promotion"
-              onClick={() => handleResetPromotion?.(brand)}
-              variant="outline"
-            />
-          )}
           <ActionButton
             icon={<Trash className="w-[0.65rem] h-[0.65rem]" />}
             tooltip="Delete Product"
