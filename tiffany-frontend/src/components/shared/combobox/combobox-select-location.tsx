@@ -216,16 +216,16 @@ export function ComboboxSelectLocation({
                   >
                     <Check
                       className={cn(
-                        "mr-[0.325rem] h-[0.65rem] w-[0.65rem] flex-shrink-0",
+                        "mr-[0.325rem] mt-[0.1rem] h-[0.65rem] w-[0.65rem] flex-shrink-0",
                         dataSelect?.id === item.id ? "opacity-100" : "opacity-0"
                       )}
                     />
-                    <span className="truncate line-clamp-1 flex-1">{item.fullAddress}</span>
-                    {item.note && (
-                      <span className="text-[11px] text-muted-foreground flex-shrink-0 ml-[0.325rem]">
-                        ({item.note})
-                      </span>
-                    )}
+                    <span className="flex-1 whitespace-normal break-words leading-snug">
+                      {item.fullAddress}
+                      {item.note && (
+                        <span className="text-muted-foreground"> ({item.note})</span>
+                      )}
+                    </span>
                   </CommandItem>
                 ))}
               </CommandGroup>

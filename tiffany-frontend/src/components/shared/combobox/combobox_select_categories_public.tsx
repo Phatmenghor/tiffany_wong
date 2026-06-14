@@ -55,6 +55,12 @@ function ComboboxSelectCategoriesPublicComponent({
   const fetchedRef = useRef(false);
 
   const sizeClasses = { sm: "h-[1.3rem] text-[11px]", md: "h-[1.625rem] text-[12px]", lg: "h-[1.625rem] text-[12px]" };
+  // Dropdown items: no fixed height so long text wraps and the row grows
+  const itemSizeClasses = {
+    sm: "min-h-[1.3rem] py-[0.24375rem] text-[11px]",
+    md: "min-h-[1.625rem] py-[0.325rem] text-[12px]",
+    lg: "min-h-[1.625rem] py-[0.325rem] text-[12px]",
+  };
 
   // Fetch all categories once on mount — backend returns a flat array
   useEffect(() => {
@@ -157,7 +163,7 @@ function ComboboxSelectCategoriesPublicComponent({
                         value={item.name}
                         onSelect={() => handleSelect(item.id)}
                         className={cn(
-                          sizeClasses[size],
+                          itemSizeClasses[size],
                           "hover:bg-primary/10 hover:text-primary cursor-pointer",
                           (selectedCategory === item.id || (!selectedCategory && item.id === "")) &&
                             "bg-primary/20 text-primary font-medium",
@@ -165,13 +171,15 @@ function ComboboxSelectCategoriesPublicComponent({
                       >
                         <Check
                           className={cn(
-                            "mr-[0.325rem] h-[0.65rem] w-[0.65rem]",
+                            "mr-[0.325rem] mt-[0.1rem] h-[0.65rem] w-[0.65rem] shrink-0",
                             (selectedCategory === item.id || (!selectedCategory && item.id === ""))
                               ? "opacity-100"
                               : "opacity-0",
                           )}
                         />
-                        {item.name}
+                        <span className="flex-1 whitespace-normal break-words leading-snug">
+                          {item.name}
+                        </span>
                       </CommandItem>
                     ))}
                   </CommandGroup>

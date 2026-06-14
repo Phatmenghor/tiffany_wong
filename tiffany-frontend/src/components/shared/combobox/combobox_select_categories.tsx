@@ -79,6 +79,13 @@ export function ComboboxSelectCategories({
     lg: "h-[1.625rem] text-[12px]",
   };
 
+  // Dropdown items: no fixed height so long text wraps and the row grows
+  const itemSizeClasses = {
+    sm: "min-h-[1.3rem] py-[0.24375rem] text-[11px]",
+    md: "min-h-[1.625rem] py-[0.325rem] text-[12px]",
+    lg: "min-h-[1.625rem] py-[0.325rem] text-[12px]",
+  };
+
   // Helper function to remove duplicates by ID
   const removeDuplicates = (
     items: CategoriesResponseModel[]
@@ -216,18 +223,20 @@ export function ComboboxSelectCategories({
                     value={item.name}
                     onSelect={() => handleSelect(item)}
                     ref={index === data.length - 1 ? ref : null}
-                    className={sizeClasses[size]}
+                    className={itemSizeClasses[size]}
                   >
                     <Check
                       className={cn(
-                        "mr-[0.325rem] h-[0.65rem] w-[0.65rem]",
+                        "mr-[0.325rem] mt-[0.1rem] h-[0.65rem] w-[0.65rem] shrink-0",
                         (item.id === "all" && !dataSelect) ||
                           dataSelect?.id === item.id
                           ? "opacity-100"
                           : "opacity-0"
                       )}
                     />
-                    {item.id === "all" ? item.name : <>{item.name}</>}
+                    <span className="flex-1 whitespace-normal break-words leading-snug">
+                      {item.name}
+                    </span>
                   </CommandItem>
                 ))}
               </CommandGroup>

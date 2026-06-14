@@ -59,15 +59,17 @@ export function CartItemCard({
 
   return (
     <div className="bg-white border border-slate-200 rounded-[0.4875rem] p-[0.65rem] hover:shadow-md transition-all duration-200 relative group">
-      <CustomButton
-        size="icon"
-        variant="outline"
-        className="absolute top-[0.4875rem] right-[0.4875rem] h-[1.3rem] w-[1.3rem] shrink-0 text-red-600 hover:bg-red-100"
-        onClick={onRemove}
-        title="Remove item"
-      >
-        <X className="h-[0.65rem] w-[0.65rem]" />
-      </CustomButton>
+      {showControls && (
+        <CustomButton
+          size="icon"
+          variant="outline"
+          className="absolute top-[0.4875rem] right-[0.4875rem] h-[1.3rem] w-[1.3rem] shrink-0 text-red-600 hover:bg-red-100"
+          onClick={onRemove}
+          title="Remove item"
+        >
+          <X className="h-[0.65rem] w-[0.65rem]" />
+        </CustomButton>
+      )}
 
       <div className="flex gap-[0.65rem]">
         {showLink ? (
