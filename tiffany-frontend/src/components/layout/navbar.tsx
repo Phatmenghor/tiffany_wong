@@ -300,21 +300,21 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full h-[2.275rem] border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm flex items-center">
+      <nav className="sticky top-0 z-50 w-full h-[3.5rem] sm:h-[2.275rem] border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm flex items-center">
         <PageContainer className="max-w-8xl w-full">
           {/* ── Mobile: expanded search overlay ── */}
           {mobileSearchOpen && showSearch ? (
             <form
               onSubmit={handleSearchSubmit}
-              className="sm:hidden flex items-center gap-[0.325rem] w-full h-[2.275rem]"
+              className="sm:hidden flex items-center gap-[0.5rem] w-full h-[3.5rem]"
             >
               <div className="relative flex-1">
-                <Search className="absolute left-[0.4875rem] top-1/2 -translate-y-1/2 h-[0.65rem] w-[0.65rem] text-muted-foreground pointer-events-none" />
+                <Search className="absolute left-[0.65rem] top-1/2 -translate-y-1/2 h-[1rem] w-[1rem] text-muted-foreground pointer-events-none" />
                 <Input
                   ref={mobileSearchRef}
                   type="text"
                   placeholder={searchPlaceholder}
-                  className="pl-[1.625rem] w-full h-[1.625rem] bg-muted/50"
+                  className="pl-[2.25rem] w-full h-[2.625rem] bg-muted/50"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -323,58 +323,58 @@ export function Navbar() {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="shrink-0"
+                className="shrink-0 h-[2.625rem] w-[2.625rem]"
                 onClick={() => setMobileSearchOpen(false)}
               >
-                <X className="h-[0.8125rem] w-[0.8125rem]" />
+                <X className="h-[1.25rem] w-[1.25rem]" />
               </Button>
             </form>
           ) : (
             /* ── Mobile: compact top bar ── */
-            <div className="sm:hidden flex items-center justify-between w-full h-[2.275rem] gap-[0.325rem]">
-              <button onClick={handleNavigateToHome} className="flex items-center gap-[0.325rem] shrink-0">
-                <div className="relative w-[1.3rem] h-[1.3rem] rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="sm:hidden flex items-center justify-between w-full h-[3.5rem] gap-[0.5rem]">
+              <button onClick={handleNavigateToHome} className="flex items-center gap-[0.5rem] shrink-0">
+                <div className="relative w-[2.25rem] h-[2.25rem] rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                   <Image
                     src="/assets/image/logo.png"
                     alt={businessName}
                     fill
                     className="object-cover"
-                    sizes="32px"
+                    sizes="40px"
                   />
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="font-bold text-[11px] text-foreground leading-tight">
+                  <span className="font-bold text-[13px] text-foreground leading-tight">
                     {isHydrated ? businessName : ""}
                   </span>
-                  <span className="text-[11px] text-muted-foreground font-medium">
+                  <span className="text-[12px] text-muted-foreground font-medium">
                     Shop Online
                   </span>
                 </div>
               </button>
 
-              <div className="flex items-center gap-[0.08125rem]">
+              <div className="flex items-center gap-[0.25rem]">
                 {showSearch && (
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-[1.625rem] w-[1.625rem]"
+                    className="h-[2.625rem] w-[2.625rem]"
                     onClick={() => setMobileSearchOpen(true)}
                   >
-                    <Search className="h-[1.1375rem] w-[1.1375rem]" />
+                    <Search className="h-[1.375rem] w-[1.375rem]" />
                   </Button>
                 )}
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="relative h-[1.625rem] w-[1.625rem]"
+                  className="relative h-[2.625rem] w-[2.625rem]"
                   onClick={() => router.push("/favorites")}
                 >
-                  <Heart className="h-[1.1375rem] w-[1.1375rem]" />
+                  <Heart className="h-[1.375rem] w-[1.375rem]" />
                   {favoriteItemCount > 0 && (
                     <Badge
                       variant="destructive"
                       className={cn(
-                        "absolute -top-[0.1625rem] -right-[0.1625rem] h-[0.8125rem] min-w-[20px] max-w-[28px] px-[0.1625rem] flex items-center justify-center text-[11px] font-semibold leading-none transition-transform duration-300",
+                        "absolute top-[0.2rem] right-[0.2rem] h-[0.9rem] min-w-[0.9rem] max-w-[1.5rem] px-[0.2rem] flex items-center justify-center text-[10px] font-semibold leading-none transition-transform duration-300",
                         favoriteAnimating && "animate-slide-down",
                       )}
                     >
@@ -385,11 +385,11 @@ export function Navbar() {
                 {isAuthenticated ? (
                   <CustomDropdownMenu
                     trigger={
-                      <div className="h-[1.4625rem] w-[1.4625rem] flex items-center justify-center rounded-full hover:ring-2 hover:ring-primary/20 transition-all">
+                      <div className="h-[2.625rem] w-[2.625rem] flex items-center justify-center rounded-full hover:ring-2 hover:ring-primary/20 transition-all">
                         <CustomAvatar
                           imageUrl={profileImage || profile?.profileImageUrl}
                           name={fullName || profile?.fullName || "User"}
-                          size="sm"
+                          size="md"
                         />
                       </div>
                     }
@@ -403,10 +403,10 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-[1.4625rem] w-[1.4625rem]"
+                    className="h-[2.625rem] w-[2.625rem]"
                     onClick={() => openLoginModal()}
                   >
-                    <User className="h-[0.8125rem] w-[0.8125rem]" />
+                    <User className="h-[1.375rem] w-[1.375rem]" />
                   </Button>
                 )}
               </div>
