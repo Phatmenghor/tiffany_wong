@@ -78,13 +78,17 @@ export function DeleteConfirmationModal({
         <div className="px-[0.975rem] pt-[0.975rem] pb-[0.65rem] border-b border-border bg-destructive/5">
           <h2 className="text-[13px] font-semibold text-foreground">{title}</h2>
           <p className="text-[11px] text-muted-foreground mt-[0.325rem]">{description}</p>
-          {isCritical && (
-            <p className="text-[11px] text-red-600 font-medium mt-[0.24375rem]">This action cannot be undone.</p>
-          )}
         </div>
 
         {/* Body */}
         <div className="px-[0.975rem] py-[0.65rem] space-y-[0.65rem]">
+          {isCritical && (
+            <div className="rounded-[0.4875rem] border border-red-200 bg-red-50/60 px-[0.65rem] py-[0.4875rem]">
+              <p className="text-[12px] font-semibold text-red-700 mb-[0.24375rem]">This action cannot be undone.</p>
+              <p className="text-[11px] text-red-600 leading-relaxed">Once confirmed, all data will be permanently removed and you will not be able to recover it. Please make sure you want to proceed before continuing.</p>
+            </div>
+          )}
+
           {itemName && (
             <div className="p-[0.4875rem] bg-muted rounded-[0.325rem] border border-muted-foreground/20">
               <p className="text-[11px]">
