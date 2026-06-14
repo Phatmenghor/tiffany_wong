@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { BottomNav } from "@/components/layout/bottom-nav";
@@ -19,33 +19,36 @@ export default function PublicLayout({
   const {
     dispatch: cartDispatch,
     loaded: cartLoaded,
-    loading: cartLoading,
   } = useCartState();
   const {
     dispatch: favoriteDispatch,
     loaded: favoriteLoaded,
-    loading: favoriteLoading,
   } = useFavoriteState();
 
-  // Load cart and favorites when user is authenticated
+  const cartFetchAttempted = useRef(false);
+  const favoriteFetchAttempted = useRef(false);
+
+  // Reset attempt flags when user logs out so next login re-fetches
   useEffect(() => {
-    if (isAuthenticated) {
-      if (!cartLoaded && !cartLoading.fetch) {
-        cartDispatch(fetchCart());
-      }
-      if (!favoriteLoaded && !favoriteLoading.fetch) {
-        favoriteDispatch(fetchFavoriteList());
-      }
+    if (!isAuthenticated) {
+      cartFetchAttempted.current = false;
+      favoriteFetchAttempted.current = false;
     }
-  }, [
-    isAuthenticated,
-    cartLoaded,
-    cartLoading.fetch,
-    favoriteLoaded,
-    favoriteLoading.fetch,
-    cartDispatch,
-    favoriteDispatch,
-  ]);
+  }, [isAuthenticated]);
+
+  // Load cart and favorites once when user is authenticated — never retry on failure
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    if (!cartLoaded && !cartFetchAttempted.current) {
+      cartFetchAttempted.current = true;
+      cartDispatch(fetchCart());
+    }
+    if (!favoriteLoaded && !favoriteFetchAttempted.current) {
+      favoriteFetchAttempted.current = true;
+      favoriteDispatch(fetchFavoriteList());
+    }
+  }, [isAuthenticated, cartLoaded, favoriteLoaded, cartDispatch, favoriteDispatch]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

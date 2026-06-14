@@ -67,7 +67,7 @@ export default function ProductDetailPage() {
   // ── Pending qty state for sized products (modal-like flow, no immediate API) ──
   const [pendingQuantities, setPendingQuantities] = useState<Map<string, number>>(new Map());
   const [modifiedSizes, setModifiedSizes] = useState<Set<string>>(new Set());
-  const [isSaving, setIsSaving] = useState(false);
+  const isSaving = false;
   const [clearingSize, setClearingSize] = useState<string | null>(null);
 
   // ── Favorite sync ──
@@ -323,19 +323,20 @@ export default function ProductDetailPage() {
     [product, cartDispatch, getQuantityForSize]
   );
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(() => {
     if (!product || modifiedSizes.size === 0) return;
     if (!isAuthenticated) {
-      setShowLoginModal(true);
+      openLoginModal();
       return;
     }
-    setIsSaving(true);
     const ts = Date.now();
+    const snapshot = new Map(pendingQuantities);
+    const snapshotSizes = new Set(modifiedSizes);
 
-    // Apply all local updates immediately
-    for (const key of modifiedSizes) {
+    // Apply all local updates immediately so UI reflects changes at once
+    for (const key of snapshotSizes) {
       const sizeId = key === "no_size" ? null : key;
-      const newQty = pendingQuantities.get(key) ?? getQuantityForSize(sizeId);
+      const newQty = snapshot.get(key) ?? getQuantityForSize(sizeId);
       const currentQuantity = getQuantityForSize(sizeId);
       if (newQty === currentQuantity) continue;
 
@@ -359,31 +360,32 @@ export default function ProductDetailPage() {
       }
     }
 
+    // Clear pending state immediately so UI feels instant
     setPendingQuantities(new Map());
     setModifiedSizes(new Set());
 
-    // Fire API calls sequentially to avoid race conditions, then sync from server
-    try {
-      for (const key of modifiedSizes) {
-        const sizeId = key === "no_size" ? null : key;
-        const newQty = pendingQuantities.get(key) ?? getQuantityForSize(sizeId);
-        const currentQty = getQuantityForSize(sizeId);
-        if (newQty === currentQty) continue;
+    // Fire API calls sequentially in background — no await on this function
+    (async () => {
+      try {
+        for (const key of snapshotSizes) {
+          const sizeId = key === "no_size" ? null : key;
+          const newQty = snapshot.get(key) ?? getQuantityForSize(sizeId);
+          const currentQty = getQuantityForSize(sizeId);
+          if (newQty === currentQty) continue;
 
-        if (newQty > 0) {
-          await cartDispatch(addToCart({ productId: product.id, productSizeId: sizeId, quantity: newQty, optimisticTimestamp: ts })).unwrap();
-        } else {
-          await cartDispatch(updateCartItem({ productId: product.id, productSizeId: sizeId, quantity: 0, optimisticTimestamp: ts })).unwrap();
+          if (newQty > 0) {
+            await cartDispatch(addToCart({ productId: product.id, productSizeId: sizeId, quantity: newQty, optimisticTimestamp: ts })).unwrap();
+          } else {
+            await cartDispatch(updateCartItem({ productId: product.id, productSizeId: sizeId, quantity: 0, optimisticTimestamp: ts })).unwrap();
+          }
         }
+        cartDispatch(fetchCart());
+      } catch (err: any) {
+        showToast.error(err?.message || "Failed to update cart");
+        cartDispatch(fetchCart());
       }
-      cartDispatch(fetchCart());
-    } catch (err: any) {
-      showToast.error(err?.message || "Failed to update cart");
-      cartDispatch(fetchCart());
-    } finally {
-      setIsSaving(false);
-    }
-  }, [product, isAuthenticated, modifiedSizes, pendingQuantities, cartDispatch, getQuantityForSize]);
+    })();
+  }, [product, isAuthenticated, openLoginModal, modifiedSizes, pendingQuantities, cartDispatch, getQuantityForSize]);
 
   const handleToggleFavorite = () => {
     if (!product) return;
