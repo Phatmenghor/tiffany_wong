@@ -254,7 +254,7 @@ export function CustomDateTimePicker({
           id={id}
           variant="outline"
           className={cn(
-            "w-full justify-start text-left font-normal h-[2.625rem] sm:h-[1.625rem] px-[0.4875rem] text-[12px] transition-all duration-200 border-input",
+            "w-full justify-start text-left font-normal h-[2.5rem] sm:h-[1.625rem] px-[0.4875rem] text-[12px] transition-all duration-200 border-input",
             !selectedDate && "text-muted-foreground",
             // Hover state
             "hover:bg-primary/10 hover:border-primary hover:text-primary",

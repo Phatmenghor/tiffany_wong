@@ -425,7 +425,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
             type="button"
             onClick={() => setIsFullScreen(false)}
             aria-label="Back"
-            className="h-[2.625rem] w-[2.75rem] sm:h-[2.25rem] sm:w-[2.25rem] -ml-[0.325rem] flex items-center justify-center rounded-full text-foreground hover:bg-muted active:scale-95 transition-all shrink-0"
+            className="h-[2.5rem] w-[2.75rem] sm:h-[2.25rem] sm:w-[2.25rem] -ml-[0.325rem] flex items-center justify-center rounded-full text-foreground hover:bg-muted active:scale-95 transition-all shrink-0"
           >
             <ChevronLeft className="h-[1.3rem] w-[1.3rem]" />
           </button>
@@ -632,7 +632,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
               onClick={handleClose}
               disabled={isSubmitting}
               variant="outline"
-              className="h-[2.625rem] sm:h-[1.7875rem] px-[1.3rem] min-w-[5.5rem]"
+              className="h-[2.5rem] sm:h-[1.7875rem] px-[1.3rem] min-w-[5.5rem]"
             />
             <SubmitButton
               isSubmitting={isSubmitting}
@@ -642,7 +642,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
               updateText="Update"
               submittingCreateText="Creating…"
               submittingUpdateText="Updating…"
-              className="h-[2.625rem] sm:h-[1.7875rem] px-[1.3rem] min-w-[5.5rem]"
+              className="h-[2.5rem] sm:h-[1.7875rem] px-[1.3rem] min-w-[5.5rem]"
             />
           </FormFooter>
         </form>

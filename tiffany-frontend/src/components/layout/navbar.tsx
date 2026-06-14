@@ -314,7 +314,7 @@ export function Navbar() {
                   ref={mobileSearchRef}
                   type="text"
                   placeholder={searchPlaceholder}
-                  className="pl-[2.25rem] w-full h-[2.625rem] bg-muted/50"
+                  className="pl-[2.25rem] w-full h-[2.5rem] bg-muted/50"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -323,7 +323,7 @@ export function Navbar() {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="shrink-0 h-[2.625rem] w-[2.625rem]"
+                className="shrink-0 h-[2.5rem] w-[2.625rem]"
                 onClick={() => setMobileSearchOpen(false)}
               >
                 <X className="h-[1.25rem] w-[1.25rem]" />
@@ -357,7 +357,7 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-[2.625rem] w-[2.625rem]"
+                    className="h-[2.5rem] w-[2.625rem]"
                     onClick={() => setMobileSearchOpen(true)}
                   >
                     <Search className="h-[1.375rem] w-[1.375rem]" />
@@ -366,7 +366,7 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="relative h-[2.625rem] w-[2.625rem]"
+                  className="relative h-[2.5rem] w-[2.625rem]"
                   onClick={() => router.push("/favorites")}
                 >
                   <Heart className="h-[1.375rem] w-[1.375rem]" />
@@ -385,7 +385,7 @@ export function Navbar() {
                 {isAuthenticated ? (
                   <CustomDropdownMenu
                     trigger={
-                      <div className="h-[2.625rem] w-[2.625rem] flex items-center justify-center rounded-full hover:ring-2 hover:ring-primary/20 transition-all">
+                      <div className="h-[2.5rem] w-[2.625rem] flex items-center justify-center rounded-full hover:ring-2 hover:ring-primary/20 transition-all">
                         <CustomAvatar
                           imageUrl={profileImage || profile?.profileImageUrl}
                           name={fullName || profile?.fullName || "User"}
@@ -403,7 +403,7 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-[2.625rem] w-[2.625rem]"
+                    className="h-[2.5rem] w-[2.625rem]"
                     onClick={() => openLoginModal()}
                   >
                     <User className="h-[1.375rem] w-[1.375rem]" />

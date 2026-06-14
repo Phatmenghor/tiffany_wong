@@ -22,10 +22,10 @@ const buttonVariants = cva(
       },
       size: {
         // Mobile: touch-friendly targets. Desktop (sm:): compact original sizes.
-        default: "h-[2.625rem] px-[0.975rem] sm:h-[1.625rem] sm:px-[0.65rem] sm:py-[0.325rem]",
+        default: "h-[2.5rem] px-[0.975rem] sm:h-[1.625rem] sm:px-[0.65rem] sm:py-[0.325rem]",
         sm: "h-[1.4625rem] rounded-[0.24375rem] px-[0.4875rem] text-[11px]",
         lg: "h-[3rem] rounded-[0.24375rem] px-[1.625rem] sm:h-[1.95rem] sm:px-[1.3rem]",
-        icon: "h-[2.625rem] w-[2.625rem] sm:h-[1.625rem] sm:w-[1.625rem]",
+        icon: "h-[2.5rem] w-[2.625rem] sm:h-[1.625rem] sm:w-[1.625rem]",
       },
     },
     defaultVariants: {
