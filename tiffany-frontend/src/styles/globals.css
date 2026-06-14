@@ -570,10 +570,11 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 97 36% 37%;
+    /* Tiffany Blue — Pantone 1837 (#81D8D0) adapted for UI contrast */
+    --primary: 175 57% 43%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 97 36% 32%;
-    --primary-active: 97 36% 27%;
+    --primary-hover: 175 57% 37%;
+    --primary-active: 175 57% 31%;
 
     /* SECONDARY - Golden Yellow #F4C430 */
     --secondary: 45 93% 56%;
@@ -587,7 +588,7 @@
 
     /* ACCENT - Light grey #F2F3F7 */
     --accent: 220 8% 95%;
-    --accent-foreground: 97 36% 37%;
+    --accent-foreground: 175 57% 43%;
     --accent-hover: 220 8% 90%;
 
     --destructive: 0 84% 60%;
@@ -598,15 +599,15 @@
     --border-strong: 220 13% 75%;
     --border-subtle: 220 13% 96%;
     --input: 220 13% 91%;
-    --input-focus: 97 36% 37%;
-    --ring: 97 36% 37%;
+    --input-focus: 175 57% 43%;
+    --ring: 175 57% 43%;
 
     /* COMBOBOX CUSTOM COLORS */
     --combobox-bg: 0 0% 100%;
     --combobox-fg: 222 47% 11%;
     --combobox-hover: 220 8% 95%;
     --combobox-selected: 220 8% 90%;
-    --combobox-selected-fg: 97 36% 37%;
+    --combobox-selected-fg: 175 57% 43%;
 
     --success: 146 79% 41%;
     --success-foreground: 0 0% 98%;
@@ -632,7 +633,7 @@
     --info-100: 215 79% 91%;
     --info-hover: 215 79% 50%;
 
-    --chart-1: 97 36% 37%;
+    --chart-1: 175 57% 43%;
     --chart-2: 39 85% 55%;
     --chart-3: 215 79% 55%;
     --chart-4: 146 79% 41%;
@@ -644,12 +645,12 @@
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 97 36% 37%;
+    --sidebar-primary: 175 57% 43%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 97 36% 95%;
-    --sidebar-accent-foreground: 97 36% 25%;
+    --sidebar-accent: 175 57% 95%;
+    --sidebar-accent-foreground: 175 57% 25%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 97 36% 37%;
+    --sidebar-ring: 175 57% 43%;
 
     --surface-1: 0 0% 100%;
     --surface-2: 220 13% 98%;
@@ -816,7 +817,7 @@
 }
 
 #nprogress .bar {
-  background: #57823d !important;
+  background: #2ba39b !important;
   position: fixed;
   z-index: 1031;
   top: 0;
@@ -825,8 +826,8 @@
   height: 2px;
   border-radius: 0;
   box-shadow:
-    0 0 5px #57823d4d,
-    0 0 8px #57823d26;
+    0 0 5px #2ba39b4d,
+    0 0 8px #2ba39b26;
   transition: all 0.2s ease-in-out;
 }
 
@@ -839,34 +840,34 @@
   background: linear-gradient(
     to right,
     transparent,
-    #57823d99,
-    #57823d
+    #2ba39b99,
+    #2ba39b
   ) !important;
   box-shadow:
-    0 0 8px #57823dcc,
-    0 0 4px #57823d;
+    0 0 8px #2ba39bcc,
+    0 0 4px #2ba39b;
   transform: rotate(2deg) translate(0px, -2px);
   border-radius: 0;
 }
 
 body.route-changing #nprogress .bar {
-  background: #57823d !important;
+  background: #2ba39b !important;
   height: 2px;
   box-shadow:
-    0 0 8px #57823d66,
-    0 0 12px #57823d33;
+    0 0 8px #2ba39b66,
+    0 0 12px #2ba39b33;
 }
 
 body.route-changing #nprogress .peg {
   background: linear-gradient(
     to right,
     transparent,
-    #57823dcc,
-    #57823d
+    #2ba39bcc,
+    #2ba39b
   ) !important;
   box-shadow:
-    0 0 10px #57823de6,
-    0 0 5px #57823d;
+    0 0 10px #2ba39be6,
+    0 0 5px #2ba39b;
 }
 
 #nprogress .peg {

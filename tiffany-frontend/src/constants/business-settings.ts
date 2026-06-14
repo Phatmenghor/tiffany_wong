@@ -14,7 +14,7 @@ export const BUSINESS_SETTINGS_DEFAULTS = {
    * Changing this value updates the color site-wide — no other files need
    * to be touched.
    */
-  PRIMARY_COLOR: "#57823D",
+  PRIMARY_COLOR: "#2BA39B",
 
   /**
    * Tax percentage applied to all transactions.

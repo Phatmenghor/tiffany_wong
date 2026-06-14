@@ -59,8 +59,8 @@ export const viewport: Viewport = {
   userScalable: false,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#57823D" },
-    { media: "(prefers-color-scheme: dark)",  color: "#476B32" },
+    { media: "(prefers-color-scheme: light)", color: "#81D8D0" },
+    { media: "(prefers-color-scheme: dark)",  color: "#3DA8A0" },
   ],
   interactiveWidget: "resizes-visual",
 };
@@ -74,6 +74,7 @@ export default async function RootLayout({
     <html className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" />
+        <script src="https://telegram.org/js/telegram-web-app.js" />
       </head>
       <body className="antialiased">
         <ClientProviders>

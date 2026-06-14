@@ -7,21 +7,21 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          50: "#F3F7F0",
-          100: "#E2EDD9",
-          200: "#BDD5AA",
-          300: "#93BA78",
-          400: "#6B9D4F",
-          500: "#57823D", // main
-          600: "#476B32", // darker
-          700: "#3C5A2A",
-          800: "#304922",
-          900: "#25381A",
-          950: "#162110",
-          main: "#57823D",
-          darker: "#476B32",
-          lighter: "#93BA78",
-          subtle: "#E2EDD9",
+          50: "#EEF9F8",
+          100: "#C8EEE9",
+          200: "#96DEDA",
+          300: "#81D8D0", // Pantone 1837 Blue Tiffany
+          400: "#4DBFB7",
+          500: "#2BA39B", // main
+          600: "#228880",
+          700: "#1A6D67",
+          800: "#13524E",
+          900: "#0C3734",
+          950: "#071F1D",
+          main: "#2BA39B",
+          darker: "#228880",
+          lighter: "#81D8D0",
+          subtle: "#C8EEE9",
         },
 
         status: {
