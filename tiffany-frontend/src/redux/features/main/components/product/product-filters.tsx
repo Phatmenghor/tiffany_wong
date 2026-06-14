@@ -333,7 +333,7 @@ function ProductFiltersComponent({
               <Button
                 variant={activeFiltersCount > 0 ? "default" : "outline"}
                 size="sm"
-                className="h-[2.75rem] px-[0.975rem] gap-[0.4rem] text-[13px] font-semibold rounded-full"
+                className="h-[2.625rem] px-[0.975rem] gap-[0.4rem] text-[13px] font-semibold rounded-full"
               >
                 <SlidersHorizontal className="h-[0.875rem] w-[0.875rem]" />
                 Filters

@@ -37,7 +37,7 @@ export function PasswordField({
               placeholder={placeholder}
               disabled={disabled}
               autoComplete="new-password"
-              className={`h-[2.75rem] sm:h-[1.625rem] pr-[1.95rem] transition-all duration-200 ${
+              className={`h-[2.625rem] sm:h-[1.625rem] pr-[1.95rem] transition-all duration-200 ${
                 error
                   ? "border-red-500 focus:border-red-500"
                   : "focus:bg-primary/10 focus:border-primary focus:ring-2 focus:ring-primary/30"

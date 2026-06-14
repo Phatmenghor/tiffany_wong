@@ -74,9 +74,9 @@ export function ComboboxSelectCategories({
   }, [loading, lastPage]);
 
   const sizeClasses = {
-    sm: "h-[2.75rem] sm:h-[1.3rem] text-[12px] sm:text-[11px]",
-    md: "h-[2.75rem] sm:h-[1.625rem] text-[12px]",
-    lg: "h-[2.75rem] sm:h-[1.625rem] text-[12px]",
+    sm: "h-[2.625rem] sm:h-[1.3rem] text-[12px] sm:text-[11px]",
+    md: "h-[2.625rem] sm:h-[1.625rem] text-[12px]",
+    lg: "h-[2.625rem] sm:h-[1.625rem] text-[12px]",
   };
 
   // Dropdown items: no fixed height so long text wraps and the row grows

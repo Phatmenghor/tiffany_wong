@@ -98,7 +98,7 @@ export function OrderSummary({
                 type="button"
                 onClick={() => onPaymentMethodChange(method)}
                 className={cn(
-                  "flex-1 flex items-center justify-center gap-[0.325rem] h-[2.75rem] sm:h-[1.625rem] border rounded-[0.325rem] text-[12px] sm:text-[11px] font-medium transition-colors",
+                  "flex-1 flex items-center justify-center gap-[0.325rem] h-[2.625rem] sm:h-[1.625rem] border rounded-[0.325rem] text-[12px] sm:text-[11px] font-medium transition-colors",
                   paymentMethod === method
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-background hover:bg-muted/50"
@@ -111,7 +111,7 @@ export function OrderSummary({
           </div>
         </div>
         <CustomButton
-          className="w-full mb-[0.40625rem] gap-[0.325rem] h-[2.75rem] sm:h-[1.7875rem] rounded-[0.4875rem]"
+          className="w-full mb-[0.40625rem] gap-[0.325rem] h-[2.625rem] sm:h-[1.7875rem] rounded-[0.4875rem]"
           onClick={onCheckout}
           disabled={isProcessing}
         >
