@@ -150,17 +150,17 @@ export function LocationCard({
 
           </div>
 
-          {/* Action buttons */}
-          <div className="flex items-center gap-[0.24375rem] shrink-0 flex-wrap justify-end">
+          {/* Action buttons — larger tap targets on mobile, compact on desktop */}
+          <div className="flex items-center gap-[0.325rem] shrink-0 flex-wrap justify-end">
             {!isPrimary && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => onSetPrimary(location)}
                 disabled={isSettingPrimary}
-                className="h-[1.3rem] text-[11px] gap-[0.24375rem] rounded-[0.325rem]"
+                className="h-[1.95rem] sm:h-[1.3rem] text-[11px] gap-[0.24375rem] rounded-[0.325rem] px-[0.4875rem]"
               >
-                <Star className="h-[0.56875rem] w-[0.56875rem]" />
+                <Star className="h-[0.65rem] w-[0.65rem]" />
                 <span className="hidden sm:inline">Default</span>
               </Button>
             )}
@@ -168,19 +168,19 @@ export function LocationCard({
               variant="outline"
               size="sm"
               onClick={() => onEdit(location)}
-              className="h-[1.3rem] w-[1.3rem] p-0 rounded-[0.325rem]"
+              className="h-[1.95rem] w-[1.95rem] sm:h-[1.3rem] sm:w-[1.3rem] p-0 rounded-[0.325rem]"
               title="Edit"
             >
-              <Edit2 className="h-[0.56875rem] w-[0.56875rem]" />
+              <Edit2 className="h-[0.65rem] w-[0.65rem]" />
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => onDelete(location)}
-              className="h-[1.3rem] w-[1.3rem] p-0 rounded-[0.325rem]"
+              className="h-[1.95rem] w-[1.95rem] sm:h-[1.3rem] sm:w-[1.3rem] p-0 rounded-[0.325rem]"
               title="Delete"
             >
-              <Trash2 className="h-[0.56875rem] w-[0.56875rem]" />
+              <Trash2 className="h-[0.65rem] w-[0.65rem]" />
             </Button>
           </div>
         </div>

@@ -34,6 +34,7 @@ import {
   Loader2,
   AlertTriangle,
   CheckCircle2,
+  ChevronLeft,
 } from "lucide-react";
 
 import { useLocationState } from "../store/state/location-state";
@@ -413,45 +414,55 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
   // ---------------------------------------------------------------------------
   if (isFullScreen) {
     return (
-      <div className="fixed inset-0 z-[201] flex flex-col bg-white">
-        {/* Toolbar */}
-        <div className="flex items-center justify-between px-[0.65rem] py-[0.4875rem] border-b bg-background shrink-0 gap-[0.4875rem] shadow-sm">
-          <div className="flex items-center gap-[0.4875rem] min-w-0">
-            <div className="p-[0.325rem] rounded-[0.325rem] bg-primary/10 shrink-0">
-              <MapPin className="h-[0.65rem] w-[0.65rem] text-primary" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[11px] font-semibold block">Select on Map</span>
-              {hasCoords && (
-                <span className="text-[11px] font-mono text-muted-foreground">
-                  {latitude.toFixed(5)}, {longitude.toFixed(5)}
-                  {isReverseGeocoding && <Loader2 className="inline-block h-[0.4875rem] w-[0.4875rem] ml-[0.1625rem] animate-spin" />}
-                </span>
-              )}
-            </div>
+      <div className="fixed inset-0 z-[201] flex flex-col bg-background">
+        {/* Top bar — clear Back/close + My Location.
+            pt clears the iPhone notch / status bar safe area. */}
+        <div
+          className="flex items-center gap-[0.4875rem] px-[0.65rem] pb-[0.4875rem] border-b bg-background shrink-0 shadow-sm"
+          style={{ paddingTop: "max(0.4875rem, env(safe-area-inset-top, 0px))" }}
+        >
+          <button
+            type="button"
+            onClick={() => setIsFullScreen(false)}
+            aria-label="Back"
+            className="h-[2.75rem] w-[2.75rem] sm:h-[2.25rem] sm:w-[2.25rem] -ml-[0.325rem] flex items-center justify-center rounded-full text-foreground hover:bg-muted active:scale-95 transition-all shrink-0"
+          >
+            <ChevronLeft className="h-[1.3rem] w-[1.3rem]" />
+          </button>
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-semibold leading-tight truncate">Select on Map</p>
+            <p className="text-[11px] text-muted-foreground leading-tight truncate">
+              Move the map to position the pin
+            </p>
           </div>
-          <div className="flex items-center gap-[0.325rem] shrink-0">
-            <Button type="button" variant="outline" size="sm" onClick={handleMyLocation} className="gap-[0.1625rem] h-[1.4625rem]">
-              <LocateFixed className="h-[0.65rem] w-[0.65rem]" />
-              <span className="hidden sm:inline">My Location</span>
-            </Button>
-            <Button type="button" variant="default" size="sm" onClick={() => setIsFullScreen(false)} className="gap-[0.1625rem] h-[1.4625rem]">
-              <Minimize2 className="h-[0.65rem] w-[0.65rem]" />
-              <span className="hidden sm:inline">Done</span>
-            </Button>
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleMyLocation}
+            className="gap-[0.325rem] h-[2.25rem] sm:h-[1.625rem] rounded-full shrink-0"
+          >
+            <LocateFixed className="h-[0.8125rem] w-[0.8125rem]" />
+            <span className="hidden sm:inline">My Location</span>
+          </Button>
         </div>
 
         {/* Search bar */}
-        <div className="px-[0.65rem] py-[0.4875rem] border-b bg-background/95 backdrop-blur shrink-0">
+        <div className="px-[0.65rem] py-[0.4875rem] border-b bg-background shrink-0">
           <div className="relative w-full">
-            <Search className="absolute left-[0.4875rem] top-1/2 -translate-y-1/2 h-[0.65rem] w-[0.65rem] text-muted-foreground" />
-            <Input ref={fullscreenSearchRef} type="text" placeholder="Search for a place, address…" className="pl-[1.4625rem] h-[1.625rem] rounded-[0.325rem] text-[11px] w-full" autoComplete="off" />
+            <Search className="absolute left-[0.65rem] top-1/2 -translate-y-1/2 h-[0.8125rem] w-[0.8125rem] text-muted-foreground pointer-events-none" />
+            <Input
+              ref={fullscreenSearchRef}
+              type="text"
+              placeholder="Search for a place, address…"
+              className="pl-[1.95rem] h-[2.25rem] sm:h-[1.95rem] rounded-[0.4875rem] text-[12px] w-full"
+              autoComplete="off"
+            />
           </div>
         </div>
 
-        {/* Map container */}
-        <div className="flex-1 relative bg-gray-100">
+        {/* Map container — fills remaining space; pin centers in the visible area */}
+        <div className="flex-1 relative bg-muted">
           {!isFullScreenMapReady && (
             <div className="absolute inset-0 flex items-center justify-center bg-muted/80 z-10">
               <div className="flex flex-col items-center gap-[0.325rem]">
@@ -462,23 +473,43 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
           )}
           <CenterPin isDragging={isDragging} size="h-[1.625rem] w-[1.625rem]" />
           <div ref={fullscreenMapContainerRef} className="w-full h-full bg-white" />
-          {/* Address display */}
-          <div className="absolute bottom-[0.65rem] left-1/2 -translate-x-1/2 bg-background/95 backdrop-blur-sm border rounded-[0.4875rem] px-[0.975rem] py-[0.65rem] shadow-lg w-[90%] max-w-2xl">
-            <div className="flex items-start gap-[0.4875rem]">
-              <MapPin className="h-[0.8125rem] w-[0.8125rem] text-red-500 shrink-0 mt-[0.08125rem]" />
-              <div className="min-w-0 flex-1">
-                {addressPreview && (
-                  <p className="text-[12px] font-semibold text-foreground leading-relaxed break-words">
-                    {addressPreview}
-                  </p>
-                )}
-                <p className="text-[11px] font-mono text-muted-foreground mt-[0.325rem] flex items-center gap-[0.325rem]">
-                  {latitude.toFixed(6)}, {longitude.toFixed(6)}
-                  {isReverseGeocoding && <Loader2 className="h-[0.4875rem] w-[0.4875rem] animate-spin shrink-0" />}
+        </div>
+
+        {/* Bottom confirm panel — address preview + primary Choose CTA.
+            pb clears the iPhone home indicator safe area. */}
+        <div
+          className="shrink-0 border-t bg-background px-[0.65rem] pt-[0.65rem] space-y-[0.4875rem] shadow-[0_-2px_12px_0_rgba(0,0,0,0.06)]"
+          style={{ paddingBottom: "max(0.65rem, calc(0.65rem + env(safe-area-inset-bottom, 0px)))" }}
+        >
+          <div className="flex items-start gap-[0.4875rem]">
+            <div className="p-[0.325rem] rounded-[0.325rem] bg-red-50 shrink-0">
+              <MapPin className="h-[0.8125rem] w-[0.8125rem] text-red-500" />
+            </div>
+            <div className="min-w-0 flex-1">
+              {addressPreview ? (
+                <p className="text-[12px] font-semibold text-foreground leading-snug break-words line-clamp-2">
+                  {addressPreview}
                 </p>
-              </div>
+              ) : (
+                <p className="text-[12px] text-muted-foreground leading-snug">
+                  Move the map to choose a spot
+                </p>
+              )}
+              <p className="text-[11px] font-mono text-muted-foreground mt-[0.1625rem] flex items-center gap-[0.325rem]">
+                {hasCoords ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : "No coordinates yet"}
+                {isReverseGeocoding && <Loader2 className="h-[0.56875rem] w-[0.56875rem] animate-spin shrink-0" />}
+              </p>
             </div>
           </div>
+          <Button
+            type="button"
+            onClick={() => setIsFullScreen(false)}
+            disabled={!hasCoords}
+            className="w-full gap-[0.4875rem] font-semibold"
+          >
+            <CheckCircle2 className="h-[0.8125rem] w-[0.8125rem]" />
+            Choose This Location
+          </Button>
         </div>
       </div>
     );
