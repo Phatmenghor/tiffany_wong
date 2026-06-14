@@ -225,7 +225,7 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <CustomButton className="w-full mb-[0.40625rem] gap-[0.325rem] h-[2.75rem] sm:h-[1.7875rem] rounded-[0.4875rem]" onClick={handleCheckout}>
+              <CustomButton className="w-full mb-[0.40625rem] gap-[0.325rem] h-[2.125rem] sm:h-[1.7875rem] rounded-[0.4875rem]" onClick={handleCheckout}>
                 <CreditCard className="h-[0.65rem] w-[0.65rem]" />
                 Proceed to Checkout
               </CustomButton>
@@ -250,7 +250,7 @@ export default function CartPage() {
             <div className="text-[13px] font-bold text-primary">{formatCurrency(finalTotal)}</div>
           </div>
         </div>
-        <CustomButton className="w-full gap-[0.325rem] h-[2.75rem] sm:h-[1.7875rem] rounded-[0.4875rem]" onClick={handleCheckout}>
+        <CustomButton className="w-full gap-[0.325rem] h-[2.125rem] sm:h-[1.7875rem] rounded-[0.4875rem]" onClick={handleCheckout}>
           <CreditCard className="h-[0.65rem] w-[0.65rem]" />
           Proceed to Checkout
           <ArrowRight className="h-[0.65rem] w-[0.65rem] ml-auto" />
