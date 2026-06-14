@@ -24,10 +24,20 @@ import {
   ListChecks,
   FilterX,
   DollarSign,
-  CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ComboboxSelectCategoriesPublic } from "@/components/shared/combobox/combobox_select_categories_public";
+
+// Keep only digits and a single decimal point (no spinner arrows, no negatives)
+function sanitizePrice(raw: string): string {
+  const cleaned = raw.replace(/[^\d.]/g, "");
+  const firstDot = cleaned.indexOf(".");
+  if (firstDot === -1) return cleaned;
+  return (
+    cleaned.slice(0, firstDot + 1) +
+    cleaned.slice(firstDot + 1).replace(/\./g, "")
+  );
+}
 
 interface ProductFiltersProps {
   totalResults: number;
@@ -186,25 +196,23 @@ function ProductFiltersComponent({
           <button
             onClick={() => updateFilter("hasSizes", hasSizes === true ? "" : "true")}
             className={cn(
-              "flex items-center justify-center gap-[0.3rem] rounded-[0.5rem] border-2 px-[0.5rem] h-[2.25rem] text-[12px] font-medium transition-all active:opacity-75",
+              "flex items-center justify-center rounded-[0.5rem] border-2 px-[0.5rem] h-[1.875rem] text-[12px] font-medium transition-all active:opacity-75",
               hasSizes === true
-                ? "border-blue-500 bg-blue-500/10 text-blue-600"
+                ? "border-blue-500 text-blue-600"
                 : "border-border/60 text-muted-foreground hover:border-blue-300",
             )}
           >
-            {hasSizes === true && <CheckCircle2 className="h-[0.75rem] w-[0.75rem]" />}
             Has Sizes
           </button>
           <button
             onClick={() => updateFilter("hasSizes", hasSizes === false ? "" : "false")}
             className={cn(
-              "flex items-center justify-center gap-[0.3rem] rounded-[0.5rem] border-2 px-[0.5rem] h-[2.25rem] text-[12px] font-medium transition-all active:opacity-75",
+              "flex items-center justify-center rounded-[0.5rem] border-2 px-[0.5rem] h-[1.875rem] text-[12px] font-medium transition-all active:opacity-75",
               hasSizes === false
-                ? "border-blue-500 bg-blue-500/10 text-blue-600"
+                ? "border-blue-500 text-blue-600"
                 : "border-border/60 text-muted-foreground hover:border-blue-300",
             )}
           >
-            {hasSizes === false && <CheckCircle2 className="h-[0.75rem] w-[0.75rem]" />}
             No Sizes
           </button>
         </div>
@@ -218,20 +226,20 @@ function ProductFiltersComponent({
         </div>
         <div className="flex items-center gap-[0.4rem]">
           <Input
-            type="number"
+            type="text"
+            inputMode="decimal"
             placeholder="Min"
-            min={0}
             value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
+            onChange={(e) => setMinPrice(sanitizePrice(e.target.value))}
             className="h-[2.5rem] sm:h-[1.625rem] text-[13px] sm:text-[11px] rounded-[0.5rem]"
           />
           <span className="text-muted-foreground text-[13px] flex-shrink-0 font-medium">–</span>
           <Input
-            type="number"
+            type="text"
+            inputMode="decimal"
             placeholder="Max"
-            min={0}
             value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
+            onChange={(e) => setMaxPrice(sanitizePrice(e.target.value))}
             className="h-[2.5rem] sm:h-[1.625rem] text-[13px] sm:text-[11px] rounded-[0.5rem]"
           />
         </div>

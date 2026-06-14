@@ -312,7 +312,7 @@ export function Navbar() {
                 <Search className="absolute left-[0.4875rem] top-1/2 -translate-y-1/2 h-[0.65rem] w-[0.65rem] text-muted-foreground pointer-events-none" />
                 <Input
                   ref={mobileSearchRef}
-                  type="search"
+                  type="text"
                   placeholder={searchPlaceholder}
                   className="pl-[1.625rem] w-full h-[1.625rem] bg-muted/50"
                   value={searchQuery}
@@ -357,10 +357,10 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-[1.4625rem] w-[1.4625rem]"
+                    className="h-[1.625rem] w-[1.625rem]"
                     onClick={() => setMobileSearchOpen(true)}
                   >
-                    <Search className="h-[0.8125rem] w-[0.8125rem]" />
+                    <Search className="h-[1.1375rem] w-[1.1375rem]" />
                   </Button>
                 )}
                 <Button
@@ -488,12 +488,25 @@ export function Navbar() {
                 <div className="relative w-full">
                   <Search className="absolute left-[0.4875rem] top-1/2 -translate-y-1/2 h-[0.65rem] w-[0.65rem] text-muted-foreground pointer-events-none" />
                   <Input
-                    type="search"
+                    type="text"
                     placeholder={searchPlaceholder}
-                    className="pl-[1.625rem] w-full bg-muted/50"
+                    className={cn(
+                      "pl-[1.625rem] w-full bg-muted/50",
+                      searchQuery && "pr-[1.625rem]",
+                    )}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      aria-label="Clear search"
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-[0.4875rem] top-1/2 -translate-y-1/2 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <X className="h-[0.65rem] w-[0.65rem]" />
+                    </button>
+                  )}
                 </div>
               </form>
             )}
