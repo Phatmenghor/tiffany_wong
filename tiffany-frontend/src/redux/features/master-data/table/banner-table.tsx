@@ -26,8 +26,12 @@ export const bannerTableColumns = ({
   data,
   handlers,
 }: BannerTableOptions): TableColumn<BannerResponseModel>[] => {
-  const { handleEditBanner, handleBannerViewDetail, handleDeleteBanner, handleToggleBannerStatus } =
-    handlers;
+  const {
+    handleEditBanner,
+    handleBannerViewDetail,
+    handleDeleteBanner,
+    handleToggleBannerStatus,
+  } = handlers;
 
   return [
     {
@@ -44,8 +48,8 @@ export const bannerTableColumns = ({
     {
       key: "imageUrl",
       label: "Banner Image",
-      minWidth: "200px",
-      maxWidth: "280px",
+      minWidth: "10px",
+      maxWidth: "400px",
       render: (banner) => (
         <TableThumbnail
           src={banner.imageUrl}
@@ -57,8 +61,8 @@ export const bannerTableColumns = ({
     {
       key: "description",
       label: "Description",
-      minWidth: "300px",
-      maxWidth: "500px",
+      minWidth: "10px",
+      maxWidth: "400px",
       render: (banner) => (
         <h3 className="font-semibold text-foreground line-clamp-3">
           {banner.description || "---"}
@@ -68,8 +72,8 @@ export const bannerTableColumns = ({
     {
       key: "linkUrl",
       label: "Link",
-      minWidth: "150px",
-      maxWidth: "250px",
+      minWidth: "10px",
+      maxWidth: "400px",
       truncate: true,
       render: (banner) => (
         <span className="text-muted-foreground truncate">
@@ -80,8 +84,8 @@ export const bannerTableColumns = ({
     {
       key: "status",
       label: "Status",
-      minWidth: "120px",
-      maxWidth: "180px",
+      minWidth: "10px",
+      maxWidth: "400px",
       render: (banner) => (
         <div className="flex items-center gap-[0.325rem]">
           <Switch

@@ -24,7 +24,6 @@ interface ProductPromotionTableOptions {
   handlers: ProductTableHandlers;
 }
 
-
 /**
  * SizesDisplay - Display product sizes in simple bordered boxes
  * Uses secondary color (yellow) from business theme for borders
@@ -125,9 +124,7 @@ export const productPromotionTableColumns = ({
       maxWidth: "400px",
       truncate: true,
       render: (product) => (
-        <span className="text-muted-foreground">
-          {product?.name || "---"}
-        </span>
+        <span className="text-muted-foreground">{product?.name || "---"}</span>
       ),
     },
 
@@ -135,7 +132,7 @@ export const productPromotionTableColumns = ({
       key: "categoryName",
       label: "Category",
       minWidth: "10px",
-      maxWidth: "150px",
+      maxWidth: "400px",
       truncate: true,
       render: (product) => (
         <span className="text-muted-foreground">
@@ -147,8 +144,8 @@ export const productPromotionTableColumns = ({
     {
       key: "price",
       label: "Price",
-      minWidth: "150px",
-      maxWidth: "200px",
+      minWidth: "10px",
+      maxWidth: "400px",
       render: (product) => (
         <div className="flex flex-col gap-[0.1625rem]">
           <span className="font-semibold text-foreground">
@@ -193,9 +190,7 @@ export const productPromotionTableColumns = ({
         }
 
         return (
-          <span className="font-semibold text-red-600">
-            {displayValue}
-          </span>
+          <span className="font-semibold text-red-600">{displayValue}</span>
         );
       },
     },
@@ -229,8 +224,8 @@ export const productPromotionTableColumns = ({
     {
       key: "status",
       label: "Status",
-      minWidth: "150px",
-      maxWidth: "350px",
+      minWidth: "10px",
+      maxWidth: "400px",
       render: (product) => (
         <StatusDisplay value={product?.status || "ACTIVE"} />
       ),
@@ -241,9 +236,9 @@ export const productPromotionTableColumns = ({
       label: "Created At",
       minWidth: "10px",
       maxWidth: "400px",
-      render: (banner) => (
+      render: (product) => (
         <span className="text-muted-foreground">
-          {dateTimeFormat(banner?.createdAt)}
+          {dateTimeFormat(product?.createdAt)}
         </span>
       ),
     },
@@ -253,29 +248,29 @@ export const productPromotionTableColumns = ({
       label: "Actions",
       minWidth: "10px",
       maxWidth: "400px",
-      render: (brand) => (
+      render: (product) => (
         <div className="flex items-center gap-[0.325rem]">
           <ActionButton
             icon={<Eye className="w-[0.65rem] h-[0.65rem]" />}
             tooltip="View Details"
-            onClick={() => handleProductViewDetail(brand)}
+            onClick={() => handleProductViewDetail(product)}
           />
           <ActionButton
             icon={<Edit className="w-[0.65rem] h-[0.65rem]" />}
             tooltip="Edit Product"
-            onClick={() => handleEditProduct(brand)}
+            onClick={() => handleEditProduct(product)}
           />
-          {handleResetPromotion && brand?.hasPromotion && (
+          {handleResetPromotion && product?.hasPromotion && (
             <ActionButton
               icon={<RotateCcw className="w-[0.65rem] h-[0.65rem]" />}
               tooltip="Reset Promotion"
-              onClick={() => handleResetPromotion(brand)}
+              onClick={() => handleResetPromotion(product)}
             />
           )}
           <ActionButton
             icon={<Trash className="w-[0.65rem] h-[0.65rem]" />}
             tooltip="Delete Product"
-            onClick={() => handleDeleteProduct(brand)}
+            onClick={() => handleDeleteProduct(product)}
             variant="destructive"
           />
         </div>

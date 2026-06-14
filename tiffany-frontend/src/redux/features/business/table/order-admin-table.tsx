@@ -7,7 +7,6 @@ import { OrderResponse } from "@/redux/features/main/store/models/response/order
 import { AllOrderResponseModel } from "../store/models/response/order-admin-response";
 import { getOrderStatusLabel } from "@/enums/order-status.enum";
 import { formatCurrency } from "@/utils/common/currency-format";
-import { Badge } from "@/components/ui/badge";
 
 interface OrderTableHandlers {
   handleViewOrder: (order: OrderResponse) => void;
@@ -20,36 +19,26 @@ interface OrderTableOptions {
   handlers: OrderTableHandlers;
 }
 
-const getStatusVariant = (status: string) => {
+// PENDING | CONFIRMED | COMPLETED | CANCELLED
+const getOrderStatusColor = (status: string) => {
   switch (status) {
-    case "COMPLETED":
-    case "READY":
-      return "default";
-    case "CANCELLED":
-    case "FAILED":
-      return "destructive";
-    case "PENDING":
-    case "PREPARING":
-      return "secondary";
-    default:
-      return "outline";
+    case "COMPLETED":  return "bg-green-100 text-green-800 border border-green-300";
+    case "CANCELLED":  return "bg-red-100 text-red-800 border border-red-300";
+    case "PENDING":    return "bg-yellow-100 text-yellow-800 border border-yellow-300";
+    case "CONFIRMED":  return "bg-blue-100 text-blue-800 border border-blue-300";
+    default:           return "bg-gray-100 text-gray-800 border border-gray-300";
   }
 };
 
-const getPaymentVariant = (status: string) => {
+// PAID | UNPAID | REFUNDED
+const getPaymentStatusColor = (status: string) => {
   switch (status) {
-    case "PAID":
-      return "default";
-    case "UNPAID":
-    case "PENDING":
-      return "secondary";
-    case "REFUNDED":
-      return "destructive";
-    default:
-      return "outline";
+    case "PAID":      return "bg-green-100 text-green-800 border border-green-300";
+    case "UNPAID":    return "bg-red-100 text-red-800 border border-red-300";
+    case "REFUNDED":  return "bg-purple-100 text-purple-800 border border-purple-300";
+    default:          return "bg-gray-100 text-gray-800 border border-gray-300";
   }
 };
-
 
 export const orderAdminTableColumns = ({
   data,
@@ -61,8 +50,8 @@ export const orderAdminTableColumns = ({
     {
       key: "index",
       label: "#",
-      minWidth: "40px",
-      maxWidth: "60px",
+      minWidth: "10px",
+      maxWidth: "400px",
       render: (_, index) => (
         <span className="font-medium">
           {indexDisplay(data?.pageNo || 1, data?.pageSize || 15, index + 1)}
@@ -72,8 +61,8 @@ export const orderAdminTableColumns = ({
     {
       key: "orderNumber",
       label: "Order #",
-      minWidth: "100px",
-      maxWidth: "130px",
+      minWidth: "10px",
+      maxWidth: "400px",
       render: (order) => (
         <span className="font-mono font-medium">
           {order?.orderNumber || "---"}
@@ -83,12 +72,14 @@ export const orderAdminTableColumns = ({
     {
       key: "customerName",
       label: "Customer",
-      minWidth: "130px",
-      maxWidth: "170px",
+      minWidth: "10px",
+      maxWidth: "400px",
       truncate: true,
       render: (order) => (
         <div className="flex flex-col">
-          <span className="font-medium">{order?.customerName || "Walk-in"}</span>
+          <span className="font-medium">
+            {order?.customerName || "Walk-in"}
+          </span>
           <span className="text-muted-foreground">
             {order?.customerPhone || "No phone"}
           </span>
@@ -100,34 +91,11 @@ export const orderAdminTableColumns = ({
       label: "Status",
       minWidth: "120px",
       maxWidth: "150px",
-      render: (order) => {
-        const getStatusColor = (status: string) => {
-          switch (status) {
-            case "COMPLETED":
-            case "READY":
-              return "bg-green-100 text-green-800 border border-green-300";
-            case "CANCELLED":
-            case "FAILED":
-              return "bg-red-100 text-red-800 border border-red-300";
-            case "PENDING":
-              return "bg-yellow-100 text-yellow-800 border border-yellow-300";
-            case "PREPARING":
-            case "CONFIRMED":
-            case "PROCESSING":
-              return "bg-blue-100 text-blue-800 border border-blue-300";
-            case "SHIPPED":
-            case "IN_TRANSIT":
-              return "bg-cyan-100 text-cyan-800 border border-cyan-300";
-            default:
-              return "bg-gray-100 text-gray-800 border border-gray-300";
-          }
-        };
-        return (
-          <span className={`font-semibold px-[0.40625rem] py-[0.24375rem] rounded-[0.24375rem] w-fit ${getStatusColor(order?.orderStatus)}`}>
-            {getOrderStatusLabel(order?.orderStatus)}
-          </span>
-        );
-      },
+      render: (order) => (
+        <span className={`font-semibold px-[0.40625rem] py-[0.24375rem] rounded-[0.24375rem] w-fit ${getOrderStatusColor(order?.orderStatus)}`}>
+          {getOrderStatusLabel(order?.orderStatus)}
+        </span>
+      ),
     },
     {
       key: "paymentMethod",
@@ -135,9 +103,7 @@ export const orderAdminTableColumns = ({
       minWidth: "120px",
       maxWidth: "150px",
       render: (order) => (
-        <span className="font-medium">
-          {order?.paymentMethod || "---"}
-        </span>
+        <span className="font-medium">{order?.paymentMethod || "---"}</span>
       ),
     },
     {
@@ -145,37 +111,19 @@ export const orderAdminTableColumns = ({
       label: "Payment Status",
       minWidth: "130px",
       maxWidth: "160px",
-      render: (order) => {
-        const getPaymentStatusColor = (status: string) => {
-          switch (status) {
-            case "PAID":
-              return "bg-green-100 text-green-800 border border-green-300";
-            case "PENDING":
-              return "bg-yellow-100 text-yellow-800 border border-yellow-300";
-            case "REFUNDED":
-              return "bg-purple-100 text-purple-800 border border-purple-300";
-            case "UNPAID":
-              return "bg-red-100 text-red-800 border border-red-300";
-            default:
-              return "bg-gray-100 text-gray-800 border border-gray-300";
-          }
-        };
-        return (
-          <span className={`font-semibold px-[0.40625rem] py-[0.24375rem] rounded-[0.24375rem] w-fit ${getPaymentStatusColor(order?.paymentStatus)}`}>
-            {order?.paymentStatus || "---"}
-          </span>
-        );
-      },
+      render: (order) => (
+        <span className={`font-semibold px-[0.40625rem] py-[0.24375rem] rounded-[0.24375rem] w-fit ${getPaymentStatusColor(order?.paymentStatus)}`}>
+          {order?.paymentStatus || "---"}
+        </span>
+      ),
     },
     {
       key: "items",
       label: "Items",
-      minWidth: "80px",
-      maxWidth: "110px",
+      minWidth: "10px",
+      maxWidth: "400px",
       render: (order) => (
-        <span className="font-medium">
-          {order?.items?.length || 0}
-        </span>
+        <span className="font-medium">{order?.items?.length || 0}</span>
       ),
     },
     {
@@ -199,8 +147,8 @@ export const orderAdminTableColumns = ({
     {
       key: "createdAt",
       label: "Created Date",
-      minWidth: "140px",
-      maxWidth: "170px",
+      minWidth: "10px",
+      maxWidth: "400px",
       render: (order) => (
         <span className="text-muted-foreground">
           {dateTimeFormat(order?.createdAt)}
@@ -210,8 +158,8 @@ export const orderAdminTableColumns = ({
     {
       key: "actions",
       label: "Actions",
-      minWidth: "100px",
-      maxWidth: "130px",
+      minWidth: "10px",
+      maxWidth: "400px",
       render: (order) => (
         <div className="flex items-center gap-[0.325rem]">
           <ActionButton

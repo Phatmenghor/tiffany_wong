@@ -14,30 +14,24 @@ interface OrderMobileCardProps {
   isCanceling: boolean;
 }
 
+// PENDING | CONFIRMED | COMPLETED | CANCELLED
 function getOrderStatusColor(status: string) {
   switch (status) {
-    case "COMPLETED": case "READY": case "DELIVERED":
-      return "bg-green-100 text-green-800 border-green-300";
-    case "CANCELLED": case "FAILED":
-      return "bg-red-100 text-red-800 border-red-300";
-    case "PENDING":
-      return "bg-yellow-100 text-yellow-800 border-yellow-300";
-    case "PREPARING": case "CONFIRMED": case "PROCESSING":
-      return "bg-blue-100 text-blue-800 border-blue-300";
-    case "SHIPPED": case "IN_TRANSIT":
-      return "bg-cyan-100 text-cyan-800 border-cyan-300";
-    default:
-      return "bg-gray-100 text-gray-800 border-gray-300";
+    case "COMPLETED": return "bg-green-100 text-green-800 border-green-300";
+    case "CANCELLED": return "bg-red-100 text-red-800 border-red-300";
+    case "PENDING":   return "bg-yellow-100 text-yellow-800 border-yellow-300";
+    case "CONFIRMED": return "bg-blue-100 text-blue-800 border-blue-300";
+    default:          return "bg-gray-100 text-gray-800 border-gray-300";
   }
 }
 
+// PAID | UNPAID | REFUNDED
 function getPaymentStatusColor(status: string) {
   switch (status) {
-    case "PAID": return "bg-green-100 text-green-800 border-green-300";
-    case "PENDING": return "bg-yellow-100 text-yellow-800 border-yellow-300";
+    case "PAID":     return "bg-green-100 text-green-800 border-green-300";
+    case "UNPAID":   return "bg-red-100 text-red-800 border-red-300";
     case "REFUNDED": return "bg-purple-100 text-purple-800 border-purple-300";
-    case "UNPAID": return "bg-red-100 text-red-800 border-red-300";
-    default: return "bg-gray-100 text-gray-800 border-gray-300";
+    default:         return "bg-gray-100 text-gray-800 border-gray-300";
   }
 }
 

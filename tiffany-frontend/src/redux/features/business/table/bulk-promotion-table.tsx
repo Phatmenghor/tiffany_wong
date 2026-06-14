@@ -24,7 +24,6 @@ interface BulkPromotionTableOptions {
   onResetPromotion?: (product: ProductDetailResponseModel) => void;
 }
 
-
 export const bulkPromotionTableColumns = ({
   selectedProductIds,
   onSelectProduct,
@@ -44,9 +43,8 @@ export const bulkPromotionTableColumns = ({
     {
       key: "index",
       label: "#",
-      width: "50px",
       minWidth: "10px",
-      maxWidth: "120px",
+      maxWidth: "400px",
       className: "pr-[0.325rem]",
       render: (_, index) => (
         <span className="font-medium pointer-events-none">
@@ -58,7 +56,7 @@ export const bulkPromotionTableColumns = ({
       key: "actions",
       label: "Actions",
       minWidth: "10px",
-      maxWidth: "120px",
+      maxWidth: "400px",
       className: "px-[0.325rem]",
       render: (product) => (
         <div className="flex items-center gap-[0.325rem]">
@@ -90,9 +88,8 @@ export const bulkPromotionTableColumns = ({
     {
       key: "image",
       label: "Image",
-      width: "60px",
       minWidth: "10px",
-      maxWidth: "120px",
+      maxWidth: "400px",
       className: "px-[0.325rem]",
       render: (product) => (
         <TableThumbnail
@@ -110,9 +107,7 @@ export const bulkPromotionTableColumns = ({
       truncate: true,
       className: "px-[0.65rem]",
       render: (product) => (
-        <span className="text-muted-foreground">
-          {product?.name || "---"}
-        </span>
+        <span className="text-muted-foreground">{product?.name || "---"}</span>
       ),
     },
 
@@ -120,16 +115,14 @@ export const bulkPromotionTableColumns = ({
       key: "promotionStatus",
       label: "Promotion",
       minWidth: "10px",
-      maxWidth: "120px",
+      maxWidth: "400px",
       className: "px-[0.65rem]",
       render: (product) => {
         if (!product.hasPromotion) {
           return <span className="text-foreground">No Promotion</span>;
         }
 
-        return (
-          <span className="font-medium text-green-600">Active</span>
-        );
+        return <span className="font-medium text-green-600">Active</span>;
       },
     },
     {
@@ -192,8 +185,8 @@ export const bulkPromotionTableColumns = ({
     {
       key: "displayPrice",
       label: "Display Price",
-      minWidth: "100px",
-      maxWidth: "150px",
+      minWidth: "10px",
+      maxWidth: "400px",
       className: "px-[0.65rem]",
       render: (product) => {
         // Only show for products WITHOUT sizes
@@ -220,8 +213,8 @@ export const bulkPromotionTableColumns = ({
     {
       key: "discount",
       label: "Discount",
-      minWidth: "100px",
-      maxWidth: "150px",
+      minWidth: "10px",
+      maxWidth: "400px",
       className: "px-[0.65rem]",
       render: (product) => {
         // Only show for products WITHOUT sizes
