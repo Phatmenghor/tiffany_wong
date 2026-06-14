@@ -120,7 +120,7 @@ export function QuantitySelector({
         onClick={handleDecrement}
         className={cn(
           isSmall
-            ? "h-[1.3rem] w-[1.3rem]"
+            ? "h-[1.3rem] w-[1.3rem] sm:h-[1.3rem] sm:w-[1.3rem]"
             : "h-[2.5rem] w-[2.5rem] sm:h-[1.625rem] sm:w-[1.625rem]",
           displayValue <= min && "opacity-40",
         )}
@@ -153,7 +153,7 @@ export function QuantitySelector({
         onClick={handleIncrement}
         className={cn(
           isSmall
-            ? "h-[1.3rem] w-[1.3rem]"
+            ? "h-[1.3rem] w-[1.3rem] sm:h-[1.3rem] sm:w-[1.3rem]"
             : "h-[2.5rem] w-[2.5rem] sm:h-[1.625rem] sm:w-[1.625rem]",
         )}
       >

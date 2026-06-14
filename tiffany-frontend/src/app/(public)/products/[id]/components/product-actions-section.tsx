@@ -126,7 +126,7 @@ export function ProductActionsSection({
                   <CustomButton
                     variant="outline"
                     size="sm"
-                    className="h-[1.3rem] px-[0.325rem] shrink-0 text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground"
+                    className="h-[1.3rem] sm:h-[1.3rem] px-[0.4875rem] shrink-0 text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground"
                     disabled={clearingSize === clearKey}
                     onClick={() => onClearSize(sizeId)}
                   >
