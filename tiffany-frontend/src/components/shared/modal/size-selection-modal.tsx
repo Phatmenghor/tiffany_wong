@@ -521,26 +521,6 @@ export function SizeSelectionModal({
                       Clear
                     </CustomButton>
                   )}
-                  {/* All-sizes summary preview */}
-                  {displayProduct?.hasSizes && displayProduct.sizes && displayProduct.sizes.length > 1 && (
-                    <div className="ml-auto flex flex-wrap gap-[0.2rem] justify-end">
-                      {displayProduct.sizes
-                        .filter((s) => getDisplayQuantity(s.id) > 0)
-                        .map((s) => (
-                          <span
-                            key={s.id}
-                            className={cn(
-                              "text-[10px] px-[0.3rem] py-[0.1rem] rounded-full font-semibold",
-                              s.id === selectedSize?.id
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-green-500 text-white",
-                            )}
-                          >
-                            {s.name}: {getDisplayQuantity(s.id)}
-                          </span>
-                        ))}
-                    </div>
-                  )}
                 </div>
               </div>
 
