@@ -48,6 +48,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       aria-describedby={undefined}
+      onOpenAutoFocus={(e) => e.preventDefault()}
       className={cn(
         // Base
         "fixed z-[60] grid w-full bg-background shadow-lg duration-200",

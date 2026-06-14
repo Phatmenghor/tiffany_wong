@@ -79,7 +79,8 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
       registerForm.reset();
       window.location.reload();
     } catch (err: any) {
-      showToast.error(err || "Registration failed. Please try again.");
+      const message = typeof err === "string" ? err : err?.message || "Registration failed. Please try again.";
+      showToast.error(message);
     }
   }
 
@@ -148,7 +149,7 @@ export function RegisterModal({ open, onOpenChange, onLoginClick }: RegisterModa
           <DialogFooter className="pt-[0.325rem]">
             <Button
               type="submit"
-              className="w-full h-[1.7875rem] font-semibold"
+              className="w-full h-[2.375rem] font-semibold"
               disabled={isAnyLoading}
             >
               {isLoading && <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />}

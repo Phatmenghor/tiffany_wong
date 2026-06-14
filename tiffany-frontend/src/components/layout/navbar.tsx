@@ -14,10 +14,17 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useDispatch } from "react-redux";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { CustomButton } from "../shared/button/custom-button";
 import {
   Search,
   ShoppingCart,
@@ -34,7 +41,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CustomAvatar } from "@/components/shared/avator/custom-avator";
 import { Badge } from "@/components/ui/badge";
-import { CustomButton } from "../shared/button/custom-button";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
 import { useFavoriteState } from "@/redux/features/main/store/state/favorite-state";
@@ -79,6 +85,7 @@ export function Navbar() {
 
   const [favoriteAnimating, setFavoriteAnimating] = useState(false);
   const prevFavoriteCount = useRef(favoriteItemCount);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   /**
    * Mark as hydrated after first render to avoid hydration mismatch
@@ -262,7 +269,7 @@ export function Navbar() {
         {
           label: "Logout",
           icon: <LogOut className="h-[0.65rem] w-[0.65rem]" />,
-          onClick: handleLogout,
+          onClick: () => setLogoutConfirmOpen(true),
           variant: "destructive" as const,
         },
       ],
@@ -360,7 +367,7 @@ export function Navbar() {
                     className="h-[2.5rem] w-[2.625rem]"
                     onClick={() => setMobileSearchOpen(true)}
                   >
-                    <Search className="h-[1.375rem] w-[1.375rem]" />
+                    <Search className="h-[1.625rem] w-[1.625rem]" />
                   </Button>
                 )}
                 <Button
@@ -369,7 +376,7 @@ export function Navbar() {
                   className="relative h-[2.5rem] w-[2.625rem]"
                   onClick={() => router.push("/favorites")}
                 >
-                  <Heart className="h-[1.375rem] w-[1.375rem]" />
+                  <Heart className="h-[1.625rem] w-[1.625rem]" />
                   {favoriteItemCount > 0 && (
                     <Badge
                       variant="destructive"
@@ -406,7 +413,7 @@ export function Navbar() {
                     className="h-[2.5rem] w-[2.625rem]"
                     onClick={() => openLoginModal()}
                   >
-                    <User className="h-[1.375rem] w-[1.375rem]" />
+                    <User className="h-[1.625rem] w-[1.625rem]" />
                   </Button>
                 )}
               </div>
@@ -581,6 +588,26 @@ export function Navbar() {
         </PageContainer>
       </nav>
 
+      <Dialog open={logoutConfirmOpen} onOpenChange={setLogoutConfirmOpen}>
+        <DialogContent className="sm:max-w-xs">
+          <DialogHeader>
+            <DialogTitle>Sign Out</DialogTitle>
+          </DialogHeader>
+          <p className="text-[12px] text-muted-foreground">Are you sure you want to sign out?</p>
+          <DialogFooter className="flex gap-[0.325rem]">
+            <CustomButton variant="outline" className="flex-1" onClick={() => setLogoutConfirmOpen(false)}>
+              Cancel
+            </CustomButton>
+            <CustomButton
+              variant="destructive"
+              className="flex-1"
+              onClick={() => { setLogoutConfirmOpen(false); handleLogout(); }}
+            >
+              Sign Out
+            </CustomButton>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

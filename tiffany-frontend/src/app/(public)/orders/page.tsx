@@ -34,8 +34,6 @@ type Order = OrderResponse;
 
 interface FilterState {
   status: string;
-  paymentStatus: string;
-  paymentMethod: string;
   search: string;
 }
 
@@ -47,8 +45,6 @@ export default function OrdersPage() {
 
   const [filters, setFilters] = useState<FilterState>({
     status: "",
-    paymentStatus: "",
-    paymentMethod: "",
     search: "",
   });
 
@@ -67,8 +63,6 @@ export default function OrdersPage() {
 
   const currentFilters = JSON.stringify({
     orderStatus: filters.status,
-    paymentStatus: filters.paymentStatus,
-    paymentMethod: filters.paymentMethod,
     search: filters.search,
   });
 
@@ -78,8 +72,6 @@ export default function OrdersPage() {
         pageNo,
         pageSize: 15,
         orderStatus: filters.status || undefined,
-        paymentStatus: filters.paymentStatus && filters.paymentStatus !== "ALL" ? filters.paymentStatus : undefined,
-        paymentMethod: filters.paymentMethod || undefined,
         search: filters.search || undefined,
       }),
     );
@@ -158,11 +150,9 @@ export default function OrdersPage() {
   };
 
   const handleStatusChange = (value: string) => { setFilters((p) => ({ ...p, status: value })); setCurrentPage(1); };
-  const handlePaymentStatusChange = (value: string) => { setFilters((p) => ({ ...p, paymentStatus: value })); setCurrentPage(1); };
-  const handlePaymentMethodChange = (value: string) => { setFilters((p) => ({ ...p, paymentMethod: value })); setCurrentPage(1); };
-  const handleClearFilters = () => { setFilters({ status: "", paymentStatus: "", paymentMethod: "", search: "" }); setCurrentPage(1); };
+  const handleClearFilters = () => { setFilters({ status: "", search: "" }); setCurrentPage(1); };
 
-  const hasActiveFilters = !!(filters.status || filters.paymentStatus || filters.paymentMethod || filters.search);
+  const hasActiveFilters = !!(filters.status || filters.search);
 
   const tableColumns = useMemo(
     () => createOrderTableColumns(handleViewOrder, handleCancelOrder, cancelingOrderId, pagination),
@@ -201,8 +191,6 @@ export default function OrdersPage() {
       <OrdersFilters
         filters={filters}
         onStatusChange={handleStatusChange}
-        onPaymentStatusChange={handlePaymentStatusChange}
-        onPaymentMethodChange={handlePaymentMethodChange}
         onSearchChange={(value) => { setFilters((p) => ({ ...p, search: value })); setCurrentPage(1); }}
         onClearFilters={handleClearFilters}
         hasActiveFilters={hasActiveFilters}

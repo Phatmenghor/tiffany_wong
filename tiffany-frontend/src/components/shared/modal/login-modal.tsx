@@ -75,7 +75,8 @@ export function LoginModal({ open, onOpenChange, onRegisterClick }: LoginModalPr
       loginForm.reset();
       setTimeout(() => window.location.reload(), 1000);
     } catch (err: any) {
-      showToast.error(err || "Login failed. Please check your credentials.");
+      const message = typeof err === "string" ? err : err?.message || "Login failed. Please check your credentials.";
+      showToast.error(message);
     }
   }
 
@@ -122,7 +123,7 @@ export function LoginModal({ open, onOpenChange, onRegisterClick }: LoginModalPr
           <DialogFooter className="pt-[0.325rem]">
             <Button
               type="submit"
-              className="w-full h-[1.7875rem] font-semibold"
+              className="w-full h-[2.375rem] font-semibold"
               disabled={isAnyLoading}
             >
               {isLoading && <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />}
