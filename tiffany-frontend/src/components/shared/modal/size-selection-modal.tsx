@@ -116,6 +116,15 @@ export function SizeSelectionModal({
       ? getDisplayQuantity(null)
       : 0;
 
+  // Total price across ALL sizes (including pending changes)
+  const totalAllSizesPrice = displayProduct?.hasSizes && displayProduct.sizes
+    ? displayProduct.sizes.reduce((sum, s) => sum + s.finalPrice * getDisplayQuantity(s.id), 0)
+    : (selectedSize?.finalPrice ?? displayProduct?.displayPrice ?? 0) * currentQuantity;
+
+  const totalAllSizesQty = displayProduct?.hasSizes && displayProduct.sizes
+    ? displayProduct.sizes.reduce((sum, s) => sum + getDisplayQuantity(s.id), 0)
+    : currentQuantity;
+
   // Initialize when modal opens
   useEffect(() => {
     if (open && product) {
@@ -535,28 +544,15 @@ export function SizeSelectionModal({
                 </div>
               </div>
 
-              {/* Total — sum across ALL sizes */}
-              {(() => {
-                const totalAllSizes = displayProduct?.hasSizes && displayProduct.sizes
-                  ? displayProduct.sizes.reduce(
-                      (sum, s) => sum + s.finalPrice * getDisplayQuantity(s.id),
-                      0,
-                    )
-                  : displayPrice * currentQuantity;
-                const totalQtyAllSizes = displayProduct?.hasSizes && displayProduct.sizes
-                  ? displayProduct.sizes.reduce((sum, s) => sum + getDisplayQuantity(s.id), 0)
-                  : currentQuantity;
-                return (
-                  <div className="flex justify-between items-center py-[0.4875rem] border-t mb-[0.65rem]">
-                    <span className="text-muted-foreground text-[11px]">
-                      Total{totalQtyAllSizes > 0 ? ` · ${totalQtyAllSizes} item${totalQtyAllSizes !== 1 ? "s" : ""}` : ""}
-                    </span>
-                    <span className="text-[13px] font-bold text-primary">
-                      {formatCurrency(totalAllSizes)}
-                    </span>
-                  </div>
-                );
-              })()}
+              {/* Total — sum across ALL sizes (updates live as qty changes) */}
+              <div className="flex justify-between items-center py-[0.4875rem] border-t mb-[0.65rem]">
+                <span className="text-muted-foreground text-[11px]">
+                  Total{totalAllSizesQty > 0 ? ` · ${totalAllSizesQty} item${totalAllSizesQty !== 1 ? "s" : ""}` : ""}
+                </span>
+                <span className="text-[13px] font-bold text-primary">
+                  {formatCurrency(totalAllSizesPrice)}
+                </span>
+              </div>
 
               {/* Action buttons: Discard & Add to Cart */}
               <div className="flex gap-[0.4875rem]">
