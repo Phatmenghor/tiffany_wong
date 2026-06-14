@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useMyOrdersState } from "@/redux/features/main/store/state/my-orders-state";
 import { fetchMyOrdersService } from "@/redux/features/main/store/thunks/my-orders-thunks";
@@ -268,7 +268,6 @@ export default function OrdersPage() {
       <PageHeader
         title="My Orders"
         subtitle={`You have ${totalOrders} order${totalOrders !== 1 ? "s" : ""}`}
-        icon={ShoppingBag}
       />
 
       {/* Filters Section */}

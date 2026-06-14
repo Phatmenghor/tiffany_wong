@@ -2,7 +2,7 @@
 
 import React, { useEffect, useCallback, useRef, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, Plus, CheckCircle2, Loader2 } from "lucide-react";
+import { Plus, CheckCircle2, Loader2 } from "lucide-react";
 import { DeleteConfirmationModal } from "@/components/shared/modal/delete-confirmation-modal";
 import { showToast } from "@/components/shared/common/show-toast";
 import { PageContainer } from "@/components/shared/common/page-container";
@@ -225,7 +225,6 @@ export default function LocationPage() {
     <PageContainer className="py-[0.65rem] sm:py-[1.3rem]">
       <PageHeader
         title="My Locations"
-        icon={MapPin}
         count={locationCount}
         countLabel={locationCount === 1 ? "location" : "locations"}
         subtitle="Manage your saved addresses"

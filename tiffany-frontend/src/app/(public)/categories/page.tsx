@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { usePublicCategoriesState } from "@/redux/features/main/store/state/public-categories-state";
-import { LayoutGrid } from "lucide-react";
 import { CategoryCard } from "@/components/shared/card/category-card";
 import { CategoryCardSkeleton } from "@/components/shared/skeletons/category-card-skeleton";
 import { useSkeletonCount, SkeletonPresets } from "@/hooks/use-skeleton-count";
@@ -29,7 +28,6 @@ export default function CategoriesPage() {
       <PageContainer className="py-[0.65rem] sm:py-[1.3rem]">
         <PageHeader
           title="Categories"
-          icon={LayoutGrid}
           count={categories.length}
           subtitle={
             isInitialLoading
@@ -52,7 +50,6 @@ export default function CategoriesPage() {
         {/* Empty State */}
         {!isInitialLoading && categories.length === 0 && (
           <EmptyState
-            icon={LayoutGrid}
             title="No categories found"
             description="There are no categories available at this time"
             size="lg"

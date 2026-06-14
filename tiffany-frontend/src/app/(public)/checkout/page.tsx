@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CreditCard } from "lucide-react";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
 import { useAppDispatch } from '@/redux/store/hooks';
@@ -138,7 +137,6 @@ export default function CheckoutPage() {
       <PageContainer className="py-[0.65rem] sm:py-[1.3rem] pb-[6.5rem] lg:pb-[1.3rem]">
         <PageHeader
           title="Checkout"
-          icon={CreditCard}
           count={totalItems}
           subtitle={`${totalItems} ${totalItems === 1 ? "item" : "items"} • ${totalQuantity} total quantity`}
         />
