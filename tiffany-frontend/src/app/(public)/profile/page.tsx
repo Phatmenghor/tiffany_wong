@@ -239,7 +239,7 @@ export default function PublicProfilePage() {
                       size="xxl"
                     />
                     {/* Camera Icon Overlay */}
-                    <div className="absolute bottom-[0.1625rem] right-[0.1625rem] bg-primary rounded-full p-[0.325rem] opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:shadow-primary/50 hover:bg-primary/80">
+                    <div className="absolute bottom-[0.1625rem] right-[0.1625rem] bg-primary rounded-full p-[0.325rem] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shadow-lg hover:shadow-primary/50 hover:bg-primary/80">
                       <Camera className="h-[0.65rem] w-[0.65rem] text-white" />
                     </div>
                   </div>

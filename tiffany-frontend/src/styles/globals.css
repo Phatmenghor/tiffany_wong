@@ -1057,17 +1057,18 @@ body.route-changing #nprogress .peg {
  * Used in the public layout so scrollable content never hides behind the nav.
  */
 @media (max-width: 639px) {
+  /* bottom nav is 3.5rem + safe-area-inset-bottom */
   .pb-nav-safe {
-    padding-bottom: calc(2.6rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
 /*
- * Positions a fixed element just above the bottom nav (2.6rem) plus any safe area.
+ * Positions a fixed element just above the bottom nav (3.5rem) plus any safe area.
  * Used by the mobile sticky checkout/action bars.
  */
 .bottom-nav-safe {
-  bottom: calc(2.6rem + env(safe-area-inset-bottom, 0px));
+  bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 /*

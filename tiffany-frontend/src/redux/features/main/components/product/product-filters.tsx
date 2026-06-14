@@ -327,7 +327,7 @@ function ProductFiltersComponent({
 
       {/* Mobile Filters */}
       <div className="lg:hidden w-full">
-        <div className="flex items-center justify-between gap-[0.4875rem] bg-card border rounded-[0.4875rem] p-[0.65rem] shadow-sm">
+        <div className="flex items-center gap-[0.4875rem] bg-card border rounded-[0.4875rem] px-[0.65rem] py-[0.4875rem] shadow-sm">
           <div className="flex-1 min-w-0">
             <p className="text-[11px] font-semibold truncate">
               {totalResults.toLocaleString()} result
@@ -340,27 +340,28 @@ function ProductFiltersComponent({
             </p>
           </div>
 
+          {/* All buttons have the same h-[2.75rem] touch target on mobile */}
           <div className="flex items-center gap-[0.325rem] flex-shrink-0">
             {activeFiltersCount > 0 && (
               <Button
                 variant="outline"
                 size="sm"
-                className="h-[1.4625rem] px-[0.4875rem] text-muted-foreground hover:text-destructive hover:border-destructive/50 gap-[0.24375rem] text-[11px]"
+                className="h-[2.75rem] px-[0.65rem] text-muted-foreground hover:text-destructive hover:border-destructive/50 gap-[0.325rem] text-[12px]"
                 onClick={clearAllFilters}
               >
-                <FilterX className="h-[0.56875rem] w-[0.56875rem]" />
+                <FilterX className="h-[0.75rem] w-[0.75rem]" />
                 Clear
               </Button>
             )}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="default" size="sm" className="h-[1.4625rem] gap-[0.325rem]">
-                  <SlidersHorizontal className="h-[0.65rem] w-[0.65rem]" />
+                <Button variant="default" size="sm" className="h-[2.75rem] px-[0.65rem] gap-[0.325rem] text-[12px]">
+                  <SlidersHorizontal className="h-[0.75rem] w-[0.75rem]" />
                   Filters
                   {activeFiltersCount > 0 && (
                     <Badge
                       variant="secondary"
-                      className="ml-[0.08125rem] rounded-full h-[0.8125rem] w-[0.8125rem] p-0 flex items-center justify-center text-[10px] font-bold bg-white text-primary"
+                      className="ml-[0.08125rem] rounded-full h-[0.975rem] w-[0.975rem] p-0 flex items-center justify-center text-[10px] font-bold bg-white text-primary"
                     >
                       {activeFiltersCount}
                     </Badge>

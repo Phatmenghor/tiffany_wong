@@ -120,7 +120,7 @@ export function QuantitySelector({
         onClick={handleDecrement}
         className={cn(
           isSmall
-            ? "h-[2rem] w-[2rem] sm:h-[1.3rem] sm:w-[1.3rem]"
+            ? "h-[1.3rem] w-[1.3rem]"
             : "h-[2.5rem] w-[2.5rem] sm:h-[1.625rem] sm:w-[1.625rem]",
           displayValue <= min && "opacity-40",
         )}
@@ -142,7 +142,7 @@ export function QuantitySelector({
             ? "bg-amber-50 text-amber-600 border-amber-200 focus:ring-amber-300"
             : "bg-primary/10 text-primary border-primary/20 focus:ring-primary/30",
           isSmall
-            ? "w-[2.25rem] h-[2rem] text-[13px] sm:w-[1.95rem] sm:h-[1.3rem] sm:text-[11px]"
+            ? "w-[1.95rem] h-[1.3rem] text-[11px]"
             : "w-[3rem] h-[2.5rem] text-[14px] sm:w-[2.6rem] sm:h-[1.625rem] sm:text-[13px]",
         )}
       />
@@ -153,7 +153,7 @@ export function QuantitySelector({
         onClick={handleIncrement}
         className={cn(
           isSmall
-            ? "h-[2rem] w-[2rem] sm:h-[1.3rem] sm:w-[1.3rem]"
+            ? "h-[1.3rem] w-[1.3rem]"
             : "h-[2.5rem] w-[2.5rem] sm:h-[1.625rem] sm:w-[1.625rem]",
         )}
       >

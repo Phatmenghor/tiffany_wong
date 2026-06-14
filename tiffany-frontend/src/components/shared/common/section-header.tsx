@@ -57,9 +57,9 @@ export const ViewAllButton = ({
     <div className={cn("flex justify-center mt-[0.975rem] sm:mt-[1.3rem]", className)}>
       <Link href={href}>
         <Button
-          size="default"
+          size="sm"
           variant="outline"
-          className="gap-[0.325rem] group border-2 hover:border-primary hover:bg-primary hover:text-primary-foreground transition-all px-[0.975rem] sm:px-[1.3rem]"
+          className="gap-[0.325rem] group border-2 hover:border-primary hover:bg-primary hover:text-primary-foreground transition-all px-[0.975rem] sm:px-[1.3rem] h-[1.95rem] sm:h-[1.625rem]"
         >
           {text}
           <ArrowRight className="h-[0.65rem] w-[0.65rem] sm:h-[0.8125rem] sm:w-[0.8125rem] transition-transform group-hover:translate-x-[0.1625rem]" />
