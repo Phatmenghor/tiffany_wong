@@ -2,6 +2,7 @@ import { CreditCard, Loader2 } from "lucide-react";
 import { CustomButton } from "@/components/shared/button/custom-button";
 import { formatCurrency } from "@/utils/common/currency-format";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/shared/common/card";
 
 interface OrderSummaryProps {
   totalItems: number;
@@ -30,7 +31,7 @@ export function OrderSummary({
 }: OrderSummaryProps) {
   return (
     <div className="hidden lg:block lg:col-span-1">
-      <div className="bg-card border rounded-[0.65rem] p-[0.8125rem] sticky top-[3.9rem]">
+      <Card className="sticky top-[3.9rem]">
         <h2 className="text-[13px] font-bold mb-[0.65rem] flex items-center justify-between">
           <span>Order Summary</span>
           <span className="text-[11px] font-normal text-muted-foreground bg-muted px-[0.325rem] py-[0.1625rem] rounded-[0.325rem]">
@@ -126,7 +127,7 @@ export function OrderSummary({
             </>
           )}
         </CustomButton>
-      </div>
+      </Card>
     </div>
   );
 }

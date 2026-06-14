@@ -11,6 +11,7 @@ import { fetchCart } from "@/redux/features/main/store/thunks/cart-thunks";
 import { resetCart } from "@/redux/features/main/store/slice/cart-slice";
 import { PageContainer } from "@/components/shared/common/page-container";
 import { PageHeader } from "@/components/shared/common/page-header";
+import { Card, CardTitle } from "@/components/shared/common/card";
 import { CartItemCard } from "@/components/shared/cart-item-card/cart-item-card";
 import { OrderSuccessModal } from "@/components/shared/modal/order-success-modal";
 import { DeliveryAddressSection } from "./components/delivery-address-section";
@@ -152,8 +153,8 @@ export default function CheckoutPage() {
             />
 
             {/* Customer Information */}
-            <div className="bg-card border rounded-[0.65rem] p-[0.8125rem]">
-              <h3 className="text-[13px] font-bold mb-[0.65rem]">Customer Information</h3>
+            <Card>
+              <CardTitle>Customer Information</CardTitle>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-[0.65rem]">
                 <div className="space-y-[0.325rem]">
                   <label className="text-[12px] sm:text-[11px] font-medium">Full Name <span className="text-red-500">*</span></label>
@@ -181,7 +182,7 @@ export default function CheckoutPage() {
                   {errors.phone && <p className="text-[11px] text-red-500">{errors.phone}</p>}
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Cart Items */}
             {items.length > 0 && (
