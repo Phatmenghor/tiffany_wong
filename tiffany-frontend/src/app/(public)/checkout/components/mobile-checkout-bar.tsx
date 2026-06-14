@@ -40,7 +40,7 @@ export function MobileCheckoutBar({
         </div>
       </div>
       <CustomButton
-        className="w-full gap-[0.325rem] h-[2.125rem] sm:h-[1.7875rem] rounded-[0.4875rem]"
+        className="w-full gap-[0.325rem] h-[2.75rem] sm:h-[1.7875rem] rounded-[0.4875rem]"
         onClick={onCheckout}
         disabled={isProcessing}
       >

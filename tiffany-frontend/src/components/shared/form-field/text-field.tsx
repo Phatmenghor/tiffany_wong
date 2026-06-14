@@ -138,7 +138,7 @@ export function TextField({
         control={control}
         name={name}
         render={({ field }) => {
-          const inputClass = `h-[1.625rem] transition-all duration-200 border ${disabled ? "bg-muted/50" : ""} ${
+          const inputClass = `transition-all duration-200 border ${disabled ? "bg-muted/50" : ""} ${
             error
               ? "border-red-500 focus:border-red-500"
               : "border-input focus:border-primary focus:ring-2 focus:ring-primary/30"
@@ -187,7 +187,7 @@ export function TextField({
                 }
               }}
               pattern={pattern}
-              className={`${inputClass} ${rightElement ? "pr-[1.625rem]" : ""}`}
+              className={`${inputClass} ${rightElement ? "pr-[2.25rem]" : ""}`}
             />
           );
 
@@ -195,7 +195,7 @@ export function TextField({
             return (
               <div className="relative">
                 {input}
-                <div className="absolute right-[0.32rem] top-0 h-[1.625rem] flex items-center">
+                <div className="absolute right-[0.32rem] inset-y-0 flex items-center">
                   {rightElement}
                 </div>
               </div>

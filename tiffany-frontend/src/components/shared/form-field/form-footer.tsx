@@ -52,7 +52,7 @@ export function FormFooter({
         )}
         <span>{getStatusMessage()}</span>
       </div>
-      <div className="flex gap-[0.4875rem] items-center min-w-fit">{children}</div>
+      <div className="flex gap-[0.4875rem] items-center justify-end min-w-fit">{children}</div>
     </div>
   );
 }

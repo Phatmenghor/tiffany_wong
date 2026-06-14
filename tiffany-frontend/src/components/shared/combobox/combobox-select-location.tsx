@@ -149,7 +149,7 @@ export function ComboboxSelectLocation({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "!flex w-full min-w-0 items-center justify-between gap-[0.325rem] overflow-hidden px-[0.4875rem] h-[2.125rem] sm:h-[1.625rem] py-[0.325rem] text-[12px] transition-all duration-200 border-input text-left",
+              "!flex w-full min-w-0 items-center justify-between gap-[0.325rem] overflow-hidden px-[0.4875rem] h-[2.75rem] sm:h-[1.625rem] py-[0.325rem] text-[12px] transition-all duration-200 border-input text-left",
               "hover:bg-primary/10 hover:border-primary hover:text-primary",
               "focus:bg-primary/10 focus:border-primary focus:text-primary focus:ring-2 focus:ring-primary/30",
               open && "bg-primary/20 border-primary text-primary",

@@ -21,7 +21,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-[60] bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -50,7 +50,7 @@ const DialogContent = React.forwardRef<
       aria-describedby={undefined}
       className={cn(
         // Base
-        "fixed z-50 grid w-full bg-background shadow-lg duration-200",
+        "fixed z-[60] grid w-full bg-background shadow-lg duration-200",
         // Mobile: bottom sheet — slides up from the bottom
         // max-h-[92dvh] + overflow-y-auto make long dialogs scrollable
         // pb-[...] clears the iPhone X+ home indicator via safe-area-inset-bottom

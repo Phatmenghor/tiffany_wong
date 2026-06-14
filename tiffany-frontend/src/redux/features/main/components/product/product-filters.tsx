@@ -24,6 +24,7 @@ import {
   ListChecks,
   FilterX,
   DollarSign,
+  CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ComboboxSelectCategoriesPublic } from "@/components/shared/combobox/combobox_select_categories_public";

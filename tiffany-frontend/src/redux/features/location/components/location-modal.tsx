@@ -628,8 +628,22 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
           </FormBody>
 
           <FormFooter isSubmitting={isSubmitting} isDirty={isDirty} isCreate={isCreate} createMessage="Creating location…" updateMessage="Updating location…">
-            <CancelButton onClick={handleClose} disabled={isSubmitting} />
-            <SubmitButton isSubmitting={isSubmitting} isDirty={isDirty} isCreate={isCreate} createText="Add Location" updateText="Update" submittingCreateText="Creating…" submittingUpdateText="Updating…" />
+            <CancelButton
+              onClick={handleClose}
+              disabled={isSubmitting}
+              variant="outline"
+              className="h-[2.75rem] sm:h-[1.7875rem] px-[1.3rem] min-w-[5.5rem]"
+            />
+            <SubmitButton
+              isSubmitting={isSubmitting}
+              isDirty={isDirty}
+              isCreate={isCreate}
+              createText="Add Location"
+              updateText="Update"
+              submittingCreateText="Creating…"
+              submittingUpdateText="Updating…"
+              className="h-[2.75rem] sm:h-[1.7875rem] px-[1.3rem] min-w-[5.5rem]"
+            />
           </FormFooter>
         </form>
       </DialogContent>
