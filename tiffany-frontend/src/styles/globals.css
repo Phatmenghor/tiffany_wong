@@ -4,6 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  /* Global placeholder: clearly lighter than real input text */
+  ::placeholder {
+    color: hsl(var(--muted-foreground) / 0.45) !important;
+    font-size: inherit;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

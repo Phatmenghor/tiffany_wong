@@ -162,7 +162,7 @@ export default function CheckoutPage() {
                     placeholder="Enter your full name"
                     value={customerName}
                     onChange={(e) => { setCustomerName(e.target.value); setErrors((v) => ({ ...v, name: "" })); }}
-                    className={`w-full h-[2.125rem] sm:h-[1.625rem] px-[0.4875rem] border rounded-[0.325rem] text-[12px] sm:text-[11px] bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors ${errors.name ? "border-red-500 focus:ring-red-300" : "border-input"}`}
+                    className={`w-full h-[2.125rem] sm:h-[1.625rem] px-[0.4875rem] border rounded-[0.325rem] text-[12px] sm:text-[11px] bg-background placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors ${errors.name ? "border-red-500 focus:ring-red-300" : "border-input"}`}
                     disabled={isProcessing}
                   />
                   {errors.name && <p className="text-[11px] text-red-500">{errors.name}</p>}
@@ -175,7 +175,7 @@ export default function CheckoutPage() {
                     placeholder="Enter your phone number"
                     value={customerPhone}
                     onChange={(e) => { setCustomerPhone(e.target.value); setErrors((v) => ({ ...v, phone: "" })); }}
-                    className={`w-full h-[2.125rem] sm:h-[1.625rem] px-[0.4875rem] border rounded-[0.325rem] text-[12px] sm:text-[11px] bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors ${errors.phone ? "border-red-500 focus:ring-red-300" : "border-input"}`}
+                    className={`w-full h-[2.125rem] sm:h-[1.625rem] px-[0.4875rem] border rounded-[0.325rem] text-[12px] sm:text-[11px] bg-background placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors ${errors.phone ? "border-red-500 focus:ring-red-300" : "border-input"}`}
                     disabled={isProcessing}
                   />
                   {errors.phone && <p className="text-[11px] text-red-500">{errors.phone}</p>}
