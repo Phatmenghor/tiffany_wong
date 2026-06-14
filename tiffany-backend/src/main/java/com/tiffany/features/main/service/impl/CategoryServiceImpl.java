@@ -69,7 +69,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Page<Category> categoryPage = categoryRepository.findAllWithFilters(
                 filter.getStatus(),
-                filter.getSearch(),
+                filter.getSearch() != null ? filter.getSearch().trim() : null,
                 pageable
         );
 
@@ -91,7 +91,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Page<Category> categoryPage = categoryRepository.findAllWithFilters(
                 filter.getStatus(),
-                filter.getSearch(),
+                filter.getSearch() != null ? filter.getSearch().trim() : null,
                 pageable
         );
 
@@ -156,7 +156,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<Category> categories = categoryRepository.findAllWithFilters(
                 filter.getStatus(),
-                filter.getSearch(),
+                filter.getSearch() != null ? filter.getSearch().trim() : null,
                 PaginationUtils.createSort(filter.getSortBy(), filter.getSortDirection())
         );
 

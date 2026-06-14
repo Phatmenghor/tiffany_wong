@@ -76,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
                 filter.getMaxPrice(),
                 filter.getHasPromotion(),
                 filter.getHasSize(),
-                filter.getSearch(),
+                filter.getSearch() != null ? filter.getSearch().trim() : null,
                 pageable
         );
 
@@ -122,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
                 filter.getMaxPrice(),
                 filter.getHasPromotion(),
                 filter.getHasSize(),
-                filter.getSearch(),
+                filter.getSearch() != null ? filter.getSearch().trim() : null,
                 pageable
         );
 

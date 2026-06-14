@@ -10,25 +10,23 @@ import { DeleteConfirmationModal } from "@/components/shared/modal/delete-confir
 import { userBusinessTableColumns } from "@/redux/features/auth/table/users-business-table";
 import { DataTableWithPagination } from "@/components/shared/common/data-table";
 import { showToast } from "@/components/shared/common/show-toast";
-import { useUsersState } from "@/redux/features/auth/store/state/users-state";
+import { useCustomersState } from "@/redux/features/auth/store/state/customers-state";
 import { usePagination } from "@/redux/store/use-pagination";
 import {
-  deleteUserService,
-  fetchAllUsersService,
-  toggleUserStatusService,
-} from "@/redux/features/auth/store/thunks/users-thunks";
+  fetchAllCustomersService,
+  deleteCustomerService,
+  toggleCustomerStatusService,
+} from "@/redux/features/auth/store/thunks/customers-thunks";
 import {
-  setAccountStatusFilter,
-  setPageNo,
-  setSearchFilter,
-  resetState,
-  toggleUserStatusOptimistic,
-  revertUserStatusOptimistic,
-} from "@/redux/features/auth/store/slice/users-slice";
+  setCustomerAccountStatusFilter,
+  setCustomerPageNo,
+  setCustomerSearchFilter,
+  resetCustomerState,
+  toggleCustomerStatusOptimistic,
+  revertCustomerStatusOptimistic,
+} from "@/redux/features/auth/store/slice/customers-slice";
 import { UserResponseModel } from "@/redux/features/auth/store/models/response/users-response";
-import {
-  ACCOUNT_STATUS_FILTER,
-} from "@/constants/status/filter-status";
+import { ACCOUNT_STATUS_FILTER } from "@/constants/status/filter-status";
 import { useAdminCleanup } from "@/hooks/use-cleanup-on-unmount";
 import { AccountStatus } from "@/constants/status/status";
 import CustomerModal from "@/redux/features/auth/components/customer-modal";
@@ -36,44 +34,34 @@ import { UserBusinessDetailModal } from "@/redux/features/auth/components/user-b
 import { AppDefault } from "@/constants/app-resource/default/default";
 import { setGlobalPageSize } from "@/redux/store/slices/global-settings-slice";
 import { selectGlobalPageSize } from "@/redux/store/selectors/global-settings-selectors";
-import { useAppSelector } from '@/redux/store/hooks';
+import { useAppSelector } from "@/redux/store/hooks";
 
 export default function CustomerUsersPage() {
-  useAdminCleanup(resetState);
+  useAdminCleanup(resetCustomerState);
 
-  const { filters, pagination, usersData, usersContent, userState, isLoading, operations, dispatch } = useUsersState();
+  const { filters, pagination, customersData, customersContent, customerState, isLoading, operations, dispatch } = useCustomersState();
   const globalPageSize = useAppSelector(selectGlobalPageSize);
   const debouncedSearch = useDebounce(filters.search, 400);
 
   const { updateUrlWithPage, handlePageChange } = usePagination({
     baseRoute: ROUTES.ADMIN.CUSTOMERS || "/admin/customers",
-    syncPageToRedux: (page) => dispatch(setPageNo(page)),
+    syncPageToRedux: (page) => dispatch(setCustomerPageNo(page)),
   });
 
-  // Fetch customers (CUSTOMER type users) when filters or search change
   useEffect(() => {
     const filterPayload = {
-      search: debouncedSearch,
+      search: debouncedSearch.trim() || undefined,
       pageNo: filters.pageNo,
       pageSize: globalPageSize,
-      userRoles: [], // All customer roles
-      userTypes: ["CUSTOMER"], // Only CUSTOMER type
+      userRoles: [],
+      userTypes: ["CUSTOMER"],
       accountStatuses: filters.accountStatus === AccountStatus.ALL ? [] : [filters.accountStatus],
     };
-
-    dispatch(fetchAllUsersService(filterPayload));
+    dispatch(fetchAllCustomersService(filterPayload));
   }, [dispatch, debouncedSearch, filters.accountStatus, filters.pageNo, globalPageSize]);
 
-  const [modalState, setModalState] = useState({
-    isOpen: false,
-    userId: "",
-  });
-
-  const [detailModalState, setDetailModalState] = useState({
-    isOpen: false,
-    userBusinessId: "",
-  });
-
+  const [modalState, setModalState] = useState({ isOpen: false, userId: "" });
+  const [detailModalState, setDetailModalState] = useState({ isOpen: false, userBusinessId: "" });
   const [resetPasswordState, setResetPasswordState] = useState({
     isOpen: false,
     userBusinessId: "",
@@ -81,7 +69,6 @@ export default function CustomerUsersPage() {
     userRole: [] as string[],
     profileImageUrl: "",
   });
-
   const [deleteState, setDeleteState] = useState({
     isOpen: false,
     user: null as UserResponseModel | null,
@@ -89,7 +76,8 @@ export default function CustomerUsersPage() {
 
   const handleEditUser = (user: UserResponseModel) => setModalState({ isOpen: true, userId: user?.id || "" });
   const handleViewDetail = (user: UserResponseModel) => setDetailModalState({ isOpen: true, userBusinessId: user.id || "" });
-  const handleResetPassword = (user: UserResponseModel) => setResetPasswordState({ isOpen: true, userBusinessId: user.id || "", userName: user.userIdentifier || "", userRole: user.userRole ? [user.userRole] : [], profileImageUrl: user.profileImageUrl || "" });
+  const handleResetPassword = (user: UserResponseModel) =>
+    setResetPasswordState({ isOpen: true, userBusinessId: user.id || "", userName: user.userIdentifier || "", userRole: user.userRole ? [user.userRole] : [], profileImageUrl: user.profileImageUrl || "" });
   const handleDeleteUser = (user: UserResponseModel) => setDeleteState({ isOpen: true, user });
 
   const handleToggleStatus = (user: UserResponseModel) => {
@@ -97,15 +85,13 @@ export default function CustomerUsersPage() {
     const newStatus = user.accountStatus === "ACTIVE" ? "LOCKED" : "ACTIVE";
     const oldStatus = user.accountStatus;
 
-    dispatch(toggleUserStatusOptimistic({ userId: user.id, newStatus }));
+    dispatch(toggleCustomerStatusOptimistic({ userId: user.id, newStatus }));
 
-    dispatch(toggleUserStatusService(user))
+    dispatch(toggleCustomerStatusService(user))
       .unwrap()
-      .then(() => {
-        showToast.success("Customer status updated");
-      })
+      .then(() => { showToast.success("Customer status updated"); })
       .catch((error: any) => {
-        dispatch(revertUserStatusOptimistic({ userId: user.id, oldStatus }));
+        dispatch(revertCustomerStatusOptimistic({ userId: user.id, oldStatus }));
         showToast.error(error || "Failed to update customer status");
       });
   };
@@ -116,29 +102,29 @@ export default function CustomerUsersPage() {
   );
 
   const columns = useMemo(
-    () => userBusinessTableColumns({ data: usersData, handlers: tableHandlers }),
-    [userState, tableHandlers],
+    () => userBusinessTableColumns({ data: customersData, handlers: tableHandlers }),
+    [customerState, tableHandlers],
   );
 
   const handlePageChangeWrapper = (page: number) => {
-    dispatch(setPageNo(page));
+    dispatch(setCustomerPageNo(page));
     handlePageChange(page);
   };
 
   const handlePageSizeChange = (size: number) => {
     dispatch(setGlobalPageSize(size));
-    dispatch(setPageNo(1));
+    dispatch(setCustomerPageNo(1));
   };
 
   const handleDelete = async () => {
     if (!deleteState.user?.id) return;
     try {
-      await dispatch(deleteUserService(deleteState.user.id)).unwrap();
+      await dispatch(deleteCustomerService(deleteState.user.id)).unwrap();
       showToast.success(`Customer "${deleteState.user.fullName ?? ""}" deleted successfully`);
       closeDeleteModal();
-      if (usersContent.length === 1 && pagination.currentPage > 1) {
+      if (customersContent.length === 1 && pagination.currentPage > 1) {
         const newPage = pagination.currentPage - 1;
-        dispatch(setPageNo(newPage));
+        dispatch(setCustomerPageNo(newPage));
         updateUrlWithPage(newPage);
       }
     } catch (error: any) {
@@ -157,22 +143,22 @@ export default function CustomerUsersPage() {
         <CardHeaderSection
           title="Customers"
           searchValue={filters.search}
-          searchPlaceholder="Search customers..."
-          onSearchChange={(e) => dispatch(setSearchFilter(e.target.value))}
+          searchPlaceholder="Search by phone number..."
+          onSearchChange={(e) => dispatch(setCustomerSearchFilter(e.target.value))}
         >
           <div className="flex flex-wrap items-center gap-[0.325rem]">
             <CustomSelect
               options={ACCOUNT_STATUS_FILTER}
               value={filters.accountStatus}
               placeholder="All Status"
-              onValueChange={(value) => dispatch(setAccountStatusFilter(value as AccountStatus))}
+              onValueChange={(value) => dispatch(setCustomerAccountStatusFilter(value as AccountStatus))}
               label="Account Status"
             />
           </div>
         </CardHeaderSection>
 
         <DataTableWithPagination
-          data={usersContent}
+          data={customersContent}
           columns={columns}
           loading={isLoading}
           emptyMessage="No customers found"

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown, Loader2, Store } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, MapPin, Store } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { useDebounce } from "@/utils/debounce/debounce";
 import { useAppDispatch } from '@/redux/store/hooks';
@@ -137,7 +137,7 @@ export function ComboboxSelectLocation({
   return (
     <div className="space-y-[0.24375rem] w-full min-w-0">
       {label && (
-        <Label className="text-[12px] font-semibold">
+        <Label className="text-[11px] font-semibold">
           {label}
           {required && <span className="text-red-500 ml-[0.1625rem]">*</span>}
         </Label>
@@ -149,7 +149,7 @@ export function ComboboxSelectLocation({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "!flex w-full min-w-0 items-center justify-between gap-[0.325rem] overflow-hidden px-[0.4875rem] h-[2.5rem] sm:h-[1.625rem] py-[0.325rem] text-[12px] transition-all duration-200 border-input text-left",
+              "!flex w-full min-w-0 items-center justify-between gap-[0.325rem] overflow-hidden px-[0.4875rem] h-[2.375rem] sm:h-[1.625rem] py-[0.325rem] text-[11px] transition-all duration-200 border-input text-left",
               "hover:bg-primary/10 hover:border-primary hover:text-primary",
               "focus:bg-primary/10 focus:border-primary focus:text-primary focus:ring-2 focus:ring-primary/30",
               open && "bg-primary/20 border-primary text-primary",
@@ -212,7 +212,7 @@ export function ComboboxSelectLocation({
                     value={item.fullAddress}
                     onSelect={() => handleSelect(item)}
                     ref={index === data.length - 1 ? ref : null}
-                    className="text-[11px] py-[0.325rem]"
+                    className="text-[11px] py-[0.325rem] pr-[0.325rem]"
                   >
                     <Check
                       className={cn(
@@ -226,6 +226,22 @@ export function ComboboxSelectLocation({
                         <span className="text-muted-foreground"> ({item.note})</span>
                       )}
                     </span>
+                    {item.latitude && item.longitude && (
+                      <button
+                        type="button"
+                        onPointerDown={(e) => {
+                          e.stopPropagation();
+                          window.open(
+                            `https://www.google.com/maps/search/${item.latitude},${item.longitude}`,
+                            "_blank"
+                          );
+                        }}
+                        className="ml-[0.325rem] shrink-0 p-[0.24375rem] rounded-[0.24375rem] text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                        title="View on Google Maps"
+                      >
+                        <MapPin className="h-[0.65rem] w-[0.65rem]" />
+                      </button>
+                    )}
                   </CommandItem>
                 ))}
               </CommandGroup>

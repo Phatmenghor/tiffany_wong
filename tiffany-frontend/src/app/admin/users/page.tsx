@@ -53,6 +53,7 @@ export default function UserBusinessPage() {
   const globalPageSize = useAppSelector(selectGlobalPageSize);
   const debouncedSearch = useDebounce(filters.search, 400);
 
+
   // Use static role filter options from constants
   const roleFilterOptions = USER_BUSINESS_ROLE_FILTER;
 
@@ -64,7 +65,7 @@ export default function UserBusinessPage() {
   // Fetch business users (OWNER type) when filters or search change
   useEffect(() => {
     const filterPayload = {
-      search: debouncedSearch,
+      search: debouncedSearch.trim() || undefined,
       pageNo: filters.pageNo,
       pageSize: globalPageSize,
       userRoles: filters.role === UserRole.ALL ? [] : [filters.role],
@@ -170,7 +171,7 @@ export default function UserBusinessPage() {
         <CardHeaderSection
           title="Business Users (Owner & Staff)"
           searchValue={filters.search}
-          searchPlaceholder="Search business users..."
+          searchPlaceholder="Search by phone number..."
           buttonTooltip="Create a new business user"
           buttonIcon={<Plus className="w-[0.4875rem] h-[0.4875rem]" />}
           buttonText="New"

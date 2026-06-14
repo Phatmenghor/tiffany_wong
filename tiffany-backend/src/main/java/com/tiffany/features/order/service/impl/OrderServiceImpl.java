@@ -175,6 +175,7 @@ public class OrderServiceImpl implements OrderService {
                 filter.getOrderStatus(),
                 filter.getPaymentMethod(),
                 filter.getPaymentStatus(),
+                filter.getSearch() != null ? filter.getSearch().trim() : null,
                 pageable
         );
         hydrateOrderItems(page.getContent());

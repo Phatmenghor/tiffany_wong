@@ -107,8 +107,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "AND (:hasSizes IS NULL OR (CASE WHEN :hasSizes = true THEN EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) " +
            "     ELSE NOT EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) END)) " +
            "AND (:search IS NULL OR :search = '' OR " +
-           "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Product> findAllWithFiltersOptimized(
         @Param("categoryId") UUID categoryId,
         @Param("statuses") List<ProductStatus> statuses,
@@ -131,8 +130,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
            "AND (:search IS NULL OR :search = '' OR " +
-           "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Product> findAllWithFilters(
         @Param("categoryId") UUID categoryId,
         @Param("statuses") List<ProductStatus> statuses,
@@ -176,9 +174,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
            "AND (:hasSizes IS NULL OR (CASE WHEN :hasSizes = true THEN EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) " +
            "     ELSE NOT EXISTS (SELECT 1 FROM ProductSize ps WHERE ps.product.id = p.id AND ps.isDeleted = false) END)) " +
            "AND (:search IS NULL OR :search = '' OR " +
-           "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')))")
     List<Product> findAllWithFilters(
         @Param("categoryId") UUID categoryId,
         @Param("statuses") List<ProductStatus> statuses,

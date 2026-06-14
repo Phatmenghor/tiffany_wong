@@ -225,8 +225,8 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
     });
   }, []);
 
-  const setupAutocomplete = useCallback((input: HTMLInputElement, ref: React.MutableRefObject<google.maps.places.Autocomplete | null>) => {
-    const map = googleMapRef.current;
+  const setupAutocomplete = useCallback((input: HTMLInputElement, ref: React.MutableRefObject<google.maps.places.Autocomplete | null>, mapInstance?: google.maps.Map | null) => {
+    const map = mapInstance || googleMapRef.current;
     if (!map || !google.maps.places) return;
     if (ref.current) google.maps.event.clearInstanceListeners(ref.current);
     const ac = new google.maps.places.Autocomplete(input, { types: ["geocode", "establishment"] });
@@ -234,7 +234,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
     ac.addListener("place_changed", () => {
       const place = ac.getPlace();
       if (place.geometry?.location) {
-        map.setCenter(place.geometry.location);
+        map.panTo(place.geometry.location);
         map.setZoom(17);
         const lat = place.geometry.location.lat();
         const lng = place.geometry.location.lng();
@@ -328,7 +328,7 @@ export default function LocationModal({ isOpen, onClose, editData, initialCoords
         if (center) fullscreenMap.setCenter(center);
         setIsFullScreenMapReady(true);
         if (fullscreenSearchRef.current && google.maps.places) {
-          setupAutocomplete(fullscreenSearchRef.current, fullscreenAutocompleteRef);
+          setupAutocomplete(fullscreenSearchRef.current, fullscreenAutocompleteRef, fullscreenMap);
         }
       }, 100);
 

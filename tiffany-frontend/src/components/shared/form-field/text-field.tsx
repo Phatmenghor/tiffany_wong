@@ -131,7 +131,7 @@ export function TextField({
 }: TextFieldProps) {
   return (
     <div className={`space-y-[0.325rem] ${className}`}>
-      <Label htmlFor={name} className="text-[12px] font-medium text-foreground">
+      <Label htmlFor={name} className="text-[11px] font-medium text-foreground">
         {label} {required && <span className="text-red-500 ml-[0.1625rem]">*</span>}
       </Label>
       <Controller

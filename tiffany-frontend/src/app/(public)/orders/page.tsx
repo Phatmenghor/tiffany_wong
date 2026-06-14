@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { useAuthState } from "@/redux/features/auth/store/state/auth-state";
@@ -21,19 +21,16 @@ import { CancelOrderModal } from "@/components/shared/modal/cancel-order-modal";
 import { showToast } from "@/components/shared/common/show-toast";
 import { useAppDispatch } from "@/redux/store/hooks";
 import { cancelOrderService } from "@/redux/features/main/store/thunks/my-orders-thunks";
+import { usePaginationLoadMore } from "@/hooks/use-pagination-load-more";
 import { OrdersPageSkeleton } from "./components/orders-page-skeleton";
 import { OrdersFilters } from "./components/orders-filters";
 import { OrdersEmptyState } from "./components/orders-empty-state";
 import { OrdersErrorState } from "./components/orders-error-state";
 import { createOrderTableColumns } from "./utils/create-order-table-columns";
+import { OrderMobileCard } from "./components/order-mobile-card";
 import { CustomButton } from "@/components/shared/button/custom-button";
 
 type Order = OrderResponse;
-
-interface StatusTab {
-  value: string;
-  label: string;
-}
 
 interface FilterState {
   status: string;
@@ -45,16 +42,8 @@ interface FilterState {
 export default function OrdersPage() {
   const router = useRouter();
   const reduxDispatch = useAppDispatch();
-  const { isAuthenticated, profile, authReady } = useAuthState();
-  const {
-    dispatch,
-    orders,
-    pagination,
-    loading,
-    error,
-    statusTabs,
-    loadedFilters,
-  } = useMyOrdersState();
+  const { isAuthenticated, authReady } = useAuthState();
+  const { dispatch, orders, pagination, loading, error, loadedFilters } = useMyOrdersState();
 
   const [filters, setFilters] = useState<FilterState>({
     status: "",
@@ -64,35 +53,18 @@ export default function OrdersPage() {
   });
 
   const [mounted, setMounted] = useState(false);
-  const [displayTabs, setDisplayTabs] = useState<StatusTab[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [detailModalState, setDetailModalState] = useState<{
-    isOpen: boolean;
-    order: OrderResponse | null;
-  }>({
-    isOpen: false,
-    order: null,
-  });
-  const [cancelModalState, setCancelModalState] = useState({
-    isOpen: false,
-    orderId: "",
-    orderNumber: "",
-  });
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  const [detailModalState, setDetailModalState] = useState<{ isOpen: boolean; order: OrderResponse | null }>({ isOpen: false, order: null });
+  const [cancelModalState, setCancelModalState] = useState({ isOpen: false, orderId: "", orderNumber: "" });
   const [cancelingOrderId, setCancelingOrderId] = useState<string | null>(null);
 
-  // Hydration fix
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { setMounted(true); }, []);
 
-  // Smart scroll restoration: Keep position on navigation, reset on browser refresh
-  useScrollRestoration({
-    enabled: true,
-    restoreOnMount: true,
-    customKey: "orders",
-  });
+  useScrollRestoration({ enabled: true, restoreOnMount: true, customKey: "orders" });
 
-  // Build current filters string for comparison
   const currentFilters = JSON.stringify({
     orderStatus: filters.status,
     paymentStatus: filters.paymentStatus,
@@ -100,145 +72,107 @@ export default function OrdersPage() {
     search: filters.search,
   });
 
-  // Build display tabs from Redux status tabs
-  useEffect(() => {
-    const tabs: StatusTab[] = [
-      { value: "", label: "All Orders" },
-      ...(statusTabs || []).map((status: any) => ({
-        value: status.name,
-        label: status.name,
-      })),
-    ];
-    setDisplayTabs(tabs);
-  }, [statusTabs]);
-
-  // Load orders function
-  const loadOrders = async (pageNo: number) => {
+  const loadOrders = useCallback(async (pageNo: number) => {
     await dispatch(
       fetchMyOrdersService({
         pageNo,
         pageSize: 15,
         orderStatus: filters.status || undefined,
-        paymentStatus:
-          filters.paymentStatus && filters.paymentStatus !== "ALL"
-            ? filters.paymentStatus
-            : undefined,
+        paymentStatus: filters.paymentStatus && filters.paymentStatus !== "ALL" ? filters.paymentStatus : undefined,
         paymentMethod: filters.paymentMethod || undefined,
         search: filters.search || undefined,
       }),
     );
-  };
+  }, [dispatch, filters]);
 
-  // Main fetch effect
+  // Filter change: clear + fetch page 1
   useEffect(() => {
     if (!authReady || !isAuthenticated || !mounted) return;
     if (loadedFilters === currentFilters) return;
 
-    if (orders.length > 0) {
-      dispatch(clearOrders());
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
+    dispatch(clearOrders());
     setCurrentPage(1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
     dispatch(setLoadedFilters(currentFilters));
     loadOrders(1);
   }, [currentFilters, loadedFilters, authReady, isAuthenticated, mounted]);
 
-  const handleViewOrder = (order: Order) => {
-    setDetailModalState({ isOpen: true, order });
-  };
+  // Mobile infinite scroll load more
+  const handleLoadMore = useCallback(() => {
+    if (!pagination.hasMore || loading.list || orders.length === 0) return;
+    loadOrders(pagination.currentPage + 1);
+  }, [pagination.hasMore, pagination.currentPage, loading.list, orders.length, loadOrders]);
 
-  const handleCancelOrder = (order: Order) => {
-    // Only allow canceling PENDING orders
-    if (order.orderStatus !== "PENDING") {
-      showToast.error("Only pending orders can be cancelled");
+  const { handleLoadMore: debouncedLoadMore } = usePaginationLoadMore(
+    handleLoadMore,
+    pagination.hasMore && !loading.list,
+    [pagination.hasMore, loading.list, handleLoadMore],
+  );
+
+  // Intersection observer
+  useEffect(() => {
+    if (!pagination.hasMore || !sentinelRef.current) {
+      observerRef.current?.disconnect();
+      observerRef.current = null;
       return;
     }
+    const observer = new IntersectionObserver(
+      (entries) => { if (entries[0].isIntersecting) debouncedLoadMore(); },
+      { threshold: 0.1, rootMargin: "200px" },
+    );
+    observerRef.current = observer;
+    observer.observe(sentinelRef.current);
+    return () => { observer.disconnect(); observerRef.current = null; };
+  }, [pagination.hasMore, debouncedLoadMore]);
 
-    // Open cancel modal instead of calling API directly
-    setCancelModalState({
-      isOpen: true,
-      orderId: order.id,
-      orderNumber: order.orderNumber || "",
-    });
+  const handleViewOrder = (order: Order) => setDetailModalState({ isOpen: true, order });
+
+  const handleCancelOrder = (order: Order) => {
+    if (order.orderStatus !== "PENDING") { showToast.error("Only pending orders can be cancelled"); return; }
+    setCancelModalState({ isOpen: true, orderId: order.id, orderNumber: order.orderNumber || "" });
   };
 
-  const handleConfirmCancel = async (data: {
-    status: "CANCELLED";
-    customerNote: string;
-  }) => {
+  const handleConfirmCancel = async (data: { status: "CANCELLED"; customerNote: string }) => {
     const orderId = cancelModalState.orderId;
     if (!orderId) return;
-
     try {
       setCancelingOrderId(orderId);
-
       const updatedOrder = await reduxDispatch(cancelOrderService({ orderId, customerNote: data.customerNote })).unwrap();
-
-      reduxDispatch(updateOrderInList(updatedOrder));
+      dispatch(updateOrderInList(updatedOrder));
       showToast.success("Order cancelled successfully");
       setCancelModalState({ isOpen: false, orderId: "", orderNumber: "" });
     } catch (error: any) {
-      const errorMessage =
-        error?.message || "Failed to cancel order. Please try again.";
-      showToast.error(errorMessage);
-      throw error; // Re-throw to let the modal handle it
+      showToast.error(error?.message || "Failed to cancel order. Please try again.");
+      throw error;
     } finally {
       setCancelingOrderId(null);
     }
   };
 
+  // Desktop: clear first so append = replace for the clicked page
   const handlePageChange = (page: number) => {
+    dispatch(clearOrders());
     setCurrentPage(page);
     loadOrders(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleStatusChange = (value: string) => {
-    setFilters((prev) => ({ ...prev, status: value }));
-    setCurrentPage(1);
-  };
-
-  const handlePaymentStatusChange = (value: string) => {
-    setFilters((prev) => ({ ...prev, paymentStatus: value }));
-    setCurrentPage(1);
-  };
-
-  const handlePaymentMethodChange = (value: string) => {
-    setFilters((prev) => ({ ...prev, paymentMethod: value }));
-    setCurrentPage(1);
-  };
-
-  const handleClearFilters = () => {
-    setFilters({
-      status: "",
-      paymentStatus: "",
-      paymentMethod: "",
-      search: "",
-    });
-    setCurrentPage(1);
-  };
+  const handleStatusChange = (value: string) => { setFilters((p) => ({ ...p, status: value })); setCurrentPage(1); };
+  const handlePaymentStatusChange = (value: string) => { setFilters((p) => ({ ...p, paymentStatus: value })); setCurrentPage(1); };
+  const handlePaymentMethodChange = (value: string) => { setFilters((p) => ({ ...p, paymentMethod: value })); setCurrentPage(1); };
+  const handleClearFilters = () => { setFilters({ status: "", paymentStatus: "", paymentMethod: "", search: "" }); setCurrentPage(1); };
 
   const hasActiveFilters = !!(filters.status || filters.paymentStatus || filters.paymentMethod || filters.search);
 
-  // Create table columns
   const tableColumns = useMemo(
-    () =>
-      createOrderTableColumns(
-        handleViewOrder,
-        handleCancelOrder,
-        cancelingOrderId,
-        pagination,
-      ),
+    () => createOrderTableColumns(handleViewOrder, handleCancelOrder, cancelingOrderId, pagination),
     [cancelingOrderId, pagination],
   );
 
-  const totalOrders = pagination.totalElements;
+  const isInitialLoad = orders.length === 0 && loading.list;
+  const isEmpty = orders.length === 0 && !loading.list;
 
-  // Prevent hydration mismatch
-  if (!mounted || !authReady) {
-    return <OrdersPageSkeleton />;
-  }
+  if (!mounted || !authReady) return <OrdersPageSkeleton />;
 
   if (!isAuthenticated) {
     return (
@@ -248,13 +182,8 @@ export default function OrdersPage() {
             <AlertCircle className="h-[1.3rem] w-[1.3rem] text-primary" />
           </div>
           <h1 className="text-[14px] font-bold mb-[0.325rem]">Sign In Required</h1>
-          <p className="text-muted-foreground mb-[0.975rem]">
-            Please sign in to view your orders.
-          </p>
-          <CustomButton
-            onClick={() => router.push("/login")}
-            className="w-full h-[1.7875rem] rounded-[0.4875rem]"
-          >
+          <p className="text-muted-foreground mb-[0.975rem]">Please sign in to view your orders.</p>
+          <CustomButton onClick={() => router.push("/login")} className="w-full h-[1.7875rem] rounded-[0.4875rem]">
             Sign In
           </CustomButton>
         </div>
@@ -264,64 +193,88 @@ export default function OrdersPage() {
 
   return (
     <PageContainer className="py-[0.975rem] sm:py-[1.3rem]">
-      {/* Header */}
       <PageHeader
         title="My Orders"
-        subtitle={`You have ${totalOrders} order${totalOrders !== 1 ? "s" : ""}`}
+        subtitle={`You have ${pagination.totalElements} order${pagination.totalElements !== 1 ? "s" : ""}`}
       />
 
-      {/* Filters Section */}
       <OrdersFilters
         filters={filters}
         onStatusChange={handleStatusChange}
         onPaymentStatusChange={handlePaymentStatusChange}
         onPaymentMethodChange={handlePaymentMethodChange}
-        onSearchChange={(value) => {
-          setFilters((prev) => ({ ...prev, search: value }));
-          setCurrentPage(1);
-        }}
+        onSearchChange={(value) => { setFilters((p) => ({ ...p, search: value })); setCurrentPage(1); }}
         onClearFilters={handleClearFilters}
         hasActiveFilters={hasActiveFilters}
       />
 
-      {/* Data Table */}
-      {!isAuthenticated ? (
-        <OrdersErrorState isUnauthenticated />
-      ) : error.list ? (
+      {error.list ? (
         <OrdersErrorState errorMessage={error.list} />
-      ) : orders.length === 0 && !loading.list ? (
+      ) : isEmpty ? (
         <OrdersEmptyState hasFilters={!!filters.status} />
       ) : (
-        <DataTableWithPagination
-          data={orders}
-          columns={tableColumns}
-          loading={loading.list}
-          emptyMessage="No orders found"
-          getRowKey={(order) => order.id}
-          currentPage={currentPage}
-          totalElements={pagination.totalElements}
-          totalPages={pagination.totalPages}
-          onPageChange={handlePageChange}
-          pageSize={15}
-          pageSizeOptions={[15]}
-          showPageSizeSelector={false}
-          hideEllipsis={true}
-        />
+        <>
+          {/* Mobile + tablet (< lg): infinite scroll cards */}
+          <div className="flex flex-col gap-[0.65rem] lg:hidden">
+            {/* Initial load skeletons */}
+            {isInitialLoad && Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="rounded-[0.4875rem] border border-border bg-muted/30 h-[6rem] animate-pulse" />
+            ))}
+
+            {/* Order cards */}
+            {orders.map((order) => (
+              <OrderMobileCard
+                key={order.id}
+                order={order}
+                onView={handleViewOrder}
+                onCancel={handleCancelOrder}
+                isCanceling={cancelingOrderId === order.id}
+              />
+            ))}
+
+            {/* Load-more skeletons */}
+            {loading.list && orders.length > 0 && Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="rounded-[0.4875rem] border border-border bg-muted/30 h-[6rem] animate-pulse" />
+            ))}
+
+            {/* Sentinel */}
+            <div ref={sentinelRef} className="h-[1px]" />
+
+            {!pagination.hasMore && orders.length > 0 && !loading.list && (
+              <p className="text-center text-[11px] text-muted-foreground py-[0.65rem]">All orders loaded</p>
+            )}
+          </div>
+
+          {/* Desktop (>= lg): paginated table */}
+          <div className="hidden lg:block">
+            <DataTableWithPagination
+              data={orders}
+              columns={tableColumns}
+              loading={loading.list}
+              emptyMessage="No orders found"
+              getRowKey={(order) => order.id}
+              currentPage={currentPage}
+              totalElements={pagination.totalElements}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+              pageSize={15}
+              pageSizeOptions={[15]}
+              showPageSizeSelector={false}
+              hideEllipsis={true}
+            />
+          </div>
+        </>
       )}
 
-      {/* Detail Modal */}
       <CustomerOrderDetailModal
         order={detailModalState.order}
         isOpen={detailModalState.isOpen}
         onClose={() => setDetailModalState({ isOpen: false, order: null })}
       />
 
-      {/* Cancel Order Modal */}
       <CancelOrderModal
         isOpen={cancelModalState.isOpen}
-        onClose={() =>
-          setCancelModalState({ isOpen: false, orderId: "", orderNumber: "" })
-        }
+        onClose={() => setCancelModalState({ isOpen: false, orderId: "", orderNumber: "" })}
         orderId={cancelModalState.orderId}
         orderNumber={cancelModalState.orderNumber}
         onConfirm={handleConfirmCancel}

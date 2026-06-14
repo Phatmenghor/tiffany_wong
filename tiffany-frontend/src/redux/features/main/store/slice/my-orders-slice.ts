@@ -16,6 +16,7 @@ interface MyOrdersState {
     pageSize: number;
     totalPages: number;
     totalElements: number;
+    hasMore: boolean;
   };
   loading: {
     list: boolean;
@@ -36,6 +37,7 @@ const initialState: MyOrdersState = {
     pageSize: 15,
     totalPages: 0,
     totalElements: 0,
+    hasMore: false,
   },
   loading: {
     list: false,
@@ -94,8 +96,11 @@ const myOrdersSlice = createSlice({
         const pageNo = action.payload.pageNo || 1;
         const pageSize = action.payload.pageSize || 15;
 
-        // Pagination behavior: replace orders on every page (not infinite scroll)
-        state.orders = newOrders;
+        // Append new orders, deduplicating by ID (supports infinite scroll)
+        // clearOrders() resets state.orders to [] before desktop page changes
+        const existingIds = new Set(state.orders.map((o) => o.id));
+        const uniqueNew = newOrders.filter((o: OrderResponse) => !existingIds.has(o.id));
+        state.orders = [...state.orders, ...uniqueNew];
 
         state.loading.list = false;
         state.pagination = {
@@ -103,6 +108,7 @@ const myOrdersSlice = createSlice({
           pageSize: pageSize,
           totalPages: action.payload.totalPages || 0,
           totalElements: action.payload.totalElements || 0,
+          hasMore: !action.payload.last,
         };
       })
       .addCase(fetchMyOrdersService.rejected, (state, action) => {

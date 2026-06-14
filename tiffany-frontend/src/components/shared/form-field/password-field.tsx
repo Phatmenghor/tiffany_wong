@@ -21,7 +21,7 @@ export function PasswordField({
 }: PasswordFieldProps) {
   return (
     <div className={`space-y-[0.325rem] ${className}`}>
-      <Label htmlFor={name} className="text-[12px] font-medium">
+      <Label htmlFor={name} className="text-[11px] font-medium">
         {label} {required && <span className="text-red-500">*</span>}
       </Label>
       <div className="relative">
@@ -37,7 +37,7 @@ export function PasswordField({
               placeholder={placeholder}
               disabled={disabled}
               autoComplete="new-password"
-              className={`h-[2.5rem] sm:h-[1.625rem] pr-[1.95rem] transition-all duration-200 ${
+              className={`h-[2.375rem] sm:h-[1.625rem] pr-[1.95rem] transition-all duration-200 ${
                 error
                   ? "border-red-500 focus:border-red-500"
                   : "focus:bg-primary/10 focus:border-primary focus:ring-2 focus:ring-primary/30"

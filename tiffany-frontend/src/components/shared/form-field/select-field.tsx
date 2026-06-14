@@ -31,7 +31,7 @@ export function SelectField<T extends FieldValues = any>({
 
   return (
     <div className={`space-y-[0.325rem] ${className}`}>
-      <Label htmlFor={name} className="text-[12px] font-medium">
+      <Label htmlFor={name} className="text-[11px] font-medium">
         {label} {required && <span className="text-red-500">*</span>}
       </Label>
       <Controller
@@ -54,7 +54,7 @@ export function SelectField<T extends FieldValues = any>({
                   role="combobox"
                   disabled={disabled || loading}
                   className={cn(
-                    "w-full justify-between h-[2.5rem] sm:h-[1.625rem] px-[0.4875rem] font-normal border-input",
+                    "w-full justify-between h-[2.375rem] sm:h-[1.625rem] px-[0.4875rem] font-normal border-input",
                     // Hover state
                     "hover:bg-primary/10 hover:border-primary hover:text-primary",
                     // Focus state

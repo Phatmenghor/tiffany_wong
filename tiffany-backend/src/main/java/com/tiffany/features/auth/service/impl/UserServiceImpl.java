@@ -55,8 +55,8 @@ public class UserServiceImpl implements UserService {
         UserProfile profile = new UserProfile();
         profile.setUser(saved);
         profile.setEmail(req.getEmail());
-        profile.setFirstName(req.getFirstName());
-        profile.setLastName(req.getLastName());
+        profile.setFirstName(req.getFirstName() != null ? req.getFirstName().trim() : null);
+        profile.setLastName(req.getLastName() != null ? req.getLastName().trim() : null);
         profile.setNickname(req.getNickname());
         profile.setGender(req.getGender());
         profile.setDateOfBirth(req.getDateOfBirth());
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
                 (request.getUserTypes() != null && !request.getUserTypes().isEmpty()) ? request.getUserTypes() : null,
                 (request.getAccountStatuses() != null && !request.getAccountStatuses().isEmpty()) ? request.getAccountStatuses() : null,
                 null,
-                request.getSearch(),
+                request.getSearch() != null ? request.getSearch().trim() : null,
                 pageable);
 
         log.info("Users retrieved: total={}, pages={}, current={}", page.getTotalElements(), page.getTotalPages(), page.getNumber());
@@ -117,8 +117,8 @@ public class UserServiceImpl implements UserService {
         }
 
         if (req.getEmail() != null) profile.setEmail(req.getEmail());
-        if (req.getFirstName() != null) profile.setFirstName(req.getFirstName());
-        if (req.getLastName() != null) profile.setLastName(req.getLastName());
+        if (req.getFirstName() != null) profile.setFirstName(req.getFirstName().trim());
+        if (req.getLastName() != null) profile.setLastName(req.getLastName().trim());
         if (req.getNickname() != null) profile.setNickname(req.getNickname());
         if (req.getGender() != null) profile.setGender(req.getGender());
         if (req.getDateOfBirth() != null) profile.setDateOfBirth(req.getDateOfBirth());

@@ -54,7 +54,7 @@ public class BannerServiceImpl implements BannerService {
 
         Page<Banner> bannerPage = bannerRepository.findAllWithFilters(
                 filter.getStatus(),
-                filter.getSearch(),
+                filter.getSearch() != null ? filter.getSearch().trim() : null,
                 pageable
         );
 
@@ -71,7 +71,7 @@ public class BannerServiceImpl implements BannerService {
 
         List<Banner> banners = bannerRepository.findAllWithFilters(
                 filter.getStatus(),
-                filter.getSearch(),
+                filter.getSearch() != null ? filter.getSearch().trim() : null,
                 PaginationUtils.createSort(filter.getSortBy(), filter.getSortDirection())
         );
 

@@ -35,8 +35,7 @@ public interface BannerRepository extends JpaRepository<Banner, UUID> {
            "WHERE b.isDeleted = false " +
            "AND (:status IS NULL OR b.status = :status) " +
            "AND (:search IS NULL OR :search = '' OR " +
-           "     LOWER(b.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(b.linkUrl) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(b.description) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Banner> findAllWithFilters(
         @Param("status") Status status,
         @Param("search") String search,
@@ -50,8 +49,7 @@ public interface BannerRepository extends JpaRepository<Banner, UUID> {
            "WHERE b.isDeleted = false " +
            "AND (:status IS NULL OR b.status = :status) " +
            "AND (:search IS NULL OR :search = '' OR " +
-           "     LOWER(b.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "     LOWER(b.linkUrl) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "     LOWER(b.description) LIKE LOWER(CONCAT('%', :search, '%')))")
     List<Banner> findAllWithFilters(
         @Param("status") Status status,
         @Param("search") String search,

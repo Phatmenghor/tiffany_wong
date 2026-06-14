@@ -92,16 +92,23 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
            "AND (:orderStatus IS NULL OR o.orderStatus = :orderStatus) " +
            "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
            "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus) " +
+           "AND (:search IS NULL OR :search = '' OR " +
+           "     LOWER(o.orderNumber) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+           "     LOWER(o.customerPhone) LIKE LOWER(CONCAT('%', :search, '%'))) " +
            "ORDER BY o.createdAt DESC",
            countQuery = "SELECT COUNT(o) FROM Order o " +
            "WHERE o.isDeleted = false " +
            "AND (:orderStatus IS NULL OR o.orderStatus = :orderStatus) " +
            "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
-           "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus)")
+           "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus) " +
+           "AND (:search IS NULL OR :search = '' OR " +
+           "     LOWER(o.orderNumber) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+           "     LOWER(o.customerPhone) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Order> findAllWithFilters(
             @Param("orderStatus") OrderStatus orderStatus,
             @Param("paymentMethod") com.tiffany.enums.payment.PaymentMethod paymentMethod,
             @Param("paymentStatus") com.tiffany.enums.payment.PaymentStatus paymentStatus,
+            @Param("search") String search,
             Pageable pageable);
 
     /**

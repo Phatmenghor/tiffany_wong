@@ -36,15 +36,11 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByIdAndIsDeletedFalse(@Param("id") UUID id);
 
     @Query("SELECT DISTINCT u FROM User u " +
-            "LEFT JOIN u.profile p " +
             "WHERE u.isDeleted = false " +
             "AND (:userTypes IS NULL OR u.userType IN :userTypes) " +
             "AND (:accountStatuses IS NULL OR u.accountStatus IN :accountStatuses) " +
             "AND (:search IS NULL OR :search = '' OR " +
-            "    LOWER(u.userIdentifier) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-            "    LOWER(p.email) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-            "    LOWER(p.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-            "    LOWER(p.lastName) LIKE LOWER(CONCAT('%', :search, '%')))")
+            "    LOWER(u.userIdentifier) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<User> searchUsers(
             @Param("userTypes") List<UserType> userTypes,
             @Param("accountStatuses") List<AccountStatus> accountStatuses,
