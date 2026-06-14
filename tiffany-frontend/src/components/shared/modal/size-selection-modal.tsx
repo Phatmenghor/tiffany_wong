@@ -329,10 +329,11 @@ export function SizeSelectionModal({
           const currentQty = getQuantityForSize(sizeId);
           if (newQty === currentQty) continue;
 
+          // Use ts-1 so local items (stamped ts) stay "newer" during conflict resolution
           if (newQty > 0) {
-            await dispatch(addToCart({ productId: displayProduct.id, productSizeId: sizeId, quantity: newQty, optimisticTimestamp: ts })).unwrap();
+            await dispatch(addToCart({ productId: displayProduct.id, productSizeId: sizeId, quantity: newQty, optimisticTimestamp: ts - 1 })).unwrap();
           } else {
-            await dispatch(updateCartItem({ productId: displayProduct.id, productSizeId: sizeId, quantity: 0, optimisticTimestamp: ts })).unwrap();
+            await dispatch(updateCartItem({ productId: displayProduct.id, productSizeId: sizeId, quantity: 0, optimisticTimestamp: ts - 1 })).unwrap();
           }
         }
         // Fetch authoritative cart state after all updates are done

@@ -373,10 +373,11 @@ export default function ProductDetailPage() {
           const currentQty = getQuantityForSize(sizeId);
           if (newQty === currentQty) continue;
 
+          // Use ts-1 so local items (stamped ts) stay "newer" during conflict resolution
           if (newQty > 0) {
-            await cartDispatch(addToCart({ productId: product.id, productSizeId: sizeId, quantity: newQty, optimisticTimestamp: ts })).unwrap();
+            await cartDispatch(addToCart({ productId: product.id, productSizeId: sizeId, quantity: newQty, optimisticTimestamp: ts - 1 })).unwrap();
           } else {
-            await cartDispatch(updateCartItem({ productId: product.id, productSizeId: sizeId, quantity: 0, optimisticTimestamp: ts })).unwrap();
+            await cartDispatch(updateCartItem({ productId: product.id, productSizeId: sizeId, quantity: 0, optimisticTimestamp: ts - 1 })).unwrap();
           }
         }
         cartDispatch(fetchCart());
