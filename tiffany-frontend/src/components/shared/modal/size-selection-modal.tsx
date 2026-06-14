@@ -485,7 +485,7 @@ export function SizeSelectionModal({
                   </div>
                 )}
 
-              {/* Quantity Selector + Clear button */}
+              {/* Quantity Selector + Clear button + all-sizes preview */}
               <div className="mb-[0.65rem]">
                 <h4 className="font-semibold mb-[0.325rem] text-[11px]">Quantity</h4>
                 <div className="flex items-center gap-[0.325rem]">
@@ -495,16 +495,14 @@ export function SizeSelectionModal({
                     min={0}
                     size="sm"
                   />
-                  {/* Clear button for selected size - calls API immediately */}
+                  {/* Clear button for selected size */}
                   {(currentQuantity > 0 || getQuantityForSize(selectedSize?.id || null) > 0) && (
                     <CustomButton
                       variant="outline"
                       size="sm"
                       className="h-[1.3rem] px-[0.325rem] text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground"
                       disabled={clearingSize === (selectedSize?.id || "no_size")}
-                      onClick={() =>
-                        handleClearSize(selectedSize?.id || null)
-                      }
+                      onClick={() => handleClearSize(selectedSize?.id || null)}
                     >
                       {clearingSize === (selectedSize?.id || "no_size") ? (
                         <Loader2 className="h-[0.56875rem] w-[0.56875rem] mr-[0.1625rem] animate-spin" />
@@ -514,16 +512,51 @@ export function SizeSelectionModal({
                       Clear
                     </CustomButton>
                   )}
+                  {/* All-sizes summary preview */}
+                  {displayProduct?.hasSizes && displayProduct.sizes && displayProduct.sizes.length > 1 && (
+                    <div className="ml-auto flex flex-wrap gap-[0.2rem] justify-end">
+                      {displayProduct.sizes
+                        .filter((s) => getDisplayQuantity(s.id) > 0)
+                        .map((s) => (
+                          <span
+                            key={s.id}
+                            className={cn(
+                              "text-[10px] px-[0.3rem] py-[0.1rem] rounded-full font-semibold",
+                              s.id === selectedSize?.id
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-green-500 text-white",
+                            )}
+                          >
+                            {s.name}: {getDisplayQuantity(s.id)}
+                          </span>
+                        ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Total */}
-              <div className="flex justify-between items-center py-[0.4875rem] border-t mb-[0.65rem]">
-                <span className="text-muted-foreground">Total</span>
-                <span className="text-[13px] font-bold text-primary">
-                  {formatCurrency(displayPrice * currentQuantity)}
-                </span>
-              </div>
+              {/* Total — sum across ALL sizes */}
+              {(() => {
+                const totalAllSizes = displayProduct?.hasSizes && displayProduct.sizes
+                  ? displayProduct.sizes.reduce(
+                      (sum, s) => sum + s.finalPrice * getDisplayQuantity(s.id),
+                      0,
+                    )
+                  : displayPrice * currentQuantity;
+                const totalQtyAllSizes = displayProduct?.hasSizes && displayProduct.sizes
+                  ? displayProduct.sizes.reduce((sum, s) => sum + getDisplayQuantity(s.id), 0)
+                  : currentQuantity;
+                return (
+                  <div className="flex justify-between items-center py-[0.4875rem] border-t mb-[0.65rem]">
+                    <span className="text-muted-foreground text-[11px]">
+                      Total{totalQtyAllSizes > 0 ? ` · ${totalQtyAllSizes} item${totalQtyAllSizes !== 1 ? "s" : ""}` : ""}
+                    </span>
+                    <span className="text-[13px] font-bold text-primary">
+                      {formatCurrency(totalAllSizes)}
+                    </span>
+                  </div>
+                );
+              })()}
 
               {/* Action buttons: Discard & Add to Cart */}
               <div className="flex gap-[0.4875rem]">
