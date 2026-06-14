@@ -149,7 +149,7 @@ export function ComboboxSelectLocation({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "!flex w-full justify-between px-[0.4875rem] h-[2.125rem] sm:h-[1.625rem] text-[12px] transition-all duration-200 border-input overflow-hidden",
+              "!flex w-full justify-between px-[0.4875rem] min-h-[2.125rem] h-auto sm:min-h-[1.625rem] py-[0.325rem] text-[12px] transition-all duration-200 border-input text-left",
               "hover:bg-primary/10 hover:border-primary hover:text-primary",
               "focus:bg-primary/10 focus:border-primary focus:text-primary focus:ring-2 focus:ring-primary/30",
               open && "bg-primary/20 border-primary text-primary",
@@ -159,7 +159,7 @@ export function ComboboxSelectLocation({
             disabled={disabled}
           >
             {dataSelect ? (
-              <span className="min-w-0 flex-1 truncate">{dataSelect.fullAddress}</span>
+              <span className="min-w-0 flex-1 text-left break-words leading-snug">{dataSelect.fullAddress}</span>
             ) : (
               <span className="flex items-center gap-[0.325rem] text-foreground">
                 <Store className="h-[0.56875rem] w-[0.56875rem] shrink-0" />
