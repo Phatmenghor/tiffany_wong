@@ -591,18 +591,30 @@ export function Navbar() {
       <Dialog open={logoutConfirmOpen} onOpenChange={setLogoutConfirmOpen}>
         <DialogContent className="sm:max-w-xs">
           <DialogHeader>
-            <DialogTitle>Sign Out</DialogTitle>
+            <div className="flex items-center gap-[0.65rem]">
+              <div className="h-[2.25rem] w-[2.25rem] rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
+                <LogOut className="h-[1rem] w-[1rem] text-destructive" />
+              </div>
+              <div>
+                <DialogTitle className="text-[14px]">Sign Out</DialogTitle>
+                <p className="text-[11px] text-muted-foreground mt-[0.1rem]">Are you sure you want to sign out?</p>
+              </div>
+            </div>
           </DialogHeader>
-          <p className="text-[12px] text-muted-foreground">Are you sure you want to sign out?</p>
-          <DialogFooter className="flex gap-[0.325rem]">
-            <CustomButton variant="outline" className="flex-1" onClick={() => setLogoutConfirmOpen(false)}>
+          <DialogFooter className="flex-row gap-[0.4875rem] pt-[0.325rem]">
+            <CustomButton
+              variant="outline"
+              className="flex-1 h-[2.375rem]"
+              onClick={() => setLogoutConfirmOpen(false)}
+            >
               Cancel
             </CustomButton>
             <CustomButton
               variant="destructive"
-              className="flex-1"
+              className="flex-1 h-[2.375rem]"
               onClick={() => { setLogoutConfirmOpen(false); handleLogout(); }}
             >
+              <LogOut className="h-[0.75rem] w-[0.75rem] mr-[0.325rem]" />
               Sign Out
             </CustomButton>
           </DialogFooter>

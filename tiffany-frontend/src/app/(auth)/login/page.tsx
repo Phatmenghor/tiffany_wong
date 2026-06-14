@@ -33,8 +33,8 @@ export default function LoginPage() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      userIdentifier: "phatmenghor19@gmail.com",
-      password: "88889999",
+      userIdentifier: "",
+      password: "",
     },
   });
 
@@ -80,7 +80,10 @@ export default function LoginPage() {
           </CardHeader>
 
           <CardContent>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[0.65rem]">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-[0.65rem]"
+            >
               <TextField
                 name="userIdentifier"
                 label="Email or Username"
@@ -108,7 +111,9 @@ export default function LoginPage() {
                 className="w-full h-[1.7875rem] mt-[0.325rem] font-semibold"
                 disabled={isLoading}
               >
-                {isLoading && <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />}
+                {isLoading && (
+                  <Loader2 className="mr-[0.325rem] h-[0.65rem] w-[0.65rem] animate-spin" />
+                )}
                 {isLoading ? "Signing in..." : "Sign in"}
               </Button>
             </form>
