@@ -22,7 +22,7 @@ export function MobileCheckoutBar({
   selectedAddressId,
 }: MobileCheckoutBarProps) {
   return (
-    <div className="fixed bottom-[2.6rem] left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur-sm border-t px-[0.65rem] py-[0.4875rem]">
+    <div className="fixed bottom-nav-safe left-0 right-0 z-40 lg:hidden bg-background/95 backdrop-blur-sm border-t px-[0.65rem] py-[0.4875rem]">
       <div className="flex items-center justify-between mb-[0.40625rem]">
         <div className="text-[11px]">
           <div className="text-muted-foreground font-medium">
@@ -40,7 +40,7 @@ export function MobileCheckoutBar({
         </div>
       </div>
       <CustomButton
-        className="w-full gap-[0.325rem] h-[1.7875rem] rounded-[0.4875rem]"
+        className="w-full gap-[0.325rem] h-[2.75rem] sm:h-[1.7875rem] rounded-[0.4875rem]"
         onClick={onCheckout}
         disabled={isProcessing}
       >

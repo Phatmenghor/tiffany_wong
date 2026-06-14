@@ -138,7 +138,7 @@ export default function CheckoutPage() {
         <PageHeader
           title="Checkout"
           count={totalItems}
-          subtitle={`${totalItems} ${totalItems === 1 ? "item" : "items"} • ${totalQuantity} total quantity`}
+          countLabel={totalItems === 1 ? "item" : "items"}
         />
 
         <div className="grid lg:grid-cols-3 gap-[0.65rem] sm:gap-[0.975rem] mt-[0.975rem]">
@@ -153,30 +153,29 @@ export default function CheckoutPage() {
 
             {/* Customer Information */}
             <div className="bg-card border rounded-[0.65rem] p-[0.8125rem]">
-              <h3 className="text-[12px] font-bold mb-[0.65rem]">Customer Information</h3>
-              {/* grid-cols-1 on mobile prevents two-column overflow at small/zoomed screens */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[0.65rem]">
-                <div className="space-y-[0.24375rem]">
-                  <label className="text-[11px] font-medium">Full Name *</label>
+              <h3 className="text-[13px] font-bold mb-[0.65rem]">Customer Information</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[0.65rem]">
+                <div className="space-y-[0.325rem]">
+                  <label className="text-[12px] sm:text-[11px] font-medium">Full Name <span className="text-red-500">*</span></label>
                   <input
                     type="text"
                     placeholder="Enter your full name"
                     value={customerName}
                     onChange={(e) => { setCustomerName(e.target.value); setErrors((v) => ({ ...v, name: "" })); }}
-                    className={`w-full px-[0.4875rem] py-[0.325rem] border rounded-[0.325rem] text-[11px] focus:outline-none focus:ring-2 focus:ring-primary ${errors.name ? "border-red-500 focus:ring-red-300" : ""}`}
+                    className={`w-full h-[2.75rem] sm:h-[1.625rem] px-[0.65rem] sm:px-[0.4875rem] border rounded-[0.325rem] text-[13px] sm:text-[11px] bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors ${errors.name ? "border-red-500 focus:ring-red-300" : "border-input"}`}
                     disabled={isProcessing}
                   />
                   {errors.name && <p className="text-[11px] text-red-500">{errors.name}</p>}
                 </div>
 
-                <div className="space-y-[0.24375rem]">
-                  <label className="text-[11px] font-medium">Phone Number *</label>
+                <div className="space-y-[0.325rem]">
+                  <label className="text-[12px] sm:text-[11px] font-medium">Phone Number <span className="text-red-500">*</span></label>
                   <input
                     type="tel"
                     placeholder="Enter your phone number"
                     value={customerPhone}
                     onChange={(e) => { setCustomerPhone(e.target.value); setErrors((v) => ({ ...v, phone: "" })); }}
-                    className={`w-full px-[0.4875rem] py-[0.325rem] border rounded-[0.325rem] text-[11px] focus:outline-none focus:ring-2 focus:ring-primary ${errors.phone ? "border-red-500 focus:ring-red-300" : ""}`}
+                    className={`w-full h-[2.75rem] sm:h-[1.625rem] px-[0.65rem] sm:px-[0.4875rem] border rounded-[0.325rem] text-[13px] sm:text-[11px] bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors ${errors.phone ? "border-red-500 focus:ring-red-300" : "border-input"}`}
                     disabled={isProcessing}
                   />
                   {errors.phone && <p className="text-[11px] text-red-500">{errors.phone}</p>}

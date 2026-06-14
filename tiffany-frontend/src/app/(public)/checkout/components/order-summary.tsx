@@ -1,6 +1,7 @@
 import { CreditCard, Loader2 } from "lucide-react";
 import { CustomButton } from "@/components/shared/button/custom-button";
 import { formatCurrency } from "@/utils/common/currency-format";
+import { cn } from "@/lib/utils";
 
 interface OrderSummaryProps {
   totalItems: number;
@@ -86,35 +87,26 @@ export function OrderSummary({
           </div>
         </div>
 
-        {/* Payment Method - In Row */}
+        {/* Payment Method */}
         <div className="mb-[0.8125rem] p-[0.65rem] bg-muted/30 rounded-[0.4875rem] border">
-          <h3 className="text-[11px] font-bold mb-[0.4875rem] flex items-center gap-[0.325rem]">
-            <CreditCard className="h-[0.65rem] w-[0.65rem]" />
-            Payment Method
-          </h3>
+          <h3 className="text-[11px] font-bold mb-[0.4875rem]">Payment Method</h3>
           <div className="flex gap-[0.325rem]">
-            <label className="flex-1 flex items-center gap-[0.325rem] cursor-pointer p-[0.40625rem] border rounded-[0.325rem] hover:bg-muted/50 transition-colors" onClick={() => onPaymentMethodChange("CASH")}>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="CASH"
-                checked={paymentMethod === "CASH"}
-                onChange={() => onPaymentMethodChange("CASH")}
-                className="w-[0.65rem] h-[0.65rem]"
-              />
-              <span className="text-[11px] font-medium">Cash</span>
-            </label>
-            <label className="flex-1 flex items-center gap-[0.325rem] cursor-pointer p-[0.40625rem] border rounded-[0.325rem] hover:bg-muted/50 transition-colors" onClick={() => onPaymentMethodChange("BANK")}>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="BANK"
-                checked={paymentMethod === "BANK"}
-                onChange={() => onPaymentMethodChange("BANK")}
-                className="w-[0.65rem] h-[0.65rem]"
-              />
-              <span className="text-[11px] font-medium">Bank</span>
-            </label>
+            {(["CASH", "BANK"] as const).map((method) => (
+              <button
+                key={method}
+                type="button"
+                onClick={() => onPaymentMethodChange(method)}
+                className={cn(
+                  "flex-1 flex items-center justify-center gap-[0.325rem] h-[2.75rem] sm:h-[1.625rem] border rounded-[0.325rem] text-[13px] sm:text-[11px] font-medium transition-colors",
+                  paymentMethod === method
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background hover:bg-muted/50"
+                )}
+              >
+                {method === "CASH" ? "💵" : "🏦"}
+                {method === "CASH" ? "Cash" : "Bank"}
+              </button>
+            ))}
           </div>
         </div>
         <CustomButton
