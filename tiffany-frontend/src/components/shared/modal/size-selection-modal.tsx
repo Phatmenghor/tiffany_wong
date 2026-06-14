@@ -246,7 +246,7 @@ export function SizeSelectionModal({
             optimisticTimestamp: ts,
           }),
         ).unwrap();
-        showToast.success("Removed from cart");
+
       } catch (error: any) {
         showToast.error(error?.message || "Failed to remove from cart");
       } finally {

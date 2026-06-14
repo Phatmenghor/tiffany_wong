@@ -313,7 +313,7 @@ export default function ProductDetailPage() {
             quantity: 0,
           })
         ).unwrap();
-        showToast.success("Removed from cart");
+
       } catch (err: any) {
         showToast.error(err?.message || "Failed to remove");
       } finally {
