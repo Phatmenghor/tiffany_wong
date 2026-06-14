@@ -54,7 +54,11 @@ function ComboboxSelectCategoriesPublicComponent({
 
   const fetchedRef = useRef(false);
 
-  const sizeClasses = { sm: "h-[1.3rem] text-[11px]", md: "h-[1.625rem] text-[12px]", lg: "h-[1.625rem] text-[12px]" };
+  const sizeClasses = {
+    sm: "h-[2.75rem] sm:h-[1.3rem] text-[12px] sm:text-[11px]",
+    md: "h-[2.75rem] sm:h-[1.625rem] text-[12px]",
+    lg: "h-[2.75rem] sm:h-[1.625rem] text-[12px]",
+  };
   // Dropdown items: no fixed height so long text wraps and the row grows
   const itemSizeClasses = {
     sm: "min-h-[1.3rem] py-[0.24375rem] text-[11px]",

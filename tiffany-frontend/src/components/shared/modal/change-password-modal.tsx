@@ -216,7 +216,11 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
             createMessage="Changing password..."
             updateMessage=""
           >
-            <CancelButton onClick={handleClose} disabled={isSubmitting} />
+            <CancelButton
+              onClick={handleClose}
+              disabled={isSubmitting}
+              className="flex-1 sm:flex-none"
+            />
 
             <SubmitButton
               isSubmitting={isSubmitting}
@@ -226,6 +230,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
               updateText=""
               submittingCreateText="Changing..."
               submittingUpdateText=""
+              className="flex-1 sm:flex-none"
             />
           </FormFooter>
         </form>
