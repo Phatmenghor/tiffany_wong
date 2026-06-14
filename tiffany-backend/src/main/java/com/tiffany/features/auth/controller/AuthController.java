@@ -41,6 +41,15 @@ public class AuthController {
     }
 
     /**
+     * Logout — token invalidation is handled client-side; endpoint exists for consistency
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout() {
+        log.info("Logout request");
+        return ResponseEntity.ok(ApiResponse.success("Logged out successfully", null));
+    }
+
+    /**
      * Refresh access token using refresh token
      */
     @PostMapping("/refresh")
