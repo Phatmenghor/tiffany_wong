@@ -146,7 +146,7 @@ export function useAdminCleanup(
     | (() => void)
     | (() => void)[]
 ) {
-  useRouteCleanup("/admin", cleanupActions);
+  useCleanupOnUnmount(cleanupActions);
 }
 
 /**
