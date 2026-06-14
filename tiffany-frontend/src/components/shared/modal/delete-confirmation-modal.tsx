@@ -69,7 +69,7 @@ export function DeleteConfirmationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-sm p-0">
+      <DialogContent className="w-full sm:max-w-sm p-0">
         <VisuallyHidden asChild>
           <DialogTitle>{title}</DialogTitle>
         </VisuallyHidden>
@@ -78,6 +78,9 @@ export function DeleteConfirmationModal({
         <div className="px-[0.975rem] pt-[0.975rem] pb-[0.65rem] border-b border-border bg-destructive/5">
           <h2 className="text-[13px] font-semibold text-foreground">{title}</h2>
           <p className="text-[11px] text-muted-foreground mt-[0.325rem]">{description}</p>
+          {isCritical && (
+            <p className="text-[11px] text-red-600 font-medium mt-[0.24375rem]">This action cannot be undone.</p>
+          )}
         </div>
 
         {/* Body */}
@@ -91,15 +94,6 @@ export function DeleteConfirmationModal({
                 </span>
               </p>
             </div>
-          )}
-
-          {isCritical && (
-            <Alert className="border-red-200 bg-red-50 py-[0.4875rem]">
-              <AlertTriangle className="h-[0.65rem] w-[0.65rem] text-red-600" />
-              <AlertDescription className="text-red-700 text-[11px]">
-                This action cannot be undone.
-              </AlertDescription>
-            </Alert>
           )}
 
           {requireConfirmation && (

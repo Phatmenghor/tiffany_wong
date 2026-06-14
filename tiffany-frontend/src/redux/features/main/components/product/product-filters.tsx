@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -127,149 +128,129 @@ function ProductFiltersComponent({
     (hasSizes !== null ? 1 : 0) +
     (hasPriceFilter ? 1 : 0);
 
-  // Create filter content once to avoid duplicate component instances
+  // Filter content — shared between desktop sidebar and mobile bottom sheet
   const filterContent = (
-    <div className="space-y-[0.8125rem]">
-      {/* Promotion - top, hidden when locked */}
+    <div className="space-y-[1rem]">
+      {/* Promotion toggle */}
       {!lockedPromotion && (
-        <>
-          <div
-            className={cn(
-              "flex items-center justify-between rounded-[0.325rem] px-[0.4875rem] py-[0.4875rem] border transition-colors cursor-pointer",
-              hasPromotion
-                ? "border-orange-400/60 bg-orange-500/5"
-                : "border-border/60 hover:border-border",
-            )}
-            onClick={() =>
-              updateFilter("hasPromotion", hasPromotion ? "" : "true")
-            }
-          >
-            <div className="flex items-center gap-[0.40625rem]">
-              <div
-                className={cn(
-                  "flex items-center justify-center w-[1.1375rem] h-[1.1375rem] rounded-[0.325rem] transition-colors",
-                  hasPromotion ? "bg-orange-500/20" : "bg-orange-500/10",
-                )}
-              >
-                <Flame
-                  className={cn(
-                    "h-[0.56875rem] w-[0.56875rem]",
-                    hasPromotion ? "text-orange-500" : "text-orange-400",
-                  )}
-                />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold leading-none">
-                  On Sale Only
-                </p>
-                <p className="text-[11px] text-muted-foreground mt-[0.08125rem]">
-                  Show promotional items
-                </p>
-              </div>
+        <div
+          className={cn(
+            "flex items-center justify-between rounded-[0.65rem] px-[0.75rem] py-[0.65rem] border-2 transition-all cursor-pointer active:opacity-75",
+            hasPromotion
+              ? "border-orange-400/70 bg-orange-500/8"
+              : "border-border/50 hover:border-orange-300/60",
+          )}
+          onClick={() => updateFilter("hasPromotion", hasPromotion ? "" : "true")}
+        >
+          <div className="flex items-center gap-[0.6rem]">
+            <div className={cn(
+              "flex items-center justify-center w-[2rem] h-[2rem] rounded-[0.5rem] transition-colors",
+              hasPromotion ? "bg-orange-500/20" : "bg-orange-500/10",
+            )}>
+              <Flame className={cn("h-[1rem] w-[1rem]", hasPromotion ? "text-orange-500" : "text-orange-400")} />
             </div>
-            <Switch
-              checked={hasPromotion}
-              onCheckedChange={(checked) =>
-                updateFilter("hasPromotion", checked ? "true" : "")
-              }
-              onClick={(e) => e.stopPropagation()}
-              className="data-[state=checked]:bg-orange-500"
-            />
+            <div>
+              <p className="text-[13px] font-semibold leading-tight">On Sale Only</p>
+              <p className="text-[11px] text-muted-foreground">Promotional items</p>
+            </div>
           </div>
-          <Separator />
-        </>
+          <Switch
+            checked={hasPromotion}
+            onCheckedChange={(checked) => updateFilter("hasPromotion", checked ? "true" : "")}
+            onClick={(e) => e.stopPropagation()}
+            className="data-[state=checked]:bg-orange-500"
+          />
+        </div>
       )}
 
-      {/* Category - Combobox */}
-      <ComboboxSelectCategoriesPublic
-        selectedCategory={selectedCategory}
-        onChangeSelected={(categoryId) =>
-          updateFilter("categoryId", categoryId)
-        }
-        label="Category"
-        size="md"
-        placeholder="All Categories"
-      />
-
-      <Separator />
+      {/* Category */}
+      <div className="space-y-[0.4rem]">
+        <label className="text-[12px] font-semibold text-foreground/80 uppercase tracking-wide">Category</label>
+        <ComboboxSelectCategoriesPublic
+          selectedCategory={selectedCategory}
+          onChangeSelected={(categoryId) => updateFilter("categoryId", categoryId)}
+          label=""
+          size="md"
+          placeholder="All Categories"
+        />
+      </div>
 
       {/* Product Size */}
-      <div className="space-y-[0.4875rem]">
-        <div className="flex items-center gap-[0.325rem]">
-          <div className="flex items-center justify-center w-[1.1375rem] h-[1.1375rem] rounded-[0.325rem] bg-blue-500/10">
-            <ListChecks className="h-[0.56875rem] w-[0.56875rem] text-blue-600" />
-          </div>
-          <label className="text-[11px] font-semibold">Product Size</label>
+      <div className="space-y-[0.5rem]">
+        <div className="flex items-center gap-[0.4rem]">
+          <ListChecks className="h-[0.875rem] w-[0.875rem] text-blue-500" />
+          <label className="text-[12px] font-semibold text-foreground/80 uppercase tracking-wide">Size Type</label>
         </div>
-        <div className="space-y-[0.40625rem]">
-          <label className="flex items-center gap-[0.4875rem] cursor-pointer group">
-            <Checkbox
-              id="has-sizes-true"
-              checked={hasSizes === true}
-              onCheckedChange={() =>
-                updateFilter("hasSizes", hasSizes === true ? "" : "true")
-              }
-            />
-            <span className="text-[11px] group-hover:text-primary transition-colors select-none">
-              Has Sizes
-            </span>
-          </label>
-          <label className="flex items-center gap-[0.4875rem] cursor-pointer group">
-            <Checkbox
-              id="has-sizes-false"
-              checked={hasSizes === false}
-              onCheckedChange={() =>
-                updateFilter("hasSizes", hasSizes === false ? "" : "false")
-              }
-            />
-            <span className="text-[11px] group-hover:text-primary transition-colors select-none">
-              No Sizes
-            </span>
-          </label>
+        <div className="grid grid-cols-2 gap-[0.4rem]">
+          <button
+            onClick={() => updateFilter("hasSizes", hasSizes === true ? "" : "true")}
+            className={cn(
+              "flex items-center justify-center gap-[0.3rem] rounded-[0.5rem] border-2 px-[0.5rem] h-[2.25rem] text-[12px] font-medium transition-all active:opacity-75",
+              hasSizes === true
+                ? "border-blue-500 bg-blue-500/10 text-blue-600"
+                : "border-border/60 text-muted-foreground hover:border-blue-300",
+            )}
+          >
+            {hasSizes === true && <CheckCircle2 className="h-[0.75rem] w-[0.75rem]" />}
+            Has Sizes
+          </button>
+          <button
+            onClick={() => updateFilter("hasSizes", hasSizes === false ? "" : "false")}
+            className={cn(
+              "flex items-center justify-center gap-[0.3rem] rounded-[0.5rem] border-2 px-[0.5rem] h-[2.25rem] text-[12px] font-medium transition-all active:opacity-75",
+              hasSizes === false
+                ? "border-blue-500 bg-blue-500/10 text-blue-600"
+                : "border-border/60 text-muted-foreground hover:border-blue-300",
+            )}
+          >
+            {hasSizes === false && <CheckCircle2 className="h-[0.75rem] w-[0.75rem]" />}
+            No Sizes
+          </button>
         </div>
       </div>
 
-      <Separator />
-
       {/* Price Range */}
-      <div className="space-y-[0.4875rem]">
-        <div className="flex items-center gap-[0.325rem]">
-          <div className="flex items-center justify-center w-[1.1375rem] h-[1.1375rem] rounded-[0.325rem] bg-yellow-500/10">
-            <DollarSign className="h-[0.56875rem] w-[0.56875rem] text-yellow-600" />
-          </div>
-          <label className="text-[11px] font-semibold">Price Range</label>
+      <div className="space-y-[0.5rem]">
+        <div className="flex items-center gap-[0.4rem]">
+          <DollarSign className="h-[0.875rem] w-[0.875rem] text-yellow-600" />
+          <label className="text-[12px] font-semibold text-foreground/80 uppercase tracking-wide">Price Range</label>
         </div>
-        <div className="flex items-center gap-[0.325rem]">
+        <div className="flex items-center gap-[0.4rem]">
           <Input
             type="number"
             placeholder="Min"
             min={0}
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
-            className="h-[1.4625rem] text-[11px]"
+            className="h-[2.5rem] sm:h-[1.625rem] text-[13px] sm:text-[11px] rounded-[0.5rem]"
           />
-          <span className="text-muted-foreground text-[11px] flex-shrink-0">–</span>
+          <span className="text-muted-foreground text-[13px] flex-shrink-0 font-medium">–</span>
           <Input
             type="number"
             placeholder="Max"
             min={0}
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="h-[1.4625rem] text-[11px]"
+            className="h-[2.5rem] sm:h-[1.625rem] text-[13px] sm:text-[11px] rounded-[0.5rem]"
           />
         </div>
-        <div className="flex gap-[0.325rem]">
+        <div className="flex gap-[0.4rem]">
           <Button
             size="sm"
-            className="flex-1"
+            className="flex-1 h-[2.5rem] sm:h-[1.625rem] rounded-[0.5rem] text-[13px] sm:text-[11px]"
             onClick={applyPrice}
             disabled={!minPrice && !maxPrice}
           >
-            Apply
+            Apply Price
           </Button>
           {hasPriceFilter && (
-            <Button size="sm" variant="outline" onClick={clearPrice}>
-              <X className="h-[0.56875rem] w-[0.56875rem]" />
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-[2.5rem] sm:h-[1.625rem] px-[0.65rem] rounded-[0.5rem]"
+              onClick={clearPrice}
+            >
+              <X className="h-[0.75rem] w-[0.75rem]" />
             </Button>
           )}
         </div>
@@ -279,136 +260,175 @@ function ProductFiltersComponent({
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:flex w-[11.7rem] flex-shrink-0">
+      {/* ── Desktop Sidebar ── */}
+      <div className="hidden lg:flex w-[12.5rem] flex-shrink-0">
         <div className="sticky top-[3.9rem] h-[calc(100vh-4.55rem)] w-full">
-          <div className="bg-card border rounded-[0.4875rem] shadow-sm h-full flex flex-col">
+          <div className="bg-card border rounded-[0.65rem] shadow-sm h-full flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-[0.8125rem] py-[0.65rem] border-b border-border/60 flex-shrink-0">
-              <div className="flex items-center gap-[0.40625rem]">
-                <SlidersHorizontal className="h-[0.8125rem] w-[0.8125rem] text-primary" />
-                <h3 className="font-bold text-[12px]">Filters</h3>
+            <div className="flex items-center justify-between px-[0.9rem] py-[0.75rem] border-b border-border/60 flex-shrink-0 bg-muted/20">
+              <div className="flex items-center gap-[0.4rem]">
+                <SlidersHorizontal className="h-[0.875rem] w-[0.875rem] text-primary" />
+                <h3 className="font-bold text-[13px]">Filters</h3>
                 {activeFiltersCount > 0 && (
-                  <Badge className="rounded-full h-[0.8125rem] w-[0.8125rem] p-0 flex items-center justify-center text-[10px] font-bold">
+                  <span className="bg-primary text-primary-foreground rounded-full px-[0.4rem] py-[0.05rem] text-[10px] font-bold">
                     {activeFiltersCount}
-                  </Badge>
+                  </span>
                 )}
               </div>
               {activeFiltersCount > 0 && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-[1.3rem] px-[0.325rem] text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-[0.24375rem] text-[11px]"
+                  className="h-[1.5rem] px-[0.4rem] text-destructive hover:bg-destructive/10 gap-[0.2rem] text-[11px]"
                   onClick={clearAllFilters}
                 >
-                  <FilterX className="h-[0.56875rem] w-[0.56875rem]" />
-                  Clear all
+                  <FilterX className="h-[0.6rem] w-[0.6rem]" />
+                  Reset
                 </Button>
               )}
             </div>
 
             {/* Results count */}
-            <div className="px-[0.8125rem] py-[0.4875rem] border-b border-border/40 flex-shrink-0 bg-muted/30">
+            <div className="px-[0.9rem] py-[0.5rem] border-b border-border/40 flex-shrink-0">
               <p className="text-[11px] text-muted-foreground">
-                <span className="font-semibold text-foreground">
-                  {totalResults.toLocaleString()}
-                </span>{" "}
-                result{totalResults !== 1 ? "s" : ""} found
+                <span className="font-semibold text-foreground">{totalResults.toLocaleString()}</span>
+                {" "}result{totalResults !== 1 ? "s" : ""}
               </p>
             </div>
 
             {/* Scrollable content */}
             <ScrollArea className="flex-1">
-              <div className="p-[0.8125rem]">{filterContent}</div>
+              <div className="p-[0.9rem]">{filterContent}</div>
             </ScrollArea>
           </div>
         </div>
       </div>
 
-      {/* Mobile Filters */}
-      <div className="lg:hidden w-full">
-        <div className="flex items-center gap-[0.4875rem] bg-card border rounded-[0.4875rem] px-[0.65rem] py-[0.4875rem] shadow-sm">
+      {/* ── Mobile Filters ── */}
+      <div className="lg:hidden w-full space-y-[0.4875rem]">
+        {/* Top bar: results count + Filter button */}
+        <div className="flex items-center gap-[0.4875rem]">
+          {/* Results */}
           <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-semibold truncate">
-              {totalResults.toLocaleString()} result
-              {totalResults !== 1 ? "s" : ""}
-            </p>
-            <p className="text-[11px] text-muted-foreground">
-              {activeFiltersCount > 0
-                ? `${activeFiltersCount} filter${activeFiltersCount > 1 ? "s" : ""} applied`
-                : "No filters applied"}
+            <p className="text-[13px] font-semibold text-foreground">
+              {totalResults.toLocaleString()}
+              <span className="text-muted-foreground font-normal">
+                {" "}result{totalResults !== 1 ? "s" : ""}
+              </span>
             </p>
           </div>
 
-          {/* All buttons have the same h-[2.75rem] touch target on mobile */}
-          <div className="flex items-center gap-[0.325rem] flex-shrink-0">
-            {activeFiltersCount > 0 && (
+          {/* Filters button */}
+          <Sheet>
+            <SheetTrigger asChild>
               <Button
-                variant="outline"
+                variant={activeFiltersCount > 0 ? "default" : "outline"}
                 size="sm"
-                className="h-[2.75rem] px-[0.65rem] text-muted-foreground hover:text-destructive hover:border-destructive/50 gap-[0.325rem] text-[12px]"
-                onClick={clearAllFilters}
+                className="h-[2.75rem] px-[0.975rem] gap-[0.4rem] text-[13px] font-semibold rounded-full"
               >
-                <FilterX className="h-[0.75rem] w-[0.75rem]" />
-                Clear
+                <SlidersHorizontal className="h-[0.875rem] w-[0.875rem]" />
+                Filters
+                {activeFiltersCount > 0 && (
+                  <span className="ml-[0.1rem] bg-white/25 text-inherit rounded-full px-[0.4rem] py-[0.05rem] text-[11px] font-bold">
+                    {activeFiltersCount}
+                  </span>
+                )}
               </Button>
-            )}
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="default" size="sm" className="h-[2.75rem] px-[0.65rem] gap-[0.325rem] text-[12px]">
-                  <SlidersHorizontal className="h-[0.75rem] w-[0.75rem]" />
-                  Filters
+            </SheetTrigger>
+
+            {/* Bottom sheet on mobile */}
+            <SheetContent
+              side="bottom"
+              className="p-0 flex flex-col max-h-[82dvh] rounded-t-[0.975rem]"
+            >
+              {/* Drag handle */}
+              <div className="mx-auto mt-[0.5rem] mb-[0.25rem] h-[0.25rem] w-[2rem] rounded-full bg-muted-foreground/20 flex-shrink-0" />
+
+              {/* Header */}
+              <div className="flex items-center justify-between px-[1rem] py-[0.75rem] border-b border-border/60 flex-shrink-0">
+                <div className="flex items-center gap-[0.5rem]">
+                  <SlidersHorizontal className="h-[1rem] w-[1rem] text-primary" />
+                  <SheetTitle className="text-[15px] font-bold">Filters</SheetTitle>
                   {activeFiltersCount > 0 && (
-                    <Badge
-                      variant="secondary"
-                      className="ml-[0.08125rem] rounded-full h-[0.975rem] w-[0.975rem] p-0 flex items-center justify-center text-[10px] font-bold bg-white text-primary"
-                    >
+                    <span className="bg-primary text-primary-foreground rounded-full px-[0.4rem] py-[0.05rem] text-[11px] font-bold">
                       {activeFiltersCount}
-                    </Badge>
+                    </span>
                   )}
-                </Button>
-              </SheetTrigger>
-              <SheetContent
-                side="left"
-                className="w-[13rem] sm:w-[15.6rem] p-0 flex flex-col"
-              >
-                <SheetHeader className="px-[0.8125rem] py-[0.65rem] border-b border-border/60 flex-shrink-0">
-                  <div className="flex items-center justify-between">
-                    <SheetTitle className="flex items-center gap-[0.40625rem]">
-                      <SlidersHorizontal className="h-[0.8125rem] w-[0.8125rem] text-primary" />
-                      Filters
-                      {activeFiltersCount > 0 && (
-                        <Badge className="rounded-full h-[0.8125rem] w-[0.8125rem] p-0 flex items-center justify-center text-[10px] font-bold">
-                          {activeFiltersCount}
-                        </Badge>
-                      )}
-                    </SheetTitle>
-                    {activeFiltersCount > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-[1.3rem] px-[0.325rem] text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-[0.24375rem] text-[11px]"
-                        onClick={clearAllFilters}
-                      >
-                        <FilterX className="h-[0.56875rem] w-[0.56875rem]" />
-                        Clear all
-                      </Button>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-muted-foreground text-left mt-[0.1625rem]">
-                    <span className="font-semibold text-foreground">
-                      {totalResults.toLocaleString()}
-                    </span>{" "}
-                    result{totalResults !== 1 ? "s" : ""} found
-                  </p>
-                </SheetHeader>
-                <ScrollArea className="flex-1">
-                  <div className="p-[0.8125rem]">{filterContent}</div>
-                </ScrollArea>
-              </SheetContent>
-            </Sheet>
-          </div>
+                </div>
+                {activeFiltersCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-[2rem] px-[0.65rem] text-destructive hover:bg-destructive/10 gap-[0.325rem] text-[12px]"
+                    onClick={clearAllFilters}
+                  >
+                    <FilterX className="h-[0.75rem] w-[0.75rem]" />
+                    Reset all
+                  </Button>
+                )}
+              </div>
+
+              {/* Scrollable filter content */}
+              <ScrollArea className="flex-1 overflow-y-auto">
+                <div className="px-[1rem] py-[0.75rem] space-y-[1rem]">
+                  {filterContent}
+                </div>
+              </ScrollArea>
+
+              {/* Sticky footer */}
+              <div className="flex-shrink-0 border-t border-border/60 px-[1rem] py-[0.75rem] bg-background pb-[max(0.75rem,calc(0.75rem+env(safe-area-inset-bottom,0px)))]">
+                <SheetClose asChild>
+                  <Button className="w-full h-[3rem] text-[14px] font-semibold rounded-full gap-[0.4rem]">
+                    Show {totalResults.toLocaleString()} result{totalResults !== 1 ? "s" : ""}
+                  </Button>
+                </SheetClose>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
+
+        {/* Active filter chips — horizontally scrollable */}
+        {activeFiltersCount > 0 && (
+          <div className="flex gap-[0.4rem] overflow-x-auto pb-[0.1rem] scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none]">
+            {!lockedPromotion && hasPromotion && (
+              <button
+                onClick={() => updateFilter("hasPromotion", "")}
+                className="flex-shrink-0 flex items-center gap-[0.3rem] bg-orange-500/10 text-orange-600 border border-orange-400/40 rounded-full px-[0.65rem] h-[1.875rem] text-[12px] font-medium active:opacity-70"
+              >
+                <Flame className="h-[0.75rem] w-[0.75rem]" />
+                On Sale
+                <X className="h-[0.6rem] w-[0.6rem] opacity-60" />
+              </button>
+            )}
+            {selectedCategory && (
+              <button
+                onClick={() => updateFilter("categoryId", "")}
+                className="flex-shrink-0 flex items-center gap-[0.3rem] bg-primary/10 text-primary border border-primary/30 rounded-full px-[0.65rem] h-[1.875rem] text-[12px] font-medium active:opacity-70"
+              >
+                Category
+                <X className="h-[0.6rem] w-[0.6rem] opacity-60" />
+              </button>
+            )}
+            {hasSizes !== null && (
+              <button
+                onClick={() => updateFilter("hasSizes", "")}
+                className="flex-shrink-0 flex items-center gap-[0.3rem] bg-blue-500/10 text-blue-600 border border-blue-400/40 rounded-full px-[0.65rem] h-[1.875rem] text-[12px] font-medium active:opacity-70"
+              >
+                {hasSizes ? "Has Sizes" : "No Sizes"}
+                <X className="h-[0.6rem] w-[0.6rem] opacity-60" />
+              </button>
+            )}
+            {hasPriceFilter && (
+              <button
+                onClick={clearPrice}
+                className="flex-shrink-0 flex items-center gap-[0.3rem] bg-yellow-500/10 text-yellow-700 border border-yellow-400/40 rounded-full px-[0.65rem] h-[1.875rem] text-[12px] font-medium active:opacity-70"
+              >
+                {urlMinPrice && urlMaxPrice ? `$${urlMinPrice}–$${urlMaxPrice}` : urlMinPrice ? `≥$${urlMinPrice}` : `≤$${urlMaxPrice}`}
+                <X className="h-[0.6rem] w-[0.6rem] opacity-60" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </>
   );

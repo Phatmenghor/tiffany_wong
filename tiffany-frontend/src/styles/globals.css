@@ -730,6 +730,18 @@
     }
   }
 
+  /* ── Responsive font-size scaling on mobile ──
+   * The project uses literal px values (text-[11px] etc.) everywhere.
+   * This bumps each tier up one step on small screens for readability.
+   */
+  @media (max-width: 639px) {
+    .text-\[10px\] { font-size: 11px; }
+    .text-\[11px\] { font-size: 12px; }
+    .text-\[12px\] { font-size: 13px; }
+    .text-\[13px\] { font-size: 14px; }
+    .text-\[14px\] { font-size: 15px; }
+  }
+
   /* ── Mobile-native tap & interaction polish ── */
   @media (max-width: 639px) {
     /* Remove the blue/grey flash on tap for all interactive elements */

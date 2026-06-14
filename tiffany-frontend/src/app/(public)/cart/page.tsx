@@ -3,9 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Trash2,
   CreditCard,
-  ShoppingCart,
   ArrowRight,
 } from "lucide-react";
 import { useCartState } from "@/redux/features/main/store/state/cart-state";
@@ -117,20 +115,20 @@ export default function CartPage() {
 
         <PageHeader
           title="Shopping Cart"
-          icon={ShoppingCart}
           count={totalItems}
-          subtitle={`${totalItems} ${totalItems === 1 ? "item" : "items"} • ${totalQuantity} total quantity`}
+          countLabel={totalItems === 1 ? "item" : "items"}
           actions={
-            <CustomButton
-              variant="ghost"
-              size="sm"
-              onClick={() => setClearCartModalOpen(true)}
-              disabled={loading.clear}
-              className="gap-[0.24375rem] text-destructive hover:text-destructive hover:bg-destructive/10 text-[11px] rounded-[0.4875rem]"
-            >
-              <Trash2 className="h-[0.56875rem] w-[0.56875rem]" />
-              Clear All
-            </CustomButton>
+            items.length > 0 ? (
+              <CustomButton
+                variant="ghost"
+                size="sm"
+                onClick={() => setClearCartModalOpen(true)}
+                disabled={loading.clear}
+                className="text-destructive hover:text-destructive hover:bg-destructive/10 text-[11px] rounded-[0.4875rem]"
+              >
+                Clear All
+              </CustomButton>
+            ) : undefined
           }
         />
 

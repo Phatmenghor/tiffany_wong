@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import {
   Heart,
   ShoppingCart,
-  Trash2,
   LogIn,
   CheckCircle2,
   Loader2,
@@ -247,21 +246,20 @@ export default function FavoritesPage() {
     <PageContainer className="py-[0.65rem] sm:py-[1.3rem]">
       <PageHeader
         title="My Favorites"
-        icon={Heart}
         count={totalItems}
         countLabel={totalItems === 1 ? "item" : "items"}
-        subtitle={`${totalItems} ${totalItems === 1 ? "item" : "items"} saved`}
         actions={
-          <CustomButton
-            variant="ghost"
-            size="sm"
-            onClick={() => setClearAllModalOpen(true)}
-            disabled={loading.fetch}
-            className="gap-[0.24375rem] text-destructive hover:text-destructive hover:bg-destructive/10 text-[11px]"
-          >
-            <Trash2 className="h-[0.56875rem] w-[0.56875rem]" />
-            Clear All
-          </CustomButton>
+          items.length > 0 ? (
+            <CustomButton
+              variant="ghost"
+              size="sm"
+              onClick={() => setClearAllModalOpen(true)}
+              disabled={loading.fetch}
+              className="text-destructive hover:text-destructive hover:bg-destructive/10 text-[11px]"
+            >
+              Clear All
+            </CustomButton>
+          ) : undefined
         }
       />
 
