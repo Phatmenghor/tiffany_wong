@@ -142,9 +142,9 @@ export default function CheckoutPage() {
           countLabel={totalItems === 1 ? "item" : "items"}
         />
 
-        <div className="grid lg:grid-cols-3 gap-[0.65rem] sm:gap-[0.975rem] mt-[0.975rem]">
+        <div className="grid lg:grid-cols-3 gap-[0.65rem] sm:gap-[0.975rem] mt-[0.975rem] min-w-0">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-[0.4875rem]">
+          <div className="lg:col-span-2 min-w-0 space-y-[0.4875rem]">
             {/* Delivery Address - Top */}
             <DeliveryAddressSection
               selectedAddress={selectedAddress}
