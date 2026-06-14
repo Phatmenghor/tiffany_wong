@@ -1,4 +1,10 @@
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
 /** @type {import('next').NextConfig} */
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 const nextConfig = {
   output: "standalone",
 
@@ -12,6 +18,10 @@ const nextConfig = {
   },
 
   trailingSlash: false,
+
+  turbopack: {
+    root: __dirname,
+  },
 
   images: {
     unoptimized: false,
