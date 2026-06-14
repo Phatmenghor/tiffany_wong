@@ -16,6 +16,7 @@ import {
 import {
   addToCart,
   updateCartItem,
+  fetchCart,
 } from "@/redux/features/main/store/thunks/cart-thunks";
 import { toggleFavorite } from "@/redux/features/main/store/thunks/favorite-thunks";
 import { useAuthModal } from "@/context/auth-modal-context";
@@ -329,80 +330,56 @@ export default function ProductDetailPage() {
       return;
     }
     setIsSaving(true);
+    const ts = Date.now();
+
+    // Apply all local updates immediately
+    for (const key of modifiedSizes) {
+      const sizeId = key === "no_size" ? null : key;
+      const newQty = pendingQuantities.get(key) ?? getQuantityForSize(sizeId);
+      const currentQuantity = getQuantityForSize(sizeId);
+      if (newQty === currentQuantity) continue;
+
+      if (currentQuantity === 0 && newQty > 0) {
+        const size = product.sizes?.find((s) => s.id === sizeId);
+        const finalPrice = size?.finalPrice ?? product.displayPrice ?? 0;
+        cartDispatch(addLocalCartItem({
+          productId: product.id, productSizeId: sizeId, quantity: newQty,
+          productName: product.name, productImageUrl: product.mainImageUrl,
+          sizeName: size?.name ?? null, finalPrice,
+          currentPrice: size?.hasPromotion ? size.price : product.displayOriginPrice ?? finalPrice,
+          hasPromotion: size ? size.hasPromotion : (product.hasPromotion ?? false),
+          promotionType: size?.promotionType ?? product.displayPromotionType ?? null,
+          promotionValue: size?.promotionValue ?? product.displayPromotionValue ?? null,
+          promotionFromDate: size?.promotionFromDate ?? product.displayPromotionFromDate ?? null,
+          promotionToDate: size?.promotionToDate ?? product.displayPromotionToDate ?? null,
+          optimisticTimestamp: ts,
+        }));
+      } else {
+        cartDispatch(updateLocalCartItem({ productId: product.id, productSizeId: sizeId, quantity: newQty, optimisticTimestamp: ts }));
+      }
+    }
+
+    setPendingQuantities(new Map());
+    setModifiedSizes(new Set());
+
+    // Fire API calls sequentially to avoid race conditions, then sync from server
     try {
-      const promises: Promise<any>[] = [];
-      const ts = Date.now();
       for (const key of modifiedSizes) {
         const sizeId = key === "no_size" ? null : key;
         const newQty = pendingQuantities.get(key) ?? getQuantityForSize(sizeId);
-        const currentQuantity = getQuantityForSize(sizeId);
-        if (newQty === currentQuantity) continue;
-        if (currentQuantity === 0 && newQty > 0) {
-          const size = product.sizes?.find((s) => s.id === sizeId);
-          const finalPrice = size?.finalPrice ?? product.displayPrice ?? 0;
-          const isPromo = size ? size.hasPromotion : (product.hasPromotion ?? false);
-          cartDispatch(
-            addLocalCartItem({
-              productId: product.id,
-              productSizeId: sizeId,
-              quantity: newQty,
-              productName: product.name,
-              productImageUrl: product.mainImageUrl,
-              sizeName: size?.name ?? null,
-              finalPrice,
-              currentPrice: size?.hasPromotion
-                ? size.price
-                : product.displayOriginPrice ?? finalPrice,
-              hasPromotion: isPromo,
-              promotionType:
-                size?.promotionType ?? product.displayPromotionType ?? null,
-              promotionValue:
-                size?.promotionValue ?? product.displayPromotionValue ?? null,
-              promotionFromDate:
-                size?.promotionFromDate ??
-                product.displayPromotionFromDate ??
-                null,
-              promotionToDate:
-                size?.promotionToDate ?? product.displayPromotionToDate ?? null,
-              optimisticTimestamp: ts,
-            })
-          );
-          promises.push(
-            cartDispatch(
-              addToCart({
-                productId: product.id,
-                productSizeId: sizeId,
-                quantity: newQty,
-                optimisticTimestamp: ts,
-              })
-            ).unwrap()
-          );
+        const currentQty = getQuantityForSize(sizeId);
+        if (newQty === currentQty) continue;
+
+        if (newQty > 0) {
+          await cartDispatch(addToCart({ productId: product.id, productSizeId: sizeId, quantity: newQty, optimisticTimestamp: ts })).unwrap();
         } else {
-          cartDispatch(
-            updateLocalCartItem({
-              productId: product.id,
-              productSizeId: sizeId,
-              quantity: newQty,
-              optimisticTimestamp: ts,
-            })
-          );
-          promises.push(
-            cartDispatch(
-              updateCartItem({
-                productId: product.id,
-                productSizeId: sizeId,
-                quantity: newQty,
-                optimisticTimestamp: ts,
-              })
-            ).unwrap()
-          );
+          await cartDispatch(updateCartItem({ productId: product.id, productSizeId: sizeId, quantity: 0, optimisticTimestamp: ts })).unwrap();
         }
       }
-      await Promise.all(promises);
-      setPendingQuantities(new Map());
-      setModifiedSizes(new Set());
+      cartDispatch(fetchCart());
     } catch (err: any) {
       showToast.error(err?.message || "Failed to update cart");
+      cartDispatch(fetchCart());
     } finally {
       setIsSaving(false);
     }

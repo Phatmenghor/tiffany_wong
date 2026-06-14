@@ -22,6 +22,7 @@ import { useCartState } from "@/redux/features/main/store/state/cart-state";
 import {
   addToCart,
   updateCartItem,
+  fetchCart,
 } from "@/redux/features/main/store/thunks/cart-thunks";
 import {
   addLocalCartItem,
@@ -318,21 +319,30 @@ export function SizeSelectionModal({
     onOpenChange(false);
     onSuccess?.();
 
-    // Fire API calls in background
-    for (const key of modifiedSizes) {
-      const sizeId = key === "no_size" ? null : key;
-      const newQty = pendingQuantities.get(key) ?? getQuantityForSize(sizeId);
-      const currentQuantity = getQuantityForSize(sizeId);
-      if (newQty === currentQuantity) continue;
+    // Fire API calls sequentially to avoid race conditions (each call builds on previous server state)
+    // then fetch once at the end to get authoritative server state
+    const syncCart = async () => {
+      try {
+        for (const key of modifiedSizes) {
+          const sizeId = key === "no_size" ? null : key;
+          const newQty = pendingQuantities.get(key) ?? getQuantityForSize(sizeId);
+          const currentQty = getQuantityForSize(sizeId);
+          if (newQty === currentQty) continue;
 
-      const apiCall = newQty > 0
-        ? dispatch(addToCart({ productId: displayProduct.id, productSizeId: sizeId, quantity: newQty, optimisticTimestamp: ts }))
-        : dispatch(updateCartItem({ productId: displayProduct.id, productSizeId: sizeId, quantity: 0, optimisticTimestamp: ts }));
-
-      apiCall.unwrap().catch(() => {
+          if (newQty > 0) {
+            await dispatch(addToCart({ productId: displayProduct.id, productSizeId: sizeId, quantity: newQty, optimisticTimestamp: ts })).unwrap();
+          } else {
+            await dispatch(updateCartItem({ productId: displayProduct.id, productSizeId: sizeId, quantity: 0, optimisticTimestamp: ts })).unwrap();
+          }
+        }
+        // Fetch authoritative cart state after all updates are done
+        dispatch(fetchCart());
+      } catch {
         showToast.error("Failed to sync cart. Please try again.");
-      });
-    }
+        dispatch(fetchCart());
+      }
+    };
+    syncCart();
   }, [
     displayProduct,
     modifiedSizes,
