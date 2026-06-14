@@ -151,6 +151,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>tiffany_backend</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
