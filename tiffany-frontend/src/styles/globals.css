@@ -730,6 +730,36 @@
     }
   }
 
+  /* ── Mobile-native tap & interaction polish ── */
+  @media (max-width: 639px) {
+    /* Remove the blue/grey flash on tap for all interactive elements */
+    a, button, [role="button"], input, textarea, select, label {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Hide scrollbars on mobile while keeping scroll functional */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    * {
+      scrollbar-width: none;
+    }
+
+    /* Momentum (inertia) scrolling for overflow containers on iOS */
+    .overflow-y-auto,
+    .overflow-x-auto,
+    .overflow-auto,
+    .overflow-scroll {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  /* Suppress hover effects on pure-touch devices (prevents stuck hover after tap) */
+  @media (hover: none) and (pointer: coarse) {
+    .hover-scale-102:hover { transform: none !important; }
+    .hover-lift:hover { transform: none !important; box-shadow: none !important; }
+  }
+
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
