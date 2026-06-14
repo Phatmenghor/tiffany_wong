@@ -110,7 +110,7 @@ export function OrderSummary({
           </div>
         </div>
         <CustomButton
-          className="w-full mb-[0.40625rem] gap-[0.325rem] h-[1.7875rem] rounded-[0.4875rem]"
+          className="w-full mb-[0.40625rem] gap-[0.325rem] h-[2.75rem] sm:h-[1.7875rem] rounded-[0.4875rem]"
           onClick={onCheckout}
           disabled={isProcessing}
         >
